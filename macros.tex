@@ -1,6 +1,41 @@
 \usepackage{color}
 \usepackage{lipsum}
 
+
+\def\lectureformat{1} 
+\ifnum\lectureformat=1
+\newcommand{\metadata}[3]
+{
+	\newpage
+	
+	\def\lectureID{#1}
+	
+	\setcounter{chapter}{\lectureID}
+
+	\draftnotice
+	
+	\begin{center}
+		\bf\large CS229M/STATS214: Machine Learning Theory
+	\end{center}
+	
+	\noindent
+	Lecturer: Tengyu Ma   %%% FILL IN LECTURER (if not RS)
+	\hfill
+	Lecture \# \lectureID              %%% FILL IN LECTURE NUMBER HERE
+	\\
+	Scribe: #2                  %%% FILL IN YOUR NAME HERE
+	\hfill
+	#3           %%% FILL IN LECTURE DATE HERE
+	
+	\noindent
+	\rule{\textwidth}{1pt}
+	
+	\medskip
+}
+\else 
+\newcommand{\metadata}[2]{{}}
+\fi
+
 \DeclareMathOperator*{\Exp}{\mathbb{E}}
 \DeclareMathOperator*{\argmin}{\textup{argmin}}
 \DeclareMathOperator*{\argmax}{\textup{argmax}}
