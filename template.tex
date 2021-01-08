@@ -1,0 +1,70 @@
+\documentclass[11pt]{amsbook}
+\usepackage{amsfonts,bm}
+\usepackage{fullpage}
+
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{xca}[theorem]{Exercise}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\numberwithin{section}{chapter}
+\numberwithin{equation}{chapter}
+
+\makeindex
+
+\def\lectureformat{1}
+\input{macros}
+\begin{document}
+
+\frontmatter
+
+\mainmatter
+\let\sec\section
+\let\subsec\subsection
+
+\newcommand{\secwarning}[1]{
+	{	
+		\color{red}
+		$\backslash$section and $\backslash$subsection are disallowed, please use 	$\backslash$sec and $\backslash$subsec instead
+	}
+}
+\let\section\secwarning
+\let\subsection\secwarning
+
+
+\newcommand{\draftnotice}{\vbox to 0.25in{\noindent
+		\raisebox{0.6in}[0in][0in]{\makebox[\textwidth][r]{\it
+				DRAFT --- a final version will be posted shortly}}}
+	\vspace{-.25in}\vspace{-\baselineskip}
+}
+
+%\section{}
+\input{yoursunetID}
+
+\input{yoursunetID2}
+
+%    Include main chapters here.
+%\include{}
+\appendix
+%    Include appendix "chapters" here.
+
+
+\backmatter
+%    Bibliography styles amsplain or harvard are also acceptable.
+\bibliographystyle{amsalpha}
+\bibliography{}
+%    See note above about multiple indexes.
+\printindex
+
+\end{document}
+
+%-----------------------------------------------------------------------
+% End of amsbook-template.tex
+%-----------------------------------------------------------------------
