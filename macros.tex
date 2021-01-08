@@ -2,7 +2,7 @@
 \usepackage{lipsum}
 
 
-\def\lectureformat{1} 
+
 \ifnum\lectureformat=1
 \newcommand{\metadata}[3]
 {
@@ -33,7 +33,7 @@
 	\medskip
 }
 \else 
-\newcommand{\metadata}[2]{{}}
+\newcommand{\metadata}[3]{}
 \fi
 
 \DeclareMathOperator*{\Exp}{\mathbb{E}}
