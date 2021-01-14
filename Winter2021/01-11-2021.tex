@@ -1,0 +1,167 @@
+% reset section counter
+\setcounter{section}{0}
+
+\metadata{1}{Anusri Pampari and Gabriel Poesia}{Jan 11th, 2021}
+
+
+\newcommand\defeq{\stackrel{\mathclap{\tiny \mbox{$\Delta$}}}{=}}
+
+\sec{Overview}
+
+In this lecture, we will introduce formulations that will be used to study topics for the first five weeks of this class. We will set up the standard supervised learning formulation, introduce and justify the \text{empirical risk minimization} paradigm with an asymptotic
+result. Under the assumption that the number of data points in our training set goes to infinity, our \emph{excess risk} (defined later) goes to zero. In practice it is often unrealistic to assume that our training set is ``infinite''; thus, in later lectures we will prove results assuming a finite training set.
+
+\sec{Supervised learning}\label{lec1:sec:sup-learn}
+Let's start with the standard formalization of the key problem in machine learning: supervised learning. Informally, we have a dataset where each data point is associated with a label, and we want to use the data to learn a function that maps a data point to its label. Once learnt, such a function can be used to infer the labels of data points with unknown labels. More formally, we'll say our data points come from some input space $\cX$ (e.g. images of birds), and labels belong to the output space $\cY$ (e.g. bird species). Suppose we are interested in a specific joint probability distribution $p$ over $\cX \times \cY$ (e.g. images of birds in North America), from which we draw a \emph{training set}, i.e we draw a a set of $n$ independent and identically distributed (i.i.d.) data points $(x^{(i)}, y^{(i)})$ from $p$. The goal of supervised learning is to learn a mapping (i.e. a function) from $\cX$ to $\cY$ using the training data. Any such function $h : \cX \rightarrow \cY$ is called a \emph{predictor} (also \emph{hypothesis} or \emph{model}).
+
+Given two predictors, how do we decide which is better? For that, we define a \emph{loss function} over the predictions. There are several ways to define loss functions: for now, define a loss function $l$ as a function $\ell : \cY \times \cY \rightarrow \R$. Intuitively, the loss function takes two labels, the prediction made by a model $\hat{y}$ and the true label $y$, and gives a number that captures how different the two labels are. We assume $\ell$ is non-negative, i.e $\ell(\hat{y}, y) \geq 0$. Then, the loss of a model $h$ on an example $(x, y)$ is $\ell(h(x), y)$, i.e. the difference (as measured by $\ell$) between the prediction made by $h$ and the true label.
+
+
+With these definitions, we are able to formalize the problem of supervised learning. Precisely, we seek to find a model $h$ that minimizes what we call the expected loss (or population risk):
+
+\al{
+    L(h) \defeq{} \Exp_{(x, y)\sim p} [\ell(h(x), y)].
+}
+
+
+In the best possible case, we would find an $h$ with expected loss $0$, since that's the best possible we can do.
+
+\subsec{Examples: Regression and classification}
+
+Here are two examples of standard supervised learning:
+
+\begin{itemize}
+    \item In the problem of \emph{regression}, predictions are real numbers ($\cY = \R$). We would like predictions to be as close as possible to the real labels. A classical loss function that captures this is the squared error, $\ell(\hat{y}, y) = (\hat{y} - y)^2$.
+    \item In the problem of \emph{classification}, predictions are in a discrete set of $k$ unordered classes $\cY = [k] = \{1, \cdots, k \}$. One possible classification loss is the $0-1$ loss: $\ell(\hat{y}, y) = \mathbbm{1}(\hat{y} \neq y)$, i.e. $0$ if the prediction is equal to the true label, and $1$ otherwise.
+\end{itemize}
+
+
+
+\subsec{Hypothesis families}
+
+In the formulation of supervised learning Section~\ref{lec1:sec:sup-learn}, we said we would like to find \emph{any function} that minimizes population risk. However, in practice, we do not have a way of optimizing over arbitrary functions. Instead, we work within a more constrained set of functions $\cH$, which we call the \emph{hypothesis family} (or \emph{hypothesis class}). Each element of $\cH$ is a function $h : \cX \rightarrow \cY$. Usually, we choose a set $\cH$ that we know how to optimize over (e.g. linear functions, or neural networks).
+
+Given one particular function $h \in \cH$, we define the \emph{excess risk} of $h$ with respect to $\cH$ as the difference between the population risk of $h$ and the best possible population risk inside $\cH$:
+
+$$E(h) \defeq{} L(h) - \inf_{g\in\cH} L(g).$$
+
+
+
+
+Generally we need more assumptions about a specific problem and hypothesis class to bound absolute population risk, hence we focus on bounding the excess risk. Toward the end of this lecture we will show a general bound on the excess risk in the asymptotic case.
+
+Usually, the family we choose to work with can be parameterized by a vector of parameters $\theta \in \Theta$. In that case, we can refer to an element of $\cH$ by $h_\theta$, making that explicit. An example of such a parametrization of the hypothesis class is $\cH = \{ h: h_\theta(x) = \theta^Tx, \theta \in \mathbb{R}^d \}$.
+
+\sec{Empirical risk minimization}
+
+Our ultimate goal is to minimize population risk. However, in practice we do not have access to the entire population: we only have a \emph{training set} of $n$ data points, drawn from the same distribution as the entire population. While we cannot compute population risk, we can compute \emph{empirical risk}, the loss over the training set, and try to minimize that. This is, in short, the paradigm known as \emph{empirical risk minimization} (ERM): we optimize the training set loss, with the hope that this leads us to a model that has low
+population loss. From now on, with some abuse of notation, we often write $\ell(h_\theta(x),y)$ as $\ell((x,y),\theta)$ and use the two notations interchangeably.  Formally, we define the empirical risk of a model $h$ as:
+\al{
+\hatL(h_\theta) \defeq{} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) = \frac{1}{n} \sum_{i=1}^n \ell((x^{(i)}, y^{(i)}), \theta).
+}
+\emph{Empirical risk minimization} means of finding the minimizer of $\hatL$, which we call $\hat{\theta}$:
+\al{
+    \label{lec1:eqn:erm}
+    \hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(h_\theta).
+}
+Fortunately, since for now we're assuming that our training examples are drawn from the same distribution as the whole population, we know that empirical risk and population risk are equal
+\emph{in expectation}:
+\al{
+    \Exp_{(x^{(i)}, y^{(i)}) \sim p}\ \hatL(h_\theta) &= \Exp_{(x^{(i)}, y^{(i)}) \sim p} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) \\
+    &= \frac{1}{n} \sum_{i=1}^n \Exp_{(x^{(i)}, y^{(i)}) \sim p} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
+    &= \frac{1}{n} \cdot{} n \cdot{} \Exp_{(x^{(i)}, y^{(i)}) \sim p} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
+    &= L(h_\theta).
+}
+
+
+This is one reason why it makes sense to use empirical risk: it is an unbiased estimator of the population risk.
+
+The key question that we seek to answer in the first part of this course is: \textbf{what guarantees do we have on the excess risk for the parameters learned by ERM?} The hope with ERM is that minimizing the training error will lead to small testing error. One way to make this rigorous is by showing that the ERM minimizer's excess risk is bounded.
+
+\sec{Asymptotics of expected risk minimization}
+
+In this section, we use an asymptotic approach (i.e assuming number of training samples $n \to \infty$) to achieve a bound on the ERM. In future lectures we will assume finite $n$ and provide a non-asymptotic analysis. 
+
+For the asymptotic analysis of ERM, we would like to prove that excess risk is bounded as shown below:
+\al{
+    L(\hat{\theta}) - \argmin_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right). 
+    \label{lec1:eqn:erm-bound}
+}
+Here $c$ is a problem dependent constant. The equation above shows that as we have more training data (i.e as $n$ increases) the excess risk of ERM decrease at the rate of $\frac{1}{n}$.
+
+Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and let $\cH = \{ h_\theta: \theta = \R^p \}$ be the parameterized family of hypothesis functions. Let the ERM minimizer be $\hat{\theta}$ as defined in Equation~\eqref{lec1:eqn:erm}. Let $\theta^{*}$ be the minimizer
+of the population risk $L$, i.e. $\theta^{*} = \argmin_\theta L(\theta)$. The theorem below quantifies the excess risk $L(\hat{\theta}) - L(\theta^{*})$:
+
+\begin{theorem} 
+Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold. Then,
+\begin{enumerate}
+    \item $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, i.e. for every $\epsilon > 0$, there is an $M$ such that $\sup_n \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) < \epsilon$. (This means that the sequence $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ is ``bounded in probability".)
+    
+    \item  $\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right)$.
+     \item $n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)$.
+    \item $n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2}$ where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2} \right)$.
+\end{enumerate}
+\label{lec1:thm:asymp}
+\end{theorem}
+\textbf{Remark:} In the theorem above, Parts 1 and 3 only show the rate or order of convergence, while Parts 2 and 4 define the limiting distribution for the random variables.
+
+\subsec{Key ideas of proof} 
+
+We will prove the theorem above by applying the following main ideas:
+\begin{enumerate}
+    \item Obtain an expression for the excess risk by Taylor expansion of the derivative of the empirical risk $\nabla \hatL(\theta)$ around $\theta^{*}$.
+    \item By the law of large numbers, we have that $\hatL(\theta) \overset{p}{\to} L(\theta)$, $\nabla\hatL(\theta) \overset{p}{\to} \nabla L(\theta)$   and  $\nabla^{2}\hat{L}(\theta) \overset{p}{\to} \nabla^{2} L(\theta)$ as $n \to \infty$.
+    
+    \item Central limit theorem (CLT).
+\label{ideas}
+\end{enumerate}
+ 
+First, we state the CLT for i.i.d. means and a lemma that we will use in the proof.
+
+\begin{theorem}[Central Limit Theorem] \label{lec1:thm:CLT}
+Let $X_1, \cdots, X_n$, be i.i.d. random variables, where $\widehat{X}=\frac{1}{n} \sum_{i=1}^{n} X_i$ and the covariance matrix $\Sigma$ is finite. Then, as $n \to \infty$ we have
+\begin{enumerate}
+    \item $\widehat{X} \overset{p}{\to} \E[X]$, and
+    \item $\sqrt{n} (\widehat{X}-\E[X]) \overset{d}{\to} \mathcal{N}(0,\Sigma)$. In particular, $\sqrt{n} (\widehat{X}-\E[X]) = O_P(1)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{lemma}\label{lec1:lem:dist}
+\quad\quad
+    \begin{enumerate}
+        \item If $Z \sim N(0, \Sigma)$ and $A$ is a deterministic matrix, then $AZ \sim N(0, A \Sigma A^T)$.
+        
+        \item If $Z \sim N(0, \Sigma^{-1})$ and $Z \in \bbR^p$, then $Z^T \Sigma Z \sim \chi^2(p)$, where $\sim \chi^2(p)$ is the chi-squared distribution with $p$ degrees of freedom.
+    \end{enumerate}
+\end{lemma}
+
+\subsec{Main Proof}
+
+We give heuristic arguments for Parts 1 and 2 here, and defer the proofs for Parts 3 and 4 to the next lecture. First, note that by definition, the gradient of the empirical risk at the empirical risk minimizer, $\nabla \hatL(\hat{\theta})$, is equal to $0$. From the Taylor expansion of $\hatL$ around $\theta^*$, we have that 
+\begin{align}
+    0 = \nabla \hatL(\hat{\theta}) = \nabla \hatL(\theta^*) + \nabla^2 \hatL(\theta^*)(\hat{\theta} - \theta^*) + O(\|\hat{\theta} - \theta^*\|^2_2).
+\end{align}
+
+Rearranging, we have
+
+\al{
+ \hat{\theta}-\theta^{*} = -(\nabla^{2}\hatL(\theta^{*}))^{-1} \nabla \hatL(\theta^{*}) + O(||\hat{\theta}-\theta^{*}||_{2}^{2}). \label{lec1:eqn:branch}} 
+
+Multiplying by $\sqrt{n}$ on both sides,
+ \al{
+\sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(||\hat{\theta}-\theta^{*}||_{2}^{2})) \\
+&\approx -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})). \label{lec1:eqn:interm}}
+
+ 
+Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \nabla \ell ((x^{(i)}, y^{(i)}), \theta^*)$ and $\widehat{X} = \nabla \hatL(\theta^*)$, and noticing that $\E[\nabla \hatL(\theta^{*})] = \nabla L(\theta^{*})$, we have
+ \al{ \sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,Cov(\ell((x, y), \theta^{*}))).} 
+ 
+Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$, so $\sqrt{n} (\nabla \hatL(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,Cov(\ell((x, y), \theta^{*})))$. By the law of large numbers, $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. Applying these results to \eqref{lec1:eqn:interm} (together with an application of Slutsky's theorem),
+\al{
+\sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,Cov(\ell((x,y),\theta^{*})) \\
+&\stackrel{d}{=} \mathcal{N} \left( 0,\nabla^{2}L(\theta^{*})^{-1}Cov(\ell((x,y), \theta^{*})) \nabla^{2}L(\theta^{*})^{-1} \right),
+}
+
+where the second step is due to Lemma~\ref{lec1:lem:dist}. This proves Part 2 of Theorem~\ref{lec1:thm:asymp}.
+
+Part 1 follows directly from Part 2 by the following fact: If $X_n \stackrel{d}{\rightarrow} P$ for some probability distribution $P$, then $X_n = O_P(1)$.

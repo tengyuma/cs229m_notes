@@ -1,0 +1,110 @@
+\usepackage{color}
+\usepackage{lipsum}
+
+
+
+\ifnum\lectureformat=1
+\newcommand{\metadata}[3]
+{
+	\newpage
+	
+	\def\lectureID{#1}
+	
+	\setcounter{chapter}{\lectureID}
+
+%	\draftnotice
+	
+	\begin{center}
+		\bf\large CS229M/STATS214: Machine Learning Theory
+	\end{center}
+	
+	\noindent
+	Lecturer: Tengyu Ma   %%% FILL IN LECTURER (if not RS)
+	\hfill
+	Lecture \# \lectureID              %%% FILL IN LECTURE NUMBER HERE
+	\\
+	Scribe: #2                  %%% FILL IN YOUR NAME HERE
+	\hfill
+	#3           %%% FILL IN LECTURE DATE HERE
+	
+	\noindent
+	\rule{\textwidth}{1pt}
+	
+	\medskip
+}
+\else 
+\newcommand{\metadata}[3]{}
+\fi
+
+\DeclareMathOperator*{\Exp}{\mathbb{E}}
+\DeclareMathOperator*{\argmin}{\textup{argmin}}
+\DeclareMathOperator*{\argmax}{\textup{argmax}}
+\newcommand{\E}{\mathbb{E}}
+
+\newcommand{\err}{\ell_{\textup{0-1}}}
+\newcommand{\thetaerm}{\theta_{\textup{ERM}}}
+\newcommand{\hatL}{\widehat{L}}
+\newcommand{\tilO}{\widetilde{O}}
+\newcommand{\iid}{\overset{\textup{iid}}{\sim}}
+
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\Norm}[1]{\left\|#1\right\|}
+
+
+\newcommand{\al}[1]{
+	\begin{align}
+	#1
+	\end{align}
+}
+
+
+\renewcommand{\sp}[1]{^{(#1)}}
+
+\newcommand{\cA}{\mathcal A}
+\newcommand{\cB}{\mathcal B}
+\newcommand{\cC}{\mathcal C}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\cE}{\mathcal E}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cG}{\mathcal G}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cI}{\mathcal I}
+\newcommand{\cJ}{\mathcal J}
+\newcommand{\cK}{\mathcal K}
+\newcommand{\cL}{\mathcal L}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cN}{\mathcal N}
+\newcommand{\cO}{\mathcal O}
+\newcommand{\cP}{\mathcal P}
+\newcommand{\cQ}{\mathcal Q}
+\newcommand{\cR}{\mathcal R}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\cT}{\mathcal T}
+\newcommand{\cU}{\mathcal U}
+\newcommand{\cV}{\mathcal V}
+\newcommand{\cW}{\mathcal W}
+\newcommand{\cX}{\mathcal X}
+\newcommand{\cY}{\mathcal Y}
+\newcommand{\cZ}{\mathcal Z}
+
+\newcommand{\bbB}{\mathbb B}
+\newcommand{\bbS}{\mathbb S}
+\newcommand{\bbR}{\mathbb R}
+\newcommand{\bbZ}{\mathbb Z}
+\newcommand{\bbI}{\mathbb I}
+\newcommand{\bbQ}{\mathbb Q}
+\newcommand{\bbP}{\mathbb P}
+\newcommand{\bbE}{\mathbb E}
+\newcommand{\bbN}{\mathbb N}
+
+\newcommand{\R}{\bbR}
+
+
+% for course staff to edit or comment
+\def\shownotes{1}  %set 1 to show author notes
+\ifnum\shownotes=1
+\newcommand{\authnote}[2]{[#1: #2]}
+\else
+\newcommand{\authnote}[2]{}
+\fi
+\newcommand{\tnote}[1]{{\color{blue}\authnote{TM}{#1}}}
