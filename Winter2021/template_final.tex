@@ -3,6 +3,10 @@
 	\usepackage{amsfonts,amsthm, bm,amsmath, bbm,amssymb,mathtools}
 	\usepackage{fullpage}
 	
+	% added for Lecture 2
+	\usepackage{tikz, pgfplots}
+	\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 	
 	\newtheorem{theorem}{Theorem}[chapter]
 	\newtheorem{lemma}[theorem]{Lemma}
@@ -59,7 +63,7 @@
 	%\backmatter
 	%    Bibliography styles amsplain or harvard are also acceptable.
 	\bibliographystyle{amsalpha}
-	\bibliography{}
+	%\bibliography{bibliography}
 	%    See note above about multiple indexes.
 %	\printindex
 	
