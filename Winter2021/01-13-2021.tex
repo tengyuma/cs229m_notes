@@ -265,7 +265,7 @@ We can then use Hoeffding's inequality to deal with the summands as $\theta$ the
 
 \subsec{Intuitive Interpretation of Uniform Convergence.}
 
-Since uniform convergence implies generalization, if we know that population risk and empirical risk are always ``close," then excess risk is ``small" as well (Figure \ref{lec2:fig:uc}). In fact, it is possible to show that not only is $L(\theta)$ ``close" to $\hat{L}(\theta)$ for sufficiently large data, but that the ``shape" of $\hat{L}$ is ``close" to the shape of $L$ as well. This holds for the convex case; furthermore, there are conditions under which this holds in the non-convex case, for which a rigorous treatment can be found in~\cite{mei2017landscape}.\\\\
+Since uniform convergence implies generalization, if we know that population risk and empirical risk are always ``close," then excess risk is ``small" as well (Figure \ref{lec2:fig:uc}). In fact, it is possible to show that not only is $L(\theta)$ ``close" to $\hat{L}(\theta)$ for sufficiently large data, but that the ``shape" of $\hat{L}$ is ``close" to the shape of $L$ as well (Figure \ref{lec2:fig:shape}). This holds for the convex case; furthermore, there are conditions under which this holds in the non-convex case, for which a rigorous treatment can be found in~\cite{mei2017landscape}.\\\\
 \emph{Figure design and some wording in this section was inspired by~\cite{percynotes, thomasliu2018}.}
 
 \begin{figure}[t]
@@ -281,4 +281,17 @@ Since uniform convergence implies generalization, if we know that population ris
 \end{tikzpicture}
     \caption{Empirical risk landscape under uniform convergence: \textcolor{green}{Green:} empirical risk, \textcolor{blue}{blue:} population risk, \textcolor{red}{red, dashed:} $\varepsilon$ additive error bounds for excess risk.}
     \label{lec2:fig:uc}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}
+    \draw[help lines, color=gray!30, dashed] (-4.9,-4.9) grid (4.9,4.9);
+    \draw[->,ultra thick] (-5,0)--(5,0) node[right]{$\theta$};
+    \draw[->,ultra thick] (0,-5)--(0,5) node[above]{$L$};
+    \draw[black, thick]   plot[smooth,domain=-5:5] (\x, {0.01*\x*\x*\x*\x - 0.3*\x*\x + 2});
+    \draw[blue, thick]   plot[smooth,domain=-5:5] (\x, {0.011*\x*\x*\x*\x -0.003*\x*\x*\x - 0.32*\x*\x + 2.15});
+\end{tikzpicture}
+    \caption{Empirical risk landscape under uniform convergence: \textcolor{blue}{Blue:} empirical risk, \textcolor{black}{black:} population risk.}
+    \label{lec2:fig:shape}
 \end{figure}
