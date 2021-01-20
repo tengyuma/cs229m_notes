@@ -137,7 +137,7 @@ Let $X_1, \cdots, X_n$, be i.i.d. random variables, where $\widehat{X}=\frac{1}{
 
 \subsec{Main Proof}
 
-We give heuristic arguments for Parts 1 and 2 here, and defer the proofs for Parts 3 and 4 to the next lecture. First, note that by definition, the gradient of the empirical risk at the empirical risk minimizer, $\nabla \hatL(\hat{\theta})$, is equal to $0$. From the Taylor expansion of $\hatL$ around $\theta^*$, we have that 
+We give heuristic arguments for Parts 1 and 2 here, and defer the proofs for Parts 3 and 4 to the next lecture. First, note that by definition, the gradient of the empirical risk at the empirical risk minimizer, $\nabla \hatL(\hat{\theta})$, is equal to $0$. From the Taylor expansion of $\nabla \hatL$ around $\theta^*$, we have that 
 \begin{align}
     0 = \nabla \hatL(\hat{\theta}) = \nabla \hatL(\theta^*) + \nabla^2 \hatL(\theta^*)(\hat{\theta} - \theta^*) + O(\|\hat{\theta} - \theta^*\|^2_2).
 \end{align}
