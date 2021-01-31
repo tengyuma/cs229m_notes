@@ -52,9 +52,9 @@ The expectation is over the randomness in the training data ($\cX \times \cY$). 
 To do so, we first define \textit{Rademacher complexity}.
 
 \begin{definition}[Rademacher complexity] \label{lec5:dfn:rc}
-Let $\cF$ be a family of functions mapping $Z \mapsto \bbR$, and let $p$ be a distribution over $Z$. The \textit{(average) Rademacher complexity} of $\cF$ is defined as 
+Let $\cF$ be a family of functions mapping $Z \mapsto \bbR$, and let $P$ be a distribution over $Z$. The \textit{(average) Rademacher complexity} of $\cF$ is defined as 
 \begin{align}
-    R_n(F) \triangleq {\bbE}_{z_1, \dots, z_n \iid p} \l[ 
+    R_n(F) \triangleq {\bbE}_{z_1, \dots, z_n \iid P} \l[ 
     {\bbE}_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
 \end{align}
 where $\sigma_1, \dots, \sigma_n$ are independent \textit{Rademacher random variables}, i.e. each taking on the value of $1$ or $-1$ with probability $1/2$.
@@ -65,7 +65,7 @@ For our applications we will take $\cZ = \cX \times \cY$. However, Definition \r
 \end{remark}
 
 \begin{remark}
-Note that $R_n(\cF)$ is also dependent on the measure $p$ of the space, so technically it should be $R_{n,p}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
+Note that $R_n(\cF)$ is also dependent on the measure $P$ of the space, so technically it should be $R_{n,P}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
 \end{remark}
 
 An interpretation is $R_n(\cF)$ is the maximal possible correlation between outputs of some $f \in \cF$ (on points $f(z_1), \dots, f(z_n)$) and random Rademacher variables $ (\sigma_1, \dots, \sigma_n).$ Essentially, functions with more random sign outputs will better match random patterns of Rademacher variables and have higher complexity (greater ability to mimic or express randomness).
@@ -74,12 +74,12 @@ The following theorem is the main theorem involving Rademacher complexity:
 
 \begin{theorem} \label{lec5:thm:thm1}
     \begin{align}
-       {\bbE}_{z_1, \dots, z_n \iid p} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim p} f(x) \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
+       {\bbE}_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
     \end{align}
 \end{theorem}
 
 \begin{remark}
-We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\bbE_{z\sim p} f(x)$ as a population average.
+We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\bbE_{z\sim P} f(x)$ as a population average.
 \end{remark}
 
 \textit{Why is Theorem \ref{lec5:thm:thm1} useful to us?} We can set $\cF$ to be the family of loss functions, i.e.
@@ -114,7 +114,7 @@ Hence,
 
 In this setting, $R_n(\cF)$ and $R_n(\cH)$ are the same (except for the factor of 2). $R_n(\cH)$ has a slightly more intuitive interpretation: it represents how well $h \in \cH$ can fit random patterns.
 
-\textbf{Warning!} $R_n(F)$ is not always the same as $R_n(\cH)$ in other problems.
+\textbf{Warning!} $R_n(\cF)$ is not always the same as $R_n(\cH)$ in other problems.
 \end{example}
 
 \begin{remark}
@@ -124,7 +124,7 @@ Rademacher complexity is invariant to translation. One example of this in play i
 Let us now prove Theorem \ref{lec5:thm:thm1}.
 
 \begin{proof}[Proof of Theorem \ref{lec5:thm:thm1}]
-We use a technique called \textit{symmetrization}, which is a very important technique in probability theory. We first fix $z_1, \dots, z_n$and draw $ z_1', \dots z_n' \iid p$. Then we can rewrite the term in the expectation on the LHS of \eqref{lec5:eqn:thm1}:
+We use a technique called \textit{symmetrization}, which is a very important technique in probability theory. We first fix $z_1, \dots, z_n$and draw $ z_1', \dots z_n' \iid P$. Then we can rewrite the term in the expectation on the LHS of \eqref{lec5:eqn:thm1}:
 \begin{align}
     \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE[f] \r) &= \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE_{z_1',\dots, z_n'} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r) \\
     &= \sup_{f \in \cF} \l( \bbE_{z_1',\dots, z_n'} \l[\frac{1}{n} \sum^n_{i=1} f(z_i) -  \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r)\\
@@ -154,10 +154,10 @@ Here is an intuitive understanding of what Theorem \ref{lec5:thm:thm1} achieves.
 \end{align*}
 First, we removed $\bbE[f]$, which is hard to control quantitatively since it is deterministic. Second, we added more randomness in the form of Rademacher variables. This will allow us to shift our focus from the randomness in the $z_i$'s to the randomness in the $\sigma_i$'s. In the future, our bounds on the Rademacher complexity will typically only depend on the randomness from the $\sigma_i$'s.
 
-\subsec{Dependence of Rademacher complexity on $p$}
-For intuition on how Rademacher complexity depends on the distribution $p$, consider the extreme example where $p$ is a point mass, i.e. $z = z_0$ almost surely. Assume that $-1 \leq f(z_0) \leq 1$ for all $f \in \cF$. Then
+\subsec{Dependence of Rademacher complexity on $P$}
+For intuition on how Rademacher complexity depends on the distribution $P$, consider the extreme example where $P$ is a point mass, i.e. $z = z_0$ almost surely. Assume that $-1 \leq f(z_0) \leq 1$ for all $f \in \cF$. Then
 \begin{align}
-    \bbE_{z_1, \dots, z_n \sim p} \l[ \sup_{f \in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]
+    \bbE_{z_1, \dots, z_n \sim P} \l[ \sup_{f \in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]
     &= \bbE_{\sigma_1, \dots, \sigma_n} \l[ \sup_{f \in \cF} \frac{1}{n}f(z_0) \sum^n_{i=1} \sigma_i \r] \\
     &\leq \bbE_{\sigma_1, \dots, \sigma_n} \l[ \l| \frac{1}{n} \sum^n_{i=1} \sigma_i \r|\r] &(\text{since } f(z_0) \in [-1,1]) \\
     &\leq \bbE_{\sigma_i} \l[ \l( \frac{1}{n} \sum^n_{i=1} \sigma_i \r)^2\r]^\frac{1}{2} &(\text{Jensen's Inequality}) \\
@@ -169,7 +169,7 @@ This bound does not depend on $\cF$ (except that it is bounded). This example il
 
 \sec{Emperical Rademacher complexity}
 
-In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim p} f(x) \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
+In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
 
 \begin{definition}[Empirical Rademacher complexity]
 Given a dataset $S = \{z_1, \dots, z_n\}$, the \textit{emprical Rademacher complexity} is defined as
@@ -181,7 +181,7 @@ $R_S(\cF)$ is a function of both the function class $\cF$ and the dataset $S$.
 
 Note that, as the name suggests, the expectation of the empirical Rademacher complexity is the Rademacher complexity:
 \begin{align}
-    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid p}{\bbE}}\l[ R_S(\cF) \r].
+    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}{\bbE}}\l[ R_S(\cF) \r].
 \end{align}
 
 Here is the theorem involving empirical Rademacher complexity:
@@ -208,12 +208,12 @@ We prove the theorem in 4 steps.
 \end{align}
 \eqref{lec5:eqn:thm2-pf1} holds because in general, $\sup_f A(f) - \sup_f B(f) \leq \sup_f [A(f) - B(f)]$, and \eqref{lec5:eqn:thm2-pf2} holds since $f$ is bounded by $[0,1]$. We can thus apply McDiarmid's Inequality with parameters $c_1 = \dots = c_n = 1/n$:
 \begin{align}
-    \bbP\l[ g(z_1, \dots, z_n) \geq \bbE_{z_1,\dots, z_n \iid p}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
+    \bbP\l[ g(z_1, \dots, z_n) \geq \bbE_{z_1,\dots, z_n \iid P}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
 \end{align}
 
 \textbf{Step 2:} We apply Theorem \ref{lec5:thm:thm1} to get 
 \begin{align}
- \bbE_{z_1,\dots, z_n \iid p}[g] \leq 2R_n(\cF).
+ \bbE_{z_1,\dots, z_n \iid P}[g] \leq 2R_n(\cF).
 \end{align}
 
 \textbf{Step 3:} Define

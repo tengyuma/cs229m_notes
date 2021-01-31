@@ -119,8 +119,11 @@ We make these ideas precise in the following section.
 We start by defining the notion of an \emph{$\epsilon$-cover} (also \textit{$\epsilon$-net}):
 
 \begin{definition}[$\epsilon$-cover]
-Let $\epsilon>0$. An \emph{$\epsilon$-cover} of a set $S$ with respect to $\rho$ is a subset $C \subseteq S$ such that $\forall x \in S$, $\exists x' \in C$ such that $\rho(x,x') \le \epsilon$, or equivalently,
-$$ S \subseteq \bigcup_{x \in C} \mathrm{Ball}(x, \epsilon, \rho). $$
+Let $\epsilon>0$. An \emph{$\epsilon$-cover} of a set $S$ with respect to distance metric $\rho$ is a subset $C \subseteq S$ such that $\forall x \in S$, $\exists x' \in C$ such that $\rho(x,x') \le \epsilon$, or equivalently,
+\begin{align}
+S &\subseteq \bigcup_{x \in C} \mathrm{Ball}(x, \epsilon, \rho), \quad \text{where} \\
+\mathrm{Ball}(x, \epsilon, \rho) &\triangleq \{ x': \rho(x, x') \leq \epsilon \}.
+\end{align}
 \end{definition}
 
 (We note that in some definitions it is possible for points in $C$ to lie outside of $S$; we do not worry about this technicality the class.) The following lemma tells us that our parameter space $S = \{\theta \in \R^p: \|\theta\|_2 \le B\}$ has an $\epsilon$-cover with not too many elements:
@@ -134,7 +137,12 @@ Set
 \begin{equation}
 C = \left\{ x \in S: x_i = k_i \frac{\epsilon}{\sqrt{p}}, k_i \in \mathbb{Z}, |k_i| \leq  \frac{B\sqrt{p}}{\epsilon}  \right\},
 \end{equation}
-i.e. $C$ is the set of grid points in $\R^p$ of width $\tfrac{\epsilon}{\sqrt{p}}$ that are contained in $S$.
+i.e. $C$ is the set of grid points in $\R^p$ of width $\tfrac{\epsilon}{\sqrt{p}}$ that are contained in $S$. See Figure \ref{lec5:fig:ecover} for an illustration. 
+\begin{figure}[ht]
+\centerline{\includegraphics[width=3in]{figures/ECover.png}}
+\caption[lec5:fig:ecover]{Our chosen $\epsilon$-cover (shown in red) of $S$. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$.}
+\label{lec5:fig:ecover}
+\end{figure}
 
 We claim that $C$ is an $\epsilon$-cover of $S$ with respect to the $\ell_2$-norm: $\forall x \in S$, there exists a grid point $x' \in C$ such that $|x_i-x_i'| \le \tfrac{\epsilon}{\sqrt{p}}$ for each $i$. Therefore,
 $$\norm{x-x'}_2 = \sqrt{\sum_{i = 1}^p |x_i - x_i'|^2} \leq \sqrt{p\cdot \frac{\epsilon^2}{p}} = \epsilon.$$
@@ -193,19 +201,19 @@ It remains to choose suitable parameters $\delta$ and $\epsilon$ to get the desi
 If we set $\delta = \sqrt{\frac{c_0 p \max(1, \ln{(\kappa Bn)})}{n}}$ with $c_0 = 36$ (see Remark \ref{lec4:rem:delta} for some intuition), then by Remark \ref{lec4:rem:enet},
 \begin{align}
 \ln{\vert C \vert} - 2n\delta^2 &\leq p \ln\left(\frac{6B \kappa}{\delta}\right) - 2n\delta^2 \\
-&\leq p \ln\left(\frac{6B\kappa \sqrt{n}}{ \sqrt{c_0 p \max(1, \ln{(\kappa Bn)})} }\right) - 2n \frac{c_0p}{n} \ln(\kappa Bn) \\
-&\leq p\ln(B\kappa \sqrt{n}) + p \ln\left(\frac{6}{\sqrt{c_0 p}}\right) - 2c_0 p \ln(\kappa Bn) \\
-&\leq p \ln(B\kappa n) - 72 p \ln(B\kappa n) \\
-&\leq -p.
+&\leq p \ln\left(\frac{6B\kappa \sqrt{n}}{ \sqrt{c_0 p \max(1, \ln{(\kappa Bn)})} }\right) - 2n \frac{c_0p}{n} \ln(\kappa Bn) &(\text{dfn of } \delta)  \\
+&\leq p\ln\left(\frac{B\kappa \sqrt{n}}{\sqrt{p}}\right) - 72 p \ln(\kappa Bn) &(\max(1, \ln{(\kappa Bn)}) \geq 1, c_0 = 36) \\
+&\leq p \ln(B\kappa n) - 72 p \ln(B\kappa n) &(\sqrt{n/p} \leq n) \\
+&\leq -p,
 \end{align}
-Therefore, with probability greater than $1 - 2|C| \exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2) \geq 1 - O(e^{-p})$, we have
+since $\ln (B\kappa n) \geq 1$ for large enough $n$. Therefore, with probability greater than $1 - 2|C| \exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2) \geq 1 - O(e^{-p})$, we have
 \al{
 \vert \hat L(\theta) - L(\theta) \vert \leq 2\delta = O\left(\sqrt{\frac{p}{n}\max(1,\ln(\kappa Bn))}\right).
 }
 \end{proof}
 
 \begin{remark}\label{lec4:rem:delta}
-Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
+Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
 \al{
    2|C| \exp(-2n\delta^2)  = 2\exp(\ln{\vert C \vert} - 2n\delta^2) \leq 2\exp(p - 2p) = 2\exp(-p).
 }
