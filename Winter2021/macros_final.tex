@@ -1,8 +1,6 @@
 \usepackage{color}
 \usepackage{lipsum}
 
-
-
 \ifnum\lectureformat=1
 \newcommand{\metadata}[3]
 {
@@ -39,24 +37,33 @@
 \DeclareMathOperator*{\Exp}{\mathbb{E}}
 \DeclareMathOperator*{\argmin}{\textup{argmin}}
 \DeclareMathOperator*{\argmax}{\textup{argmax}}
-\newcommand{\E}{\mathbb{E}}
+
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\margin}{\text{margin}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\sd}{\operatorname{sd}}
+\newcommand{\sgn}{\text{sgn}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}}
 
 \newcommand{\err}{\ell_{\textup{0-1}}}
 \newcommand{\thetaerm}{\theta_{\textup{ERM}}}
 \newcommand{\hatL}{\widehat{L}}
 \newcommand{\tilO}{\widetilde{O}}
 \newcommand{\iid}{\overset{\textup{iid}}{\sim}}
+\newcommand\defeq{\stackrel{\mathclap{\tiny \mbox{$\Delta$}}}{=}}
 
 \newcommand{\norm}[1]{\|#1\|}
 \newcommand{\Norm}[1]{\left\|#1\right\|}
-
+\renewcommand{\l}{\left}
+\renewcommand{\r}{\right}
 
 \newcommand{\al}[1]{
 	\begin{align}
 	#1
 	\end{align}
 }
-
 
 \renewcommand{\sp}[1]{^{(#1)}}
 
@@ -97,7 +104,10 @@
 \newcommand{\bbE}{\mathbb E}
 \newcommand{\bbN}{\mathbb N}
 
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\bbR}
+\newcommand{\Z}{\mathbb{Z}}
 
 
 % for course staff to edit or comment
