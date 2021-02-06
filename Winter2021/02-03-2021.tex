@@ -1,0 +1,264 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{7}{Spencer M.~Richards and Thomas Lew}{Feb.~3rd, 2021}
+
+
+%*****************************************************************************
+\sec{Review and overview}
+In the previous lecture, we discussed margin theory, margin loss, and how to use it to bound the generalization gap for binary classifiers. We found that for training data of the form $S = \{(x\sp{i},y\sp{i})\}_{i=1}^n \subset \mathbb{R}^d \times \{-1,1\}$, a hypothesis class~$\mathcal{H}$ and 0-1 loss, we could derive a bound of the form
+\begin{equation}\label{lec7:eqn:generalization_loss}
+    \text{generalization loss} \leq \frac{2R_S(\mathcal{H})}{\gamma_{\mathrm{min}}} + \text{low-order term},
+\end{equation}
+where $\gamma_\mathrm{min}$ is the minimum margin achievable on~$S$ over those hypotheses in $\cH$ that separate the data, and $R_S(\cH)$ is the empirical Rademacher complexity of $\cH$. Such bounds state that simpler models will generalize better beyond the training data, particularly for data that is strongly separable.
+
+In this lecture, we study bounds on the Rademacher complexity of two hypothesis classes: linear models and two-layer neural networks.
+
+
+%*****************************************************************************
+\sec{Rademacher complexity of linear models}\label{lec7:sec:lin_models}
+
+\subsec{Linear models with weights bounded in $\ell_2$ norm}
+We begin with the Rademacher complexity of linear models using weights with bounded $\ell_2$ norm.
+
+\begin{theorem}\label{lec7:thm:l2-thm}
+    Let $\mathcal{H} = \{x \mapsto \inprod{w,x} \mid w \in \R^d, \Norm{w}_2 \le B\}$ for some constant $B > 0$. Moreover, assume $\Exp_{x \sim P}\sbr{\Norm{x}_2^2} \leq C^2$, where $P$ is some distribution and $C > 0$ is a constant. Then
+    \begin{align}
+        R_S(\mathcal{H}) &\le \frac{B}{n} \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2},  \label{lec7:eqn:linear-sample}
+        \intertext{and}
+        R_n(\mathcal{H}) &\le \frac{BC}{\sqrt{n}}.  \label{lec7:eqn:linear}
+    \end{align}
+\end{theorem}
+
+Generally speaking, there are two methods with which we can bound the Rademacher complexity of a model. The first method, which we used in the last lecture, consists of discretizing the space of possible outputs from our hypothesis class, then using a union bound or covering number argument to bound the Rademacher complexity of the model. While this method is powerful and generally applicable, it yields bounds that depend on the logarithm of the cardinality of this discretized output space, which in turn depends on the number of data points~$n$. In the proof below, we will instead use a more elegant, albeit limited technique which does not rely on discretization of the output space.
+
+\begin{proof}
+We start with the proof of \eqref{lec7:eqn:linear-sample}. By definition,
+\begin{align}
+    R_S(\mathcal{H}) 
+    &= \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} }
+    \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} }
+    \\&= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_2 }
+        &&\text{($\textstyle\sup_{\Norm{w}_2 \le B} \langle w,v\rangle =B\Norm{v}_2$)}
+    \\&\leq \frac{B}{n} \sqrt{ \E_\sigma\sbr{\Norm{ \sum_{i=1}^n \sigma_i x\sp{i} }_2^2} }
+        &&\text{(Jensen's ineq. for $\alpha \mapsto \alpha^2$)} 
+    \\&= \frac{B}{n} \sqrt{ \E_\sigma \sbr{\sum_{i=1}^n \rbr{\sigma_i^2 \Norm{x\sp{i}}_2^2 + \inprod{\sigma_ix\sp{i},\sum_{j \ne i}^n \sigma_j x\sp{j}} }} }
+    \\&= \frac{B}{n} \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
+        &&\text{($\sigma_i$ indep. and $\E[\sigma_i]=0$)}
+\end{align}
+This completes the proof of \eqref{lec7:eqn:linear-sample} for the empirical Rademacher complexity. The bound on the average Rademacher complexity in \eqref{lec7:eqn:linear} follows from taking the expectation of both sides to get
+\begin{equation}
+    R_n(\mathcal{H}) = \E\sbr{ R_S(\mathcal{H}) }
+    = \frac{B}{n} \E\sbr{ \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2} }
+    \le \frac{B}{n} \sqrt{ \sum_{i=1}^n \E\sbr{\Norm{x\sp{i}}_2^2} }
+    \le \frac{BC}{\sqrt{n}},
+\end{equation}
+where the first inequality is another application of Jensen's inequality, and the second follows from the assumption $\Exp_{x \sim P}\sbr{\Norm{x}_2^2} \leq C^2$.
+
+\end{proof}
+
+We observe that both the empirical and average Rademacher complexities scale with the upper $\ell_2$-norm bound $\Norm{w}_2 \le B$ on the parameters~$w$, which motivates regularizing the model. However, smaller weights in the model may reduce the margin $\gamma_\mathrm{min}$, which in turn hurts generalization according to \eqref{lec7:eqn:generalization_loss}.
+
+\begin{remark}
+Note that if we scale the data by some multiplicative factor, the bound on empirical Rademacher complexity $R_S(\cH)$ will scale accordingly. However, at the same time we expect the margin to scale by the same multiplicative factor, so the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} does not change. This lines up with our intuition that the bound should not depend on the scaling of the data.
+\end{remark}
+
+\subsec{Linear models with weights bounded in $\ell_1$ norm}
+Now, we consider linear models again, except we restrict the $\ell_1$-norm of the parameters and assume an $\ell_\infty$-norm bound on the data.
+
+\begin{theorem}\label{lec7:thm:l1-thm}
+    Let $\mathcal{H} = \cbr{x \mapsto \inprod{w,x} \mid w \in \R^d, \Norm{w}_1 \le B}$ for some constant $B > 0$. Moreover, assume $\Norm{x\sp{i}}_\infty \leq C$ for some constant $C > 0$ and all points in $S = \{x\sp{i}\}_{i=1}^n \subset \R^d$. Then
+    \begin{equation}
+        R_S(\mathcal{H}) \leq BC\sqrt{\frac{2\log(2d)}{n}}.
+    \end{equation}
+\end{theorem}
+
+To prove the theorem, we will need Massart's lemma, which provides a bound for the Rademacher complexity of a finite hypothesis class.
+
+    \begin{lemma}[Massart's lemma]
+        Suppose $\mathcal{Q} \subset \R^n$ is finite and contained in the $\ell_2$-norm ball of radius $M\sqrt{n}$ for some constant $M > 0$, i.e.,
+        \begin{equation}
+            \mathcal{Q} \subset \{v \in \R^n \mid \Norm{v}_2 \leq M\sqrt{n} \}.
+        \end{equation}
+        Then, for Rademacher variables $\sigma = (\sigma_1,\sigma_2,\dots,\sigma_n) \in \R^n$,
+        \begin{equation}
+            \E_\sigma \left[ \sup_{v\in \mathcal{Q}} \frac{1}{n}\inprod{\sigma,v} \right] \leq M\sqrt{\frac{2\log|\mathcal{Q}|}{n}}.
+        \end{equation}
+        As a corollary, if $\mathcal{F}$ is a set of real-valued functions satisfying
+        \begin{equation}
+            \sup_{f\in\mathcal{F}} \frac{1}{n}\sum_{i=1}^n f(z\sp{i})^2 \leq M^2,
+        \end{equation}
+        over some data $S = \{z\sp{i}\}_{i=1}^n$, then
+        \begin{align}
+            R_S(\mathcal{F}) \leq M\sqrt{\frac{2\log|\mathcal{F}|}{n}}, \quad\text{and}\quad
+            R_n(\mathcal{F}) \leq M\sqrt{\frac{2\log|\mathcal{F}|}{n}}.
+        \end{align}
+    \end{lemma}
+
+We will not prove Massart's lemma in detail. The intuition is to use concentration inequalities to bound $\frac{1}{n}\inprod{\sigma, v}$ for fixed $v$, then to use a union bound over the elements $v \in \mathcal{Q}$.
+
+We will now prove Theorem \ref{lec7:thm:l1-thm}:
+
+\begin{proof}[Proof of Theorem \ref{lec7:thm:l1-thm}]
+    By definition,
+    \begin{align}
+        R_S(\mathcal{H}) &= \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} } \\
+        &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1\le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_\infty  },
+    \end{align}
+    
+    where the last equality is because $\sup_{\Norm{w}_1 \leq B}\inprod{w,v} = B\Norm{v}_\infty$, i.e., the $\ell_\infty$-norm is the dual of the $\ell_1$-norm, which is a consequence of H\"older's inequality. However, the $\ell_\infty$-norm is difficult to simplify further. Instead, we use the fact that $\sup_{\Norm{w}_1 \leq 1} \inprod{w,v}$ for any $v \in \R^d$ is always attained at one of the vertices $\mathcal{W} = \bigcup_{i=1}^d \{-e_i,e_i\}$, where $e_i \in \R^d$ is the $i$-th coordinate unit vector. Defining the restricted hypothesis class $\bar{\mathcal{H}} = \{x \mapsto \inprod{w,x} \mid w \in \mathcal{W}\} \subset \mathcal{H}$, this yields
+    \begin{align}
+        R_S(\mathcal{H}) &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \E_\sigma\sbr{ \max_{w\in\mathcal{W}} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= BR_S(\bar{\mathcal{H}}).
+    \end{align}
+    
+    Since $\bar{\mathcal{H}}\subset{\mathcal{H}}$, necessarily $R_S(\bar{\mathcal{H}})\leq R_S(\mathcal{H})$. In particular, the model class $\bar{\mathcal{H}}$ is bounded and finite with cardinality $|\bar{\mathcal{H}}| = 2d$. This suggests using Massart's lemma to complete the proof. To do so, we need to confirm that $\mathcal{\bar{H}}$ is bounded with respect to the $\ell_2$-metric. Indeed, since the inner product of $x\sp{i}$ with a coordinate vector $e_j$ just selects the $j$-th coordinate of $x\sp{i}$, for any $w \in \mathcal{W}$ we have
+    \begin{equation}
+        \frac{1}{n}\sum_{i=1}^n \inprod{w,x\sp{i}}^2 \leq \frac{1}{n}\sum_{i=1}^n \Norm{x\sp{i}}^2_\infty \leq \frac{1}{n}\sum_{i=1}^n C^2 = C^2,
+    \end{equation}
+    where the last inequality uses the assumption $\Norm{x_i}_\infty \leq C$. So $\bar{\mathcal{H}}$ is bounded in the $\ell_2$-metric and finite, thus by Massart's Lemma we have
+    \begin{equation}
+        R_S(\mathcal{H}) = B R_S(\bar{\mathcal{H}}) \leq BC\sqrt{\frac{2\log|\bar{\mathcal{H}}|}{n}} = BC\sqrt{\frac{2\log(2d)}{n}},
+    \end{equation}
+    which completes the proof.
+\end{proof}
+
+\subsec{Comparing the bounds for different $\cH$}
+
+First, we note that for this hypothesis class of linear models, it is possible to obtain an upper bound proportional to $\sqrt{d/n}$ using the VC~dimension, which grows quickly with the data dimension~$d$. Our bound is better since it does not have as strong of a dependence on~$d$, and accounts for the norms of our model parameters and the data.
+
+In the two subsections above, we considered two different hypothesis classes of linear models, each restricting different norms. In both cases, the bound on the average Rademacher complexity depended on the product of the norm bound on the parameters $w$ and the norm bound on each data point $x$. To determine which choice of hypothesis class is better, consider the bounds
+    \begin{equation*}
+        \Norm{w}_2\Norm{x}_2 \quad\text{vs.}\quad \Norm{w}_1\Norm{x}_\infty
+    \end{equation*}
+    and see how they compare in different settings. We consider 3 settings here:
+    
+    \begin{itemize}
+    \item Suppose $w$ and $x$ are random variables with $w_i$ and $x_i$ close to the set of values $\{-1,1\}$. Then we have
+    \begin{equation*}
+        \sqrt{d}\sqrt{d} \quad\text{vs.}\quad d\cdot 1.
+    \end{equation*}
+    In this case, there is no difference in using either linear hypothesis class.
+    
+    \item If we additionally suppose $w$ is sparse with at most $k$ non-zero entries, then we have
+    \begin{equation*}
+        \sqrt{k}\sqrt{d} \quad\text{vs.}\quad k\cdot 1.
+    \end{equation*}
+    So for $d \gg k$, we have $\sqrt{kd} \gg k$ and thus $\ell_1$-norm regularization leads to a better complexity bound when $w$ is suspected to be sparse. Indeed, $\sqrt{d}\Norm{x}_\infty \approx \Norm{x}_2$ when the entries of $x$ are somewhat uniformly distributed, and so in the sparse case we have
+    \begin{equation}
+        \Norm{w}_2\Norm{x}_2 \geq \sqrt{d}\Norm{w}_2\Norm{x}_\infty \geq \Norm{w}_1\Norm{x}_\infty. 
+    \end{equation}
+    
+    \item On the other hand, if $w$ is dense in the sense that $\Norm{w}_2\approx {\sqrt{d}}\Norm{w}_1$ (i.e., if all entries in $w$ are close to each other in magnitude), then
+    \begin{equation}
+        \Norm{w}_2\Norm{x}_2 \leq \frac{1}{\sqrt{d}}\Norm{w}_1 \cdot \sqrt{d} \Norm{x}_\infty \leq \Norm{w}_1\Norm{x}_\infty.
+    \end{equation}
+    In this case, it makes sense to regularize the $\ell_2$-norm instead.
+    \end{itemize}
+    
+    In practice, other multiplicative factors enter the generalization bound, so regularizing both the $\ell_1$- and $\ell_2$-norms of the model parameters $w$ is preferable.
+
+    Continuing with this rough style of analysis, for the hypothesis class with restricted $\ell_2$-norm, we can write the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} as
+    \begin{equation}
+        \text{generalization loss} \lesssim \frac{\Norm{w}_2\Norm{x}_2}{\sqrt{n}\gamma_{\mathrm{min}}} + \text{low-order term}.
+    \end{equation}
+    The presence of $\Norm{w}_2/\gamma_{\mathrm{min}}$ motivates both the minimum norm and the maximum margin formulations of the Support Vector Machine (SVM) problem as good methods to improve generalization performance of binary classifiers.
+
+%*****************************************************************************
+\sec{Rademacher complexity of two-layer neural networks}
+We now compute a bound for the Rademacher complexity of two-layer neural networks.  Throughout this section, we use the following notation:
+\begin{itemize}
+    \item $\theta = (w, U)$ are the parameters of the model with $w \in \R^m$ and $U \in \R^{m \times d}$, where $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$ (written as a column vector).
+    \item $\phi(z) = \max(z, 0)$ is the ReLU activation function applied element-wise.
+    \item $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)$ is the model.
+    \item $\{ (x\sp{i}, y\sp{i}) \}_{i=1}^n$ is the training set, with $x\sp{i}\in\R^d$ and $y\sp{i}\in\R$.
+\end{itemize}
+We start with a somewhat weak bound which introduces the technical tools we need to derive tighter bounds in subsequent lectures.
+
+\begin{theorem}\label{lec7:thm:thm_3}
+    For some constants $B_w > 0$ and $B_u > 0$, let
+    \begin{equation}
+        \mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2 \leq B_w,\ \Norm{u_i}_2 \leq B_u,\ \forall i \in \{1,2,\dots,m\} }, 
+    \end{equation}
+    and suppose $\E\sbr{\Norm{x}_2^2} \leq C^2$. Then
+    \begin{align}
+        R_n(\mathcal{H}) \le 2 B_w B_u C\sqrt{\frac{m}{n}}.
+    \end{align}
+\end{theorem}
+
+This bound is not ideal as it depends on the number of neurons~$m$. Empirically, it has been found that the generalization error does \emph{not} increase monotonically with~$m$. As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. This contradicts the bound above, which states that more neurons leads to worse generalization. Nevertheless, we now derive this bound.
+
+\begin{proof}
+    By definition,
+    \begin{align}
+        R_S(\mathcal{H}) 
+        &= \E_\sigma\sbr{ \sup_\theta \frac{1}{n} \sum_{i=1}^n \sigma_i \inprod{w,\phi(Ux\sp{i})} }
+        \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \sup_{\Norm{w}_2 \leq B_w} \inprod{w,\sum_{i=1}^n \sigma_i \phi(Ux\sp{i})} }
+        \\&= \frac{B_w}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
+            &&\text{($\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
+        \\&\leq \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
+            &&\text{($\Norm{v}_2 \leq m\Norm{v}_\infty$)}
+        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
+        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
+            &&\text{(to be explained later)} \label{lec7:eqn:nn-proof1}
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
+    \end{align}
+    where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
+    
+    We now observe that the expectation in \eqref{lec7:eqn:nn-proof2} is the Rademacher complexity of the family of linear models $\{x \mapsto \inprod{u,x} \mid \Norm{u}_2\leq B_u\}$. Thus, applying Theorem~\ref{lec7:thm:l1-thm} yields
+    \begin{equation}
+        R_S(\mathcal{H}) \leq \frac{2B_w\sqrt{m}}{n}B_u\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
+    \end{equation}
+    
+    Taking the expectation of both sides and using similar steps to those in the proof of Theorem~\ref{lec7:thm:l1-thm} gives us
+    \begin{align}
+        R_n(\mathcal{H})  &= \E\left[ R_S(\mathcal{H})\right] \\
+        &\leq \frac{2B_wB_u\sqrt{m}}{n} \E\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
+        &\leq \frac{2B_wB_u\sqrt{m}}{n} C\sqrt{n} \\
+        &= 2 B_w B_u C\sqrt{\frac{m}{n}},
+    \end{align}
+    which completes the proof.
+    
+\end{proof}
+
+Next, we look at a finer bound that results from defining a new complexity measure:
+
+\begin{theorem}
+    Let $C(\theta) = \sum_{j=1}^m |w_j|\,\Norm{u_j}_2$, and for some constant $B_C > 0$ consider the hypothesis class
+    \begin{equation}
+        \mathcal{H}=\{f_\theta \mid C(\theta) \leq B_C\}.
+    \end{equation}
+    If $\Norm{x\sp{i}}_2\leq C$ for all $i\in\{1,\dots,n\}$, then
+    \begin{equation}
+        R_S(\mathcal{H}) \leq \frac{2B_C C}{\sqrt{n}}.
+    \end{equation}
+\end{theorem}
+We defer the proof of this theorem to the next lecture. We conclude the lecture we some remarks:
+
+\begin{remark}
+We can think of $C(\theta)$ as a new complexity measure. One nice thing about hypothesis classes defined by $C(\theta)$ is that it is invariant to transformations of the form $(w, U) \mapsto (kw, U /k)$ for some constant $k > 0$: for the ReLU activation function $\phi$, we have
+\begin{equation}
+    f_{(w, U)}(x) 
+    = w^\top \max(Ux, 0) 
+    = kw^\top \max\rbr{\frac{1}{k}Ux, 0}
+    = f_{(kw, U/k)}(x).
+\end{equation}
+
+This is not the case for the (implicit) complexity measure in Theorem \ref{lec7:thm:thm_3}: these transformations would change the values of $B_w$ and $B_u$.
+\end{remark}
+
+\begin{remark}
+Compared to Theorem~\ref{lec7:thm:thm_3}, this bound does not explicitly depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound if the value of the new complexity measure $C(\theta)$ is reasonable. In contrast, the bound of Theorem \ref{lec7:thm:thm_3} only looks at the total number of neurons. With the result above, it is possible to regularize $C(\theta)$ and obtain a tighter bound for any number~$m$ of neurons. This would lead to an accurate model with better generalization guarantees for a high number neurons. 
+
+For example, consider solving the constrained problem
+\begin{equation}
+    \rho_m = \min_\theta C(\theta) 
+    \quad \text{such that}\quad 
+    \text{$f_\theta$ fits the data  $\{(x\sp{i}, y\sp{i})\}_{i=1}^n$.}
+\end{equation}
+In this case, $\rho_m$ monotonically decreases as the number of neurons $m$ increases. Indeed, models with more parameters necessarily include models with a lower number of parameters and thus those of lower complexity.  As a result, it is possible to obtain lower complexity models by increasing the number of parameters $m$.
+\end{remark}
