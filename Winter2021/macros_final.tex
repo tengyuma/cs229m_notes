@@ -48,6 +48,7 @@
 \newcommand{\Var}{\operatorname{Var}}
 
 \newcommand{\err}{\ell_{\textup{0-1}}}
+\newcommand{\Err}{L_{\textup{0-1}}}
 \newcommand{\thetaerm}{\theta_{\textup{ERM}}}
 \newcommand{\hatL}{\widehat{L}}
 \newcommand{\tilO}{\widetilde{O}}
@@ -123,3 +124,12 @@
 \newcommand{\authnote}[2]{}
 \fi
 \newcommand{\tnote}[1]{{\color{blue}\authnote{TM}{#1}}}
+
+% for long term comments 
+\def\shownotes{0}  %set 1 to show author notes
+\ifnum\shownotes=1
+\newcommand{\authnotelong}[2]{[#1: #2]}
+\else
+\newcommand{\authnotelong}[2]{}
+\fi
+\newcommand{\tnotelong}[1]{{\color{blue}\authnotelong{TM}{#1}}}

@@ -139,13 +139,13 @@ In the two subsections above, we considered two different hypothesis classes of 
     \begin{itemize}
     \item Suppose $w$ and $x$ are random variables with $w_i$ and $x_i$ close to the set of values $\{-1,1\}$. Then we have
     \begin{equation*}
-        \sqrt{d}\sqrt{d} \quad\text{vs.}\quad d\cdot 1.
+        \sqrt{d}\cdot \sqrt{d} \quad\text{vs.}\quad d\cdot 1.
     \end{equation*}
     In this case, there is no difference in using either linear hypothesis class.
     
     \item If we additionally suppose $w$ is sparse with at most $k$ non-zero entries, then we have
     \begin{equation*}
-        \sqrt{k}\sqrt{d} \quad\text{vs.}\quad k\cdot 1.
+        \sqrt{k}\cdot\sqrt{d} \quad\text{vs.}\quad k\cdot 1.
     \end{equation*}
     So for $d \gg k$, we have $\sqrt{kd} \gg k$ and thus $\ell_1$-norm regularization leads to a better complexity bound when $w$ is suspected to be sparse. Indeed, $\sqrt{d}\Norm{x}_\infty \approx \Norm{x}_2$ when the entries of $x$ are somewhat uniformly distributed, and so in the sparse case we have
     \begin{equation}
