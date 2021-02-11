@@ -34,6 +34,9 @@
 \newcommand{\metadata}[3]{}
 \fi
 
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+	\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
 \DeclareMathOperator*{\Exp}{\mathbb{E}}
 \DeclareMathOperator*{\argmin}{\textup{argmin}}
 \DeclareMathOperator*{\argmax}{\textup{argmax}}
