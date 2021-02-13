@@ -1,0 +1,169 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{9}{Rafael Rafailov and Aidan Perreault}{Feb 10th, 2021}
+
+\sec{Review and overview}
+
+In the last lecture, we described the covering number approach for Rademacher complexity, and ended off with a statement of Dudley's chaining theorem. In this lecture, we finish up that section of material with some remarks on how to use these covering number bounds. We then move on to a conceptual introduction of deep learning theory. This will be a higher-level discussion of the ideas in deep learning theory so that we have a big picture view of what is happening in the research on deep learning, and will set us up well for the next few lectures where we dive into the details. (We note that there is no universal agreement on the direction that deep learning research should take as we are still very much in the exploratory phase of research, but there are a few general directions that several researchers are pursuing.)
+
+\sec{Covering number and Dudley's theorem}
+
+At the end of last lecture we stated Dudley's Theorem, which gives a link between the covering number of a function class and its Rademacher complexity:
+
+\begin{theorem}[Dudley's Theorem]
+If $\cF$ is a function class from $Z$ to $\R$, then
+
+\begin{equation}\label{lec9:eqn:dudley}
+    R_S(\mathcal{F})\leq 12\int_{0}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon.
+\end{equation}
+
+\end{theorem}
+
+In particular, if $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that $\forall \epsilon > 1, N(\epsilon, \mathcal{F}, L_2({p_n}))=1$. (To see this choose $\{f\equiv 0\}$, which is a complete cover for $\epsilon>1$.) Hence, the limits of integration in \eqref{lec9:eqn:dudley} can be truncated to $[0,1]$:
+    
+    \begin{equation}
+    R_S(\mathcal{F})\leq 12\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon,
+    \end{equation}
+    
+since $\log N(\epsilon, \mathcal{F}, L_2(p_n))=0$ for $\epsilon >1$.
+
+\subsec{Covering number regimes for which Dudley's theorem is finite}
+
+Of course, the bound in \eqref{lec9:eqn:dudley} is only useful if the integral on the RHS is finite. Here are some setups where this is the case (we continue to assume that the functions in $\cF$ are bounded in $[-1, 1]$):
+
+\begin{enumerate}
+\item If $N(\epsilon, \mathcal{F}, L_2(p_n))\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2(p_n))\approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
+        
+\begin{equation}
+\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
+\end{equation}
+            
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(p_n))\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2(p_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
+        
+\begin{align}
+\int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(p_n))}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
+&= \sqrt{\frac{R}{n}\log a} \int_0^1\!\!\sqrt{\frac{1}{\epsilon}}d\epsilon \\
+&= \tilO \l(\sqrt{\frac{R}{n}}\r).
+\end{align}
+        
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(p_n))\approx a^{R/\epsilon^2}$, then $\log N(\epsilon, \mathcal{F}, L_2(p_n))\approx \frac{R}{\epsilon^2}\log a$. In this case we have:
+        
+\begin{equation}\int_0^1\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(p_n))}{n}}d\epsilon \approx \sqrt{\frac{R}{n}\log a} \underbrace{\int_0^1\frac{1}{\epsilon}d\epsilon}_{=\infty}=\infty,
+\end{equation}
+
+i.e. the bound in \eqref{lec9:eqn:dudley} is vacuous. This is because of the behavior of $\epsilon \mapsto 1/\epsilon^2$ near 0: the function goes to infinity too quickly for us to upper bound its integral. Fortunately, there is an ``improved'' version of Dudley's theorem that is applicable here:
+        
+\begin{theorem}[Improved Dudley's Theorem]\label{lec9:thm:better-dudley}
+If $\cF$ is a function class from $Z$ to $\R$, then for any fixed cutoff $\alpha \geq 0$ we have the bound
+\begin{equation}\label{lec9:eqn:better-dudley}
+R_S(\mathcal{F})\leq 4\alpha + 12\int_{\alpha}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon.      
+\end{equation}
+\end{theorem}
+The proof of this theorem is similar to the proof of the original Dudley's theorem, except that the iterative covering procedure is stopped at the threshold $\epsilon = \alpha$ at the cost of the extra $4\alpha$ term above.
+        
+Theorem \ref{lec9:thm:better-dudley} allows us to avoid the problematic region around $\epsilon=0$ in the integral in \eqref{lec9:eqn:dudley}. If we let $\alpha = 1/poly(n)$, the bound in \eqref{lec9:eqn:better-dudley} becomes
+        
+\begin{align}
+R_S(\mathcal{F}) &\leq \frac{1}{poly(n)} + \frac{\sqrt{R\log a}}{\sqrt{n}}\int_{\alpha}^1\frac{1}{\epsilon}d\epsilon \\
+&= \frac{1}{poly(n)}  + \frac{\sqrt{R\log a}}{\sqrt{n}} \log(1/\alpha) \\
+&= \tilO \l(\sqrt{\frac{R}{n}}\r).
+\end{align}
+\end{enumerate}
+
+In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for these three dependencies on $\epsilon$: when $\log N(\epsilon, \mathcal{F}, L_2({p_n})) \approx R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$, and when $\alpha = 1/poly(n)$, this term leads to a bad dependence on $n$.
+
+\subsec{Regimes where we can get covering number bounds}
+The previous remarks discuss how strong our bounds on covering number need to be in order to get a useful result. Here we mention some situations in which we know how to obtain these covering number bounds:
+
+\begin{enumerate}
+\item Covering number and corresponding Rademacher complexity bounds for linear models are well-known, but fairly technical (see \cite{zhang2002}).
+    
+\item Covering numbers interact nicely with composition by Lipschitz functions. If $\phi$ is a $\rho$-Lipschitz function, then the following bound holds:
+\begin{equation}\label{lec9:eqn:covering-num-lipschitz}
+N(\epsilon/\rho, \mathcal{F}, L_2({p_n}))\geq N(\epsilon, \phi\circ\mathcal{F}, L_2({p_n})).
+\end{equation}
+    
+This result is the analog of Talagrand's lemma for covering numbers. The proof follows easily if one considers $\phi$ as a change of measure: informally, the Lipschitz condition on $\phi$ means that a distance of $\epsilon/\rho$ in the original space $\mathcal{F}$ can be increased to at most $\epsilon$ in the space $\phi \circ \mathcal{F}$.
+
+\item Using these results we can obtain a bound on the Rademacher complexity of a dense neural network. Consider a deep network
+\begin{equation}
+f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
+\end{equation}
+
+where $W_i$ are layer-wise weights and $\sigma$ is an activation function which is 1-Lipschitz. For this setup we have the following Rademacher complexity bound:
+\begin{equation}
+R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{op} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^T\|^{2/3}_{2,1}}{\|W_i\|_{op}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
+\end{equation}
+        
+Here $\|W\|_{op}$ is the operator norm (or spectral norm) of $W$, and $\|W_i^T\|_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms. This first term comes from composition of Lipschitz functions as in \eqref{lec9:eqn:covering-num-lipschitz} above, since the Lipschitz constant of a linear operator is its spectral norm. The full details are presented in \cite{bartlett2017}.
+\end{enumerate}
+
+\sec{Deep learning theory}
+
+We now turn to a high-level overview of deep learning theory. To begin, we outline a framework for classical machine theory, then discuss how the situation is different from deep learning theory.
+
+\subsec{Framework for classical machine theory}
+At the risk of oversimplification, we can divide classical machine learning theory into three parts:
+
+\begin{enumerate}
+\item {\bf Approximation theory} attempts to answer whether there is any choice of parameters $\theta$ that achieves low population error. In other words, is the choice of hypothesis class good enough to approximate the ground truth function? Using notation from earlier in this course, the goal is to upper bound $L(\theta^*) = \min_{\theta \in \Theta} L(\theta).$
+    
+\item {\bf Statistical generalization} focuses on bounding the excess risk $L(\hat{\theta}) - L(\theta^*)$. In Lecture 2 we obtained the following bound:
+    
+\begin{equation}
+L(\hat{\theta})-L(\theta^*)\leq \underbrace{L(\hat{\theta})-\hat{L}(\hat{\theta})}_{\text{generalization error}} + |L(\theta^*)-\hat{L}(\theta^*)|.
+\end{equation}
+    
+The first term here is the generalization error, which usually has an upper bound of the form $R(\theta)/\sqrt{n}$, where $R(\theta)$ is some complexity measure.\footnote{In earlier lectures, we defined the complexity of a hypothesis class, not of a specific parameter value. To reconcile these two approaches, think of $R$ as a measure of complexity (such as a norm) that we can then use to define a hypothesis class $\Theta$, i.e.~$\Theta = \{\theta' : R(\theta') \le R(\theta)\}$.} This is a demonstration of \textit{Occam's Razor}: the principle that simple (low-complexity) explanations generalize better. 
+    
+This statistical approach allows us to define a regularized loss  $\hat{L}_{reg}(\theta)=\hat{L}(\theta)+\lambda R(\theta)$. Minimizing this loss gives us a solution $\hat{\theta}_\lambda$ which simultaneously has low training error and low complexity, which lets us bound both the training error and the generalization error. To summarize, in the classical setting, we can prove statements of the form
+    
+\begin{equation}\label{lec9:eqn:classical-guarantee}
+\text{If }\hat{\theta}_\lambda \text{ minimizes } \hat{L}_{reg},\text{ then } L(\hat{\theta}_\lambda) - L(\theta^*) \text{ is small.}
+\end{equation}
+    
+\item {\bf Optimization} considers how to obtain the minimizer $\hat\theta$ or $\hat{\theta}_\lambda$ computationally. This usually involves convex optimization: if $\hat{L}$ or $\hat{L}_{reg}$ is convex, then we have a polynomial-time algorithm to find the global minimum.
+\end{enumerate}
+
+While there are many tradeoffs to consider between these three components (for example, we may be able to find a loss function for which optimization is easy, but generalization becomes worse), it is still possible to study each area individually, then combine all three to get a result.
+
+\subsec{Deep learning theory and its differences}
+The situation is not so simple for deep learning theory. Let us consider how this is the case for each of the three components described for classical machine learning theory
+
+\begin{enumerate} 
+\item {\bf Approximation theory:} Large neural net models are considered to be very expressive. That is, both the population loss $L(\theta^*)$ and the finite sample loss $\hat{L}(\hat\theta)$ can be made small. In fact, neural networks are \textit{universal approximators}; see for example \cite{hornik1991}. This can be a somewhat misleading statement as the definition of universal approximator allows for the size of the network to be impracticably large, but morally it seems to hold true in practice anyway.
+        
+This expressivity is possible because neural networks are usually highly \textit{over-parametrized}: they have many more parameters than samples. It is possible to prove that in this regime, the network can ``memorize'' the entire dataset and achieve approximately zero training error.
+    
+\item {\bf Statistical generalization:} Relatively weak regularization is used in practice. In many cases only weak $\ell_2$ regularization is used, i.e.
+\begin{equation}
+\widehat{L}_{reg}(\theta)=\hat{L}(\theta)+\lambda\|\theta\|_2^2.
+\end{equation}
+    
+The first interesting fact is that this regularized loss does not have a unique (approximate) global minimizer. This is due to overparametrization: there are so many degrees of freedom that there are many approximate global minimizers with approximately the same $\ell_2$ norm.
+    
+However, it turns out that these global minimizers are not equally good: many models which achieve zero training error may have very bad test error. Take, for example, using stochastic gradient descent (SGD) to learn a model to classify the dataset CIFAR-10. Consider two instantiations of this: one starting with a large learning rate and slowly decreasing it, and one with a small learning rate throughout. Even though both instantiations result in approximately zero training error, the former leads to much better test performance.
+
+Therefore, the goal in deep learning theory is not just to find an arbitrary global minimum: we need to find the right global minimum. This contrasts sharply with \eqref{lec9:eqn:classical-guarantee} from the classical setting, where achieving a global minimum leads to good guarantees on generalization error. This means that \eqref{lec9:eqn:classical-guarantee} is simply not powerful enough to deal with deep learning, because it cannot distinguish between $\theta$'s with good test error and bad test error.
+
+\item {\bf Optimization:} The discussion above means that optimization plays a significant role in generalization for deep learning. Different training algorithms have different ``implicit biases'', causing them to converge to different global minimizers. Understanding the implicit biases of algorithms is thus a central goal of deep learning theory. It is impossible to design a good optimization algorithm without also considering its impact on generalization. In fact, many algorithms for non-convex optimization have been proposed that work well for minimizing training loss, but because their implicit bias is different, they lead to worse test performance and are therefore not too useful.
+    
+Often these implicit biases can be interpreted as encouraging $\hat\theta$ to have low complexity in some sense. The deep learning analog of  \eqref{lec9:eqn:classical-guarantee} is that ``low complexity solutions generalize''. This means that we end up doing more work on the optimization front in order to understand the implicit bias of our algorithm, and then proving generalization bounds works similarly to the classical setting once we understand how our optimizer finds a low-complexity solution.
+    
+\end{enumerate}
+
+To explain the success of deep learning, we will cover three tasks over the next several classes:
+
+\begin{enumerate}
+    \item Prove that our optimization algorithm converges to an approximate global minimum, even though the objective function is non-convex. Our results here will mostly be for simplified models (e.g. linearized neural nets). (We will also show later that this can be accomplished separately from the other tasks using a special optimization setup (the ``NTK approach"). However, the generalization of this approach can be poor.)
+    
+    \item Show that the solution $\hat{\theta}$ has low complexity $R(\hat{\theta})\leq C$. We can only answer this question for some special cases of models (e.g. logistic regression, matrix factorization) and optimizers (e.g. gradient descent, label noise in SGD, dropout, learning rate).
+    
+    \item Show that for all $\theta$ such that $R(\theta)\leq C$ with $\hat{L}(\theta)\approx 0$, we have $L(\theta)$ is small. That is, we show that low-complexity solutions to the empirical risk problem generalize well. We will be working with more fine-grained complexity measures, and several of the tools we used in classical machine learning can still apply.
+\end{enumerate}
+
+
+
+%\subsection{}
