@@ -16,41 +16,41 @@ At the end of last lecture we stated Dudley's Theorem, which gives a link betwee
 If $\cF$ is a function class from $Z$ to $\R$, then
 
 \begin{equation}\label{lec9:eqn:dudley}
-    R_S(\mathcal{F})\leq 12\int_{0}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon.
+    R_S(\mathcal{F})\leq 12\int_{0}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({P_n}))}{n}}d\epsilon.
 \end{equation}
 
 \end{theorem}
 
-In particular, if $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that $\forall \epsilon > 1, N(\epsilon, \mathcal{F}, L_2({p_n}))=1$. (To see this choose $\{f\equiv 0\}$, which is a complete cover for $\epsilon>1$.) Hence, the limits of integration in \eqref{lec9:eqn:dudley} can be truncated to $[0,1]$:
+In particular, if $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that for all $\epsilon > 1, N(\epsilon, \mathcal{F}, L_2({P_n}))=1$. (To see this choose $\{f\equiv 0\}$, which is a complete cover for $\epsilon>1$.) Hence, the limits of integration in \eqref{lec9:eqn:dudley} can be truncated to $[0,1]$:
     
     \begin{equation}
-    R_S(\mathcal{F})\leq 12\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon,
+    R_S(\mathcal{F})\leq 12\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({P_n}))}{n}}d\epsilon,
     \end{equation}
     
-since $\log N(\epsilon, \mathcal{F}, L_2(p_n))=0$ for $\epsilon >1$.
+since $\log N(\epsilon, \mathcal{F}, L_2(P_n))=0$ for $\epsilon >1$.
 
 \subsec{Covering number regimes for which Dudley's theorem is finite}
 
 Of course, the bound in \eqref{lec9:eqn:dudley} is only useful if the integral on the RHS is finite. Here are some setups where this is the case (we continue to assume that the functions in $\cF$ are bounded in $[-1, 1]$):
 
 \begin{enumerate}
-\item If $N(\epsilon, \mathcal{F}, L_2(p_n))\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2(p_n))\approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
+\item If $N(\epsilon, \mathcal{F}, L_2(P_n))\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n))\approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
         
 \begin{equation}
-\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
+\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({P_n}))}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
 \end{equation}
             
-\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(p_n))\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2(p_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
         
 \begin{align}
-\int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(p_n))}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
+\int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
 &= \sqrt{\frac{R}{n}\log a} \int_0^1\!\!\sqrt{\frac{1}{\epsilon}}d\epsilon \\
 &= \tilO \l(\sqrt{\frac{R}{n}}\r).
 \end{align}
         
-\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(p_n))\approx a^{R/\epsilon^2}$, then $\log N(\epsilon, \mathcal{F}, L_2(p_n))\approx \frac{R}{\epsilon^2}\log a$. In this case we have:
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon^2}$, then $\log N(\epsilon, \mathcal{F}, L_2(P_n))\approx \frac{R}{\epsilon^2}\log a$. In this case we have:
         
-\begin{equation}\int_0^1\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(p_n))}{n}}d\epsilon \approx \sqrt{\frac{R}{n}\log a} \underbrace{\int_0^1\frac{1}{\epsilon}d\epsilon}_{=\infty}=\infty,
+\begin{equation}\int_0^1\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon \approx \sqrt{\frac{R}{n}\log a} \underbrace{\int_0^1\frac{1}{\epsilon}d\epsilon}_{=\infty}=\infty,
 \end{equation}
 
 i.e. the bound in \eqref{lec9:eqn:dudley} is vacuous. This is because of the behavior of $\epsilon \mapsto 1/\epsilon^2$ near 0: the function goes to infinity too quickly for us to upper bound its integral. Fortunately, there is an ``improved'' version of Dudley's theorem that is applicable here:
@@ -58,7 +58,7 @@ i.e. the bound in \eqref{lec9:eqn:dudley} is vacuous. This is because of the beh
 \begin{theorem}[Improved Dudley's Theorem]\label{lec9:thm:better-dudley}
 If $\cF$ is a function class from $Z$ to $\R$, then for any fixed cutoff $\alpha \geq 0$ we have the bound
 \begin{equation}\label{lec9:eqn:better-dudley}
-R_S(\mathcal{F})\leq 4\alpha + 12\int_{\alpha}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({p_n}))}{n}}d\epsilon.      
+R_S(\mathcal{F})\leq 4\alpha + 12\int_{\alpha}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2({P_n}))}{n}}d\epsilon.      
 \end{equation}
 \end{theorem}
 The proof of this theorem is similar to the proof of the original Dudley's theorem, except that the iterative covering procedure is stopped at the threshold $\epsilon = \alpha$ at the cost of the extra $4\alpha$ term above.
@@ -72,7 +72,7 @@ R_S(\mathcal{F}) &\leq \frac{1}{poly(n)} + \frac{\sqrt{R\log a}}{\sqrt{n}}\int_{
 \end{align}
 \end{enumerate}
 
-In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for these three dependencies on $\epsilon$: when $\log N(\epsilon, \mathcal{F}, L_2({p_n})) \approx R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$, and when $\alpha = 1/poly(n)$, this term leads to a bad dependence on $n$.
+In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for these three dependencies on $\epsilon$: when $\log N(\epsilon, \mathcal{F}, L_2({P_n})) \approx R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$, and when $\alpha = 1/poly(n)$, this term leads to a bad dependence on $n$.
 
 \subsec{Regimes where we can get covering number bounds}
 The previous remarks discuss how strong our bounds on covering number need to be in order to get a useful result. Here we mention some situations in which we know how to obtain these covering number bounds:
@@ -82,7 +82,7 @@ The previous remarks discuss how strong our bounds on covering number need to be
     
 \item Covering numbers interact nicely with composition by Lipschitz functions. If $\phi$ is a $\rho$-Lipschitz function, then the following bound holds:
 \begin{equation}\label{lec9:eqn:covering-num-lipschitz}
-N(\epsilon/\rho, \mathcal{F}, L_2({p_n}))\geq N(\epsilon, \phi\circ\mathcal{F}, L_2({p_n})).
+N(\epsilon/\rho, \mathcal{F}, L_2({P_n}))\geq N(\epsilon, \phi\circ\mathcal{F}, L_2({P_n})).
 \end{equation}
     
 This result is the analog of Talagrand's lemma for covering numbers. The proof follows easily if one considers $\phi$ as a change of measure: informally, the Lipschitz condition on $\phi$ means that a distance of $\epsilon/\rho$ in the original space $\mathcal{F}$ can be increased to at most $\epsilon$ in the space $\phi \circ \mathcal{F}$.
@@ -94,17 +94,17 @@ f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
 
 where $W_i$ are layer-wise weights and $\sigma$ is an activation function which is 1-Lipschitz. For this setup we have the following Rademacher complexity bound:
 \begin{equation}
-R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{op} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^T\|^{2/3}_{2,1}}{\|W_i\|_{op}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
+R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{\textup{op}} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^T\|^{2/3}_{2,1}}{\|W_i\|_{\textup{op}}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
 \end{equation}
         
-Here $\|W\|_{op}$ is the operator norm (or spectral norm) of $W$, and $\|W_i^T\|_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms. This first term comes from composition of Lipschitz functions as in \eqref{lec9:eqn:covering-num-lipschitz} above, since the Lipschitz constant of a linear operator is its spectral norm. The full details are presented in \cite{bartlett2017}.
+Here $\|W\|_{\textup{op}}$ is the operator norm (or spectral norm) of $W$, and $\|W_i^T\|_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms. This first term comes from composition of Lipschitz functions as in \eqref{lec9:eqn:covering-num-lipschitz} above, since the Lipschitz constant of a linear operator is its spectral norm. The full details are presented in \cite{bartlett2017}.
 \end{enumerate}
 
 \sec{Deep learning theory}
 
-We now turn to a high-level overview of deep learning theory. To begin, we outline a framework for classical machine theory, then discuss how the situation is different from deep learning theory.
+We now turn to a high-level overview of deep learning theory. To begin, we outline a framework for classical machine learning theory, then discuss how the situation is different from deep learning theory.
 
-\subsec{Framework for classical machine theory}
+\subsec{Framework for classical machine learning theory}
 At the risk of oversimplification, we can divide classical machine learning theory into three parts:
 
 \begin{enumerate}
@@ -118,13 +118,13 @@ L(\hat{\theta})-L(\theta^*)\leq \underbrace{L(\hat{\theta})-\hat{L}(\hat{\theta}
     
 The first term here is the generalization error, which usually has an upper bound of the form $R(\theta)/\sqrt{n}$, where $R(\theta)$ is some complexity measure.\footnote{In earlier lectures, we defined the complexity of a hypothesis class, not of a specific parameter value. To reconcile these two approaches, think of $R$ as a measure of complexity (such as a norm) that we can then use to define a hypothesis class $\Theta$, i.e.~$\Theta = \{\theta' : R(\theta') \le R(\theta)\}$.} This is a demonstration of \textit{Occam's Razor}: the principle that simple (low-complexity) explanations generalize better. 
     
-This statistical approach allows us to define a regularized loss  $\hat{L}_{reg}(\theta)=\hat{L}(\theta)+\lambda R(\theta)$. Minimizing this loss gives us a solution $\hat{\theta}_\lambda$ which simultaneously has low training error and low complexity, which lets us bound both the training error and the generalization error. To summarize, in the classical setting, we can prove statements of the form
+This statistical approach allows us to define a regularized loss  $\hat{L}_{\textup{reg}}(\theta)=\hat{L}(\theta)+\lambda R(\theta)$. Minimizing this loss gives us a solution $\hat{\theta}_\lambda$ which simultaneously has low training error and low complexity, which lets us bound both the training error and the generalization error. To summarize, in the classical setting, we can prove statements of the form
     
 \begin{equation}\label{lec9:eqn:classical-guarantee}
-\text{If }\hat{\theta}_\lambda \text{ minimizes } \hat{L}_{reg},\text{ then } L(\hat{\theta}_\lambda) - L(\theta^*) \text{ is small.}
+\text{If }\hat{\theta}_\lambda \text{ minimizes } \hat{L}_{\textup{reg}},\text{ then } L(\hat{\theta}_\lambda) - L(\theta^*) \text{ is small.}
 \end{equation}
-    
-\item {\bf Optimization} considers how to obtain the minimizer $\hat\theta$ or $\hat{\theta}_\lambda$ computationally. This usually involves convex optimization: if $\hat{L}$ or $\hat{L}_{reg}$ is convex, then we have a polynomial-time algorithm to find the global minimum.
+
+\item {\bf Optimization} considers how to obtain the minimizer $\hat\theta$ or $\hat{\theta}_\lambda$ computationally. This usually involves convex optimization: if $\hat{L}$ or $\hat{L}_{\textup{reg}}$ is convex, then we have a polynomial-time algorithm to find the global minimum.
 \end{enumerate}
 
 While there are many tradeoffs to consider between these three components (for example, we may be able to find a loss function for which optimization is easy, but generalization becomes worse), it is still possible to study each area individually, then combine all three to get a result.
@@ -139,7 +139,7 @@ This expressivity is possible because neural networks are usually highly \textit
     
 \item {\bf Statistical generalization:} Relatively weak regularization is used in practice. In many cases only weak $\ell_2$ regularization is used, i.e.
 \begin{equation}
-\widehat{L}_{reg}(\theta)=\hat{L}(\theta)+\lambda\|\theta\|_2^2.
+\widehat{L}_{\textup{reg}}(\theta)=\hat{L}(\theta)+\lambda\|\theta\|_2^2.
 \end{equation}
     
 The first interesting fact is that this regularized loss does not have a unique (approximate) global minimizer. This is due to overparametrization: there are so many degrees of freedom that there are many approximate global minimizers with approximately the same $\ell_2$ norm.
@@ -163,7 +163,3 @@ To explain the success of deep learning, we will cover three tasks over the next
     
     \item Show that for all $\theta$ such that $R(\theta)\leq C$ with $\hat{L}(\theta)\approx 0$, we have $L(\theta)$ is small. That is, we show that low-complexity solutions to the empirical risk problem generalize well. We will be working with more fine-grained complexity measures, and several of the tools we used in classical machine learning can still apply.
 \end{enumerate}
-
-
-
-%\subsection{}
