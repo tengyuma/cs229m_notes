@@ -22,7 +22,7 @@ The big question that we have in mind is the following: many existing optimizers
 \begin{figure}[H]
     \centering
     \includegraphics[scale = 0.3]{figures/smooth_func.png}
-    \caption{Illustration of a general non-convex function. A useful plot to keep in mind when thinking about non-convex functions.}
+    \caption{Illustration of a general non-convex function. A useful plot to keep in mind when thinking about non-convex functions. \tnote{I think this plot was to show that you can converge to a bad local minimum. I did draw some arrows in it to show you can converge to a bad local minimum. The problem is that this is not the right picture to keep in mind for high-dimensional nonconvex functions}}
     \label{lec10:fig:smooth_func}
 \end{figure}
 Before diving into details, we first highlight some observations that will be important to keep in mind when discussing optimization in deep learning. Suppose $g(\theta)$ is the loss function. Recall that the \textit{gradient descent (GD)} algorithm would do the following:
@@ -36,7 +36,7 @@ Here are some observations to :
     \item[] \textit{Observation 2}: Finding the global minimum of general non-convex functions is NP-hard.
     \item[] \textit{Observation 3}: Gradient descent can find the global minimum for convex functions.
     \item[] \textit{Observation 4}: The objective function in deep learning is non-convex.
-    \item[] \textit{Observation 5}: Gradient descent/stochastic gradient descent finds an approximate global minimum of loss function in deep learning.
+    \item[] \textit{Observation 5}: Gradient descent/stochastic gradient descent \tnote{+typically} finds an approximate global minimum of loss function in deep learning.
 \end{enumerate}
 
 These observations motivate the following two-step plan:
@@ -45,9 +45,9 @@ These observations motivate the following two-step plan:
     \item Identify a large set of functions that stochastic gradient descent/gradient descent can solve.
     \item Prove that some of the loss functions in machine learning problems belong to this set. (Most of the effort will be spent here.)
 \end{enumerate}
-\textbf{Basic idea:} Gradient descent can find local minimum $+$ all local minimums of $f$ are also global $\Rightarrow$ Gradient descent can find global minimums.
+\textbf{Basic idea:} Gradient descent can find local minimum $+$ all local minimums of $f$ are also global $\Rightarrow$ Gradient descent can find global minimums\tnote{minima; check other places}.
 
-\sec{Convergence to local minimum}
+\sec{Convergence to local minimum\tnote{minima}}
 Let $f$ be a twice-differentiable function. We start with the following definition:
 \begin{definition} [Local minimum of a function]
 We say that $x$ is a \textit{local minimum} of a function $f$ if there exists an open neighborhood $N$ around $x$ such that in $N$, the function values are at least $f(x)$.
@@ -64,13 +64,13 @@ Consider the function $f(x_1, x_2) = x_1^2 + x_2^3$. $(x_1, x_2) = (0, 0)$ satis
 It is generally not easy to verify if a point is a local minimum. In fact, we have the following theorem regarding the computational tractability:
 \begin{theorem}
 \label{lec10:thm:np_hard}
-Verifying if $x$ is a local minimum of $f$ is NP-hard. Moreover, finding a local minimum is NP-hard.
+Verifying if $x$ is a local minimum of $f$ is NP-hard. \tnote{Citation} Moreover, finding a local minimum is NP-hard.
 \end{theorem}
 
 \subsec{Strict-saddle condition}
 Theorem~\ref{lec10:thm:np_hard} forces us to consider more specific types of functions to be able to obtain computational tractability. To this end, we define the following \textit{strict-saddle condition}:
 
-\begin{definition} [Strict-saddle condition (\cite{lee2016}; \cite{ge2015})]
+\begin{definition} [Strict-saddle condition (\cite{lee2016}; \tnote{should only cite the first one because the condition in the second one is different}\cite{ge2015})]
 For positive $\alpha, \beta, \gamma$, we say that $f: \R^d \mapsto \R$ is \textit{$(\alpha, \beta, \gamma)$-strict-saddle} if every $x \in \bbR^d$ satisfies one of the following:
 \begin{enumerate}
     \item $\|\nabla f(x)\|_2 \geq \alpha$.
@@ -100,7 +100,7 @@ Suppose $f$ is a function that satisfies the following condition: $\exists  \ \e
     \label{lec10:fig:strict-saddle}
 \end{figure}
 
-\sec{Two examples where local minimums are global minimums}
+\sec{Two examples where local minimums are global minimums\tnote{grammar; many other places}}
 So far, we have focused on general results. Next, we give two concrete examples that satisfies all local minimums are global minimums:(i) principal components analysis (PCA)/matrix factorization/linearized neural nets, and (ii) matrix completion.
 
 \subsec{Principal components analysis (PCA)}
@@ -137,6 +137,7 @@ which implies that $x$ is an eigenvector of $M$ with eigenvalue $\|x\|_2^2$. Fro
 \langle v, \nabla^2g(x) v \rangle \geq 0.
 \end{equation}
 To compute $\langle v, \nabla^2g(x) v \rangle$, we use the following trick: expand $g(x + v)$ into $g(x) + \text{linear term in } v + \text{quadratic term in } v$, then the quadratic term will be $\langle v, \nabla^2g(x) v \rangle$ (see HW0 Problem 2d for an example). Using this trick, we get 
+\tnote{could the scribe notes taker fill in this derivation?}
 \begin{equation}
 \langle v, \nabla^2g(x) v \rangle = 2\langle x, v \rangle^2 - v^TMv + \|x\|_2^2\|v\|_2^2. 
 \end{equation}
@@ -187,10 +188,10 @@ Without loss of generality, assume the ground truth vector $z\in\bbR^d$ satisfie
 \end{definition}
 
 \begin{remark}
-A nice counterexample to think about why such condition is necessary is when $z = \mathbf{e_1}$ and $M = \mathbf{e_1}\mathbf{e_1}^T$. All entries of $M$ are 0 except for a 1 in the top-left corner. There is no way to recover $M$ without observing the top-left corner.
+A nice counterexample to think about why such condition is necessary is when $z = \mathbf{e_1}$ and $M = \mathbf{e_1}\mathbf{e_1}^T$. \tnote{could we avoid using bold font for symbols?} All entries of $M$ are 0 except for a 1 in the top-left corner. There is no way to recover $M$ without observing the top-left corner.
 \end{remark}
 
 We conclude with a theorem which we will prove next lecture:
 \begin{theorem}
-Suppose $p = \frac{poly(\mu, \log d)}{d\epsilon}, \ \epsilon > 0$ and assume $z$ is incoherent. Then all local minimums of $f$ are $O(\sqrt{\epsilon})$-close to either $z$ or $-z$ (i.e. the global minimums), and we also have the strict saddle condition.
+Suppose $p = \frac{poly(\mu, \log d)}{d\epsilon^2}$ for some sufficient small constant $\epsilon$ and assume $z$ is incoherent. Then all local minimums of $f$ are $O(\sqrt{\epsilon})$-close to either $z$ or $-z$ (i.e. the global minimums), and we also have the strict saddle condition.
 \end{theorem}
