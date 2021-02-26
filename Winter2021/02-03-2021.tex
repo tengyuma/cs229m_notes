@@ -204,7 +204,7 @@ This bound is not ideal as it depends on the number of neurons~$m$. Empirically,
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
         \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
-            &&\text{(to be explained later)} \label{lec7:eqn:nn-proof1}
+            &&\text{(see Lemma \ref{lec7:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
         \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
     \end{align}
     where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
@@ -224,6 +224,27 @@ This bound is not ideal as it depends on the number of neurons~$m$. Empirically,
     which completes the proof.
     
 \end{proof}
+
+For completeness, we state and prove the lemma used in Equation \eqref{lec7:eqn:nn-proof1}:
+
+\begin{lemma}\label{lec7:lemma:absfortwo}
+Let $\sigma = (\sigma_1, ..., \sigma_n)$ and $f_{\theta}(x) = \l(f_{\theta}\l(x\sp{1}\r), ...,  f_{\theta}\l(x\sp{n} \r)\r)$. Suppose that for any $\sigma \in \{\pm 1\}^n$, $\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle \geq 0$. Then, 
+\begin{equation}
+\mathbb{E}_{\sigma}\l[ \sup_{\theta}  \l | \langle \sigma, f_{\theta}(x) \rangle \r|  \r] \leq 2 \mathbb{E}_{\sigma}\l[ \sup_{\theta}  \langle \sigma, f_{\theta}(x) \rangle   \r].
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Letting $\phi$ be the ReLU function, the lemma's assumption implies that $\sup_{\theta} \phi\left(\langle \sigma, f_{\theta}(x) \rangle\right) = \sup_{\theta}\langle \sigma, f_{\theta}(x) \rangle$ for any $\sigma \in \{\pm 1\}^n$. Observing that $|z| = \phi(z) + \phi(-z)$, 
+\begin{align}
+\sup_{\theta} \abs{\inprod{ \sigma, f_{\theta}(x) }}%
+&= \sup_{\theta} \left[ \phi \l(\inprod{ \sigma, f_{\theta}(x) } \r) + \phi \l(\inprod{-\sigma, f_{\theta}(x) } \r)\right] \\
+&\le \sup_{\theta}  \phi \l(\inprod{ \sigma, f_{\theta}(x) } \r) +  \sup_{\theta}  \phi \l(\inprod{-\sigma, f_{\theta}(x) } \r)  \\
+&= \sup_{\theta} \inprod{ \sigma, f_{\theta}(x) } +  \sup_{\theta}  \inprod{-\sigma, f_{\theta}(x) }. 
+\end{align}
+Taking the expectation over $\sigma$ (and noting that $\sigma \overset d = -\sigma$), we get the desired conclusion.
+\end{proof}
+
 
 Next, we look at a finer bound that results from defining a new complexity measure:
 
