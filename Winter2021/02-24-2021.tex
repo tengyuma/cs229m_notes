@@ -1,0 +1,161 @@
+\renewcommand{\Phi}{\varphi}
+
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{12}{Rohan Taori and Jonathan Lee}{Feb 24nd, 2021}
+
+\sec{Review and overview}
+
+In the last lecture, we finished our discussion of matrix completion and introduced the neural tangent kernel (NTK), which we defined via Taylor expansion as follows:
+
+\begin{equation}
+f_\theta(x) = f_{\theta^0}(x) + \langle \underbrace{\nabla_\theta f_{\theta^0}(x)}_{\text{features}}, \theta - \theta^0 \rangle + \text{higher order terms},
+\end{equation}
+
+where $\theta^0$ is an appropriate random parameter initialization. Ignoring the higher order terms, we can think of $f_\theta$ as an affine transformation of $\theta$, thus allowing us to treat this as a linear model. There are two main questions left unaddressed:
+
+\begin{enumerate}
+    \item Does there exist a small neighborhood around $\theta^0$, denoted $B(\theta^0)$, such that there is a global minimizer in $B(\theta^0)$?
+    \item Does gradient descent on the loss with respect to $f_\theta(x)$ stay in the neighborhood $B(\theta^0)$ and thus converge to the global minimizer?
+\end{enumerate}
+
+The answer to both questions is ``yes''. In this lecture, we will explain the answer to the first question at an intuitive level, but skip discussion on the second since it requires more technical machinery (and is also easier to believe).
+
+\sec{The two-layer network case}
+
+We demonstrate the NTK approach for the two-layer network setup.
+
+\subsec{Setup}
+
+For $i \in [m]$, let $a_i \in \R$ be scalars and let $w_i \in \R^d$ be vectors. Let $\sigma: \R \to \R$ be the ReLU activation function defined as $\sigma(t) = \max\{ t, 0\}$. Suppose we have the following two-layer network:
+\begin{equation}\label{lec12:eqn:network}
+\hat{y} = f_\theta(x) = \frac{1}{\sqrt{m}} \sum_{i=1}^m a_i \sigma (w_i^T x),
+\end{equation}
+for some input $x$.
+
+Our weight matrix is $W = \begin{bmatrix} w_1^T \\ \vdots \\ w_m^T \end{bmatrix} \in R^{m \times d}$. We initialize $W$ randomly using $W_{ij} \stackrel{i.i.d.}{\sim} \mathcal{N}(0, 1)$ for all $i$ and $j$. We initialize $a_i \in \{\pm 1\}$ and assume that the $a_i$'s are fixed after initialization, i.e. not updated during training. (We fix $a_i$ for simplicity: the results still hold when we are allowed to optimize $a_i$ in training.) We also assume that $x$ has norm on the order of $1$, and that the true label $y$ is on the order of $1$.
+
+In our analysis, we will assume we have sufficiently large $m = \poly(n, d)$. In other words, the width of the network $m$ is sufficiently large such that $\poly(n, d)$ factors are not important in the analysis. For simplicity, we write $O_{d,n}(1)$ to hide polynomial dependencies on $d$ and $n$. Thus $O_{d,n}(m^c) = m^c \cdot \poly(n, d)$.
+
+\textbf{Why do we need the scaling factor $1 / \sqrt{m}$ in Equation~\ref{lec12:eqn:network}?} It is included to prevent the model outputs from blowing up when we increase the number of neurons $m$. Note that $\sigma (w_i^T x) \approx O_{d,n}(1)$ since $w_i^T \approx O_{d,n}(1)$ and $x \approx O_{d,n}(1)$. Since $a_i \in \{ \pm 1\}$ for all $i$, this implies that $ \sum_{i=1}^m a_i \sigma (w_i^T x) \approx O_{d,n}(\sqrt{m})$. Thus, the scaling factor is needed to obtain $\hat{y} = f_\theta(x) = O_{d,n}(1)$.
+
+Next, we introduce some notation that will be helpful for our analysis. Let $\Delta \theta = \theta - \theta^0$. Suppose we have $n$ examples $x^{(1)},...,x^{(n)}$ and labels $y^{(1)},...,y^{(n)}$. Let $\overrightarrow{y} = \begin{bmatrix} y^{(1)} & \dots & y^{(n)} \end{bmatrix}^T$. Let
+\begin{equation}
+\overrightarrow{y'} = \begin{bmatrix} y^{(1)}-f_{\theta^0}(x^{(1)}) \\ \vdots \\ y^{(n)}-f_{\theta^0}(x^{(n)}) \end{bmatrix}
+\end{equation}
+be the transformed labels where we subsume the affine term in the label, allowing us to treat this as a purely linear model without loss of generality. Note that $\theta = \text{vec}(W) \in R^{dm}$ is the vectorized version of the weights. Let $\Phi^{(i)} = \nabla_\theta f_{\theta^0}(x^{(i)}) \in R^{dm}$ be the feature associated with the $i$th example, and let $\Phi$ denote the collection of the features across the examples:
+\begin{equation}
+\Phi = \begin{bmatrix} \Phi^{(1)^T} \\ \vdots \\ \Phi^{(n)^T} \end{bmatrix} \in R^{n \times dm}.
+\end{equation}
+
+\subsec{Analysis of neighborhood size}
+
+Recall that in the previous lecture, we defined
+\begin{align}
+    g_\theta(x) = f_{\theta^0}(x) + \langle\nabla_\theta f_{\theta^0}, \theta - \theta^0\rangle,
+\end{align}
+which is the linear approximation of $f_\theta(x)$ at $\theta^0$. If we wish to fit $g_\theta(x)$ to $y$ with the $\ell_2$-loss, we may consider minimizing the following objective function over $\theta$:
+\begin{align}
+\sum_{i=1}^n \left( y^{(i)} - f_{\theta^0}(x^{(i)}) - \langle \nabla_\theta f_{\theta^0}(x\sp{i}), \theta - \theta^0 \rangle \right)^2 
+&=  \sum_{i=1}^n \left(y^{(i)} - f_{\theta^0}(x^{(i)}) - \Delta\theta^T \Phi^{(i)} \right)^2 \\
+&=  \norm{\overrightarrow{y'} - \Phi \Delta\theta}_2^2.
+\end{align}
+This is equivalent to the following optimization problem:
+\begin{align}
+    \min_{\Delta \theta} \quad \norm{\overrightarrow{y'} - \Phi \Delta\theta}_2^2. \label{lec12:eqn:opt-problem}
+\end{align}
+Since $n \ll dm$, so we have an undetermined linear system. Since our goal is to show that the relevant neighborhood around $\theta^0$ is small, we should choose the minimum norm solution which can be found directly by the pseudoinverse: $\hat{\theta} = \Phi^\dagger \overrightarrow{y'}$,  where $\Phi^\dagger$ is the pseudoinverse of $\Phi$ given by $\Phi^\dagger = \Phi^T (\Phi \Phi^T)^{-1}$.
+
+It remains to show that the norm of $\hat{\theta}$ is small. Before we can do that, we will prove some useful claims:
+
+\begin{lemma}[$\Phi$ is a well-conditioned matrix]\label{lec12:lem:claim1}
+When $\theta^0$ is random, $\Phi$ is well-conditioned in the sense that \begin{align}
+\sigma_{\min}(\Phi) \approx \frac{1}{\sqrt{n}} \norm{\Phi}_F \quad \text{and} \quad
+\sigma_{\max}(\Phi) \approx \frac{1}{\sqrt{n}} \norm{\Phi}_F.
+\end{align}
+($\sigma_{\min}(\Phi)$ and $\sigma_{\max}(\Phi)$ denote the smallest and largest singular values of $\Phi$ respectively.) Specifically, $\sigma_{min}(\Phi) \gtrsim \Omega \left( \frac{1}{\sqrt{n}} \norm{\Phi}_F \right)$, and vice-versa for $\sigma_{\max}(\Phi)$.
+\end{lemma}
+
+We omit the proof as it uses tools from random matrix theory that are not required for this course. (The high-level idea is to use the fact that $\Phi \Phi^T \approx c \cdot I$ for some constant scalar $c$.)
+
+\begin{remark}
+Since $\Phi \in R^{n \times dm}$, $\Phi$ has at most $n$ singular values $\sigma_1 \geq \ldots \geq \sigma_n \geq 0$. Since $\norm{\Phi}_F = \sqrt{\sigma_1^2 + ... + \sigma_n^2}$, the fact that $\sigma_n \approx \frac{1}{\sqrt{n}} \norm{\Phi}_F$ means that all the singular values are not very different from each other.
+\end{remark}
+
+\begin{lemma}[Frobenius norm of $\Phi$ is order $1$]\label{lec12:lem:phi-norm}
+$\norm{\Phi}_F \asymp \Theta_{d,n}(1)$, which implies that
+\begin{equation}
+\norm{\Phi}_{\text{op}}, \ \norm{\Phi^\dagger}_{\text{op}}  \asymp \Theta_{d,n}(1).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Applying the definition of $\Phi^{(i)}$, we have 
+\begin{align}
+    \Phi^{(i)} &= \text{vec}\left(\frac{\partial f_{\theta}(x^{(i)})}{\partial W}\right) = \frac{1}{\sqrt{m}} (a \odot \sigma' (w x^{(i)})) \cdot \left(x^{(i)}\right)^T.
+\end{align}
+
+Thus, its norm can be written as
+\begin{align}
+\norm{\Phi^{(i)}}_2 &= \frac{1}{\sqrt{m}} \norm{a \odot \sigma' (w x^{(i)})}_2 \cdot \norm{x^{(i)}}_2  \\
+&\approx \Theta_{d,n}\left(\frac{1}{\sqrt{m}} \cdot \sqrt{m} \cdot 1 \right) \label{lec12:eqn:approx} \\
+&\approx \Theta_{d,n}(1).
+\end{align}
+The first equality is because $\norm{ab^T}_2 = \norm{a}_2 \cdot \norm{b}_2$ for any vectors $a$ and $b$, and \eqref{lec12:eqn:approx} is because $\norm{x^{(i)}}_2$ is on order of $1$, $a \odot \sigma' (w x^{(i)})$ is a vector of length $m$ with each entry being on the order of $1$ (each $a_i$ is either $1$ or $-1$, and $\sigma'$ is either $0$ or $1$). Summing up over the $\Phi^{(i)}$'s,
+\begin{align}
+\norm{\Phi}_F &= \sqrt{\sum_{i=1}^n \norm{\Phi^{(i)}}_2^2} \approx \Theta_{d,n}(1).
+\end{align}
+
+Putting this together with Lemma~\ref{lec12:lem:claim1}, all the singular values of $\Phi$ are $\Theta_{d,n}(1)$. By extension,  $\norm{\Phi^\dagger}_{\text{op}} \asymp \Theta_{d,n}(1)$ as well, since if a matrix $A$ has singular values $\sigma_1, \dots,\sigma_n$, $A^\dagger$ has singular values $1 / \sigma_1, \dots,1/\sigma_n$. 
+\end{proof}
+
+Now we can leverage the previous two lemmas to produce a bound on the $\ell_2$-norm of the solution of the optimization problem~\eqref{lec12:eqn:opt-problem}, $\hat \theta$. Recall that $\hat \theta = \Phi^\dagger \overrightarrow {y'}$. Upper bounding the norm yields
+\begin{align}
+    \| \hat \theta\|_2 & \leq \| \Phi^\dagger \|_{\text{op}} \cdot \|\overrightarrow{y'} \|_2  \\
+    & \leq O_{d, n} (1) \cdot \|\overrightarrow{y'} \|_2 &\text{(by Lemma~\ref{lec12:lem:phi-norm})} \\
+    & \leq  O_{d, n} (1),
+\end{align}
+where the last inequality is because $\overrightarrow{y'}$ is of dimension $n$ and each entry is on the order of $1$ (the original labels are on the order of $1$ and the shifts $f_{\theta^0}(x\sp{i})$ are also on the order of $1$). Although $\| \hat \theta\|_2$ may not appear to be small, since it may still be $\poly(d, n)$, we can view it as comparatively small relative to the size of $\theta^0$ since
+\begin{align}
+    \| \theta^0 \|_2 &= \| W^0 \|_F^2 \\
+    &\asymp \sqrt {dm} &\text{($\because W^0$ has $dm$ entries of order $1$)} \\
+    &= \Theta_{d, n}(\sqrt m).
+\end{align}
+Thus, the neighborhood size is much smaller than the norm of the initialization in terms of $m$. Further justification of the $\ell_2$-norm as a reasonable metric for defining neighborhood size may require deeper inspection of the higher order terms and their behavior within the neighborhood. The intuition is that one only needs to move a little to reach the solution. Relative to the norm of the initialization, the neighborhood size is shrinking.
+
+\begin{remark}
+While we do not cover this in detail, the main takeaway on the optimization front is that the problem of fitting $g_\theta(x)$ is a standard strongly convex optimization problem, which enjoys the geometric rate of convergence.
+\end{remark}
+
+\sec{Limitations of NTK}
+
+The NTK approach has its limitations.
+\begin{itemize}
+    \item Empirically, optimizing $g_\theta(x)$ as described in the theory does not work as well as state-of-the-art (or even standard) deep learning methods. For example, using the NTK approach (i.e., taking the Taylor expansion and optimizing $g_{\theta}(x)$) with a ResNet generally does not perform as well as ResNet with best-tuned hyperparameters.
+    
+    \item The NTK approach requires a specific initialization scheme and learning rate which may not coincide with what is commonly used in practice.
+    
+    \item The analysis above was for gradient descent, while stochastic gradient descent is used in practice, introducing noise in the procedure. This means that NTK with stochastic gradient descent requires a small learning rate to stay in the initialization neighborhood. Deviating from the requirements can lead to leaving the initialization neighborhood.
+\end{itemize}
+
+One possible explanation for the gap between theory and practice is because NTK effectively requires a fixed kernel, so there is no incentive to select the right features. Furthermore, the minimum $\ell_2$-norm solution is typically dense. This is similar to the difference between sparse and dense combinations of features observed in the $\ell_1$-SVM/two-layer network versus the standard kernel method SVM (or $\ell_2$-SVM) analyzed previously.
+
+To make these ideas more concrete, consider the following example \cite{wei2020regularization}. 
+\begin{example}\label{lec12:ex:sparse123}
+Let $x \in \R^d$ and $y \in \{-1, 1\}$. Assume that each component of $x$ satisfies $x_i \in \{ -1, 1\}$. Define the output $y = x_1x_2$, that is, $y$ is only a function of the first two components of $x$.
+
+This output function can be described exactly by a neural network consisting of a sparse combination of the features (4 neurons to be exact):
+\begin{align}
+\hat y &= \frac{1}{2} \left[ \phirelu(x_1 + x_2) + \phirelu(-x_1 - x_2)  - \phirelu(x_1 - x_2) -  \phirelu(x_2 - x_1)  \right] \\
+&= \frac{1}{2}\left( |x_1 + x_2| - |x_1 - x_2| \right) \label{lec12:eqn:ex1} \\
+&= x_1x_2. \label{lec12:eqn:ex2}
+\end{align}
+\eqref{lec12:eqn:ex1} follows from the fact that $\phirelu(t) + \phirelu(-t) = |t|$ for all $t$, while \eqref{lec12:eqn:ex2} follows from evaluating the 4 possible values of $(x_1, x_2)$. Thus, we can solve this problem exactly with a very sparse combination of features.
+
+However, if we were to use the NTK approach (kernel method), the network's output will always involve $\sigma(w^\top x)$ where $w$ is random so it includes all components of $x$ (i.e. a dense combination of features), and cannot isolate just the relevant features $x_1$ and $x_2$. This is illustrated in the following informal theorem (which will not be proved in this lecture).
+\begin{theorem}
+The kernel method with NTK requires $n = \Omega(d^2)$ samples to learn Example \ref{lec12:ex:sparse123} well. In contrast, the neural network regularized by $\sum_{j = 1}^m | u_j| \| w_j\|_2$ only requires $n = O(d)$ samples.
+\end{theorem}
+\end{example}
