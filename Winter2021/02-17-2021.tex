@@ -21,15 +21,9 @@ The big question that we have in mind is the following: many existing optimizers
 
 \begin{figure}[H]
     \centering
-<<<<<<< HEAD
-    \includegraphics[scale = 0.3]{figures/smooth_func.png}
-    \caption{Illustration of a general non-convex function. A useful plot to keep in mind when thinking about non-convex functions. \tnote{I think this plot was to show that you can converge to a bad local minimum. I did draw some arrows in it to show you can converge to a bad local minimum. The problem is that this is not the right picture to keep in mind for high-dimensional nonconvex functions}}
-    \label{lec10:fig:smooth_func}
-=======
     \includegraphics[scale = 0.3]{figures/gradient_descent.png}
     \caption{Illustration of how gradient descent does not always find the global minimum. In the picture, gradient descent initialized at the blue point only makes it to the local minimum at the red point: it does not find the global minimum at the black point.}
     \label{lec10:fig:gradient_descent}
->>>>>>> 7e92f25cc0025edc1a38ed9e8a22ee5fa6b7f003
 \end{figure}
 Before diving into details, we first highlight some observations that will be important to keep in mind when discussing optimization in deep learning. Suppose $g(\theta)$ is the loss function. Recall that the \textit{gradient descent (GD)} algorithm would do the following:
 \begin{enumerate}
@@ -42,11 +36,7 @@ Here are some observations to :
     \item[] \textit{Observation 2}: Finding the global minimum of general non-convex functions is NP-hard.
     \item[] \textit{Observation 3}: Gradient descent can find the global minimum for convex functions.
     \item[] \textit{Observation 4}: The objective function in deep learning is non-convex.
-<<<<<<< HEAD
-    \item[] \textit{Observation 5}: Gradient descent/stochastic gradient descent \tnote{+typically} finds an approximate global minimum of loss function in deep learning.
-=======
     \item[] \textit{Observation 5}: Gradient descent/stochastic gradient descent typically finds an approximate global minimum of loss function in deep learning.
->>>>>>> 7e92f25cc0025edc1a38ed9e8a22ee5fa6b7f003
 \end{enumerate}
 
 These observations motivate the following two-step plan:
