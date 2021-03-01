@@ -204,11 +204,7 @@ This bound is not ideal as it depends on the number of neurons~$m$. Empirically,
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
         \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
-<<<<<<< HEAD
-            &&\text{(to be explained later) \tnote{this step should be explained by Lemma 8.6 of next lecture; that lemma can be moved here}} \label{lec7:eqn:nn-proof1}
-=======
             &&\text{(see Lemma \ref{lec7:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
->>>>>>> 7e92f25cc0025edc1a38ed9e8a22ee5fa6b7f003
         \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
     \end{align}
     where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
