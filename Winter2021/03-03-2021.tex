@@ -1,0 +1,266 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{14}{Roshni Sahoo and Sarah Wu}{Mar 3rd, 2021}
+
+\sec{Review and overview}
+
+In the last lecture, we introduced the concept of \textit{algorithmic regularization} (or \textit{implicit regularization}) and demonstrated it for the problem of overparametrized linear regression. We also began applying it to a non-convex case where we assume that the ground-truth model is sparse. Consider the following quadratic parametrization:
+\begin{equation}
+    y = \langle \beta^\star \odot \beta^\star , x\rangle,
+\end{equation} 
+where $\beta^\star$ is an $r$-sparse vector. We write $\beta^\star = \mathbf{1}_{S}$ where $S$ is the set of indices on which $\beta^\star$ takes nonzero value. Since $\beta^\star$ is $r$-sparse, we have that $|S| \leq r.$ Our goal is to show that with $\Omega(r^{2})$ samples, gradient descent on $\empL$ starting from small initialization can converge to $\beta^\star$. This is is expressed more formally by the following theorem.
+
+\begin{theorem}\label{lec14:thm:prev}
+Let $c$ be a sufficiently large universal constant. Suppose $n\ge cr^2\log^2(d)$ and $\alpha\le 1 / d^c$, then when $\dfrac{\log(d/\alpha)}{\eta}\lesssim T\lesssim \dfrac{1}{\eta\sqrt{d\alpha}},$ we have
+\begin{equation}\label{lec14:eqn:prev}
+    \big\|\beta^T\odot\beta^T-\beta^\star\odot\beta^\star \big\|_2^2\le O \big( \alpha\sqrt{d}\big).
+\end{equation}
+\end{theorem}
+
+The main intuition for proving Theorem~\ref{lec14:thm:prev} is to establish strong uniform convergence on $S_r = \{\beta : \|\beta\|_0 \leq O(r)\}$, i.e. gradient descent on the population loss $\hatL$ is sufficiently ``similar" to gradient descent on the empirical loss $\empL$.
+
+As a warm-up, we began to prove the following result on convergence for gradient descent on $\popL$:
+\begin{theorem}\label{lec14:thm:warmup}
+    For sufficiently small $\eta$, gradient descent on $L(\beta)$ converges to $\beta^\star$ in $\Theta\Big(\frac{\log (1/ (\epsilon\alpha) )}{\eta}\Big)$ iterations with $\epsilon$-error in $\ell_2$-distance.
+\end{theorem}
+In this lecture, we will wrap up the proof of Theorem~\ref{lec14:thm:warmup} and then prove Theorem~\ref{lec14:thm:prev} in the case of $r = 1$.
+
+\sec{Warm-up: Gradient descent on population loss}
+The analysis of Theorem~\ref{lec14:thm:warmup} can be broken into two cases depending on where coordinate $i$ of $\beta^\star$ is nonzero or not, i.e. $i \in S$ or $i \notin S$. Refer to the previous lecture for the proof in the case of $i \in S$. Here, we will prove the following lemma for $i \notin S$, then explain informally how the lemma implies Theorem~\ref{lec14:thm:warmup}.
+
+\begin{lemma}
+For all $i \notin S$, when $t \leq 1 / (10 \eta \alpha^{2})$ we have that $\beta_{i}^{t} \leq 2\alpha$.
+\end{lemma}
+
+\begin{proof}
+For a coordinate $i\notin S$, the gradient descent update for this problem becomes
+\begin{align}
+    \beta_i^{t+1} &= \left[ \beta^{t} - \eta (\beta^{t} \odot \beta^{t} - \beta^\star \odot \beta^\star) \odot \beta^{t} \right]_i \\
+    &= \beta_i^{t} - \eta (\beta_i^{t} \cdot \beta_i^{t}) \cdot \beta_i^{t} & (\text{since } \beta_{i}^\star = 0 \ \forall i \notin S) \\
+    &= \beta_i^{t} - \eta (\beta_i^{t})^{3}.
+\end{align}
+
+Since our initialization $\beta^{0}$ was small, the update to these coordinates will be even smaller because $(\beta_{i}^{t})^{3}$ is small. We can prove the desired claim using strong induction. Suppose $\beta_{i}^{s} \leq 2\alpha$ for all $s \leq t$ and $i \notin S$, and that $t+1 \leq 1 / (10\eta \alpha^{2})$. Then, for all $s \leq t$,
+\begin{align}
+\beta_{i}^{s+1} %&= \beta^{s}_{i} - \eta (\beta_{i}^{s})^{3} \\
+    &= (1 - \eta (\beta_{i}^{s})^{2})\beta_{i}^{s} \\
+    &\leq (1 + \eta (\beta_{i}^{s})^{2}) \beta_{i}^{s} \\
+    &\leq (1 + 4\eta \alpha^{2}) \beta_{i}^{s}. & (\text{since } \beta_{i}^{s} \leq 2\alpha)
+\end{align}
+
+With strong induction, we can repeatedly apply this gradient update starting from $t=0$ to obtain
+\begin{align}
+    \beta_{i}^{t+1} &\leq \beta_{0} \cdot (1 + 4 \eta \alpha^{2})^t \\
+    &\leq \beta_{0} ( 1 + 4 \eta \alpha^{2})^{\frac{1}{10 \eta \alpha^{2} }} \\
+    &\leq \beta_{0} \exp \bigg(\frac{4\eta \alpha^{2}}{10 \eta \alpha^{2}} \bigg) \\
+    &=  \beta_{0} \cdot e^{2/5} \\
+    &\leq 2 \alpha,
+ \end{align}
+ which completes the inductive proof of the claim.
+
+\end{proof}
+
+Informally, what we observe here is that when $i \notin S$, $\beta_{i}$ stays small and will take many iterations before it even gets to $2\alpha$, which is close to $0$ since $\alpha$ is chosen to be small. Last lecture, we saw that when $i\in S$, $\beta_i$ converges to 1. Putting these two together, we can be sure that gradient descent on $L(\beta)$ converges to $\beta^\star.$
+
+\sec{Main result: Gradient descent on empirical loss}
+
+The main part of this lecture focuses on analyzing gradient descent on the empirical risk $\empL$. Analyzing the empirical risk is more complicated than analyzing the population risk, so we focus on the case when $\beta^\star$ is $1$-sparse, i.e. $r=1$. (When $r>1$, the main idea is the same but requires some more advanced analysis techniques.) We restate the case of $r=1$ in the following theorem.
+ 
+\begin{theorem} \label{lec14:thm:main}
+Suppose $\eta \geq \widetilde{\Omega}(1).$ Then, gradient descent on $\empL$ with $t = \Theta \l(\frac{\alpha \log (1/\delta)}{\eta}\r)$ steps satisfies 
+\begin{equation}
+\Norm{\beta^{t} \odot \beta^{t} - \beta^\star \odot \beta^\star}_{2}^{2} \leq \tilO\l(\frac{1}{\sqrt{n}}\r).
+\end{equation} 
+\end{theorem}
+
+\begin{remark}
+Note that Theorem~\ref{lec14:thm:main} is a slightly weaker version of Theorem~\ref{lec14:thm:prev} for $r=1$, since the bound on the RHS depends on the number of examples and not the initialization $\alpha$. In Theorem~\ref{lec14:thm:prev}, we could take $\alpha$ as small as we like to drive the bound to zero; we cannot do this for Theorem~\ref{lec14:thm:main}.
+\end{remark}
+
+In the proof of this theorem, we will make use of the \textit{restricted isometry property} $(r, \delta)$-RIP (refer to last lecture) as well as the following lemma.
+
+\begin{lemma}\label{lec14:lem:rip}
+    Suppose $x^{(1)}, x^{(2)}, \dots x^{(n)}$ satisfy the $(r, \delta)$-RIP condition. Then, $\forall v, w$ such that $\Norm{v}_{0} \leq r$ and $\Norm{w}_{0} \leq r$, we have that
+    \begin{equation}
+        \left| \frac{1}{n} \sum_{i=1}^{n} \langle x^{(i)}, v \rangle \langle x^{(i)}, w \rangle  - \langle v, w \rangle \right| \leq 4 \delta \Norm{v}_{2} \cdot \Norm{w}_{2}.
+    \end{equation} 
+    
+    Equivalently,
+    \begin{equation}
+        \left|  v^{T} \l(\frac{1}{n} \sum_{i=1}^{n}  x^{(i)} (x^{(i)})^\top \r)  w  - \langle v, w \rangle \right| \leq 4 \delta \Norm{v}_{2} \cdot \Norm{w}_{2}.
+    \end{equation}
+\end{lemma}
+
+\begin{corollary}\label{lec14:cor:rip}
+    Taking $w = e_1, \dots, e_d$ in Lemma~\ref{lec14:lem:rip}, we can conclude that
+    \begin{equation}
+        \Norm{ \frac{1}{n} \sum_{i=1}^n \langle x^{(i)}, v\rangle x^{(i)} - v }_\infty \leq 4\delta \Norm{v}_2.
+    \end{equation}
+    
+    Equivalently,
+    \begin{equation}
+        \Norm{ \l(\frac{1}{n} \sum_{i=1}^n x^{(i)}(x^{(i)})^\top \r)v - v }_\infty \leq 4\delta \Norm{v}_2.
+    \end{equation}
+\end{corollary}
+
+Specifically, in the Gaussian case when $x^{(1)} \ldots x^{(n)} \iid \mathcal{N}(0, I_{d\times d})$ and when $n\geq \widetilde{\Omega}(r/\delta^2)$, with high probability the data satisfy the $(r, \delta)$-RIP condition. It follows that when $r=1$ and $\delta = \tilO(1/\sqrt{n})$, the data are $(1, \delta)$-RIP. With this, we proceed to prove Theorem~\ref{lec14:thm:main} over the next few subsections.
+
+\subsec{Computing the gradient update $\nabla \empL$}
+
+WLOG, assume that $\beta^\star = e_{1}.$ We can decompose the gradient descent iterate $\beta^{t}$ as
+\begin{equation}
+    \beta^{t} = r_{t} \cdot e_{1} + \zeta_{t},
+\end{equation}
+where $\zeta_t \perp e_1$. The idea is to prove convergence to $\beta^\star$ by showing that (i) $r_{t} \rightarrow 1$ as $t \rightarrow \infty$, and (ii) $\norm{\zeta_{t}}_{\infty} \leq O(\alpha)$ for $t \leq \tilO\big(1/\eta).$ In other words, the \textit{signal} $r_{t}$ converges quickly to $1$ while the \textit{noise} $\zeta_t$ remains small for some number of initial iterations. One may be concerned that it is possible for the noise to amplify after many iterations, but we will not have to worry about this scenario if we can guarantee that $\beta^{t}$ converges to $\beta^\star$ first.
+
+We can compute the gradient of $\empLt$ as follows. Since $y\sp{i} = \langle \beta^\star \odot \beta^\star, x\sp{i} \rangle$ and $\beta^{t} = r_{t}e_{1} + \zeta_{t} = r_{t}\beta^\star + \zeta_{t}$,
+\begin{align}
+    \nabla \empLt &= \frac{1}{n} \sum_{i=1}^{n} (\langle \beta^{t} \odot \beta^{t}, x\sp{i} \rangle - y\sp{i} ) x\sp{i} \odot \beta^{t} \\
+    &= \frac{1}{n} \sum_{i=1}^{n} ( \langle \beta^{t} \odot \beta^{t} - \beta^\star \odot \beta^\star, x\sp{i} \rangle ) x\sp{i} \odot \beta^{t} \\
+    &= \frac{1}{n} \sum_{i=1}^{n} \langle r_{t}^{2} \beta^\star \odot \beta^\star + \zeta_{t} \odot \zeta_{t} - \beta^\star \odot \beta^\star, x\sp{i}  \rangle x\sp{i} \odot \beta^{t} \\
+    &= \underbrace{\frac{1}{n} \sum_{i=1}^{n} \Big\langle \big(r_{t}^{2} - 1\big) \beta^\star \odot \beta^\star + \zeta_{t} \odot \zeta_{t}, x\sp{i}  \Big\rangle x\sp{i}}_{m_t} \odot \beta^{t}.
+\end{align}
+
+To simplify the analysis, we can rearrange some of the terms that are part of the gradient. Define $m_{t} $ such that $\nabla \empLt = m_{t} \odot \beta^{t}.$ Also, let $X = \frac{1}{n} \sum_{i=1}^{n} x\sp{i}(x\sp{i})^\top.$ Then,
+\begin{align}
+    m_{t} &= \frac{1}{n} \sum_{i=1}^{n} \Big\langle \big(r_{t}^{2} - 1\big) \beta^\star \odot \beta^\star + \zeta_{t} \odot \zeta_{t}, \ x\sp{i}  \Big\rangle \ x\sp{i} \\
+    &= \l( \frac{1}{n} \sum_{i=1}^{n} x\sp{i}\big(x\sp{i}\big)^\top \r) \l(r_{t}^{2} - 1\r) \cdot \l(\beta^\star \odot \beta^\star\r) + \l( \frac{1}{n} \sum_{i=1}^{n} x\sp{i}(x\sp{i})^\top \r) \l(\zeta_{t} \odot \zeta_{t}\r) \\
+    &= \underbrace{X \big(r_{t}^{2} - 1\big) \cdot \big(\beta^\star \odot \beta^\star\big)}_{\text{part of } u_t} + \underbrace{X \big(\zeta_{t} \odot \zeta_{t}\big)}_{v_t}.
+\end{align}
+
+Now, define $u_{t} := (r_{t}^{2} - 1) (\beta^\star \odot \beta^\star) - X (r_{t}^{2} - 1) (\beta_{*} \odot \beta_{*})$ and $v_{t} := X \big(\beta_{t} \odot \beta_{t}\big)$. Then we can rewrite the gradient as
+
+\begin{equation}
+    \nabla \empLt = m_{t} \odot \beta^{t} = [(r_{t}^{2} -1) \beta^\star \odot \beta^\star - u_{t} + v_{t}] \odot \beta_{t}. \label{lec14:eqn:emp-gradient}
+\end{equation}
+
+Our goal is to show that both $u_t$ and $v_t$ are small, so that $\nabla \empLt$ is close to its population version $\nabla L(\beta^t)$. Observe that $X$ appears in both $u_{t}$ and $v_{t}$. This matrix is challenging to deal with mathematically because it does not have full rank (because $n < d$). Instead, we rely on the RIP condition to reason about the behavior of $X$: the idea is that $X$ behaves like the identity for sparse vector multiplication. Applying Corollary~\ref{lec14:cor:rip}, we can bound $\Norm{u_{t}}_{\infty}$ as
+\begin{equation} \label{lec14:eqn:u-inf-norm}
+    \Norm{u_{t}}_{\infty} \leq 4\delta \Norm{(r_t^2 - 1)  \beta^\star \odot \beta^\star }_{2} 
+    \leq 4\delta ||\beta^\star \odot \beta^\star||_{2} \leq 4\delta.
+\end{equation}
+
+(In the second inequality, we assume that $|r_t| < 1$. We can do this because $r_t$ starts out at $\alpha$ which is small; if $r_t \geq 1$, then we are already in the regime where gradient descent has converged.) We can bound $\Norm{v_{t}}_{\infty}$ in a similar manner: since Corollary~\ref{lec14:cor:rip} implies $\Norm{v_t - \zeta_t \odot \zeta_t}_\infty \leq 4\delta \Norm{\zeta_{t} \odot \zeta_{t}}_{2}$,
+\begin{align}
+    \Norm{v_{t}}_{\infty} &\leq \Norm{\zeta_{t} \odot \zeta_{t}}_{\infty} + 4\delta \Norm{\zeta_{t} \odot \zeta_{t}}_{2} &(\text{by the triangle inequality}) \\
+    &\leq \Norm{\zeta_{t}}_{\infty}^{2} + 4\delta \Norm{\zeta_{t} \odot \zeta_{t}}_{1} &(\text{since } \zeta_t \text{ very small}) \\
+    &= \Norm{\zeta_{t}}_{\infty}^{2} + 4\delta \Norm{\zeta_{t}}_{2}^{2}. \label{lec14:eqn:v-inf-norm}
+\end{align}
+
+Note that the size of $v_t$ depends on the size of the noise $\zeta_t$. Thus, by bounding $\zeta_t$ (e.g. with a small initialization), we can ensure that $v_t$ is also small. (Ensuring bounds on $u_t$ is more difficult because it depends only on $\delta$.) In the next subsection, we analyze the growth of $\zeta_t$ and $r_t$.
+
+\subsec{Dynamics analysis of $\zeta_t$}
+
+First, we analyze the dynamics of the noise $\zeta_t$, which we want to ensure does not grow too fast.
+
+\begin{lemma} \label{lec14:lem:dynamics_noise}
+    For all $t\leq 1 / (c\eta\delta)$ with sufficiently large constant $c$, we have
+    \begin{equation} \label{lec14:eqn:dynamics_noise}
+        \Norm{\zeta_t}_\infty \leq 2\alpha, \quad \quad \Norm{\zeta_t}_2^2 \leq \frac{1}{2}, \quad \quad \text{and} \quad \Norm{\zeta_{t+1}}_\infty \leq \big(1 + O(\eta\delta)\big) \Norm{\zeta_t}_\infty.
+    \end{equation}
+\end{lemma}
+Note that this result is weaker than what we were able to show for the population gradient (exponential growth with a small fixed rate), but we will ultimately show that the growth of the signal will be even faster.
+
+\begin{proof}
+Recall that the empirical gradient \eqref{lec14:eqn:emp-gradient} is $\nabla \hat{L}(\beta) = \big[(r_{t}^{2} - 1) \beta^\star \odot \beta^\star - u_{t} + v_{t} \big] \odot \beta^{t}$. Hence, the gradient update to $\beta^{t}$ is
+
+\begin{align}
+\beta^{t+1} &= \beta^{t} - \eta \l[\l(r_{t}^{2} - 1\r) \beta^\star \odot \beta^\star - u_{t} + v_{t} \r] \odot \beta^{t} \\
+&= \underbrace{\beta^{t} - \eta \l(r_{t}^{2} - 1\r) \beta^\star  \odot \beta^\star \odot \beta^{t}}_{\text{GD update for population loss}} - \eta \l(- u_{t} + v_{t}\r) \odot \beta^{t}. \label{lec14:eqn:gd-update}
+\end{align}
+    
+Recall that $\zeta_{t+1}$ is simply $\beta^{t+1}$ except for the first coordinate (where it has a zero instead of $r_{t+1}$), i.e. $\zeta_{t+1}$ is the projection of $\beta^{t+1}$ onto the subspace orthogonal to $e_1$. Hence,
+\begin{align}
+\zeta_{t+1} &= \l(I - e_{1} e_{1}^\top\r) \beta^{t+1} \\
+&= \l(I - e_{1} e_{1}^\top\r) \cdot \beta^{t} - \eta \l(I - e_{1} e_{1}^\top\r) (v_{t} - u_{t}) \odot \beta^{t} &\text{(by \eqref{lec14:eqn:gd-update}, second term = 0)} \\
+&= \zeta_{t} - \eta \l[\l(I - e_{1}e_{1}^{T}\r) (v_{t} - u_{t}) \odot \l(I - e_{1}e_{1}^{T}\r) \beta^{t}\r] &(\text{by distribution law for $\odot$}) \\
+&= \zeta_t - \eta \underbrace{\l[ \l(I - e_{1}e_{1}^{T}\r) \l(v_t - u_t\r)\r]}_{\rho_t} \odot \zeta_t.
+\end{align}
+    
+If we define $\rho_t$ such that $\zeta_{t+1} = \zeta_t - \eta \rho_t \odot \zeta_t$, then the growth of $\zeta_t$ is dictated by the size of $\rho_t$. We can bound this as
+\begin{equation}
+\Norm{\zeta_{t+1}}_{\infty} \leq (1 + \eta \Norm{\rho_{t}}_{\infty}) \Norm{\zeta_{t}}_{\infty}. \label{lec14:eqn:zeta-growth-bd}
+\end{equation}
+
+Now, we will prove the lemma by using strong induction on $t$. Suppose that the first two pieces of \eqref{lec14:eqn:dynamics_noise} hold for all iterations up to $t$. We can show that
+\begin{align}
+\Norm{\rho_{t}}_{\infty} &\leq \Norm{u_{t}}_{\infty} + \Norm{v_{t}}_{\infty}  \\
+&\leq 4\delta + \Norm{\zeta_t}_{\infty}^{2} + 4\delta \Norm{\zeta_t}_{2}^{2} &(\text{by \eqref{lec14:eqn:u-inf-norm} and \eqref{lec14:eqn:v-inf-norm}}) \\
+&\leq  4\delta + (2\alpha)^2 + 4\delta \cdot \frac{1}{2} &(\text{by the inductive hypothesis})\\
+\label{lec14:eqn:diff-inf-norm}
+&\leq 8\delta,
+\end{align}
+where the last step holds because we can take $\alpha$ to be arbitrarily small (e.g. $\alpha \leq \text{poly}(1/n) \leq O(\delta)$). Plugging this into \eqref{lec14:eqn:zeta-growth-bd}, we have
+\begin{equation}
+\Norm{\zeta_{t+1}}_\infty \leq (1 + 8\eta \delta) \Norm{\zeta_t}_{\infty} = \big(1 + O(\eta\delta)\big) \Norm{\zeta_t}_\infty,
+\end{equation}
+which proves the third piece of the lemma. Using this piece, we can show that
+\begin{equation}
+\Norm{\zeta_{t+1}}_{\infty} \leq \l(1 + 8 \eta \delta\r)^{t+1} \Norm{\zeta_{0}}_{\infty} \leq \big(1 + 8\eta \delta\big) ^{1/(c\eta \delta)} \cdot \alpha  \leq 2\alpha
+\end{equation}
+for a sufficiently large constant $c$, which proves the second piece. Finally, we show that
+\begin{equation}
+\Norm{\zeta_{t+1}}_{2}^2 \leq \big(1 + 8\eta \delta\big)^{t+1}\Norm{\zeta_{0}}_{2}^2 \leq \big(1 + 8\eta \delta)^{1/(c\eta \delta)} \cdot \alpha \sqrt{d} \leq \frac{1}{2},
+\end{equation}
+if $\alpha \leq \frac{1}{n^{O(1)}}$, which proves the first piece.
+
+\end{proof}
+
+\subsec{Dynamics analysis of $r_t$}
+
+Next, we analyze the dynamics of the signal $r_t$, which we want to show converges to 1.
+
+\begin{lemma} \label{lec14:lem:dynamics_signal}
+    For all $t\leq 1 / (c\eta\delta)$ with sufficiently large constant $c$, we have that
+    \[ r_{t+1} = \big(1 + \eta\big( 1 - r_t^2 \big) \big) r_t + O\big(\eta\delta\big) r_t. \]
+\end{lemma}
+Note that the first term on the RHS is $r_{t+1}$ during gradient descent on the population loss, and the second term captures the error.
+
+\begin{proof}
+    Recall that the gradient descent update from the empirical gradient~\eqref{lec14:eqn:emp-gradient} is
+    \begin{equation}
+        \beta^{t+1} = \beta^t - \eta \big[\big(r_{t}^{2} -1\big) \beta^\star \odot \beta^\star - u_{t} + v_{t}\big] \odot \beta_{t}.
+    \end{equation} 
+    We have that
+    \begin{align}
+        r_{t+1} &= \big\langle \beta^{t+1}, e_1\big\rangle \\
+        &= \big\langle \beta^t, e_1\big\rangle - \eta \big(r_{t}^{2} -1\big)\big\langle \beta^t, e_1\big\rangle - \eta \big\langle v_t-u_t, e_1\big\rangle \big\langle \beta^t, e_1 \big\rangle \\
+        &= r_t - \eta \big(r_{t}^{2} -1\big) r_t - \eta \big\langle v_t-u_t, e_1\big\rangle r_t \\
+        &= \Big(1 + \eta\big( 1 - r_t^2 \big) \Big) r_t + \eta \big\langle u_t-v_t, e_1\big\rangle r_t
+    \end{align}
+    so all we need to do is bound the second term as follows:
+    \begin{align}
+        |\eta \langle v_t - u_t, e_1\rangle r_t| &\leq \eta \cdot r_t \Norm{v_t-u_t}_\infty \\
+        &\leq \eta \cdot r_t \cdot 8\delta &(\text{by \eqref{lec14:eqn:diff-inf-norm}}) \\
+        &= O(\eta\delta) \cdot r_t.
+    \end{align}
+\end{proof}
+
+\subsec{Putting it all together}
+Finally, we return to the proof of Theorem~\ref{lec14:thm:main}. By Lemma~\ref{lec14:lem:dynamics_signal}, we know that as long as $r_t \leq 1/2$ it will grow exponentially fast, since
+\begin{equation}
+    r_{t+1} \geq \Big(1 + \eta\big(1-r_t^2\big) - O(\eta\delta) \Big) \cdot r_t \geq \bigg(1 + \frac{\eta}{2}\bigg)\cdot r_t.
+\end{equation} 
+This implies that at some $t_0 = O\Big(\frac{\log (1/\alpha)}{\eta}\Big)$, we'll observe $r_{t_0} > 1/2$ for the first time. Consider what happens after this point.
+
+\begin{itemize}
+    \item When $1/2 < r_t \leq 1$, we have that
+    \begin{align}
+        1 - r_{t+1} &\leq 1 - r_t - \eta \big(1 - r_t^2\big) r_t + O(\eta\delta) \cdot r_t \\
+        &\leq 1 - r_t - \frac{\eta \big(1 - r_t^2\big)}{2} + O(\eta\delta) \\
+        &\leq 1 - r_t - \frac{\eta \big(1 - r_t\big)}{2} + O(\eta\delta) \\
+        &= \bigg(1 - \frac{\eta}{2}\bigg) (1 - r_t) + O(\eta\delta).
+    \end{align}
+    Thus, we can achieve $1 - r_{t+1} \leq 2 \cdot \frac{O(n\delta)}{\eta/2} = O(\delta)$ in $\Theta\Big(\frac{\log(1/\delta)}{\eta}\Big)$ iterations.
+    
+    \item When $r_t > 1$, we can show in a similar manner that
+    \begin{equation}
+        r_{t+1} - 1 \leq (1 - \eta) (r_t - 1) + O(\eta\delta) \leq O(\delta),
+    \end{equation} 
+    implying that $r_t$ remains very close to 1 after the same order of iterations.
+\end{itemize}
+
+This completes the proof of Theorem~\ref{lec14:thm:main}, bounding the number of iterations needed for gradient descent on the empirical loss to converge to $\beta^*$.
+\qed 
