@@ -83,26 +83,19 @@ In the proof of this theorem, we will make use of the \textit{restricted isometr
 
 \begin{lemma}\label{lec14:lem:rip}
     Suppose $x^{(1)}, x^{(2)}, \dots x^{(n)}$ satisfy the $(r, \delta)$-RIP condition. Then, $\forall v, w$ such that $\Norm{v}_{0} \leq r$ and $\Norm{w}_{0} \leq r$, we have that
-    \begin{equation}
-        \left| \frac{1}{n} \sum_{i=1}^{n} \langle x^{(i)}, v \rangle \langle x^{(i)}, w \rangle  - \langle v, w \rangle \right| \leq 4 \delta \Norm{v}_{2} \cdot \Norm{w}_{2}.
-    \end{equation} 
-    
-    Equivalently,
-    \begin{equation}
-        \left|  v^{T} \l(\frac{1}{n} \sum_{i=1}^{n}  x^{(i)} (x^{(i)})^\top \r)  w  - \langle v, w \rangle \right| \leq 4 \delta \Norm{v}_{2} \cdot \Norm{w}_{2}.
-    \end{equation}
+    \begin{align}
+        \left| \frac{1}{n} \sum_{i=1}^{n} \langle x^{(i)}, v \rangle \langle x^{(i)}, w \rangle  - \langle v, w \rangle \right| &= \left|  v^{T} \l(\frac{1}{n} \sum_{i=1}^{n}  x^{(i)} (x^{(i)})^\top \r)  w  - \langle v, w \rangle \right| \\
+        &\leq 4 \delta \Norm{v}_{2} \cdot \Norm{w}_{2}.
+    \end{align} 
 \end{lemma}
 
+\tnotelong{To add proof of this lemma in the future.}
 \begin{corollary}\label{lec14:cor:rip}
     Taking $w = e_1, \dots, e_d$ in Lemma~\ref{lec14:lem:rip}, we can conclude that
-    \begin{equation}
-        \Norm{ \frac{1}{n} \sum_{i=1}^n \langle x^{(i)}, v\rangle x^{(i)} - v }_\infty \leq 4\delta \Norm{v}_2.
-    \end{equation}
-    
-    Equivalently,
-    \begin{equation}
-        \Norm{ \l(\frac{1}{n} \sum_{i=1}^n x^{(i)}(x^{(i)})^\top \r)v - v }_\infty \leq 4\delta \Norm{v}_2.
-    \end{equation}
+    \begin{align}
+        \Norm{ \frac{1}{n} \sum_{i=1}^n \langle x^{(i)}, v\rangle x^{(i)} - v }_\infty &= \Norm{ \l(\frac{1}{n} \sum_{i=1}^n x^{(i)}(x^{(i)})^\top \r)v - v }_\infty \\
+        &\leq 4\delta \Norm{v}_2.
+    \end{align}
 \end{corollary}
 
 Specifically, in the Gaussian case when $x^{(1)} \ldots x^{(n)} \iid \mathcal{N}(0, I_{d\times d})$ and when $n\geq \widetilde{\Omega}(r/\delta^2)$, with high probability the data satisfy the $(r, \delta)$-RIP condition. It follows that when $r=1$ and $\delta = \tilO(1/\sqrt{n})$, the data are $(1, \delta)$-RIP. With this, we proceed to prove Theorem~\ref{lec14:thm:main} over the next few subsections.
