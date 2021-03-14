@@ -13,13 +13,13 @@ As discussed previously, the NTK framework does not fully explain the empirical 
 The focus of today's lecture will be to illustrate algorithmic regularization in simple settings. In particular, we first show that gradient descent (with the right initialization) identifies the minimum norm interpolating solution in overparametrized linear regression. Next, we show that for a certain non-convex reparametrization of the linear regression task where the data is generated from a sparse ground-truth model, gradient descent (again, suitably initialized) approximately recovers a sparse solution with good generalization.
 
 \sec{Algorithmic regularization in overparametrized linear regression}\label{lec13:sec:olr}
-We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). Let $X:= \l[x\sp{1},...,x\sp{n} \r]^T \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^T \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
+We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). Let $X:= \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
 
 \subsec{Analysis of algorithmic regularization}
 As we are in the overparametrized setting with $n < d$ and $X$ full rank, there exist infinitely many global minimizers that interpolate the data and hence achieve zero loss. In fact, the following lemma shows that the set of global minimizers forms a subspace.
 
 \begin{lemma}\label{lec13:lem:soln-subspace}
-Let $X^\dagger$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^T$ is invertible and so we have $X^\dagger = X^T (X X^T)^{-1}$. Note that $X X^\dagger X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^\dagger y + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
+Let $X^\dagger$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^\top$ is invertible and so we have $X^\dagger = X^\top (X X^\top)^{-1}$. Note that $X X^\dagger X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^\dagger y + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
 \end{lemma}
 
 \begin{proof}
@@ -41,9 +41,9 @@ $\beta^\star = X^\dagger y$.
 Take any $\beta$ such that $\hatL(\beta) = 0$, and write $\beta = X^\dagger y + \zeta$. Then from the definition of $X^\dagger$ and the fact that $X \zeta = 0$ (see the proof of Lemma~\ref{lec13:lem:soln-subspace}), we have 
 \begin{align}
     ||\beta||_2^2 &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\dagger y, \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle X^T(X X^T)^{-1} y, \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^T)^{-1} y, X \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 &(\because X\zeta = 0) \\
+    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\top(X X^\top)^{-1} y, \zeta \rangle \\
+    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^\top)^{-1} y, X \zeta \rangle \\
+    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 &\text{(because $X\zeta = 0$)} \\
     &\geq ||X^\dagger y||_2^2,
 \end{align}
 with equality if and only if $\zeta = 0$.
@@ -51,13 +51,23 @@ with equality if and only if $\zeta = 0$.
 \end{proof}
 
 Now, suppose we learn $\beta$ using gradient descent with initialization $\beta^0$, where at iteration $t$ we set $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$ for some learning rate $\eta$. Since $\hatL (\beta)$ is convex, we know from standard results in convex optimization that gradient descent will converge to a global minimizer for a suitably chosen learning rate $\eta$ (in particular, taking $\eta$ to be sufficiently small). Assuming $\beta^0 = 0$, we will in fact recover the minimum norm interpolating solution.
-\begin{theorem}
-Suppose gradient descent on $\hatL(\beta)$ with initialization $\beta^0 = 0$ converges to a solution $\hat \beta$ such that $L(\hat \beta) = 0$. Then $\hat \beta = \beta^\star$.
+\begin{theorem}\label{lec13:thm:linear-main}
+Suppose gradient descent on $\hatL(\beta)$ with initialization $\beta^0 = 0$ converges to a solution $\hat \beta$ such that $\hatL(\hat \beta) = 0$. Then $\hat \beta = \beta^\star$.
 \end{theorem}
-\begin{proof}
-We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ for all $t$. Note that $\beta^0 = 0 \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Now suppose $\beta^{t-1} \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Recall that $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$. Since left-multiplying any vector by $X^T$ amounts to taking a linear combination of the rows of $X$, it follows that $\eta \nabla \hatL(\beta^{t-1}) = \eta X^T(X\beta^{t-1} - y) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$, and so $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. This proves the induction step.
 
-Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^T v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^T v - y$. This implies $v = (X X^T)^{-1}y$, and so $\hat \beta = X^T v = X^T (X X^T)^{-1} y = X^\dagger y = \hat \beta^\star$.
+The main idea of the proof is that the iterates of gradient descent always lie in the span of the $x\sp{i}$'s (see Figure \ref{lec13:fig:1} for an illustration).
+
+\begin{figure}
+\centering
+\includegraphics[width=.35\linewidth]{figures/subspace-global-min.png}
+\caption{Visualization of proof intuition for Theorem~\ref{lec13:thm:linear-main}. The solution $\beta^\star$ is the projection of the origin onto the subspace of global minima.}
+\label{lec13:fig:1}
+\end{figure}
+
+\begin{proof}
+We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ for all $t$. Note that $\beta^0 = 0 \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Now suppose $\beta^{t-1} \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Recall that $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$. Since left-multiplying any vector by $X^\top$ amounts to taking a linear combination of the rows of $X$, it follows that $\eta \nabla \hatL(\beta^{t-1}) = \eta X^\top(X\beta^{t-1} - y) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$, and so $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. This proves the induction step.
+
+Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^\dagger y = \hat \beta^\star$.
 \end{proof}
 
 \sec{Algorithmic regularization in non-linear models}
@@ -118,7 +128,7 @@ $\beta^\star$ is the min-norm solution in this case. That is,
 \end{remark}
 
 \begin{remark}    
-In this non-linear case and the linear case before, gradient descent with small initialization converges to minimum $\ell_2$-norm solution. Similarly, gradient descent with any initialization converges to the solution nearest to the initialization (for example, in the NTK analysis). However, we do not have a general theorem for this phenomenon. 
+In this non-linear case and the linear case before, gradient descent with small initialization converges to minimum $\ell_2$-norm solution. Similarly, in the NTK regime, gradient descent converges to a solution that is very close to the initialization. Therefore, it seems conceivable that GD generally prefers global minima nearest to the initialization. However, we do not have a general theorem for this phenomenon (and the instructor also believes that this is not universally true without other conditions). 
 \end{remark}
 
 \subsec{Analysis of algorithmic regularization}
@@ -133,7 +143,7 @@ We start by showing several basic properties about $\hatL(\beta)$. Note that for
 It follows that 
 \begin{align}
     L(\beta)&=\frac{1}{4}\E_{x\sim \cN(0,I)} \l[(y-\langle \beta\odot\beta,x\rangle^2 \r] \\
-    &=\frac{1}{4}\E_{x\sim \cN(0,I)} \l[\langle \beta^\star\odot\beta^\star-\beta\odot\beta,x\rangle^2 \r] &\text{(by dfn of $y$)} \\
+    &=\frac{1}{4}\E_{x\sim \cN(0,I)} \l[\langle \beta^\star\odot\beta^\star-\beta\odot\beta,x\rangle^2 \r] &\text{(by definition of $y$)} \\
     &=\frac{1}{4} \l\| \beta^\star\odot\beta^\star-\beta\odot\beta \r\|_2^2.\label{lec13:eqn:loss-form} &\text{(by \eqref{lec13:eqn:gaussian-product})}
 \end{align}
 Note that \eqref{lec13:eqn:loss-form} is the metric that we use to characterize how close $\beta$ is to the ground-truch parameter $\beta^\star$ (see \eqref{lec13:eqn:non-linear-main}).
@@ -147,7 +157,7 @@ Assume $n\ge \widetilde\Omega(r^2)$. With high probability over the randomness i
 \end{equation}
 \end{lemma}
 
-Lemma~\ref{lec13:lem:RIP} is a special case of Lemma 2.2 in \cite{li2018algorithmic} so the proof is omitted here. We say the set $\l\{ x^{(1)},\cdots,x^{(n)} \r\}$ (or $X=[x^{(1)},\cdots,x^{(n)}]$) satisfies $(r,\delta)$\textit{-RIP condition} (\textit{restricted isometric property}) if Lemma~\ref{lec13:lem:RIP} holds.
+Lemma~\ref{lec13:lem:RIP} is a special case of Lemma 2.2 in \cite{li2018algorithmic} so the proof is omitted here. We say the set $\l\{ x^{(1)},\cdots,x^{(n)} \r\}$ (or $X=[x^{(1)},\cdots,x^{(n)}]$) satisfies $(r,\delta)$\textit{-RIP condition} (\textit{restricted isometric property}) if \eqref{lec13:eqn:RIP} holds.
 
 By algebraic manipulation, \eqref{lec13:eqn:RIP} is equivalent to 
 \begin{align}\label{lec13:eqn:RIP-2}
@@ -157,14 +167,21 @@ In other words, from the point of view of a sparse vector $v$ we have $\sum_{i=1
 
 As a result, with the RIP condition we have $\hatL(\beta)\approx L(\beta)$ if $\beta$ is sparse. With more tools we can also get $\nabla \hatL(\beta)\approx \nabla L(\beta)$. Let us define the set $S_r=\{\beta:\|\beta\|_0\le O(r)\}$, the set where we have uniform convergence of $\hatL$ and $\nabla \hatL$. (Note, on the other hand, that there exists a dense $\beta\not\in S_r$ such that $\hatL(\beta)=0$ but $L(\beta)\gg 0.$)
 
-The main intuition for proving Theorem~\ref{lec13:thm:non-linear-main} is to leverage the uniform convergence when $\beta$ belongs to the set $S_r.$ Note that the initialization $\beta^0$ is not exactly $r$-sparse, but taking $\alpha$ to be sufficiently small, $\beta^0$ is approximately $0$-sparse. The proof is decomposed into the following steps:
+The main intuition for proving Theorem~\ref{lec13:thm:non-linear-main} is to leverage the uniform convergence when $\beta$ belongs to the set $S_r$ (see Figure~\ref{lec13:fig:uc-sr}). Note that the initialization $\beta^0$ is not exactly $r$-sparse, but taking $\alpha$ to be sufficiently small, $\beta^0$ is approximately $0$-sparse. The proof is decomposed into the following steps:
 
 \begin{enumerate}
-    \item Gradient descent on $L(\beta)$ converge to $\beta^\star$ without leaving $S_r$, and
+    \item Gradient descent on $L(\beta)$ converges to $\beta^\star$ without leaving $S_r$, and
     \item Gradient descent on $\hatL(\beta)$ is similar to gradient descent on $L(\beta)$ inside $S_r$.
 \end{enumerate}
 
 Combining the two steps we can show that gradient descent on $\hatL(\beta)$ does not leave $S_r$ and converges to $\beta^\star.$
+
+\begin{figure}
+\centering
+\includegraphics[width=.7\linewidth]{figures/uc-sr.png}
+\caption{Visualization of proof intuition for Theorem~\ref{lec13:thm:non-linear-main}.}
+\label{lec13:fig:uc-sr}
+\end{figure}
 
 As a warm up, in the following we prove the following theorem for gradient descent on $L(\beta).$
 \begin{theorem}
@@ -204,9 +221,9 @@ Consequently, $\beta_i^{t+1}$ grow exponentially, and it takes $\Theta\left(\dfr
 \begin{align}
 1-\beta_i^{t+1}&=1-\beta_i^t+\eta \l[ \l(\beta_i^t \r)^2-1 \r] \beta_i^t\\
 &=1-\beta_i^{t}-\eta \l( 1-\beta_i^t \r) \l(1+\beta_i^t \r)\beta_i^t\\
-&\le 1-\beta_i^t-\eta \l( 1-\beta_i^t \r)\beta_i^t &(\because 1+\beta_i^t\ge 1) \\
+&\le 1-\beta_i^t-\eta \l( 1-\beta_i^t \r)\beta_i^t &\text{(because $1+\beta_i^t\ge 1$)} \\
 &= \l(1-\beta_i^t \r) \l( 1-\eta \beta_i^t \r) \\
-&\le \l( 1-\beta_i^t \r) \l(1-\eta/2 \r). &(\because \beta_i^t\ge 1/2)
+&\le \l( 1-\beta_i^t \r) \l(1-\eta/2 \r). &\text{(because $\beta_i^t\ge 1/2$)}
 \end{align}
 
 Therefore it takes $\Theta\left(\dfrac{\log (1/\epsilon)}{\eta}\right)$ iterations to achieve $1-\beta_i^t\le \epsilon.$
