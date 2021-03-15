@@ -24,7 +24,7 @@ Online learning has several distinctive features \cite{percynotes}:
 \item The feedback is \textit{limited}. For example, in bandit problems, the algorithm only knows if its right or wrong, but no other feedback is given. 
 \end{enumerate}
 
-\subsec{Set-up}
+\subsec{Setup}
 
 Online learning can be viewed as a game between two parties: (i) the learner/agent/algorithm/player, and (ii) the environment/nature. For simplicity, we will refer to the two parties as ``learner'' and ``environment'' in the remainder of this lecture.
 
@@ -47,22 +47,20 @@ The game takes place over $T$ rounds or time steps. At each step $t = 1, \dots, 
     \label{lec15:fig:OLgame}
 \end{figure}
 
-Note that in online learning, it is possible that the ``true label'' $y_t$ is not generated at the same time as $x_t$. The environment could generate the label $y_t$ depending on the prediction $\hat{y}_t$ made by the learner. Later, we will see that the manner that nature generates  $(x_t, y_t)$ leads to different types of online learning. We can also see that Algorithm \ref{lec15:alg:gen-ol} is a very general framework as there are very few constraints on how $x_t$ and $y_t$ are generated.
+Later, we will see that the manner in which nature generates  $(x_t, y_t)$ leads to different types of online learning. In the most adversarial setting of online learning, it is possible that the ``true label'' $y_t$ is not generated at the same time as $x_t$. The environment could generate the label $y_t$ depending on the prediction $\hat{y}_t$ made by the learner.  We can also see that Algorithm \ref{lec15:alg:gen-ol} is a very general framework as there are very few constraints on how $x_t$ and $y_t$ are generated.
     
 \subsec{Evaluation of the learner}
-Given this set-up, a natural question to ask is how one can evaluate the performance of the learner. Intuitively, one could simply evaluate the learner's performance by computing the loss between the predicted label and the ``true'' label sent by the environment $\ell(y_t, \hat{y}_t)$. For the entire sequence of tasks, one can then evaluate in terms of the cumulative loss:
+Given this setup, a natural question to ask is how one can evaluate the performance of the learner. Intuitively, one could simply evaluate the learner's performance by computing the loss between the predicted label and the ``true'' label sent by the environment $\ell(y_t, \hat{y}_t)$. For the entire sequence of tasks, one can then evaluate in terms of the cumulative loss:
     \begin{align}
         \sum_{t=1}^T \ell(y_t, \yhat_t).
     \end{align}
     
-However, as the environment can be adversarial, the task itself might be inherently hard and even the best possible learner fails to achieve a small loss. For example, in a zero-one loss setting, the environment can always choose to select $y_t \neq \yhat$ for \textit{any} learner!
-
-Hence, instead instead of using the cumulative loss for a learner by itself, we compare its performance against a suitable baseline, the ``best model in hindsight''. Assume that our learner comes from a set of hypotheses $\mathcal{H}$. Let us choose the hypothesis $h \in \mathcal{H}$ that minimizes the cumulative loss, i.e.
+However, as the environment can be adversarial, the task itself might be inherently hard and even the best possible learner fails to achieve a small loss. Hence, instead instead of using the cumulative loss for a learner by itself, we compare its performance against a suitable baseline, the ``best model in hindsight''. Assume that our learner comes from a set of hypotheses $\mathcal{H}$. Let us choose the hypothesis $h \in \mathcal{H}$ that minimizes the cumulative loss, i.e.
 \begin{equation}
-    h^* = \argmin_{h \in \mathcal{H}} \sum_{t=1}^T \ell(y_t, h(x_t)).
+    h^\star = \argmin_{h \in \mathcal{H}} \sum_{t=1}^T \ell(y_t, h(x_t)).
 \end{equation}
 
-Note here that in minimizing the cumulative loss, the learner gets to see all the data points $(x_t, y_t)$ at once. The cumulative loss of $h^*$ is the best we can ever hope to do, and so it would be better to compare the cumulative loss of the learner against it. (This approach is analogous to ``excess risk'', which tells how far the current model is away from the best we could hope for.) This measurement is denoted as \emph{regret}, and is formally defined as:
+Note here that in minimizing the cumulative loss, the learner gets to see all the data points $(x_t, y_t)$ at once. The cumulative loss of $h^\star$ is the best we can ever hope to do, and so it would be better to compare the cumulative loss of the learner against it. (This approach is analogous to ``excess risk'', which tells how far the current model is away from the best we could hope for.) This measurement is denoted as \emph{regret}, and is formally defined as:
     \begin{align}
         \text{Regret} \overset{\Delta}{=} 
         \left[\sum_{t=1}^T \ell(y_t, \yhat_t)\right]
@@ -83,7 +81,7 @@ An online learning problem is \textit{realizable} (for a family of predictors $\
 Note that even though zero error is possible, this is still an interesting problem to consider because the $x_t$'s are not i.i.d. as they are in classical supervised learning. Hence, standard statistical learning theory does not apply, and there is still research to be done here.
 
 \begin{example}
-Consider a classification problem on $(x_t, y_t)$, and for simplicity assume $y_t \in \{0, 1\}$. Suppose there exists $h^* \in \mathcal{H}$ such that we always have $y_t = \yhat^*_t = h^*(x_t)$. In this case, the problem is realizable. 
+Consider a classification problem on $(x_t, y_t)$, and for simplicity assume $y_t \in \{0, 1\}$. Suppose there exists $h^\star \in \mathcal{H}$ such that we always have $y_t = \yhat^\star_t = h^\star(x_t)$. In this case, the problem is realizable. 
     
 In this case, the learner can adopt a ``majority algorithm''. At each time, the learner maintains a set $V_t \subset \mathcal{H}$ so that $\sum_{t=1}^T \ell (y_t, h(x_t)) = 0$ for all $h \in V_t$, and $\hat{y}_t$ is simply the prediction made by the majority of $h \in V_t$. Based on the loss received, learners $h \in V_t$ that fail for time $t + 1$ will be eliminated from future $V_t$'s.
     
@@ -96,9 +94,9 @@ Now, if one puts $\ell$ as the zero-one loss, the regret for this example will b
 so in this example, one has $\text{regret} \leq \log |\mathcal{H}|$, which is a non-trivial bound when $\mathcal{H}$ is finite.
 \end{example}
     
-As one can see in the example, the realizable case usually indicates that the problem is not too far out of reach, and online learning is basically attempting to learn the $h \in \mathcal{H}$ that achieves the zero training loss. Hence, most literature focuses on non-realizable cases. However, the realizable case is still an interesting problem to consider because the $x_t$'s are not i.i.d. as they are in classical supervised learning. Hence, standard statistical learning theory does not apply, and there is still research to be done here.
+As one can see in the example, the realizable case usually indicates that the problem is not too far out of reach. Indeed, for finite hypothesis classes and linear models, the realizable case is considered to be straightforward to solve. This is perhaps why most of the past literature has focused on non-realizable cases. However, the realizable case is still an interesting problem and perhaps a very good starting point when the model class is beyond linear models and when the loss function is no longer convex, because the $x_t$'s are not i.i.d. as they are in classical supervised learning. Hence, standard statistical learning theory does not apply, and there is still research to be done here.
  
-To tackle this category of problems, we usually find reducing this problem to online optimization, which is a boarder problem scholars study on, helpful. This tool is our main focus in the next section.
+In the rest of the lecture, we will only focus on the convex loss case, where we reduce online learning to online convex optimization. 
     
 \sec{Online (convex) optimization (OCO)}
 
@@ -119,7 +117,7 @@ Essentially the learner is trying to minimize the function $f_t$ at each step. A
 \underbrace{\min_{w \in \Omega} \sum_{t=1}^T f_t(w)}_\text{best action in hindsight}.
 \end{align}
 
-At some level, OCO seems like an impossible task, since we are trying to minimize a function $f_t$ that we only get to see \textit{after} we have made our prediction! This is certainly the case for $t = 1$. However, as time goes on, we see more and more functions and, if future functions are somewhat related to past functions, we have more information to make better predictions.
+At some level, OCO seems like an impossible task, since we are trying to minimize a function $f_t$ that we only get to see \textit{after} we have made our prediction! This is certainly the case for $t = 1$. However, as time goes on, we see more and more functions and, if future functions are somewhat related to past functions, we have more information to make better predictions. (And if the future functions are completely unrelated or contradictory to past functions, then the best action in hindsight would also be bad and therefore our algorithm does not have to do much.)
 
 \subsec{Settings and variants of OCO}
 There are multiple settings of the OCO network, which can vary the power of the environment and observations.
@@ -247,9 +245,9 @@ As in the standard supervised learning setting, consider an i.i.d dataset $\{(x_
 \begin{theorem}[Relationship between excess risk and regret]
 Assume $\ell((x, y), w)$ is convex. Suppose we run an online learning algorithm on the dataset $\{(x_i, y_i)\}_{i=1}^T$ and obtain a sequence of models $w_1, \dots, w_T$, and regret $R_T$. Let $\overline{w} = \frac{1}{T} \sum_{i=1}^T w_i$, then the excess risk of $\overline{w}$ can be bounded above:
 \begin{align}
-L(\overline{w}) - L(w^*) \leq \frac{R_T}{T} + \tilO\left(\frac{1}{\sqrt{T}}\right), \label{lec15:eqn:lec15_ol_gen_bound}
+L(\overline{w}) - L(w^\star) \leq \frac{R_T}{T} + \tilO\left(\frac{1}{\sqrt{T}}\right), \label{lec15:eqn:lec15_ol_gen_bound}
 \end{align}
-where $w^* = \argmin_{w \in \Omega} L(w)$.
+where $w^\star = \argmin_{w \in \Omega} L(w)$.
 \end{theorem}
 
 Here are some intuitive interpretations of the theorem:
