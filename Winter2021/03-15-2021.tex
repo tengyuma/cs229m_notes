@@ -1,0 +1,245 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{17}{Jeff Z. HaoChen and Carrie Wu}{Mar 15th, 2021}
+
+\sec{Review and overview}
+In the last lecture, we described the ``Be the leader'' (BTL) algorithm for online convex optimization (OCO), a strategy that has non-positive regret. However, BTL is not a valid strategy because it uses $f_t$, the convex loss function for time $t$ which the learner does not know when making the choice $w_t$ at time $t$. Based on the intuition gleaned from BTL, we introduced the ``Follow the regularized leader'' (FTRL) algorithm which is a valid strategy. At time $t$, FTRL chooses $w_t$ based on the following minimization problem:
+\begin{align}
+w_t = \argmin \sum_{i=1}^{t-1} f_i(w) + \frac{1}{\eta} \phi(w).
+\end{align}
+
+We proved an upper bound on the regret achieved by FTRL: if $\phi$ is a 1-strongly-convex regularizer with respect to the norm $\norm{\cdot}$ on the action space $\Omega$, then the FTRL algorithm satisfies the regret guarantee
+\begin{align}
+\text{FTRL regret} = \sum_{t = 1}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 1}^T f_t(w)  \leq \frac{D}{\eta} + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2,
+\end{align}
+where $D = \max_{w \in \Omega} \phi(w) - \min_{w \in \Omega} \phi(w)$. Furthermore, if for all $t$ and $w$ we have the uniform bound $\norm{\nabla f_t(w)}_* \leq G$, then the above implies that the regret is upper bounded by $2 \sqrt{D G} \times \sqrt{T}$. 
+
+\begin{align}\label{lec17:eqn:ftrl-regret-ub}
+\text{FTRL regret} \leq 2 \sqrt{D G} \times \sqrt{T}.
+\end{align}
+
+We then demonstrated how FTRL applies to online linear regression and the expert problem.
+
+In this lecture....
+
+\sec{More on FTRL and the expert problem}
+
+Last lecture, we analyzed the use of FTRL with $\ell_2$-regularization (i.e. $\phi(w) = \frac{1}{2}\norm{w}^2$) on the expert problem and proved that FTRL gave an $O(\sqrt{NT})$ regret guarantee. Here, we show that if we change our regularization, we can get a better regret guarantee which is logarithmic in $N$, i.e., the regret is $O(\sqrt{(log N) \cdot T})$.
+
+The new regularizer we choose is the \textit{(negative) entropy regularizer}:
+\begin{equation}
+\phi(p) = -H(p) = \sum_{j=1}^N p(j)\log p(j),
+\end{equation}
+where $p \in \Delta(N)$ is in the set of distributions over $[N]$. We first introduce the following nice property of this regularizer:
+\begin{lemma}
+	$\phi(p)$ defined above is 1-strongly convex with respective to the $\ell_1$ norm $\|\cdot\|_1$. 
+\end{lemma}
+
+\begin{proof}
+By definition of strong convexity, we need to show that for all $p, q \in \Delta(N)$,
+\begin{equation}\label{lec17:eqn:entropy-sc}
+\phi(p) - \phi(q) - \langle \nabla \phi(q), p-q\rangle \geq \frac{1}{2} \|p-q\|_1^2.
+\end{equation}
+	
+From direct computation, we know the gradient of $\phi(q)$ is 
+\begin{equation}
+\nabla\phi(q) = \begin{bmatrix} 1+\log q(1)\\\cdots \\ 1+\log q(N) \end{bmatrix}.
+\end{equation}
+	
+Plugging this into the LHS of \eqref{lec17:eqn:entropy-sc}, we get
+\begin{align}
+&\phi(p) - \phi(q) - \langle \nabla \phi(q), p-q\rangle  \\
+=& \sum_{j=1}^N p(j)\log p(j) - \sum_{j=1}^N q(j)\log q(j) - \sum_{j=1}^N \left(1 + \log q(j)\right)\left(p(j) - q(j)\right) \\
+=& \sum_{j=1}^N p(j)\log p(j) - \sum_{j=1}^N p(j)\log q(j) - \sum_{j=1}^N \left(p(j) - q(j)\right)\\
+=& \sum_{j=1}^N p(j) \log \frac{p(j)}{q(j)} \label{lec17:eqn:entropy-sc-proof} \\
+=& KL(p||q),
+\end{align}
+where $KL(p || q)$ is the KL-divergence between $p$ and $q$. (We used the fact that $\sum_{j=1}^N p(j) = \sum_{j=1}^N q(j) = 1$ to get \eqref{lec17:eqn:entropy-sc-proof}.) Finally, we finish the proof by applying Pinsker's inequality: $KL(p||q) \geq \frac{1}{2} \norm{p-q}_1^2$. 
+	
+\end{proof}
+
+Hence, $\phi$ is a satisfies the condition on the regularizer for our FTRL regret guarantee. To obtain the regret bound \eqref{lec17:eqn:ftrl-regret-ub}, we also need to bound $D = \sup \phi(p) - \inf \phi(p)$ and $G = \sup \|\nabla f_t(w)\|_\infty$ (since $\|\cdot\|_\infty$ is the dual norm of $\|\cdot \|_1$ ). Since negative entropy is always non-positive and (positive) entropy is always bounded above by $\log N$, we bound $D$ with
+\begin{equation} 
+D = \sup \phi(p) - \inf \phi(p) \leq -\inf \phi (p) = -\inf (-H(p)) = \sup (H(p)) \leq \log N,
+\end{equation}
+and we bound $G$ with
+\begin{equation}
+G = \|\nabla f_t(w)\|_\infty = \|l_t\|_\infty \leq 1.
+\end{equation}
+
+Plugging these two into the regret bound \eqref{lec17:eqn:ftrl-regret-ub} we get bound $O(\sqrt{(\log N) \cdot T})$. 
+
+Thus far, we have looked at FTRL and the expert problem abstractly: at each time $t$ we choose action $p_t$ based on the update
+\begin{equation}
+p_t = \argmin_{p \in \Delta(N)} \sum_{i=1}^{t+1} f_t(p) - \frac{1}{\eta} H(p).
+\end{equation}
+
+\textbf{Can we get an exact analytical solution for $p_t$?} Since we are minimizing a convex function, we can call some off-the-shelf convex optimization algorithm to solve this at each step. Another way is to write down the KKT conditions and solve that set of equations.  Instead, we will show that there exists much simpler ways to solve this update. In particular, we will be using the \textit{Gibbs variational principle}, which is essentially the KKT conditions under the hood.
+
+\begin{lemma}[Gibbs variational principle] \label{lec17:lem:gibbs}
+Let $\nu, \mu$ be probability distributions on $[N]$. Then 
+\al{\sup_\nu \left(\E_\nu[f] - KL(\nu||\mu)\right) = \log \E_\mu \left[e^f\right],} where $\E_\nu[f] = \E_{x \sim \nu} [f(x)] = \langle v, f\rangle$ and $\E_\mu \left[e^f\right] = \E_{x \sim \mu}  \left[e^{f(x)}\right]$. Moreover, the optimal solution is attained at \al{\nu(x) \propto \mu(x) \cdot e^{f(x)}.}
+\end{lemma}
+
+Intuitively, Lemma~\ref{lec17:lem:gibbs} says that taking the supremum over distributions $\mu$ of a linear function plus the KL divergence as the regularizer will give us the same distribution as exponentiating $f$. 
+
+If we take $\mu$ to be the uniform distribution on $[N]$ and replace $f$ with $-f$ in Lemma~\ref{lec17:lem:gibbs}, we get the following corollary:
+
+\begin{corollary}\label{lec17:cor:gibbs}
+	Let $\nu$ be a probability distribution. Then, 
+	$\E_\nu[f] - H(\nu)$ is minimized at $\nu(x) \propto e^{-f(x)}$.
+\end{corollary} 
+
+\begin{proof}
+When $\mu$ is uniform distribution, we have
+\begin{align}
+KL(\nu||\mu) &= \sum_x \nu(x) \log \frac{\nu(x)}{\mu(x)} \\
+&= \log N - \sum_x \nu(x) \log \frac{1}{\nu(x)} \\
+&= \log N - H(\nu).
+\end{align}
+
+So $\sup_\nu \left(\E_\nu[-f] - KL(\nu||\mu)\right) = -\inf_\nu \left(\E_\nu[f] - H(\nu) + \log N\right)$. This means that the value of $\nu$ that attains the infimum of $\E_\nu[f] - H(\nu)$ is the same $\nu$ attaining the supremum of $\E_\nu[-f] - KL(\nu||\mu)$, which by Lemma~\ref{lec17:lem:gibbs} is proportional to $e^{-f(x)}$.
+\end{proof}
+
+We now apply the Gibbs variational principle to the expert problem. Notice that our FTRL update for the expert problem at time $t$ can be written as
+\begin{equation}
+\argmin_{p_t \in \Delta(N)} \l\langle \sum_{i=1}^{t-1}l_i, p_t \r\rangle - \frac{1}{\eta}H(p_t) = \argmin_{p_t \in \Delta(N)} \l\langle\eta \sum_{i=1}^{t-1}l_i, p_t \r\rangle - H(p_t),
+\end{equation}
+where $l_i$ is the vector of expert losses at time $i$. Letting $f = \eta \sum_{i=1}^{t-1} l_i$, we know from Corollary~\ref{lec17:cor:gibbs} that the minimizer is attained at $p_t \propto \exp \l(-\eta \sum_{i=1}^{t-1}l_i \r)$, or equivalently,  
+\begin{equation}
+p_t(j) = \frac{\exp(-\eta L_t(j))}{\sum_{k=1}^N \exp(-\eta L_t(k))},
+\end{equation}
+where $L_t = \sum_{i=1}^{t-1}l_i$ is the cumulative loss vector. Basically, solving the expert problem is to look a the historical loss of each expert and take softmax to find the probability distribution of how much to trust each expert. 
+
+This algorithm is also called the ``Multiplicative Weights Update'', which has been studied before online learning framework became popular~\cite{arora2005fast, freund1997decision, littlestone1994weighted}. One way of doing multiplicative weights update is the following: Let $\tilde{p}_t$ be the unnormalized distribution that we keep track of. At each time step $t$, for each expert $j$, we look at $l_{t-1}(j)$. if $l_{t-1}(j)=1$, i.e. the expert made a mistake at the previous time step, we update $\tilde{p}_t(j) = \tilde{p}_{t-1}(j) \cdot \exp(-\eta)$; otherwise we make no change. We then get a distribution by normalizing $\tilde{p}_t$:
+\begin{equation}
+p_t = \frac{\tilde{p}_t}{\|\tilde{p}_t\|_1}.
+\end{equation}
+
+\sec{Convex to linear reduction}
+
+In the previous section we considered the expert problem, where the loss function is a \textit{linear} function of the parameters. At first glance we may think this is a very restrictive constraint for online convex optimization. However, as we will see in this section, we can always assume $f_t$ to be linear in online convex optimization without loss of generality. That means that for online learning, the linear case is the hardest one. 
+
+More concretely, assume we have an algorithm $\cA$ that solves the linear case. Given any online convex optimization, we will build an algorithm $\cA'$ which invokes algorithm $\cA$ in the following fashion: for $t = 1, \dots, T$,
+\begin{enumerate}
+	\item The learner invoke $\cA$ to get output action $w_t \in \Omega$. 
+	\item The environment gives the learner the loss function $f_t(\cdot)$. 
+	\item The learner construct a linear function $g_t(w) = \langle\nabla f_t(w_t), w \rangle$, which is the local linear approximation of $f$ at $w$. (Technically the local linear approximation of $f$ and $w$ is $\langle \nabla f_t(w_t), w - w_t\rangle$, but we drop the $w_t$ shift for convenience.)
+	\item The learner feeds $g_t(\cdot)$ to algorithm $\cA$ as the loss function. 
+\end{enumerate}
+
+We have the following informal claim\footnote{For rigorous proof, we need additional assumptions and restrictions on $f_t, g_t$.}:
+\begin{proposition}[Informal]
+	If a deterministic algorithm $\cA$ has regret no more than $\gamma (T)$ for linear cases for some function $\gamma (\cdot)$, then $\cA'$ stated above has regret no more than $\gamma(T)$ for convex functions. 
+\end{proposition}
+
+\begin{proof}
+	For all $w \in \Omega$, the regret guarantee on $\cA$ tells us that
+	\begin{align}
+		\sum_{t=1}^T g_t(w_t) - \sum_{t=1}^T g_t(w) \leq \gamma(T).
+	\end{align}
+	Since $f_t$ is convex, we also know that
+	\begin{align}
+		g_t(w_t) - g_t(w) = \langle \nabla f_t(w_t), w_t- w \rangle \geq f_t(w_t) - f_t(w).
+	\end{align}
+	Therefore, for all $w \in \Omega$,
+	\begin{align}
+		\sum_{t=1}^T f_t(w_t) - \sum_{t=1}^Tf_t(w) &\leq \sum_{t=1}^T g_t(w_t) - \sum_{t=1}^T g_t(w) \\
+		&\leq \gamma(T).
+	\end{align}
+	
+	Hence, the regret for $\cA'$ is upper bounded by $\gamma(T)$ as well.
+\end{proof}
+
+\subsec{Online gradient descent}
+In this section we combine the FTRL framework with $\ell_2$-regularization and the online-to-linear reduction. The resulting algorithm is \textit{online gradient descent}.
+
+Concretely, given any convex online optimization problem, we first do the online-to-linear reduction, then we use FTRL with $\ell_2$ regularization ($\phi (w) = \frac{1}{2}\norm{w}_2^2$) to solve the resulting linear case. This gives us the following update:
+\begin{align}
+w_t &= \argmin \sum_{i=1}^{t-1} g_i(w) + \frac{1}{\eta} \|w\|_2^2 \\
+&= \argmin_{w \in \Omega} \sum_{i=1}^{t-1} \langle \nabla f_i(w_i), w \rangle + \frac{1}{\eta} \|w\|_2^2 \\
+&= \Pi_\Omega \left( -\eta \cdot \sum_{i=1}^{t-1} \nabla f_i(w_i) \right),
+\end{align}
+where $\Pi_\Omega (\cdot)$ is the projection operator onto the set $\Omega$.The last equality is because for any vector $a$, we have 
+\begin{align}
+\argmin_{w \in \Omega} \langle a, w\rangle + \frac{1}{\eta} \|w\|_2^2 & = \argmin_{w \in \Omega} \frac{1}{2\eta} \|w + \eta a\|_2^2 - \eta \|a\|_2^2 \\
+& = \argmin_{w \in \Omega} \|w + \eta a\|_2^2 \\
+& = \argmin_{w \in \Omega} \|w - (-\eta a)\|_2^2 \\
+& = \Pi_\Omega(-\eta a).
+\end{align}
+
+Intuitively, we can think of this algorithm as gradient descent with ``lazy'' projection:
+\begin{align}
+u_t &= u_{t-1} - \eta \nabla f_{t-1}(w_{t-1}), \\
+w_t &= \Pi_\Omega(u_t).
+\end{align}
+
+Similarly, we can define gradient descent with ``eager'' projection (which can get similar regret bounds):
+\begin{align}
+u_t &= w_{t-1} - \eta \nabla f_{t-1}(w_{t-1}), \\
+w_t &= \Pi_\Omega(u_t).
+\end{align}
+
+This concludes our discussion of online learning in this course.
+
+\sec{Algorithmic regularization for classification}
+We return now to the subject of algorithmic regularization. In the previous lectures we have discussed the following two cases of algorithmic regularization for the regression problem (assuming overparameterization, i.e.,  $n \ll d$):
+\begin{itemize}
+\item For linear model $y = \langle x, \beta \rangle$ where $\beta \in \R^d$ is the parameter and $x \in \R^d$ is the data input, if we initialize at $\beta=0$, then gradient descent converges to a minimum norm solution.
+
+\item For quadratically parameterized model $y = \langle x, \beta \odot \beta \rangle$ where $\beta$ is the parameter and $x$ is the data input, if we initialize at some small $\beta$, then gradient descent converges to a sparse ground truth $\beta^\star$.
+\end{itemize}
+
+In this section, we will discuss algorithmic regularization for classification problem. In particular, we consider binary classification with logistic loss. Let $\{(x_i, y_i)\}_{i=1}^n$ be a separable dataset with $y_i\in \{\pm 1\}$, $x_i\in \R^d$. We have a linear model $h_w(x) = w^\top x$, and we minimize the empirical logistic loss 
+\begin{align}
+	\hatL (w) &= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i h_w(x_i))\\
+	&= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i w^\top x_i),
+\end{align}
+where $\ell(t) = \log(1+\exp(-t))$ is the logistic loss.
+
+In order to observe algorithmic regularization, we need to ensure that there exist multiple global minima for this setup. This is the case here: because the dataset is linearly separable, there exists some $w$ such that $y_i w^\top x_i > 0$ for all $i$. Clearly any $w'$ in a small neighborhood of $w$ also classifies all the data correctly; hence, there exists an infinite number of separating classifiers $\overline{w}$ with unit norm. For any of these $\overline{w}$, note that $\hatL(\alpha\overline{w}) \rightarrow 0$ as $\alpha \rightarrow \infty$, hence intuitively all of ``$\infty \overline{w}$'' classifiers are global minima.
+
+Having shown the existence of multiple global minima, we now show that gradient descent will actually converge to the solution which maximizes the \textit{margin}. We first define the \textit{normalized margin} for a separating classifier $w$ as
+\begin{align}
+	\gamma(w) = \frac{\min_{i\in [n]} y_iw^\top x_i }{\|w\|_2}.
+\end{align}
+We call $\overline{\gamma} = \max_w \gamma(w)$ the \textit{max margin}. Now we are ready to state the theorem:
+
+\begin{theorem}[\cite{soudry2018implicit}]
+	Gradient descent with iterates $w_t$ converges to the direction of a max-margin solution:
+	
+	\begin{align}
+		\gamma(w_t) \rightarrow \overline{\gamma} \quad  \text{as} \quad t \rightarrow \infty.
+	\end{align}
+	In other words, gradient descent on logistic loss is equivalent to the SVM.\footnote{This result is still very limited it only works without regularization, and one needs to run gradient descent for a long time before this convergence in direction happens. Also, SVM is not always the best possible solution.}
+\end{theorem}
+
+Here, we provide the intuition behind the proof. The proof of this theorem follows these steps:
+\begin{enumerate}
+	\item By standard convex optimization arguments, $\hatL (w_t) \rightarrow 0$ as $t\rightarrow \infty$.
+	\item For sufficiently large $t$, $\|w_t\|_2 \rightarrow \infty$.
+	\item For sufficiently large $t$, $w_t$ will separate the data (since the loss goes to 0).
+	\item As $z \rightarrow \infty$, $l(z) = \log(1 + \exp (-z)) \approx \exp(-z)$ (i.e. logistic loss is similar to exponential loss). 
+	\item When $\|w\|_2 = q $ is big, the loss $\hatL(w)$ mainly depends on supporting data $\{(x_i, y_i) : y_i\overline{w}^\top x_i = \gamma(w)\}$.
+\end{enumerate}
+
+To see the last bullet point: letting $\overline{w} = w / \|w\|_2$, we notice that 
+\begin{align}
+	\hatL &= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i w^\top x_i)\\
+	&\approx \frac{1}{n} \sum_{i=1}^{n} \exp\left(-qy_i \overline{w}^\top x_i\right) \label{lec17:eqn:reg-approx1} \\
+	&\approx \frac{1}{n} \sum_{i=1}^{n} \exp\left(-qy_i \overline{w}^\top x_i\right) 1\left[y_i \overline{w}^\top x_i = \gamma(w)\right] \label{lec17:eqn:reg-approx2} \\
+	&= \frac{1}{n} \sum_{i=1}^{n} \exp\left(-q\gamma(w) \right) 1\left[y_i \overline{w}^\top x_i = \gamma(w)\right]. \label{lec17:eqn:reg-approx3}
+\end{align}
+Here the first approximation~\eqref{lec17:eqn:reg-approx1} is because of the logistic loss vs. exponential loss approximation, while the second approximation~\eqref{lec17:eqn:reg-approx2} is because for any data $x_i, y_i$ that is not a support vector, i.e.
+\begin{align}
+	\overline{w}^\top x_i y_i \ge \gamma(w)+\epsilon,
+\end{align}
+for $\epsilon>0$, then
+\begin{align}
+	\exp(-qy_i\overline{w}^\top x_i) \le \exp(-q\gamma(w))\exp(-q\epsilon),
+\end{align}
+and as $q\rightarrow \infty$ the term $\exp(-q\epsilon)\rightarrow 0$, making such terms negligible.
+
+In conclusion, minimizing the (approximate) loss~\eqref{lec17:eqn:reg-approx3} is (informally) equivalent to maximizing the margin. (Note that if you examine \eqref{lec17:eqn:reg-approx3}, there are actually two ways to make the loss small: maximizing the margin or making $q$ large. The rigorous proof shows that when $q$ is large, the margin is already very close to the max margin. These are technical details that we will not concern ourselves with.)
