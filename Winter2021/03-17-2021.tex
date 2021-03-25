@@ -10,7 +10,7 @@
 
 In the last lecture, we completed our discussion of online learning and returned to the topic of algorithmic regularization. We described an instance of algorithmic regularization in the classification setting: gradient descent converges to the direction of the max-margin solution.
 
-In this lecture...
+In this lecture, we discuss the Lipschitzness of models and why they seem to generalize better than arbitrary networks. To do so, we introduce a refined notion of uniform convergence that is data-dependent, and use it to derive a generalization bound for generalized margin. We end by introducing the \textit{all-layer margin}, a specific instance of generalized margin that captures model Lipschitzness, thus allowing us to use the data-dependent generalization bound.
 
 \sec{Stochasticity in algorithmic regularization}
 We note that in general, when the loss has multiple global minima, any decisions we make about the optimization algorithm will make a difference. Another important source of algorithmic regularization (possibly the most important) comes from the \textit{stochasticity} in the stochastic gradient descent (SGD) algorithm, where the parameters are optimized by updates of the form
