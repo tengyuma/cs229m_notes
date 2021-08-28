@@ -1,0 +1,362 @@
+% reset section counter
+%\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{16}{Kevin Guo}{Mar 10th, 2021}
+
+% ===============================================
+\sec{Be-the-leader (BTL) algorithm}
+
+A better strategy is called \textit{``Be the Leader'' (BTL)}.  At time $t$, the BTL strategy chooses the action that would have performed best on $f_1, \cdots, f_{t-1}$ \textit{and} $f_t$.  In other words, the BTL action at time $t$ is $w_{t+1}$, as defined for the FTL algorithm. Note that this is an ``illegal'' choice for the action because $w_{t+1}$ depends on $f_t$: in online convex optimization, the action at time $t$ is required to be chosen \textit{before} seeing the function $f_t$.  Nevertheless, we can still gain some useful insights by analyzing this procedure. In particular, the following lemma shows that the BTL strategy is worth emulating because it achieves very good regret.
+
+\begin{lemma}\label{lec16:lem:btl_regret}
+The BTL strategy has non-positive regret. That, is, if $w_t$ is defined as in the FTL algorithm, then
+\begin{align}
+\text{BTL regret} = \sum_{t = 1}^T f_t(w_{t + 1}) - \min_{w \in \Omega} \sum_{t = 1}^T f_t(w) \leq 0, \label{lec16:eqn:btl_regret}
+\end{align}
+for any $T$ and any sequence of functions $f_1, \cdots, f_T$.
+\end{lemma}
+
+\begin{proof}
+We prove the lemma by induction on $T$. \eqref{lec16:eqn:btl_regret} holds trivially for $T = 1$. Suppose that \eqref{lec16:eqn:btl_regret} holds for all $t \leq T - 1$ and any $f_1, \cdots, f_{T-1}$.  Now we wish to extend \eqref{lec16:eqn:btl_regret} to time $t = T$.  Let $f_T$ be any function.  Since $w_{T+1} = \argmin_w \sum_{t = 1}^T f_t(w)$, we can write:
+\begin{align}
+\sum_{t = 1}^{T} f_t(w_{t+1}) - \min_{w \in \Omega} \sum_{t = 1}^{T} f_t(w) &= \sum_{t = 1}^T f_t(w_{t+1}) - \sum_{t = 1}^T f_t(w_{T+1})\\
+&= \sum_{t = 1}^{T - 1} f_t(w_{t+1}) - \sum_{t = 1}^{T - 1} f_t(w_{T+1}) &\text{(final summands cancel)}\\
+&\leq \sum_{t = 1}^{T - 1} f_t(w_{t+1}) - \min_{w \in \Omega} \sum_{t = 1}^{T - 1} f_t(w)\\
+&\leq 0. &\text{(induction hypothesis)}
+\end{align}
+\end{proof}
+
+A useful consequence of this lemma is a regret bound for the FTL strategy.
+
+\begin{lemma}
+\label{lec16:lem:ftl_regret}
+\textup{(FTL regret bound)} Again, let $w_t$ be as in the FTL algorithm. The FTL strategy has the regret guarantee
+\begin{align}
+\text{FTL regret} = \sum_{t = 1}^T f_t(w_t) - \min_{w \in \Omega} \sum_{t = 1}^T f_t(w) \leq \sum_{t = 1}^T [f_t(w_t) - f_t(w_{t+1})].
+\end{align}
+\end{lemma}
+
+\begin{proof}
+\begin{align}
+\text{FTL regret} &= \sum_{t = 1}^T f_t(w_t) - \min_{w \in \Omega} \sum_{t = 1}^T f_t(w) \\
+&= \sum_{t = 1}^T f_t(w_{t+1}) - \min_{w \in \Omega} \sum_{t = 1}^T f_t(w) + \sum_{t = 1}^T [f_t(w_t) - f_t(w_{t+1})] \\
+&\leq 0 + \sum_{t = 1}^T [f_t(w_t) - f_t(w_{t+1})],
+\end{align}
+where the last inequality is due to \eqref{lec16:eqn:btl_regret}.
+
+\end{proof}
+
+Lemma \ref{lec16:lem:ftl_regret} tells us that if terms $f_t(w_t) - f_t(w_{t+1})$ are small (e.g. $w_t$ does not change much from round to round), then the FTL strategy can have small regret. It suggests that the player should adopt a \textit{stable} policy, i.e. one where the terms $f_t(w_t) - f_t(w_{t+1})$ are small.  It turns out that following this intuition will lead to a strategy that improves the regret all the way to $O(\sqrt{T})$ in certain cases.
+
+% ===============================================
+\sec{Follow-the-regularized-leader (FTRL) strategy}
+
+Now, we discuss a OCO strategy aims to improve the stability of FTL by controlling the differences $f_t(w_t) - f_t(w_{t+1})$. To describe the method, we will first need a preliminary definition.
+
+\begin{definition}
+We say that a differentiable function $\phi : \Omega \mapsto \R$ is \textit{$\alpha$-strongly-convex} with respect to the norm $|| \cdot ||$ on $\Omega$ if we have 
+\begin{equation}\label{lec16:eqn:strongly-convex}
+\phi(x) \geq \phi(y) + \langle \nabla f(y), x - y \rangle + \frac{\alpha}{2} \norm{x - y}^2
+\end{equation}
+for any $x, y \in \Omega$.
+\end{definition}
+
+\begin{remark}
+If $\phi$ is convex, then we know that $f(x)$ has a linear lower bound $\phi(y) + \langle \nabla f(y), x - y \rangle$. Being $\alpha$-strong-convex means that $f(x)$ has a quadratic lower bound, the RHS of \eqref{lec16:eqn:strongly-convex}. This quadratic lower bound is very useful in proving theorems in optimization.
+\end{remark}
+
+\begin{remark}
+If $\nabla^2 f(y) \succeq \alpha I$ for all $y$, then $f$ is $\alpha$-strongly-convex. This follows directly from writing the second-order Taylor expansion of $f$ around $y$.
+\end{remark}
+
+Given a $1$-strongly-convex function $\phi(\cdot)$, which we call a \textit{regularizer}, we can implement the \textit{``Follow the Regularized Leader'' (FTRL)} strategy.  At time $t$, this strategy chooses the action
+\begin{align}
+w_t = \argmin_{w \in \Omega} \left[ \sum_{i = 1}^{t -1} f_i(w) + \frac{1}{\eta} \phi(w) \right], \label{lec16:eqn:ftrl}
+\end{align}
+where $\eta > 0$ is a tuning parameter that we will tune later.
+
+\subsec{Regularization and stability}
+
+To understand why we might use the FTRL policy, we first establish that it achieves the intended goal of controlling the differences $f_t(w_t) - f_t(w_{t+1})$. Actually, we will show a more general result that adding a regularizer induces stability for any convex objective.
+
+\begin{lemma}
+\label{lec16:lem:regularizers_stability}
+\textup{(Regularizers induce stability)} Let $F$ and $f$ be functions taking $\Omega$ into $\R$, and assume that $F$ is $\alpha$-strongly-convex with respect to the norm $\norm{\cdot}$ and that $f$ is convex.  Let $w = \argmin_{z \in \Omega} F(z)$ and $w' = \argmin_{z \in \Omega} [f(z) + F(z)]$.  Then
+\begin{equation}\label{lec16:eqn:regularizers_stability}
+0 \leq f(w) - f(w') \leq \frac{1}{\alpha} \norm{\nabla f(w)}_*^2,
+\end{equation}
+where $\norm{\cdot}_*$ is the dual norm of $\norm{\cdot}$.
+\end{lemma}
+
+\begin{proof}
+By strong convexity,
+\begin{align}
+F(w') - F(w) &\geq \langle \nabla F(w), w' - w \rangle + \frac{\alpha}{2} \norm{w - w'}^2 \\
+&\geq \frac{\alpha}{2} \norm{w - w'}^2,
+\end{align}
+where in the second step we used the fact that the KKT optimality conditions for $w$ imply $\langle \nabla F(w), w' - w \rangle \geq 0$. (Informally, if $\Omega = \R^d$, then $\nabla F(w) = 0$ as $w$ minimizes $F$. If $\Omega$ is a convex subset of $\R^d$, then the gradient $\nabla F(w)$ must be perpendicular to the tangent to $\Omega$ at $w$; otherwise, we could move in the direction of the negative gradient and project back to the set $\Omega$ to lower the value of $F$.) Since $F + f$ is also $\alpha$-strongly convex, exactly the same argument implies:
+\begin{align}
+[F(w) + f(w)] - [F(w') + f(w')] \geq \frac{\alpha}{2} \norm{w - w'}^2.
+\end{align}
+Adding these two inequalities gives
+\begin{align}
+f(w) - f(w') \geq \alpha \norm{w - w'}^2. \label{lec16:eqn:lower_bound}
+\end{align}
+Since this lower bound is clearly positive, this shows $0 \leq f(w) - f(w')$.
+
+Next, we prove the upper bound on $f(w) - f(w')$. Rearranging the inequality \eqref{lec16:eqn:lower_bound}, we obtain
+\begin{align}
+\norm{w - w'} \leq \sqrt{\frac{1}{\alpha} [f(w) - f(w')]}. \label{lec16:eqn:upper_bound}
+\end{align}
+Since $f$ is convex, we have $f(w') \geq f(w) + \langle \nabla f(w), w' - w \rangle$.  Rearranging this gives
+\begin{align*}
+f(w) - f(w') &\leq \langle \nabla f(w), w - w' \rangle\\
+&\leq \norm{\nabla f(w)}_* \cdot \norm{w - w'} &\text{(by Cauchy-Schwarz)} \\
+&\leq \norm{\nabla f(w)}_* \sqrt{ \frac{1}{\alpha} [f(w) - f(w')]}. &\text{(by \eqref{lec16:eqn:upper_bound})}
+\end{align*}
+Since $f(w) - f(w') \geq 0$, we can square both sides of this inequality to conclude that
+\begin{equation}
+[f(w) - f(w')]^2 \leq || \nabla f(w) ||_*^2 \frac{1}{\alpha} [f(w) - f(w')].
+\end{equation}
+Dividing both sides of this expression by $f(w) - f(w')$ gives the desired upper bound.
+\end{proof}
+
+\begin{remark}
+Consider the special case where $\nabla f(w) = 0$. In this situation, $w$ is the minimizer of both $F$ and $f$, and hence is the minimizer of $F + f$. This implies that $w = w'$, and the inequalities in \eqref{lec16:eqn:regularizers_stability} become equalities.
+\end{remark}
+
+\subsec{Regret of FTRL}
+We are now ready to prove a regret bound for the FTRL procedure, based on the idea that strongly convex regularizers induce stability.
+
+\begin{theorem}\label{lec16:thm:ftrl_regret}
+\textup{(Regret of FTRL)} Let $\phi$ be a 1-strongly-convex regularizer with respect to the norm $\norm{\cdot}$ on $\Omega$.  Then the FTRL algorithm (\ref{lec16:eqn:ftrl}) satisfies the regret guarantee
+\begin{align}
+\text{FTRL regret} = \sum_{t = 1}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 1}^T f_t(w)  \leq \frac{D}{\eta} + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2,
+\end{align}
+where $D = \max_{w \in \Omega} \phi(w) - \min_{w \in \Omega} \phi(w)$.
+\end{theorem}
+
+\begin{remark}
+Suppose that for all $t$ and $w$, we have the uniform bound $|| \nabla f_t(w) ||_* \leq G$.  Then Theorem \ref{lec16:thm:ftrl_regret} implies that the regret is upper bounded by $D / \eta + \eta G T$.  Optimizing this upper bound over $\eta$ by taking $\eta = \sqrt{\dfrac{D}{TG^2}}$ gives the guarantee
+\begin{equation}\label{lec17:eqn:ftrl-regret-ub}
+\text{FTRL regret} \leq 2 \sqrt{D G} \times \sqrt{T}.
+\end{equation}
+In other words, optimally-tuned FTRL can achieve $O(\sqrt{T})$ regret in many cases.
+\end{remark}
+
+\begin{proof}
+For convenience, define $f_0(w) = \phi(w) / \eta$.  Then the FTRL policy can be written as
+\begin{equation}
+w_t = \argmin_{w \in \Omega} \sum_{i = 0}^{t - 1} f_i(w),
+\end{equation}
+i.e. FTRL is just FTL with an additional ``round'' of play at time zero. Thus, by Lemma \ref{lec16:lem:ftl_regret} with time starting from $t = 0$, we have
+\begin{align}
+\sum_{t = 0}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 0}^T f_t(w) &\leq \sum_{t = 0}^T [f_t(w_t) - f_t(w_{t+1})].
+\end{align}
+For any $t \geq 1$, applying Lemma \ref{lec16:lem:regularizers_stability} with $F(w) = \sum_{i = 0}^{t-1} f_i(w)$ (which is $1/\eta$-strongly-convex) and $f(w) = f_t(w)$ gives the bound $f_t(w_t) - f_t(w_{t+1}) \leq \eta || \nabla f_t(w_t) ||_*^2$.  Plugging this into the preceding display gives the upper bound:
+\begin{align}
+\sum_{t = 0}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 0}^T f_t(w) &\leq f_0(w_0) - f_0(w_1) + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2. \label{lec16:eqn:ftrl_ub}
+\end{align}
+
+Next, we need to relate the LHS of the above display (which starts at time $t = 0$) to the actual regret of FTRL (which starts at time $t = 1$). To do this, define $w^* = \argmin_{w \in \Omega} \sum_{t = 1}^T f_t(w)$. Then,
+\begin{align}
+\sum_{t = 0}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 0}^T f_t(w) &\geq \sum_{t = 0}^T f_t(w_t) - \sum_{t = 0}^T f_t(w^*)\\
+&= f_0(w_0) - f_0(w^*) + \underbrace{\left( \sum_{t = 1}^T f_t(w_t) - \argmin_{w \in \Omega} \sum_{t = 1}^T f_t(w)  \right)}_{\text{Regret of FTRL}}.
+\end{align}
+Combining this inequality with (\ref{lec16:eqn:ftrl_ub}) gives
+\begin{align}
+\text{Regret of FTRL} &\leq f_0(w_0) - f_0(w_1) + f_0(w^*) - f_0(w_0) + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2\\
+&= \frac{\phi(w^*) - \phi(w_1)}{\eta} + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2\\
+&\leq \frac{D}{\eta} + \eta \sum_{t = 1}^T \norm{\nabla f_t(w_t)}_*^2.
+\end{align}
+This concludes the proof of the theorem.
+\end{proof}
+
+\subsec{Applying FTRL to online linear regression}
+
+We apply the FTRL algorithm to a concrete machine learning problem. Let $\Omega = \{ \omega \, : \, \norm{w}_2 \leq 1 \}$, and let $f_t(\omega) = \tfrac{1}{2}(y_t - \omega^{\top} x_t)^2$ for some observation pair $(x_t, y_t)$ satisfying $\norm{x_t}_2 \leq 1$ and $|y_t| \leq 1$.  This corresponds to a problem where we are trying to make accurate predictions using a linear model, but we do not assume any structure on the observation sequence $(x_t, y_t)$ beyond boundedness.
+
+Consider using FTRL in this problem with a ridge regularizer, $\phi(\omega) = \tfrac{1}{2} \norm{w}_2^2$.  One can check that $\phi$ is 1-strongly-convex with respect to the $\ell_2$-norm, and also that $D = \max_{\omega \in \Omega} \phi(\omega) - \min_{\omega \in \Omega} \phi(\omega) = \tfrac{1}{2}$.  Moreover, for all $t$ and $w$ we have 
+\begin{align}
+\nabla f_t(w) &= - (y_t - w^\top x_t) x_t, \\
+\norm{\nabla f_t(w)}_2 &\leq |y_t - w^\top x_t| \cdot \norm{x_t}_2 \\
+&\leq 2 \cdot 1 = 2.
+\end{align}
+Therefore, by choosing $\eta = \sqrt{1/(8T)}$ and applying the FTRL regret theorem (Theorem \ref{lec16:thm:ftrl_regret}), we can obtain the regret guarantee
+\begin{align}
+\sum_{t = 1}^T (y_t - w_t^{\top} x_t)^2 - \min_{|| w ||_2 \leq 1} \sum_{t = 1}^T  (y_t - w^{\top} x_t)^2 \leq 4 \sqrt{T}.
+\end{align}
+
+\subsec{Applying FTRL to the expert problem}
+
+For the expert problem, recall that the action space is $\Delta (N)$ and $f_t = \langle \ell_t , p \rangle$, where $\ell_t \in [0,1]^N$. As a first attempt at applying FTRL to this problem, we set $\phi (p) = \frac{1}{2}\norm{p}_2^2$. With this choice,
+\begin{align}
+D &= \max_{p \in \Delta(N)} \phi (p) - \min_{p \in \Delta(N)} \phi (p) \\
+&\leq \max_{p \in \Delta(N)} \frac{1}{2}\norm{p}_2^2 \\
+&\leq \max_{p \in \Delta(N)} \frac{1}{2}\norm{p}_1^2 \\
+&= \frac{1}{2}.
+\end{align}
+
+Also,
+\begin{align}
+\norm{\nabla f_t}_2 &= \norm{\ell_t}_2 \leq \sqrt{N}.
+\end{align}
+
+Thus, the regret bound is $O(G\sqrt{DT}) = O(\sqrt{NT})$. This is optimal dependency on $T$, but not good dependency on $N$.
+
+Next, we show that if we change our regularization, we can get a better regret guarantee which is logarithmic in $N$, i.e., the regret is $O(\sqrt{(log N) \cdot T})$. The new regularizer we choose is the \textit{(negative) entropy regularizer}:
+\begin{equation}
+\phi(p) = -H(p) = \sum_{j=1}^N p(j)\log p(j),
+\end{equation}
+where $p \in \Delta(N)$ is in the set of distributions over $[N]$. We first introduce the following nice property of this regularizer:
+\begin{lemma}
+	$\phi(p)$ defined above is 1-strongly convex with respective to the $\ell_1$ norm $\|\cdot\|_1$. 
+\end{lemma}
+
+\begin{proof}
+By definition of strong convexity, we need to show that for all $p, q \in \Delta(N)$,
+\begin{equation}\label{lec17:eqn:entropy-sc}
+\phi(p) - \phi(q) - \langle \nabla \phi(q), p-q\rangle \geq \frac{1}{2} \|p-q\|_1^2.
+\end{equation}
+	
+From direct computation, we know the gradient of $\phi(q)$ is 
+\begin{equation}
+\nabla\phi(q) = \begin{bmatrix} 1+\log q(1)\\\cdots \\ 1+\log q(N) \end{bmatrix}.
+\end{equation}
+	
+Plugging this into the LHS of \eqref{lec17:eqn:entropy-sc}, we get
+\begin{align}
+&\phi(p) - \phi(q) - \langle \nabla \phi(q), p-q\rangle  \\
+=& \sum_{j=1}^N p(j)\log p(j) - \sum_{j=1}^N q(j)\log q(j) - \sum_{j=1}^N \left(1 + \log q(j)\right)\left(p(j) - q(j)\right) \\
+=& \sum_{j=1}^N p(j)\log p(j) - \sum_{j=1}^N p(j)\log q(j) - \sum_{j=1}^N \left(p(j) - q(j)\right)\\
+=& \sum_{j=1}^N p(j) \log \frac{p(j)}{q(j)} \label{lec17:eqn:entropy-sc-proof} \\
+=& KL(p||q),
+\end{align}
+where $KL(p || q)$ is the KL-divergence between $p$ and $q$. (We used the fact that $\sum_{j=1}^N p(j) = \sum_{j=1}^N q(j) = 1$ to get \eqref{lec17:eqn:entropy-sc-proof}.) Finally, we finish the proof by applying Pinsker's inequality: $KL(p||q) \geq \frac{1}{2} \norm{p-q}_1^2$. 
+	
+\end{proof}
+
+Hence, $\phi$ is a satisfies the condition on the regularizer for our FTRL regret guarantee. To obtain the regret bound \eqref{lec17:eqn:ftrl-regret-ub}, we also need to bound $D = \sup \phi(p) - \inf \phi(p)$ and $G = \sup \|\nabla f_t(w)\|_\infty$ (since $\|\cdot\|_\infty$ is the dual norm of $\|\cdot \|_1$ ). Since negative entropy is always non-positive and (positive) entropy is always bounded above by $\log N$, we bound $D$ with
+\begin{equation} 
+D = \sup \phi(p) - \inf \phi(p) \leq -\inf \phi (p) = -\inf (-H(p)) = \sup (H(p)) \leq \log N,
+\end{equation}
+and we bound $G$ with
+\begin{equation}
+G = \|\nabla f_t(w)\|_\infty = \|l_t\|_\infty \leq 1.
+\end{equation}
+
+Plugging these two into the regret bound \eqref{lec17:eqn:ftrl-regret-ub} we get bound $O(\sqrt{(\log N) \cdot T})$. 
+
+Thus far, we have looked at FTRL and the expert problem abstractly: at each time $t$ we choose action $p_t$ based on the update
+\begin{equation}
+p_t = \argmin_{p \in \Delta(N)} \sum_{i=1}^{t+1} f_t(p) - \frac{1}{\eta} H(p).
+\end{equation}
+
+\textbf{Can we get an exact analytical solution for $p_t$?} Since we are minimizing a convex function, we can call some off-the-shelf convex optimization algorithm to solve this at each step. Another way is to write down the KKT conditions and solve that set of equations.  Instead, we will show that there exists much simpler ways to solve this update. In particular, we will be using the \textit{Gibbs variational principle}, which is essentially the KKT conditions under the hood.
+
+\begin{lemma}[Gibbs variational principle] \label{lec17:lem:gibbs}
+Let $\nu, \mu$ be probability distributions on $[N]$. Then 
+\al{\sup_\nu \left(\E_\nu[f] - KL(\nu||\mu)\right) = \log \E_\mu \left[e^f\right],} where $\E_\nu[f] = \E_{x \sim \nu} [f(x)] = \langle v, f\rangle$ and $\E_\mu \left[e^f\right] = \E_{x \sim \mu}  \left[e^{f(x)}\right]$. Moreover, the optimal solution is attained at \al{\nu(x) \propto \mu(x) \cdot e^{f(x)}.}
+\end{lemma}
+
+Intuitively, Lemma~\ref{lec17:lem:gibbs} says that taking the supremum over distributions $\mu$ of a linear function plus the KL divergence as the regularizer will give us the same distribution as exponentiating $f$. 
+
+If we take $\mu$ to be the uniform distribution on $[N]$ and replace $f$ with $-f$ in Lemma~\ref{lec17:lem:gibbs}, we get the following corollary:
+
+\begin{corollary}\label{lec17:cor:gibbs}
+	Let $\nu$ be a probability distribution. Then, 
+	$\E_\nu[f] - H(\nu)$ is minimized at $\nu(x) \propto e^{-f(x)}$.
+\end{corollary} 
+
+\begin{proof}
+When $\mu$ is uniform distribution, we have
+\begin{align}
+KL(\nu||\mu) &= \sum_x \nu(x) \log \frac{\nu(x)}{\mu(x)} \\
+&= \log N - \sum_x \nu(x) \log \frac{1}{\nu(x)} \\
+&= \log N - H(\nu).
+\end{align}
+
+So $\sup_\nu \left(\E_\nu[-f] - KL(\nu||\mu)\right) = -\inf_\nu \left(\E_\nu[f] - H(\nu) + \log N\right)$. This means that the value of $\nu$ that attains the infimum of $\E_\nu[f] - H(\nu)$ is the same $\nu$ attaining the supremum of $\E_\nu[-f] - KL(\nu||\mu)$, which by Lemma~\ref{lec17:lem:gibbs} is proportional to $e^{-f(x)}$.
+\end{proof}
+
+We now apply the Gibbs variational principle to the expert problem. Notice that our FTRL update for the expert problem at time $t$ can be written as
+\begin{equation}
+\argmin_{p_t \in \Delta(N)} \l\langle \sum_{i=1}^{t-1}l_i, p_t \r\rangle - \frac{1}{\eta}H(p_t) = \argmin_{p_t \in \Delta(N)} \l\langle\eta \sum_{i=1}^{t-1}l_i, p_t \r\rangle - H(p_t),
+\end{equation}
+where $l_i$ is the vector of expert losses at time $i$. Letting $f = \eta \sum_{i=1}^{t-1} l_i$, we know from Corollary~\ref{lec17:cor:gibbs} that the minimizer is attained at $p_t \propto \exp \l(-\eta \sum_{i=1}^{t-1}l_i \r)$, or equivalently,  
+\begin{equation}
+p_t(j) = \frac{\exp(-\eta L_t(j))}{\sum_{k=1}^N \exp(-\eta L_t(k))},
+\end{equation}
+where $L_t = \sum_{i=1}^{t-1}l_i$ is the cumulative loss vector. Basically, solving the expert problem is to look a the historical loss of each expert and take softmax to find the probability distribution of how much to trust each expert. 
+
+This algorithm is also called the ``Multiplicative Weights Update'', which has been studied before online learning framework became popular~\cite{arora2005fast, freund1997decision, littlestone1994weighted}. One way of doing multiplicative weights update is the following: Let $\tilde{p}_t$ be the unnormalized distribution that we keep track of. At each time step $t$, for each expert $j$, we look at $l_{t-1}(j)$. if $l_{t-1}(j)=1$, i.e. the expert made a mistake at the previous time step, we update $\tilde{p}_t(j) = \tilde{p}_{t-1}(j) \cdot \exp(-\eta)$; otherwise we make no change. We then get a distribution by normalizing $\tilde{p}_t$:
+\begin{equation}
+p_t = \frac{\tilde{p}_t}{\|\tilde{p}_t\|_1}.
+\end{equation}
+
+\sec{Convex to linear reduction}
+
+In the previous section we considered the expert problem, where the loss function is a \textit{linear} function of the parameters. At first glance we may think this is a very restrictive constraint for online convex optimization. However, as we will see in this section, we can always assume $f_t$ to be linear in online convex optimization without loss of generality. That means that for online learning, the linear case is the hardest one. 
+
+More concretely, assume we have an algorithm $\cA$ that solves the linear case. Given any online convex optimization, we will build an algorithm $\cA'$ which invokes algorithm $\cA$ in the following fashion: for $t = 1, \dots, T$,
+\begin{enumerate}
+	\item The learner invoke $\cA$ to get output action $w_t \in \Omega$. 
+	\item The environment gives the learner the loss function $f_t(\cdot)$. 
+	\item The learner construct a linear function $g_t(w) = \langle\nabla f_t(w_t), w \rangle$, which is the local linear approximation of $f$ at $w$. (Technically the local linear approximation of $f$ and $w$ is $\langle \nabla f_t(w_t), w - w_t\rangle$, but we drop the $w_t$ shift for convenience.)
+	\item The learner feeds $g_t(\cdot)$ to algorithm $\cA$ as the loss function. 
+\end{enumerate}
+
+We have the following informal claim\footnote{For rigorous proof, we need additional assumptions and restrictions on $f_t, g_t$.}:
+\begin{proposition}[Informal]
+	If a deterministic algorithm $\cA$ has regret no more than $\gamma (T)$ for linear cases for some function $\gamma (\cdot)$, then $\cA'$ stated above has regret no more than $\gamma(T)$ for convex functions. 
+\end{proposition}
+
+\begin{proof}
+	For all $w \in \Omega$, the regret guarantee on $\cA$ tells us that
+	\begin{align}
+		\sum_{t=1}^T g_t(w_t) - \sum_{t=1}^T g_t(w) \leq \gamma(T).
+	\end{align}
+	Since $f_t$ is convex, we also know that
+	\begin{align}
+		g_t(w_t) - g_t(w) = \langle \nabla f_t(w_t), w_t- w \rangle \geq f_t(w_t) - f_t(w).
+	\end{align}
+	Therefore, for all $w \in \Omega$,
+	\begin{align}
+		\sum_{t=1}^T f_t(w_t) - \sum_{t=1}^Tf_t(w) &\leq \sum_{t=1}^T g_t(w_t) - \sum_{t=1}^T g_t(w) \\
+		&\leq \gamma(T).
+	\end{align}
+	
+	Hence, the regret for $\cA'$ is upper bounded by $\gamma(T)$ as well.
+\end{proof}
+
+\subsec{Online gradient descent}
+In this section we combine the FTRL framework with $\ell_2$-regularization and the online-to-linear reduction. The resulting algorithm is \textit{online gradient descent}.
+
+Concretely, given any convex online optimization problem, we first do the online-to-linear reduction, then we use FTRL with $\ell_2$ regularization ($\phi (w) = \frac{1}{2}\norm{w}_2^2$) to solve the resulting linear case. This gives us the following update:
+\begin{align}
+w_t &= \argmin \sum_{i=1}^{t-1} g_i(w) + \frac{1}{\eta} \|w\|_2^2 \\
+&= \argmin_{w \in \Omega} \sum_{i=1}^{t-1} \langle \nabla f_i(w_i), w \rangle + \frac{1}{\eta} \|w\|_2^2 \\
+&= \Pi_\Omega \left( -\eta \cdot \sum_{i=1}^{t-1} \nabla f_i(w_i) \right),
+\end{align}
+where $\Pi_\Omega (\cdot)$ is the projection operator onto the set $\Omega$.The last equality is because for any vector $a$, we have 
+\begin{align}
+\argmin_{w \in \Omega} \langle a, w\rangle + \frac{1}{\eta} \|w\|_2^2 & = \argmin_{w \in \Omega} \frac{1}{2\eta} \|w + \eta a\|_2^2 - \eta \|a\|_2^2 \\
+& = \argmin_{w \in \Omega} \|w + \eta a\|_2^2 \\
+& = \argmin_{w \in \Omega} \|w - (-\eta a)\|_2^2 \\
+& = \Pi_\Omega(-\eta a).
+\end{align}
+
+Intuitively, we can think of this algorithm as gradient descent with ``lazy'' projection:
+\begin{align}
+u_t &= u_{t-1} - \eta \nabla f_{t-1}(w_{t-1}), \\
+w_t &= \Pi_\Omega(u_t).
+\end{align}
+
+Similarly, we can define gradient descent with ``eager'' projection (which can get similar regret bounds):
+\begin{align}
+u_t &= w_{t-1} - \eta \nabla f_{t-1}(w_{t-1}), \\
+w_t &= \Pi_\Omega(u_t).
+\end{align}
+
+This concludes our discussion of online learning in this course.

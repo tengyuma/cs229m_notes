@@ -1,0 +1,426 @@
+% reset section counter
+%\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{7}{Spencer M.~Richards and Thomas Lew}{Feb.~3rd, 2021}
+
+\sec{Linear models}\label{lec7:sec:lin_models}
+
+\subsec{Linear models with weights bounded in $\ell_2$ norm}
+We begin with the Rademacher complexity of linear models using weights with bounded $\ell_2$ norm.
+
+\begin{theorem}\label{lec7:thm:l2-thm}
+    Let $\mathcal{H} = \{x \mapsto \inprod{w,x} \mid w \in \R^d, \Norm{w}_2 \le B\}$ for some constant $B > 0$. Moreover, assume $\Exp_{x \sim P}\sbr{\Norm{x}_2^2} \leq C^2$, where $P$ is some distribution and $C > 0$ is a constant. Then
+    \begin{align}
+        R_S(\mathcal{H}) &\le \frac{B}{n} \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2},  \label{lec7:eqn:linear-sample}
+        \intertext{and}
+        R_n(\mathcal{H}) &\le \frac{BC}{\sqrt{n}}.  \label{lec7:eqn:linear}
+    \end{align}
+\end{theorem}
+
+Generally speaking, there are two methods with which we can bound the Rademacher complexity of a model. The first method, which we used in Chapter \ref{chap:uc}, consists of discretizing the space of possible outputs from our hypothesis class, then using a union bound or covering number argument to bound the Rademacher complexity of the model. While this method is powerful and generally applicable, it yields bounds that depend on the logarithm of the cardinality of this discretized output space, which in turn depends on the number of data points~$n$. In the proof below, we will instead use a more elegant, albeit limited technique which does not rely on discretization of the output space.
+
+\begin{proof}
+We start with the proof of \eqref{lec7:eqn:linear-sample}. By definition,
+\begin{align}
+    R_S(\mathcal{H}) 
+    &= \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} }
+    \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} }
+    \\&= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_2 }
+        &&\text{($\textstyle\sup_{\Norm{w}_2 \le B} \langle w,v\rangle =B\Norm{v}_2$)}
+    \\&\leq \frac{B}{n} \sqrt{ \E_\sigma\sbr{\Norm{ \sum_{i=1}^n \sigma_i x\sp{i} }_2^2} }
+        &&\text{(Jensen's ineq. for $\alpha \mapsto \alpha^2$)} 
+    \\&= \frac{B}{n} \sqrt{ \E_\sigma \sbr{\sum_{i=1}^n \rbr{\sigma_i^2 \Norm{x\sp{i}}_2^2 + \inprod{\sigma_ix\sp{i},\sum_{j \ne i}^n \sigma_j x\sp{j}} }} }
+    \\&= \frac{B}{n} \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
+        &&\text{($\sigma_i$ indep. and $\E[\sigma_i]=0$)}
+\end{align}
+This completes the proof of \eqref{lec7:eqn:linear-sample} for the empirical Rademacher complexity. The bound on the average Rademacher complexity in \eqref{lec7:eqn:linear} follows from taking the expectation of both sides to get
+\begin{equation}
+    R_n(\mathcal{H}) = \E\sbr{ R_S(\mathcal{H}) }
+    = \frac{B}{n} \E\sbr{ \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2} }
+    \le \frac{B}{n} \sqrt{ \sum_{i=1}^n \E\sbr{\Norm{x\sp{i}}_2^2} }
+    \le \frac{BC}{\sqrt{n}},
+\end{equation}
+where the first inequality is another application of Jensen's inequality, and the second follows from the assumption $\Exp_{x \sim P}\sbr{\Norm{x}_2^2} \leq C^2$.
+
+\end{proof}
+
+We observe that both the empirical and average Rademacher complexities scale with the upper $\ell_2$-norm bound $\Norm{w}_2 \le B$ on the parameters~$w$, which motivates regularizing the model. However, smaller weights in the model may reduce the margin $\gamma_\mathrm{min}$, which in turn hurts generalization according to \eqref{lec7:eqn:generalization_loss}.
+
+\begin{remark}
+Note that if we scale the data by some multiplicative factor, the bound on empirical Rademacher complexity $R_S(\cH)$ will scale accordingly. However, at the same time we expect the margin to scale by the same multiplicative factor, so the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} does not change. This lines up with our intuition that the bound should not depend on the scaling of the data.
+\end{remark}
+
+\subsec{Linear models with weights bounded in $\ell_1$ norm}
+Now, we consider linear models again, except we restrict the $\ell_1$-norm of the parameters and assume an $\ell_\infty$-norm bound on the data.
+
+\begin{theorem}\label{lec7:thm:l1-thm}
+    Let $\mathcal{H} = \cbr{x \mapsto \inprod{w,x} \mid w \in \R^d, \Norm{w}_1 \le B}$ for some constant $B > 0$. Moreover, assume $\Norm{x\sp{i}}_\infty \leq C$ for some constant $C > 0$ and all points in $S = \{x\sp{i}\}_{i=1}^n \subset \R^d$. Then
+    \begin{equation}
+        R_S(\mathcal{H}) \leq BC\sqrt{\frac{2\log(2d)}{n}}.
+    \end{equation}
+\end{theorem}
+
+To prove the theorem, we will need Massart's lemma, which provides a bound for the Rademacher complexity of a finite hypothesis class.
+
+    \begin{lemma}[Massart's lemma]
+        Suppose $\mathcal{Q} \subset \R^n$ is finite and contained in the $\ell_2$-norm ball of radius $M\sqrt{n}$ for some constant $M > 0$, i.e.,
+        \begin{equation}
+            \mathcal{Q} \subset \{v \in \R^n \mid \Norm{v}_2 \leq M\sqrt{n} \}.
+        \end{equation}
+        Then, for Rademacher variables $\sigma = (\sigma_1,\sigma_2,\dots,\sigma_n) \in \R^n$,
+        \begin{equation}
+            \E_\sigma \left[ \sup_{v\in \mathcal{Q}} \frac{1}{n}\inprod{\sigma,v} \right] \leq M\sqrt{\frac{2\log|\mathcal{Q}|}{n}}.
+        \end{equation}
+        As a corollary, if $\mathcal{F}$ is a set of real-valued functions satisfying
+        \begin{equation}
+            \sup_{f\in\mathcal{F}} \frac{1}{n}\sum_{i=1}^n f(z\sp{i})^2 \leq M^2,
+        \end{equation}
+        over some data $S = \{z\sp{i}\}_{i=1}^n$, then
+        \begin{align}
+            R_S(\mathcal{F}) \leq M\sqrt{\frac{2\log|\mathcal{F}|}{n}}, \quad\text{and}\quad
+            R_n(\mathcal{F}) \leq M\sqrt{\frac{2\log|\mathcal{F}|}{n}}.
+        \end{align}
+    \end{lemma}
+
+We will not prove Massart's lemma in detail. The intuition is to use concentration inequalities to bound $\frac{1}{n}\inprod{\sigma, v}$ for fixed $v$, then to use a union bound over the elements $v \in \mathcal{Q}$.
+
+We will now prove Theorem \ref{lec7:thm:l1-thm}:
+
+\begin{proof}[Proof of Theorem \ref{lec7:thm:l1-thm}]
+    By definition,
+    \begin{align}
+        R_S(\mathcal{H}) &= \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} } \\
+        &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1\le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_\infty  },
+    \end{align}
+    
+    where the last equality is because $\sup_{\Norm{w}_1 \leq B}\inprod{w,v} = B\Norm{v}_\infty$, i.e., the $\ell_\infty$-norm is the dual of the $\ell_1$-norm, which is a consequence of H\"older's inequality. However, the $\ell_\infty$-norm is difficult to simplify further. Instead, we use the fact that $\sup_{\Norm{w}_1 \leq 1} \inprod{w,v}$ for any $v \in \R^d$ is always attained at one of the vertices $\mathcal{W} = \bigcup_{i=1}^d \{-e_i,e_i\}$, where $e_i \in \R^d$ is the $i$-th coordinate unit vector. Defining the restricted hypothesis class $\bar{\mathcal{H}} = \{x \mapsto \inprod{w,x} \mid w \in \mathcal{W}\} \subset \mathcal{H}$, this yields
+    \begin{align}
+        R_S(\mathcal{H}) &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \E_\sigma\sbr{ \max_{w\in\mathcal{W}} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= BR_S(\bar{\mathcal{H}}).
+    \end{align}
+    
+    Since $\bar{\mathcal{H}}\subset{\mathcal{H}}$, necessarily $R_S(\bar{\mathcal{H}})\leq R_S(\mathcal{H})$. In particular, the model class $\bar{\mathcal{H}}$ is bounded and finite with cardinality $|\bar{\mathcal{H}}| = 2d$. This suggests using Massart's lemma to complete the proof. To do so, we need to confirm that $\mathcal{\bar{H}}$ is bounded with respect to the $\ell_2$-metric. Indeed, since the inner product of $x\sp{i}$ with a coordinate vector $e_j$ just selects the $j$-th coordinate of $x\sp{i}$, for any $w \in \mathcal{W}$ we have
+    \begin{equation}
+        \frac{1}{n}\sum_{i=1}^n \inprod{w,x\sp{i}}^2 \leq \frac{1}{n}\sum_{i=1}^n \Norm{x\sp{i}}^2_\infty \leq \frac{1}{n}\sum_{i=1}^n C^2 = C^2,
+    \end{equation}
+    where the last inequality uses the assumption $\Norm{x_i}_\infty \leq C$. So $\bar{\mathcal{H}}$ is bounded in the $\ell_2$-metric and finite, thus by Massart's Lemma we have
+    \begin{equation}
+        R_S(\mathcal{H}) = B R_S(\bar{\mathcal{H}}) \leq BC\sqrt{\frac{2\log|\bar{\mathcal{H}}|}{n}} = BC\sqrt{\frac{2\log(2d)}{n}},
+    \end{equation}
+    which completes the proof.
+\end{proof}
+
+\subsec{Comparing the bounds for different $\cH$}
+
+First, we note that for this hypothesis class of linear models, it is possible to obtain an upper bound proportional to $\sqrt{d/n}$ using the VC~dimension, which grows quickly with the data dimension~$d$. Our bound is better since it does not have as strong of a dependence on~$d$, and accounts for the norms of our model parameters and the data.
+
+In the two subsections above, we considered two different hypothesis classes of linear models, each restricting different norms. In both cases, the bound on the average Rademacher complexity depended on the product of the norm bound on the parameters $w$ and the norm bound on each data point $x$. To determine which choice of hypothesis class is better, consider the bounds
+    \begin{equation*}
+        \Norm{w}_2\Norm{x}_2 \quad\text{vs.}\quad \Norm{w}_1\Norm{x}_\infty
+    \end{equation*}
+    and see how they compare in different settings. We consider 3 settings here:
+    
+    \begin{itemize}
+    \item Suppose $w$ and $x$ are random variables with $w_i$ and $x_i$ close to the set of values $\{-1,1\}$. Then we have
+    \begin{equation*}
+        \sqrt{d}\cdot \sqrt{d} \quad\text{vs.}\quad d\cdot 1.
+    \end{equation*}
+    In this case, there is no difference in using either linear hypothesis class.
+    
+    \item If we additionally suppose $w$ is sparse with at most $k$ non-zero entries, then we have
+    \begin{equation*}
+        \sqrt{k}\cdot\sqrt{d} \quad\text{vs.}\quad k\cdot 1.
+    \end{equation*}
+    So for $d \gg k$, we have $\sqrt{kd} \gg k$ and thus $\ell_1$-norm regularization leads to a better complexity bound when $w$ is suspected to be sparse. Indeed, $\sqrt{d}\Norm{x}_\infty \approx \Norm{x}_2$ when the entries of $x$ are somewhat uniformly distributed, and so in the sparse case we have
+    \begin{equation}
+        \Norm{w}_2\Norm{x}_2 \geq \sqrt{d}\Norm{w}_2\Norm{x}_\infty \geq \Norm{w}_1\Norm{x}_\infty. 
+    \end{equation}
+    
+    \item On the other hand, if $w$ is dense in the sense that $\Norm{w}_2\approx {\sqrt{d}}\Norm{w}_1$ (i.e., if all entries in $w$ are close to each other in magnitude), then
+    \begin{equation}
+        \Norm{w}_2\Norm{x}_2 \leq \frac{1}{\sqrt{d}}\Norm{w}_1 \cdot \sqrt{d} \Norm{x}_\infty \leq \Norm{w}_1\Norm{x}_\infty.
+    \end{equation}
+    In this case, it makes sense to regularize the $\ell_2$-norm instead.
+    \end{itemize}
+    
+    In practice, other multiplicative factors enter the generalization bound, so regularizing both the $\ell_1$- and $\ell_2$-norms of the model parameters $w$ is preferable.
+
+    Continuing with this rough style of analysis, for the hypothesis class with restricted $\ell_2$-norm, we can write the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} as
+    \begin{equation}
+        \text{generalization loss} \lesssim \frac{\Norm{w}_2\Norm{x}_2}{\sqrt{n}\gamma_{\mathrm{min}}} + \text{low-order term}.
+    \end{equation}
+    The presence of $\Norm{w}_2/\gamma_{\mathrm{min}}$ motivates both the minimum norm and the maximum margin formulations of the Support Vector Machine (SVM) problem as good methods to improve generalization performance of binary classifiers.
+
+%*****************************************************************************
+\sec{Two-layer neural networks}
+We now compute a bound for the Rademacher complexity of two-layer neural networks.  Throughout this section, we use the following notation:
+\begin{itemize}
+    \item $\theta = (w, U)$ are the parameters of the model with $w \in \R^m$ and $U \in \R^{m \times d}$, where $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$ (written as a column vector).
+    \item $\phi(z) = \max(z, 0)$ is the ReLU activation function applied element-wise.
+    \item $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)$ is the model.
+    \item $\{ (x\sp{i}, y\sp{i}) \}_{i=1}^n$ is the training set, with $x\sp{i}\in\R^d$ and $y\sp{i}\in\R$.
+\end{itemize}
+We start with a somewhat weak bound which introduces the technical tools we need to derive tighter bounds subsequently.
+
+\begin{theorem}\label{lec7:thm:thm_3}
+    For some constants $B_w > 0$ and $B_u > 0$, let
+    \begin{equation}
+        \mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2 \leq B_w,\ \Norm{u_i}_2 \leq B_u,\ \forall i \in \{1,2,\dots,m\} }, \label{lec7:eqn:thm_3}
+    \end{equation}
+    and suppose $\E\sbr{\Norm{x}_2^2} \leq C^2$. Then
+    \begin{align}
+        R_n(\mathcal{H}) \le 2 B_w B_u C\sqrt{\frac{m}{n}}.
+    \end{align}
+\end{theorem}
+
+This bound is not ideal as it depends on the number of neurons~$m$. Empirically, it has been found that the generalization error does \emph{not} increase monotonically with~$m$. As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. This contradicts the bound above, which states that more neurons leads to worse generalization. Nevertheless, we now derive this bound.
+
+\begin{proof}
+    By definition,
+    \begin{align}
+        R_S(\mathcal{H}) 
+        &= \E_\sigma\sbr{ \sup_\theta \frac{1}{n} \sum_{i=1}^n \sigma_i \inprod{w,\phi(Ux\sp{i})} }
+        \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \sup_{\Norm{w}_2 \leq B_w} \inprod{w,\sum_{i=1}^n \sigma_i \phi(Ux\sp{i})} }
+        \\&= \frac{B_w}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
+            &&\text{($\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
+        \\&\leq \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
+            &&\text{($\Norm{v}_2 \leq m\Norm{v}_\infty$)}
+        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
+        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
+            &&\text{(by Lemma \ref{lec8:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
+    \end{align}
+    \tnotelong{check if we need to reorganize this a bit}
+    where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
+    
+    We now observe that the expectation in \eqref{lec7:eqn:nn-proof2} is the Rademacher complexity of the family of linear models $\{x \mapsto \inprod{u,x} \mid \Norm{u}_2\leq B_u\}$. Thus, applying Theorem~\ref{lec7:thm:l1-thm} yields
+    \begin{equation}
+        R_S(\mathcal{H}) \leq \frac{2B_w\sqrt{m}}{n}B_u\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
+    \end{equation}
+    
+    Taking the expectation of both sides and using similar steps to those in the proof of Theorem~\ref{lec7:thm:l1-thm} gives us
+    \begin{align}
+        R_n(\mathcal{H})  &= \E\left[ R_S(\mathcal{H})\right] \\
+        &\leq \frac{2B_wB_u\sqrt{m}}{n} \E\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
+        &\leq \frac{2B_wB_u\sqrt{m}}{n} C\sqrt{n} \\
+        &= 2 B_w B_u C\sqrt{\frac{m}{n}},
+    \end{align}
+    which completes the proof.
+    
+\end{proof}
+
+This upper bound is undesirable since it grows with the number of neurons $m$, contradicting empirical observations of the generalization error decreasing with $m$.
+
+%*****************************************************************************
+
+\sec{Refined bounds for two-layer neural networks}
+
+Next, we look at a finer bound that results from defining a new complexity measure. A recurring theme in subsequent proofs will be the functional invariance of two-layer neural networks under a class of rescaling transformations. The key ingredient will be the \textit{positive homogeneity} of the ReLU function, i.e.
+\begin{equation}
+\alpha \phi(x) = \phi(\alpha x) \qquad \forall \alpha > 0.
+\end{equation}
+This implies that for any $\lambda_i > 0$ ($i = 1, \dots, m$), the transformation $\theta = \{(w_i, u_i)\}_{1 \leq i \leq m} \mapsto \theta' = \{(\lambda_i w_i,  u_i / \lambda_i )\}_{1 \leq i \leq m}$ has no net effect on the neural network's functionality (i.e. $f_{\theta} = f_{\theta'}$) since 
+\begin{equation}
+w_i\cdot \phi \left(u_i^\top x\sp i \right) = (\lambda_i w_i) \cdot \phi\l(\l( \frac{u_i}{\lambda_i}\r)^\top x\sp i\r).   
+\end{equation}
+In light of this, we devise a new complexity measure $C(\theta)$ that is also invariant under such transformations and use it to prove a better bound for the Rademacher complexity. This positive homogeneity property is absent in the (implicit) complexity measure used in the hypothesis class \eqref{lec7:eqn:thm_3} of Theorem \ref{lec7:thm:thm_3}.
+
+\begin{theorem}\label{lec8:thm:thm-improved-nn-rc}
+$\operatorname{Let} C(\theta)=\sum_{j=1}^{m}\left|w_{j}\right|\left\|u_{j}\right\|_{2},$ and for some constant $B_{C}>0$ consider the hypothesis class
+\begin{equation}
+\mathcal{H}=\left\{f_{\theta} \mid C(\theta) \leq B_{C}\right\}.
+\end{equation}
+If $\left\|x\sp{i}\right\|_{2} \leq C$ for all $i \in\{1, \ldots, n\},$ then
+\begin{equation}
+R_{S}(\mathcal{H}) \leq \frac{2 B_{C} C}{\sqrt{n}}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^T x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^T x)$. The empirical Rademacher complexity satisfies
+\allowdisplaybreaks
+\al{
+R_S(\cH) &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
+&= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \phi\left(u_j ^ T x\sp{i}\right) \right] \right] &&\text{(by dfn of $f_\theta$)} \\
+&=  \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \norm{u_j}_2  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right]  
+    && \text{(by positive homogeneity of $\phi$)}\\
+&= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right] \\ 
+&\leq \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
+&\leq \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq B_C$)} \\
+&=  \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{2B_C}{n}  \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
+&= 2B_C R_S(\cH '),
+}
+where $\cH' = \l\{x \mapsto \phi(\bar{u}^T x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^T x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.
+
+\end{proof}
+
+We complete the proof by deriving the Lemma \ref{lec8:lemma:absfortwo} used in the second last inequality. Notably, the lemma's assumption holds in the current context, since
+\al{
+\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle = \sup_{\bar{u}: \norm{\bar{u}}_2 \leq 1} 
+\sum_{i=1}^n \sigma_i \phi \l(\bar{u}^T x\sp i \r)  \geq 0.
+}
+since one can take $\bar{u} = 0$ for any $\sigma = (\sigma_1, \dots, \sigma_n)$.
+
+\begin{lemma}\label{lec8:lemma:absfortwo}
+Let $\sigma = (\sigma_1, ..., \sigma_n)$ and $f_{\theta}(x) = \l(f_{\theta}\l(x\sp{1}\r), ...,  f_{\theta}\l(x\sp{n} \r)\r)$. Suppose that for any $\sigma \in \{\pm 1\}^n$, $\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle \geq 0$. Then, 
+\begin{equation}
+\mathbb{E}_{\sigma}\l[ \sup_{\theta}  \l | \langle \sigma, f_{\theta}(x) \rangle \r|  \r] \leq 2 \mathbb{E}_{\sigma}\l[ \sup_{\theta}  \langle \sigma, f_{\theta}(x) \rangle   \r].
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Letting $\phi$ be the ReLU function, the lemma's assumption implies that $\sup_{\theta} \phi\left(\langle \sigma, f_{\theta}(x) \rangle\right) = \sup_{\theta}\langle \sigma, f_{\theta}(x) \rangle$ for any $\sigma \in \{\pm 1\}^n$. Observing that $|z| = \phi(z) + \phi(-z)$, 
+\begin{align}
+\sup_{\theta} \abs{\inprod{ \sigma, f_{\theta}(x) }}%
+&= \sup_{\theta} \left[ \phi \l(\inprod{ \sigma, f_{\theta}(x) } \r) + \phi \l(\inprod{-\sigma, f_{\theta}(x) } \r)\right] \\
+&\le \sup_{\theta}  \phi \l(\inprod{ \sigma, f_{\theta}(x) } \r) +  \sup_{\theta}  \phi \l(\inprod{-\sigma, f_{\theta}(x) } \r)  \\
+&= \sup_{\theta} \inprod{ \sigma, f_{\theta}(x) } +  \sup_{\theta}  \inprod{-\sigma, f_{\theta}(x) }. 
+\end{align}
+Taking the expectation over $\sigma$ (and noting that $\sigma \overset d = -\sigma$), we get the desired conclusion.
+\end{proof}
+
+\begin{remark}
+Compared to Theorem~\ref{lec7:thm:thm_3}, this bound does not explicitly depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound if the value of the new complexity measure $C(\theta)$ is reasonable. In contrast, the bound of Theorem \ref{lec7:thm:thm_3} only looks at the total number of neurons. With the result above, it is possible to regularize $C(\theta)$ and obtain a tighter bound for any number~$m$ of neurons. This would lead to an accurate model with better generalization guarantees for a high number neurons. 
+
+For example, consider solving the constrained problem
+\begin{equation}
+    \rho_m = \min_\theta C(\theta) 
+    \quad \text{such that}\quad 
+    \text{$f_\theta$ fits the data  $\{(x\sp{i}, y\sp{i})\}_{i=1}^n$.}
+\end{equation}
+In this case, $\rho_m$ monotonically decreases as the number of neurons $m$ increases. Indeed, models with more parameters necessarily include models with a lower number of parameters and thus those of lower complexity.  As a result, it is possible to obtain lower complexity models by increasing the number of parameters $m$.
+\end{remark}
+
+\sec{More implications and discussions on neural networks}
+In this section, we discuss practical implications of the refined neural network bound. 
+
+\subsec{Connection to $\ell_2$ regularization}
+
+Recall that margin theory yields
+\begin{equation}
+\text{for all } \theta, \quad \Err(\theta) \leq \frac{2R_S(\cH)}{\gammamin} + \tilO\l(\sqrt{\frac{\log \l( 2 / \delta \r)}{n}}\r), \label{lec8:eqn:margin-bound}
+\end{equation}
+with probability at least $1 -\delta$. Thus, Theorem \ref{lec8:thm:thm-improved-nn-rc} motivates us to minimize $\frac{R_S(\cH)}{\gammamin}$ by regularizing $C(\theta)$. Concretely, this can be formulated as the optimization problem 
+\al{
+\text{minimize} & \qquad C(\theta) = \sum_{j=1}^m |w_j|\cdot \norm{u_j}_2 \nonumber \tag{I} \label{lec8:eqn:opt1} \\ 
+\text{subject to} & \qquad \gammamin(\theta)\ge 1, \nonumber
+}
+or equivalently,
+\al{
+\text{maximize} & \qquad \gammamin(\theta) \nonumber \tag{II} \label{lec8:eqn:opt2} \\ 
+\text{subject to} & \qquad C(\theta)\le 1. \nonumber
+}
+
+At first glance, the above seems orthogonal to techniques used in practice. However, it turns out that the optimal neural network from \eqref{lec8:eqn:opt1} is functionally equivalent to that of the new problem:
+\al{
+\text{minimize} & \qquad C_{\ell_2}(\theta) = \frac{1}{2}\sum_{j=1}^m |w_j|^2 + \frac{1}{2}\sum_{j=1}^m \norm{u_j}_2^2 \nonumber \tag{I*} \label{lec8:eqn:opt1star} \\ 
+\text{subject to} & \qquad \gammamin(\theta)\ge 1. \nonumber
+}
+This is a simple consequence of the positive homogeneity of $\phi$. For any scaling factor $\lambda=(\lambda_1, \dots, \lambda_m)\in \R_+^m$, the rescaled neural network $\theta_\lambda := \{(\lambda_i w_i, u_i/\lambda_i)\}$ has the same functionality as the original neural network $\theta = \{w_i, u_i \}$ (i.e. it achieves the same $\gammamin$). Thus, 
+\al{
+\min_{\theta} C_{\ell_2}(\theta) &= \min_{\theta} \min_{\lambda} \rbr{ \frac{1}{2}\sum_{j=1}^m \lambda_j^2 |w_j|^2 + \frac{1}{2}\sum_{j=1}^m \lambda_j^{-2}\norm{u_j}_2^2 }\\
+&= \min_{\theta}  \sum_{j=1}^m |w_j|\cdot \norm{u_j}_2 \\
+&= \min_{\theta}  C(\theta)
+}
+where we have used the equality case of the AM-GM inequality, attainable by $\lambda_j^* = \sqrt{\frac{\norm{u_j}_2}{|w_j|}}$, in the second step. This equality case also shows that $\theta^* = \{(w_i, u_i ) \}$ is the optimal solution of \eqref{lec8:eqn:opt1} if and only if $\hat{\theta}^* = \theta_{\lambda^*}$ is the optimal solution of \eqref{lec8:eqn:opt1star}---proving that $\hat{\theta}^*$ and $\theta^*$ are functionally equivalent since they only differ by a positive scale factor. 
+
+This connects our $C(\theta)$ regularization to $\ell_2$-norm penalties that are more prevalent in practice. In retrospect, we see this equivalence is essentially due to the positive homogeneity of the neural network which ``homogenizes'' any inhomogeneous objective such as $C_{\ell_2}$. Hence, we can just deal with $C(\theta)$ which is transparently homogeneous.
+
+\subsec{Stable generalization bound in $m$} 
+
+Next, we show that the generalization bound given by Theorem \ref{lec8:thm:thm-improved-nn-rc} does not deteriorate with the network width (number of neurons) $m$, which is consistent with experimental results. To this end, the perspective of \eqref{lec8:eqn:opt2} enables us to isolate all dependencies of $m$ in $\gammamin$. Letting $\widehat \theta_m$ denote the minimizer of program \eqref{lec8:eqn:opt2} with width $m$ and defining optimal value $\gamma_m^* = \gammamin\l(\widehat \theta_m\r)$, we can rewrite the margin bound \eqref{lec8:eqn:margin-bound} as 
+\begin{equation}
+L(\widehat \theta_m) \le \frac{4C}{\sqrt{n}} \cdot \frac{1}{\gamma_m^*} + \text{(lower-order terms)},
+\end{equation}
+where all dependencies on $m$ are now contained in $\gamma_m^*$. Hence, to show that this bound does not worsen as $m$ grows, we just have to show that $\gamma_m^*$ is non-decreasing in $m$. This is intuitively the case since a neural network of width $m+1$ contains one of width $m$ under the same complexity constraints. The following theorem formalizes this hunch:
+
+\begin{theorem}
+Let $\gamma_m^*$ be the minimum margin obtained by solving \eqref{lec8:eqn:opt2} with a two-layer neural network of width $m$. Then $\gamma_m^* \leq \gamma_{m+j}^*$ for all positive integers $j$.
+\end{theorem}
+
+\begin{proof}
+Suppose $\theta = \{(w_i, u_i)\}_{1 \leq i \leq m}$ is a two-layer neural network of width $m$ satisfying $C(\theta)\le 1$. Then we may construct a neural network $\widetilde \theta = \{(\tilde w_i, \tilde u_i)\}_{1 \leq i \leq m+1}$ of width $m+1$ by simply taking
+\al{
+(\widetilde w_i, \widetilde u_i) = \begin{cases}
+(w_i, u_i) & i\le m, \\
+(0,0) & \text{otherwise}
+\end{cases}
+}
+$\widetilde \theta$ is functionally equivalent to $\theta$ and $C(\widetilde \theta) = C(\theta) \le 1$. This means maximizing $\gammamin$ over $\{C(\widetilde \theta): \widetilde \theta\text{ of width }m+1\}$ should give no lower of a value than the maximum of $\gammamin$ over $\{C(\theta): \theta\text{ of width }m\}$.
+\end{proof}
+
+\subsec{Equivalence to an $\ell_1$-SVM in $m \to \infty$ limit}
+
+Since $\gamma_m^*$ is non-decreasing in $m$, quantity 
+\begin{equation}
+\gamma_\infty ^* = \lim_{m\to \infty } \gamma_m^*
+\end{equation}
+is well-defined. The next interesting fact is that in this $m \to \infty$ limit, $\gamma_{\infty}^*$ of the two-layer neural network is equivalent to the minimum margin of an $\ell_1$-SVM. As a brief digression, we recap the formulation of $\ell_p$-SVMs and discuss the importance of $\ell_1$-SVMs in particular.
+
+Since a collection of data points with binary class labels may not be a priori separable, a \textit{kernel model} first transforms an input $x$ to $\Phi(x)$ where $\Phi: \mathbb{R}^d \to \mathcal{G}$ is known as the \textit{feature map}. The model then seeks a separating hyperplane in this new (extremely high-dimensional) feature space $\mathcal{G}$, parameterized by a vector $\mu$ pointing from the origin to the hyperplane. The prediction of the model on an input $x$ is then a decision score that quantifies $\Phi(x)$'s displacement with respect to the hyperplane:
+\begin{equation}
+g_{\mu, \Phi}(x) := \l\langle \mu, \Phi(x) \r\rangle.
+\end{equation}
+Motivated by margin theory, it is desirable to seek the maximum-margin hyperplane under a constraint on $\mu$ to guarantee the generalizability of the model. In particular, a kernel model with an $\ell_p$-constraint seeks to solve the following program:
+\al{
+\text{maximize} & \qquad \gamma_{min} \coloneqq \min_{i \in [n]} y\sp{i}\langle \mu, \Phi(x\sp{i}) \rangle \\ 
+\text{subject to} & \qquad \norm{\mu}_p \le 1. \nonumber
+}
+Observe that both the prediction and optimization of the feature model only rely on inner products in $\mathcal{G}$. The ingenuity of the SVM is to choose maps $\Phi$ such that $K(x, x') = \l\langle \Phi(x), \Phi(x') \r\rangle$ can be directly computed in terms of $x$ and $x'$ in the original space $\mathbb{R}^d$, thereby circumventing the need to perform expensive inner products in the large space $\mathcal{G}$. Remarkably, this ``kernel trick'' enables us to even operate in an implicit, infinite-dimensional $\mathcal{G}$. 
+
+The case of $p=1$ is particularly useful in practice as $\ell_1$-regularization generally produces sparse feature weights (the constrained parameter space is a polyhedron and the optimum tends to lie at one of its vertices). Hence, $\ell_1$-regularization is an important feature selection method when one expects only a few dimensions of $\cG$ to be significant. Unfortunately, the $\ell_1$-SVM is not kernelizable due to the kernel trick relying on $\ell_2$-geometry, and is hence infeasible to implement. However, our next theorem shows that a two-layer neural network can approximate a particular $\ell_1$-SVM in the $m \to \infty$ limit (and in fact, for finite $m$). For the sake of simplicity, we sacrifice rigor in defining the space $\mathcal{G}$ and convey the main ideas.
+
+\begin{theorem}\label{lec8:thm:thm8.5}
+Define the feature map $\phirelu: \mathbb{R}^d \to \mathcal{G}$ such that $x$ is mapped to $\phi(u^\top x)$ for all vectors $u$ on the $d-1$-dimensional sphere $\mathcal{S}^{d-1}$. Informally, 
+$$\phirelu(x) := \begin{bmatrix} \vdots \\ \phi(u^\top x) \\ \vdots \end{bmatrix}_{u\in S^{d-1}}$$
+is an ``infinite-dimensional vector'' that contains an entry $\phi(u^T x)$ for each vector $u \in \mathcal{S}^{d-1}$, and we let $\phirelu(x)[u]$ denote the ``$u$''-th entry of this vector. Noting that $\mathcal{G}$ is the space of functions which can be indexed by $u \in S^{d-1}$, the inner product structure on $\mathcal{G}$ is defined by $\langle f, g \rangle = \int_{S^{d-1}} f[u]g[u] du$.
+
+Under this set-up, we have
+\begin{equation}
+\gamma_{\infty}^* = \gamma_{\ell_1}^*,
+\end{equation}
+where $\gamma_{\ell_1}^*$ is the minimum margin of the optimized $\ell_1$-SVM with $\Phi = \phirelu$.
+\end{theorem}
+
+\begin{proof}
+
+We will only prove the $\gamma_{\infty}^* \leq \gamma_{\ell_1}^*$ direction. (The $\gamma_{\infty}^* \geq \gamma_{\ell_1}^*$ direction requires substantial functional analysis.)
+
+Suppose $\gamma_\infty^*$ is obtained by network weights $(w_1,w_2, \cdots), (u_1, u_2, \cdots)$ where $w_i\in \R, u_i\in \R^d$ (there is a slight subtlety here to be rectified later). Define renormalized versions of $\{w_i\}$ and $\{u_i\}$:
+\begin{equation}
+\widetilde w_i := w_i\cdot \norm{u_i}_2, \qquad \overline u_i := \frac {u_i} {\norm{u_i}_2}.   
+\end{equation}
+Note that $\{(\widetilde w_i, \overline u_i)\}$ has the same functionality (and also the same complexity measure $C(\theta)$, margin, etc.) as that of $\{(w_i,u_i)\}$, but now $\overline u_i$ has unit $\ell_2$-norm (i.e. $\bar{u}_i \in \mathcal{S}^{d-1}$). Thus, $\phi(\overline u_i ^\top x)$ can be treated as a feature in $\cG$ and we can construct an equivalent $\ell_1$-SVM (denoted by $\mu$) such that $\widetilde w_i$ is the coefficient of $\mu$ associated with that feature. Since $\widetilde w_i$ must only be ``turned on' at $\overline u_i $, we have 
+\al{
+\mu[u] = \sum_{i \in \mathcal{S}^{d-1}} \tilde{w}_i \delta(u - \overline u_i),
+}
+where $ \delta(u)$ is the Dirac-delta function. Given this $\mu$, we can check that the SVM's prediction is
+\al{
+g_{\mu, \phirelu}(x) &= \int_{S^{d-1}} \mu[u] \phirelu(x)[u] du \\
+&= \int_{S^{d-1}}   \sum_{i \in \mathcal{S}^{d-1}} \tilde{w}_i \delta(u - \overline u_i) \phi\left(\overline u ^\top x\right) du \\
+&= \sum_{i \in \mathcal{S}^{d-1}}  \tilde{w}_i \phi\left(\overline u_i ^\top x\right) ,
+}
+which is identical to the output $f_{\{(\widetilde w_i, \overline u_i)\}}(x)$ of the neural network. Furthermore, 
+\al{
+\norm{\mu}_1 =  \sum_{i=1}^{\infty} |\widetilde w_i| = \sum_{i=1}^{\infty} |w_i|\cdot \norm{u_i}_2 \leq 1,
+}
+where the last equality holds because $\{(\widetilde w_i, \overline u_i)\}$ satisfies the constraints of \eqref{lec8:eqn:opt2}. This shows that our constructed $\mu$ satisfies the $\ell_1$-SVM constraint. Thus, $\gamma_{\infty}^* \leq \gamma_{\ell_1}^*$ since the functional behavior of the optimal neural network is contained in the search range of the SVM.
+
+\end{proof}
+
+\begin{remark}
+How well does a finite dimensional neural network approximate the infinite-dimensional $\ell_1$ network? Proposition B.11 of \cite{wei2020regularization} shows that you only need $n+1$ neurons. Another way to say this is that $\{\gamma_m\}$ stabilizes once $m=n+1$:
+\begin{equation}
+\gamma_1^* \le \gamma_2^* \le \dots \le \gamma_{n+1}^* = \gamma_\infty^*.
+\end{equation}
+The main idea of the proof is that if we have a neural net $\theta$ with $(n+2)$ neurons, then we can always pick a simplification $\theta'$ with $(n+1)$ neurons such that $\theta,\theta'$ agree on all $n$ datapoints.
+
+As an aside, this result also resolves the issue in our partial proof. A priori, $\gamma_{\infty}^*$ may not necessarily be attained by a set of weights $\{(\widetilde w_i, \overline u_i)\}$ but the above shows that it is achievable with just $n+1$ non-zero indices.
+
+\end{remark}

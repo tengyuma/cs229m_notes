@@ -1,0 +1,177 @@
+%% filename: amsbook-template.tex
+%% version: 1.1
+%% date: 2014/07/24
+%%
+%% American Mathematical Society
+%% Technical Support
+%% Publications Technical Group
+%% 201 Charles Street
+%% Providence, RI 02904
+%% USA
+%% tel: (401) 455-4080
+%%      (800) 321-4267 (USA and Canada only)
+%% fax: (401) 331-3842
+%% email: tech-support@ams.org
+%% 
+%% Copyright 2006, 2008-2010, 2014 American Mathematical Society.
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%% 
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is the American Mathematical
+%% Society.
+%%
+%% ====================================================================
+
+%    AMS-LaTeX v.2 driver file template for use with amsbook
+%
+%    Remove any commented or uncommented macros you do not use.
+
+\documentclass{book}
+\usepackage{amsfonts,bm,amsthm,amsmath,bbm,amssymb,mathtools}
+\usepackage{fullpage}
+\usepackage{tikz, pgfplots} % added for Lecture 2	
+\usepackage{float}  % added for Lecture 8
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}  % added for Lecture 15
+\usepackage{booktabs}  % added for Lecture 15
+
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{xca}[theorem]{Exercise}
+\newtheorem{corollary}[theorem]{Corollary}  % added for Lecture 5
+\newtheorem{proposition}{Proposition}[section]  % added for Lecture 6
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\numberwithin{section}{chapter}
+\numberwithin{equation}{chapter}
+
+%    For a single index; for multiple indexes, see the manual
+%    "Instructions for preparation of papers and monographs:
+%    AMS-LaTeX" (instr-l.pdf in the AMS-LaTeX distribution).
+\makeindex
+\def\lectureformat{0}
+\input{macros}
+\begin{document}
+
+\frontmatter
+
+\title{Lecture Notes for Machine Learning Theory (CS229M/STATS214)}
+
+%    Remove any unused author tags.
+
+%    author one information
+\author{Instructor: Tengyu Ma
+}
+%\address{}
+%\curraddr{}
+%\email{}
+%\thanks{}
+
+%    author two information
+%\author{}
+%\address{}
+%\curraddr{}
+%\email{}
+%\thanks{}
+
+%\subjclass[2010]{Primary }
+
+%\keywords{}
+
+%\date{}
+
+%\begin{abstract}
+%\end{abstract}
+
+\maketitle
+
+%    Dedication.  If the dedication is longer than a line or two,
+%    remove the centering instructions and the line break.
+%\cleardoublepage
+%\thispagestyle{empty}
+%\vspace*{13.5pc}
+%\begin{center}
+%  Dedication text (use \\[2pt] for line break if necessary)
+%\end{center}
+%\cleardoublepage
+
+%    Change page number to 6 if a dedication is present.
+\setcounter{page}{4}
+
+\tableofcontents
+
+%    Include unnumbered chapters (preface, acknowledgments, etc.) here.
+%\include{}
+\mainmatter
+\let\sec\section
+\let\subsec\subsection
+
+\chapter{Supervised Learning Formulations}\label{chap:supervised}
+\input{collection/01supervised.tex}
+
+\chapter{Asymptotic Analysis}\label{chap:asymp}
+\input{collection/02asymptotics.tex}
+
+\chapter{Concentration Inequalities}\label{chap:conc}
+\input{collection/03concentration.tex}
+
+\chapter{Generalization Bounds via Uniform Convergence}\label{chap:uc}
+\input{collection/04-01-uniform.tex}
+\input{collection/04-02-uniform.tex}
+\input{collection/04-03-uniform.tex}
+
+\chapter{Rademacher Complexity Bounds for Concrete Models and Losses}\label{chap:gen-bounds}
+\input{collection/05-01-concrete-models.tex}
+\input{collection/05-02-concrete-models}
+
+\chapter{Theoretical Mysteries in Deep Learning}
+\input{collection/06-dltheory}
+
+\chapter{Nonconvex Optimization}
+\input{collection/07-01-nonconvex.tex}
+\input{collection/07-02-nonconvex.tex}
+\input{collection/07-03-nonconvex.tex}
+
+\chapter{Implicit/Algorithmic Regularization Effect}
+\input{collection/08-01-algorithmic.tex}
+\input{collection/08-02-algorithmic.tex}
+\input{collection/08-03-algorithmic.tex}
+
+\chapter{Data-dependent generalization bounds}
+\input{collection/09-01-data-dependent.tex}
+
+\chapter{Online learning}
+\input{collection/10-01-online.tex}
+\input{collection/10-02-online.tex}
+
+
+\appendix
+%    Include appendix "chapters" here.
+
+
+\backmatter
+%    Bibliography styles amsplain or harvard are also acceptable.
+\bibliographystyle{amsalpha}
+\bibliography{bibliography}
+%    See note above about multiple indexes.
+%\printindex
+
+\end{document}
+
+%-----------------------------------------------------------------------
+% End of amsbook-template.tex
+%-----------------------------------------------------------------------

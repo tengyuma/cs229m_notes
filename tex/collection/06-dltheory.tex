@@ -1,0 +1,67 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{9}{Rafael Rafailov and Aidan Perreault}{Feb 10th, 2021}
+
+We now turn to a high-level overview of deep learning theory. To begin, we outline a framework for classical machine learning theory, then discuss how the situation is different from deep learning theory.
+
+\sec{Framework for classical machine learning theory}
+At the risk of oversimplification, we can divide classical machine learning theory into three parts:
+
+\begin{enumerate}
+\item {\bf Approximation theory} attempts to answer whether there is any choice of parameters $\theta$ that achieves low population error. In other words, is the choice of hypothesis class good enough to approximate the ground truth function? Using notation from earlier in this course, the goal is to upper bound $L(\theta^*) = \min_{\theta \in \Theta} L(\theta).$
+    
+\item {\bf Statistical generalization} focuses on bounding the excess risk $L(\hat{\theta}) - L(\theta^*)$. In Chapter \ref{chap:uc} we obtained the following bound:
+    
+\begin{equation}
+L(\hat{\theta})-L(\theta^*)\leq \underbrace{L(\hat{\theta})-\hat{L}(\hat{\theta})}_{\text{generalization error}} + |L(\theta^*)-\hat{L}(\theta^*)|.
+\end{equation}
+    
+The first term here is the generalization error, which usually has an upper bound of the form $R(\theta)/\sqrt{n}$, where $R(\theta)$ is some complexity measure.\footnote{In earlier chapters, we defined the complexity of a hypothesis class, not of a specific parameter value. To reconcile these two approaches, think of $R$ as a measure of complexity (such as a norm) that we can then use to define a hypothesis class $\Theta$, i.e.~$\Theta = \{\theta' : R(\theta') \le R(\theta)\}$.} This is a demonstration of \textit{Occam's Razor}: the principle that simple (low-complexity) explanations generalize better. 
+    
+This statistical approach allows us to define a regularized loss  $\hat{L}_{\textup{reg}}(\theta)=\hat{L}(\theta)+\lambda R(\theta)$. Minimizing this loss gives us a solution $\hat{\theta}_\lambda$ which simultaneously has low training error and low complexity, which lets us bound both the training error and the generalization error. To summarize, in the classical setting, we can prove statements of the form
+    
+\begin{equation}\label{lec9:eqn:classical-guarantee}
+\text{If }\hat{\theta}_\lambda \text{ minimizes } \hat{L}_{\textup{reg}},\text{ then } L(\hat{\theta}_\lambda) - L(\theta^*) \text{ is small.}
+\end{equation}
+
+\item {\bf Optimization} considers how to obtain the minimizer $\hat\theta$ or $\hat{\theta}_\lambda$ computationally. This usually involves convex optimization: if $\hat{L}$ or $\hat{L}_{\textup{reg}}$ is convex, then we have a polynomial-time algorithm to find the global minimum.
+\end{enumerate}
+
+While there are many tradeoffs to consider between these three components (for example, we may be able to find a loss function for which optimization is easy, but generalization becomes worse), it is still possible to study each area individually, then combine all three to get a result.
+
+\sec{Deep learning theory and its differences}
+The situation is not so simple for deep learning theory. Let us consider how this is the case for each of the three components described for classical machine learning theory
+
+\begin{enumerate} 
+\item {\bf Approximation theory:} Large neural net models are considered to be very expressive. That is, both the population loss $L(\theta^*)$ and the finite sample loss $\hat{L}(\hat\theta)$ can be made small. In fact, neural networks are \textit{universal approximators}; see for example \cite{hornik1991}. This can be a somewhat misleading statement as the definition of universal approximator allows for the size of the network to be impracticably large, but morally it seems to hold true in practice anyway.
+        
+This expressivity is possible because neural networks are usually highly \textit{over-parametrized}: they have many more parameters than samples. It is possible to prove that in this regime, the network can ``memorize'' the entire dataset and achieve approximately zero training error.
+    
+\item {\bf Statistical generalization:} Relatively weak regularization is used in practice. In many cases only weak $\ell_2$ regularization is used, i.e.
+\begin{equation}
+\widehat{L}_{\textup{reg}}(\theta)=\hat{L}(\theta)+\lambda\|\theta\|_2^2.
+\end{equation}
+    
+The first interesting fact is that this regularized loss does not have a unique (approximate) global minimizer. This is due to overparametrization: there are so many degrees of freedom that there are many approximate global minimizers with approximately the same $\ell_2$ norm.
+    
+However, it turns out that these global minimizers are not equally good: many models which achieve zero training error may have very bad test error. Take, for example, using stochastic gradient descent (SGD) to learn a model to classify the dataset CIFAR-10. Consider two instantiations of this: one starting with a large learning rate and slowly decreasing it, and one with a small learning rate throughout. Even though both instantiations result in approximately zero training error, the former leads to much better test performance.
+
+Therefore, the goal in deep learning theory is not just to find an arbitrary global minimum: we need to find the right global minimum. This contrasts sharply with \eqref{lec9:eqn:classical-guarantee} from the classical setting, where achieving a global minimum leads to good guarantees on generalization error. This means that \eqref{lec9:eqn:classical-guarantee} is simply not powerful enough to deal with deep learning, because it cannot distinguish between $\theta$'s with good test error and bad test error.
+
+\item {\bf Optimization:} The discussion above means that optimization plays a significant role in generalization for deep learning. Different training algorithms have different ``implicit biases'', causing them to converge to different global minimizers. Understanding the implicit biases of algorithms is thus a central goal of deep learning theory. It is impossible to design a good optimization algorithm without also considering its impact on generalization. In fact, many algorithms for non-convex optimization have been proposed that work well for minimizing training loss, but because their implicit bias is different, they lead to worse test performance and are therefore not too useful.
+    
+Often these implicit biases can be interpreted as encouraging $\hat\theta$ to have low complexity in some sense. The deep learning analog of  \eqref{lec9:eqn:classical-guarantee} is that ``low complexity solutions generalize''. This means that we end up doing more work on the optimization front in order to understand the implicit bias of our algorithm, and then proving generalization bounds works similarly to the classical setting once we understand how our optimizer finds a low-complexity solution.
+    
+\end{enumerate}
+
+To explain the success of deep learning, we will cover three tasks in the next two chapters:
+
+\begin{enumerate}
+    \item Prove that our optimization algorithm converges to an approximate global minimum, even though the objective function is non-convex. Our results here will mostly be for simplified models (e.g. linearized neural nets). (We will also show later that this can be accomplished separately from the other tasks using a special optimization setup (the ``NTK approach"). However, the generalization of this approach can be poor.)
+    
+    \item Show that the solution $\hat{\theta}$ has low complexity $R(\hat{\theta})\leq C$. We can only answer this question for some special cases of models (e.g. logistic regression, matrix factorization) and optimizers (e.g. gradient descent, label noise in SGD, dropout, learning rate).
+    
+    \item Show that for all $\theta$ such that $R(\theta)\leq C$ with $\hat{L}(\theta)\approx 0$, we have $L(\theta)$ is small. That is, we show that low-complexity solutions to the empirical risk problem generalize well. We will be working with more fine-grained complexity measures, and several of the tools we used in classical machine learning can still apply.
+\end{enumerate}

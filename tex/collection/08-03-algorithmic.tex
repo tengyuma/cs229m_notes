@@ -1,0 +1,69 @@
+% reset section counter
+%\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{17}{Jeff Z. HaoChen and Carrie Wu}{Mar 15th, 2021}
+
+\sec{Algorithmic regularization for classification}
+
+In this section, we will discuss algorithmic regularization for classification problem. In particular, we consider binary classification with logistic loss. Let $\{(x_i, y_i)\}_{i=1}^n$ be a separable dataset with $y_i\in \{\pm 1\}$, $x_i\in \R^d$. We have a linear model $h_w(x) = w^\top x$, and we minimize the empirical logistic loss 
+\begin{align}
+	\hatL (w) &= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i h_w(x_i))\\
+	&= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i w^\top x_i),
+\end{align}
+where $\ell(t) = \log(1+\exp(-t))$ is the logistic loss.
+
+In order to observe algorithmic regularization, we need to ensure that there exist multiple global minima for this setup. This is the case here: because the dataset is linearly separable, there exists some $w$ such that $y_i w^\top x_i > 0$ for all $i$. Clearly any $w'$ in a small neighborhood of $w$ also classifies all the data correctly; hence, there exists an infinite number of separating classifiers $\overline{w}$ with unit norm. For any of these $\overline{w}$, note that $\hatL(\alpha\overline{w}) \rightarrow 0$ as $\alpha \rightarrow \infty$, hence intuitively all of ``$\infty \overline{w}$'' classifiers are global minima.
+
+Having shown the existence of multiple global minima, we now show that gradient descent will actually converge to the solution which maximizes the \textit{margin}. We first define the \textit{normalized margin} for a separating classifier $w$ as
+\begin{align}
+	\gamma(w) = \frac{\min_{i\in [n]} y_iw^\top x_i }{\|w\|_2}.
+\end{align}
+We call $\overline{\gamma} = \max_w \gamma(w)$ the \textit{max margin}. Now we are ready to state the theorem:
+
+\begin{theorem}[\cite{soudry2018implicit}]
+	Gradient descent with iterates $w_t$ converges to the direction of a max-margin solution:
+	
+	\begin{align}
+		\gamma(w_t) \rightarrow \overline{\gamma} \quad  \text{as} \quad t \rightarrow \infty.
+	\end{align}
+	In other words, gradient descent on logistic loss is equivalent to the SVM.\footnote{This result is still very limited it only works without regularization, and one needs to run gradient descent for a long time before this convergence in direction happens. Also, SVM is not always the best possible solution.}
+\end{theorem}
+
+Here, we provide the intuition behind the proof. The proof of this theorem follows these steps:
+\begin{enumerate}
+	\item By standard convex optimization arguments, $\hatL (w_t) \rightarrow 0$ as $t\rightarrow \infty$.
+	\item For sufficiently large $t$, $\|w_t\|_2 \rightarrow \infty$.
+	\item For sufficiently large $t$, $w_t$ will separate the data (since the loss goes to 0).
+	\item As $z \rightarrow \infty$, $l(z) = \log(1 + \exp (-z)) \approx \exp(-z)$ (i.e. logistic loss is similar to exponential loss). 
+	\item When $\|w\|_2 = q $ is big, the loss $\hatL(w)$ mainly depends on supporting data $\{(x_i, y_i) : y_i\overline{w}^\top x_i = \gamma(w)\}$.
+\end{enumerate}
+
+To see the last bullet point: letting $\overline{w} = w / \|w\|_2$, we notice that 
+\begin{align}
+	\hatL &= \frac{1}{n} \sum_{i=1}^{n} \ell(y_i w^\top x_i)\\
+	&\approx \frac{1}{n} \sum_{i=1}^{n} \exp\left(-qy_i \overline{w}^\top x_i\right) \label{lec17:eqn:reg-approx1} \\
+	&\approx \frac{1}{n} \sum_{i=1}^{n} \exp\left(-qy_i \overline{w}^\top x_i\right) 1\left[y_i \overline{w}^\top x_i = \gamma(w)\right] \label{lec17:eqn:reg-approx2} \\
+	&= \frac{1}{n} \sum_{i=1}^{n} \exp\left(-q\gamma(w) \right) 1\left[y_i \overline{w}^\top x_i = \gamma(w)\right]. \label{lec17:eqn:reg-approx3}
+\end{align}
+Here the first approximation~\eqref{lec17:eqn:reg-approx1} is because of the logistic loss vs. exponential loss approximation, while the second approximation~\eqref{lec17:eqn:reg-approx2} is because for any data $x_i, y_i$ that is not a support vector, i.e.
+\begin{align}
+	\overline{w}^\top x_i y_i \ge \gamma(w)+\epsilon,
+\end{align}
+for $\epsilon>0$, then
+\begin{align}
+	\exp(-qy_i\overline{w}^\top x_i) \le \exp(-q\gamma(w))\exp(-q\epsilon),
+\end{align}
+and as $q\rightarrow \infty$ the term $\exp(-q\epsilon)\rightarrow 0$, making such terms negligible.
+
+In conclusion, minimizing the (approximate) loss~\eqref{lec17:eqn:reg-approx3} is (informally) equivalent to maximizing the margin. (Note that if you examine \eqref{lec17:eqn:reg-approx3}, there are actually two ways to make the loss small: maximizing the margin or making $q$ large. The rigorous proof shows that when $q$ is large, the margin is already very close to the max margin. These are technical details that we will not concern ourselves with.)
+
+\sec{Stochasticity in algorithmic regularization}
+Finally, we note that in general, when the loss has multiple global minima, any decisions we make about the optimization algorithm will make a difference. Another important source of algorithmic regularization (possibly the most important) comes from the \textit{stochasticity} in the stochastic gradient descent (SGD) algorithm, where the parameters are optimized by updates of the form
+\begin{equation}
+\theta_{t+1} = \theta_t - \eta(\nabla\hat{L}(\theta_t) + \xi_t),
+\end{equation}
+
+where $\xi_t$ is a random noise term, typically with $\E\left[\xi_t\right]=0$ so the noise will not affect the result too much. The variance of $\xi_t$ can sometimes be time-dependent: for example, $\xi_t$ could be dependent on the parameter $\theta_t$. 
+
+In practice, it turns out that larger gradient noise can lead to better generalization performance, as long as the algorithm can optimize under such level of noise. The intuition behind this phenomenon is that SGD converges to a ``flat'' global minimum, i.e. one with small curvature and small noise covariance. On the other hand, if you have a ``sharp'' local/global minimum with a large amount of noise, SGD will not converge to it stably. There are a number of works on this topic~\cite{haochen2020shape,blanc2020implicit}, but a lot of questions in this space remained to be answered.

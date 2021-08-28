@@ -1,0 +1,280 @@
+% reset section counter
+\setcounter{section}{0}
+
+%\metadata{lecture ID}{Your names}{date}
+\metadata{3}{Brad Ross and Robbie Jones}{Jan 20, 2021}
+
+In this chapter, we take a little diversion and develop the notion of \emph{concentration inequalities}. Assume that we have independent random variables $X_1, \ldots, X_n$. We will develop tools to show results that formalize the intuition for these statements:
+\begin{enumerate}
+    \item $X_1 + \ldots + X_n$ concentrates around $\Exp[X_1 + \ldots + X_n]$.
+    \item More generally, $f(X_1, \ldots, X_n)$ concentrates around $\Exp[f(X_1, \ldots, X_n)]$.
+\end{enumerate}
+
+These inequalities will be used in subsequent chapters to bound several key quantities of interest.
+
+As it turns out, the material from this chapter constitutes arguably the most important content in the entire course. No matter what area of machine learning one wants to study, if it involves sample complexity, some kind of concentration result will typically be required. Hence, concentration inequalities are some of the most important tools in modern statistical learning theory.
+
+\sec{The big-O notation}
+
+Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(x)$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cx$ for some absolute/universal constant $C$. In other words, suppose $O(n_1),\dots, O(n_k)$ occur in a statement, it means that \textbf{there exists} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(x)|\le C_ix$ for all $x$, such that after replacing each occurrence $O(n_i)$ by $f_i(n_i)$,  the statement is true.  (The difference with traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O".)
+
+Also, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some absolute constant $c > 0$ such that $a \leq cb$.
+
+
+\sec{Hoeffding's inequality}\label{lec2:subsec:hoeffding}
+
+We provide a brief overview of Hoeffding's inequality, an important concentration inequality for bounded random variables:
+
+\begin{theorem}[Hoeffding's inequality]
+    Let $X_1, X_2, \dots, X_n$ be i.i.d. real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
+    \al {
+    \Pr \left[ |\bar{X} - \mu | \leq \varepsilon \right] \geq 1 - 2  \exp\left(\frac{-2n^2\varepsilon^2}{\sum_{i=1}^n (b_i - a_i)^2}\right). \label{lec2:eqn:hoeffding}
+    }
+\end{theorem}
+
+Note that the demoninator within the exponential term, $\sum_{i=1}^n (b_i - a_i)^2$, can be thought of as an upper bound or proxy for the variance $\Var(X_i)$. In fact, under the i.i.d. assumption, we can show
+\begin{align}
+    \Var\left(\bar{X} \right) &= \frac{1}{n^2}\sum_{i=1}^n \Var(x_i) \leq \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2.
+\end{align}
+
+Let $\sigma^2 = \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2$. If we take $\varepsilon = O(\sigma \sqrt{\log{n}}) = \sigma \sqrt{c \log n}$; i.e. $\varepsilon$ bounded above by some large (i.e., $c \geq 10$) multiple of the standard deviation of the $x_i$'s times $\sqrt{\log{n}}$, we can substitute this value of $\varepsilon$ into \eqref{lec2:eqn:hoeffding} to reach the following conclusion: 
+\begin{align}
+    \Pr \left[ |\bar{X} - \mu| \leq \varepsilon \right] &\geq 1 - 2\exp\left(\frac{-2 \varepsilon^2}{\sigma^2}\right)\\
+    &= 1 - 2 \exp(-2 c \log n)\\
+    &= 1 - 2 n^{-2c}
+\end{align}
+
+We can see that as $n$ grows, the right-most term tends to zero such that $\Pr[|\bar{X} - \mu| \leq \varepsilon]$ very quickly approaches 1. Intuitively, this result tells us that, with high probability, the sample mean $\bar{X}$ will not be ``much farther" from the population mean $\mu$ by some sublogarithmic ($\sqrt{c \log n}$) factor of the standard deviation.\footnote{This is with the caveat, of course, that $\sigma$ is not exactly standard deviation but a loose upper bound on standard deviation.} Thus, we can restate the above claim we reached as follows:
+
+\begin{remark}
+    For sufficiently large $n$, $|\bar{X} - \mu | \leq O(\sigma \sqrt{\log{n}})$ with high probability.
+\end{remark}
+
+\begin{remark}\label{lec2:rem:hoeffding}
+    If, in addition, we have $a_i = -O(1)$ and $b_i = O(1)$, then $\sigma^2 = O \left( \frac{1}{n}\right)$, and $|\bar{X} - \mu | \leq O\left(\sqrt{\frac{\log n}{n}}\right) = \tilO\left(\frac{1}{\sqrt{n}}\right)$.\footnote{$\tilO$ is analogous to Big-$O$ notation, in that $\tilO$ hides logarithmic factors. That is; if $f(n) = O(\log n)$, then $f(n) = \tilO(1)$.}
+\end{remark}
+
+Remark~\ref{lec2:rem:hoeffding} provides a compact form of the Hoeffding bound that we can use when the $X_i$ are bounded almost surely.
+
+\sec{Chebyshev's inequality}
+
+\tnoteimp{This subsection should go before the subsection Hoelfding inequality; the transition sentences and the discussion around the end of this subsection need to be rephrased a bit after reorganizing the subsections}
+
+Consider an arbitrary random variable $Z$ with finite variance. One of the most famous results characterizing its tail behavior is the following theorem:
+
+\begin{theorem}[Chebyshev's inequality]
+    Let $Z$ be a random variable with finite expectation and variance. Then
+    \al{
+        \Pr[|Z - \Exp[Z]| \geq t] \leq \frac{\Var(Z)}{t^2}, \quad \forall t > 0.
+        \label{lec3:eqn:chebyshev}
+    }
+\end{theorem}
+
+Intuitively, this means that as we approach the tails of the distribution of $Z$, the density decreases at a rate of at least $1 / t^2$. Moreover, for any $\delta \in (0, 1]$, by plugging in $t = \sd(Z) / \sqrt{\delta}$ to \eqref{lec3:eqn:chebyshev} we see that 
+    \al{
+        \Pr\left[|Z - \Exp[Z]| \leq \frac{\sd(Z)}{\sqrt{\delta}}\right] \geq 1 - \delta.
+        \label{lec3:eqn:chebyshevdelta}
+    }
+    
+Unfortunately, it turns out that Chebyshev's inequality is a rather weak concentration inequality. To illustrate this, assume $Z \sim \cN(0, 1)$. We can show (using the Gaussian tail bound derived in Problem 3(c) in Homework 0) that
+\al{
+    \Pr\left[|Z - \Exp[Z]| \leq \sd(Z)\sqrt{2 \log (2 / \delta)}\right] \geq 1 - \delta.
+    \label{lec3:eqn:normaltailbound}
+}
+for any $\delta \in (0, 1]$. In other words, the density at the tails of the normal distribution is decreasing at an exponential rate, while Chebyshev's inequality only gives a quadratic rate. The discrepancy between \eqref{lec3:eqn:chebyshevdelta} and \eqref{lec3:eqn:normaltailbound} is made more apparent when we consider inverse-polynomial $\delta = \frac{1}{n^c}$ for some parameter $n$ and degree $c$ (we will see concrete instances of this setup in future chapters). Then the tail bound for the normal distribution \eqref{lec3:eqn:normaltailbound} implies that
+\al{
+    |Z - \Exp[Z]| \leq \sd(Z) \cdot \sqrt{\log{O\left(n^c\right)}} = \sd(Z) \cdot O\left(\sqrt{\log{n}}\right) \quad w.p. \; 1 - \delta,
+}
+while Chebyshev's inequality gives us the weaker result
+\al{
+    |Z - \Exp[Z]| \leq \sd(Z) \cdot \sqrt{O(n^c)} = \sd(Z) \cdot O(n^{c / 2})  \quad w.p. \; 1 - \delta.
+}
+
+Despite the previous example, Chebyshev's inequality is actually optimal without further assumptions, in the sense that there exist distributions with finite variance for which the bound is tight. With that in mind, we will need to assume more about our random variables if we want to improve upon the Chebyshev inequality's $1/t^2$ rate of tail decay. As an example, recall that when $0 \leq X_i \leq 1$ for $i = 1, \ldots, n$, Hoeffding's inequality is applicable:
+\al{
+    \Pr[|Z - \Exp[Z]| \geq t] \leq 2\exp(-2t^2 / n).
+}
+This tail probability is exponentially decaying in $t$ instead of polynomially decaying as in Chebyshev's inequality! Certainly requiring boundedness in $[0, 1]$ (or $[a, b]$ more generally) is limiting, so it is worth asking what types of distributions permit such an exponential tail bound. The following section will explore such a class of random variables: \emph{sub-Gaussian} random variables.
+
+\sec{Sub-Gaussian random variables}
+
+\tnoteimp{add motivations---we will extend Hoelfding inequality to unbounded random variables} 
+We begin by defining the class of sub-Gaussian random variables by way of a bound on their moment generating functions, after which we will see how this bound guarantees the exponential tail decay we are after.
+
+\begin{definition}[Sub-Gaussian Random Variables]
+    A random variable $X$ with finite mean $\mu$ is \textit{sub-Gaussian} with parameter $\sigma$ if
+    \al{
+        \Exp \left[ e^{\lambda(X - \mu)} \right] \leq e^{\sigma^2\lambda^2 / 2}, \quad \forall\lambda\in\R.
+        \label{lec3:eqn:subgassdefn}
+    }
+    We say that $X$ is $\sigma$-sub-Gaussian and say it has \emph{variance proxy} $\sigma^2$.
+\end{definition}
+
+\begin{remark}\label{lec3:rem:mgf_strong}
+    As it turns out, \eqref{lec3:eqn:subgassdefn} is quite a strong condition, requiring that infinitely many moments of $X$ exist and do not grow too quickly. To see why, assume without loss of generality that $\mu = 0$ and take a power series expansion of the moment generating function:
+    \al{
+        \Exp[\exp(\lambda X)] = \Exp\left[\sum_{k = 0}^\infty \frac{(\lambda X)^k}{k!}\right] = \sum_{k = 0}^\infty\frac{\lambda^k}{k!}\Exp[X^k].
+    }
+    A bound on the moment generating function then is a bound on infinitely many moments of $X$, i.e. a requirement that the moments of $X$ are all finite and grow slowly enough to allow the power series to converge.
+\end{remark}
+
+\noindent Although \eqref{lec3:eqn:subgassdefn} is not a particularly intuitive definition, it turns out to imply exactly the type of exponential tail bound we want:
+
+\begin{theorem}[Tail bound for sub-Gaussian random variables]\label{lec3:thm:subgausstail}
+    If a random variable $X$ with finite mean $\mu$ is $\sigma$-sub-Gaussian, then
+    \al{ 
+        \Pr[|X - \mu| \geq t] \leq 2 \exp \left( -\frac{t^2}{2\sigma^2} \right), \quad \forall t \in \R.
+        \label{lec3:eqn:subgausstail}
+    }
+\end{theorem}
+
+\begin{proof}
+Fix $t > 0$. For any $\lambda > 0$,
+\al{
+    \Pr[X - \mu \geq t] &= \Pr[\exp(\lambda (X - \mu)) \geq \exp(\lambda t)]  \\
+    &\leq \exp(-\lambda t)\Exp[\exp(\lambda (X - \mu))] && \text{(by Markov's inequality)}  \\
+    &\leq \exp(-\lambda t)\exp(\sigma^2\lambda^2/2) && \text{(by \eqref{lec3:eqn:subgassdefn})} \\
+    &= \exp(-\lambda t + \sigma^2\lambda^2/2). \label{lec3:eqn:non_opt_tail_bound}
+}
+Because the bound \eqref{lec3:eqn:non_opt_tail_bound} holds for any choice of $\lambda$ and $\exp(\cdot)$ is monotonically increasing, we can optimize the bound \eqref{lec3:eqn:non_opt_tail_bound} by finding $\lambda$ which minimizes the exponent $-\lambda t + \sigma^2 \lambda^2/2$. Differentiating and setting the derivative equal to zero, we find that the optimal choice is $\lambda = t/\sigma^2$, yielding the one-sided tail bound
+\al{\label{lec3:eqn:opt_tail_bound_right}
+    \Pr[X - \mu \geq t] \leq \exp\left(-\frac{t^2}{2\sigma^2}\right).
+}
+Going through the same line of reasoning but for $-X$ and $-t$, we can also show that for any $t > 0$,
+\al{\label{lec3:eqn:opt_tail_bound_left}
+    \Pr[X - \mu \leq -t] \leq \exp\left(-\frac{t^2}{2\sigma^2}\right).
+}
+
+We can then obtain \eqref{lec3:eqn:subgausstail} by applying the union bound:
+\al{
+    \Pr[|X - \mu| \geq t] = \Pr[X - \mu \geq t] + \Pr[X - \mu \leq -t] \leq 2\exp\left(-\frac{t^2}{2\sigma^2}\right).
+}
+\end{proof}
+
+\begin{remark}[Tail bound implies sub-Gaussianity]\label{lec3:rem:tail_bound_remark}
+    In addition to being a necessary condition for sub-Gaussianity (Theorem \ref{lec3:thm:subgausstail}), the tail bound \eqref{lec3:eqn:subgausstail} for sub-Gaussian random variables is also a sufficient condition up to a constant factor. In particular, if a random variable $X$ with finite mean $\mu$ satisfies \eqref{lec3:eqn:subgausstail} for some $\sigma > 0$, then $X$ is $O(\sigma)$-sub-Gaussian. Unfortunately, the proof of this reverse direction is somewhat more involved, so we refer the interested reader to Theorem 2.6 and its proof in Section 2.4 of \cite{wainwright2019high} and Proposition 2.5.2 in \cite{vershynin2018high} for details. While the tail bound is the property we ultimately care about most when studying sub-Gaussian random variables, the definition in \eqref{lec3:eqn:subgassdefn} is a more technically convenient characterization, as we will see in the proof of Theorem \ref{lec3:thm:sum_sub_gaussian}.
+\end{remark}
+
+\begin{remark}
+    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\E[|X-\mu|^k]$) only requires that the second central moment $\E[(X-\mu)^2]$ (more generally, the $k$th central moment $\E[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\E[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently, which is why most researchers use exponential tail bounds in practice.
+\end{remark}
+
+Having defined and derived exponential tail bounds for sub-Gaussian random variables, we can now accomplish the first of the goals we set out at the beginning of the chapter: to show that under certain conditions, namely independence and sub-Gaussianity of $X_1, \dotsc, X_n$, the sum $Z = \sum_{i = 1}^n X_i$ concentrates around $\Exp[Z] = \Exp[\sum_{i = 1}^n X_i]$.
+
+\begin{theorem}[Sum of sub-Gaussian random variables is sub-Gaussian]\label{lec3:thm:sum_sub_gaussian}
+    If $X_1, \ldots, X_n$ are independent sub-Gaussian random variables with variance proxies $\sigma_1^2, \ldots, \sigma_n^2$, then $Z = \sum_{i = 1}^n X_i$ is sub-Gaussian with variance proxy $\sum_{i = 1}^n \sigma_i^2$. As a consequence, we have the tail bound
+    \al{
+        \Pr[|Z - \Exp[Z]| \geq t] \leq 2\exp\left(-\frac{t^2}{2\sum_{i = 1}^n \sigma_i^2}\right),
+    }
+    for all $t \in \R$.
+\end{theorem}
+
+\begin{proof}
+Using the independence of $X_1, \ldots, X_n$, we have that for any $\lambda \in \R$:
+ \al{
+    \Exp \left[ \exp \left\{\lambda(Z - \Exp[Z]) \right\} \right] &= \Exp\left[\prod_{i = 1}^n \exp \left\{\lambda(X_i - \Exp[X_i]) \right\}\right] \\
+    &= \prod_{i = 1}^n \Exp \left[ \exp \left\{\lambda(X_i - \Exp[X_i]) \right\} \right] \\
+    &\leq \prod_{i = 1}^n \exp \left( \frac{\lambda^2\sigma_i^2}{2} \right) \\
+    &= \exp \left( \frac{\lambda^2 \sum_{i = 1}^n\sigma_i^2}{2} \right),
+ }
+ so $Z$ is sub-Gaussian with variance proxy $\sum_{i = 1}^n \sigma_i^2$. The tail bound then follows immediately from \eqref{lec3:eqn:subgausstail}.
+\end{proof}
+
+The proof above demonstrates the value of the moment generating functions of sub-Gaussian random variables: they factorize conveniently when dealing with sums of independent random variables.
+
+\subsec{Examples of sub-Gaussian random variables}
+
+We now provide several examples of classes of random variables that are sub-Gaussian, some of which will appear repeatedly throughout the remainder of the course.
+
+\begin{example}[Rademacher random variables]
+    A \textit{Rademacher random variable} $\epsilon$ takes a value of 1 with probability $1/2$ and a value of $-1$ with probability $1/2$. To see that $\epsilon$ is $1$-sub-Gaussian, we follow Example 2.3 in \cite{wainwright2019high} and upper bound the moment generating function of $\epsilon$ by way of a power series expansion of $\exp(\cdot)$:
+    \al{
+        \Exp[\exp(\lambda \epsilon)] &= \frac{1}{2}\left\{\exp(-\lambda) + \exp(\lambda)\right\} \\
+        &= \frac{1}{2}\left\{\sum_{k = 0}^\infty \frac{(-\lambda)^k}{k!} + \sum_{k = 0}^\infty \frac{\lambda^k}{k!}\right\} \\
+        &= \sum_{k = 0}^\infty \frac{\lambda^{2k}}{(2k)!} && \text{(for odd $k$, $(-\lambda)^k + \lambda^k = 0$)} \\
+        &\leq 1 + \sum_{k = 1}^\infty \frac{\left(\lambda^2\right)^{k}}{2^k k!} && \text{($2^k k!$ is every other term of $(2k)!$)} \\
+        & = \exp(\lambda^2/2),
+    }
+    which is exactly the moment generating function bound \eqref{lec3:eqn:subgassdefn} required for $1$-sub-Gaussianity.
+\end{example}
+
+\begin{example}[Random variables with bounded distance to mean]\label{lec3:ex:rand_var_bound_dist_to_mean}
+    Suppose a random variable $X$ satisfies $|X - \Exp[X]| \leq M$ almost surely for some constant $M$. Then $X$ is $O(M)$-sub-Gaussian.
+\end{example}
+We now provide an even more general class of sub-Gaussian random variables that subsume the random variables in Example \ref{lec3:ex:rand_var_bound_dist_to_mean}:
+\begin{example}[Bounded random variables]
+    If $X$ is a random variable such that $a \leq X \leq b$ almost surely for some constants $a, b \in \R$, then
+    \begin{equation*}
+        \Exp\left[e^{\lambda(X - \Exp[X])}\right] \leq \exp \left[ \frac{\lambda^2(b - a)^2}{8} \right],
+    \end{equation*}
+    i.e., $X$ is sub-Gaussian with variance proxy $(b - a)^2/4$. (We will prove this in Question 2(a) of Homework 1.) Note that combining the $(b - a)/2$-sub-Gaussianity of i.i.d. bounded random variables $X_1, \dotsc, X_n$ and Theorem \ref{lec3:thm:sum_sub_gaussian} yields a proof of Hoeffding's inequality.
+\end{example}
+
+\begin{example}[Gaussian random variables]
+If $X$ is Gaussian with variance $\sigma^2$, then $X$ satisfies \eqref{lec3:eqn:subgassdefn} and \eqref{lec3:eqn:subgausstail} with equality. In this special case, the variance and the variance proxy are the same.
+\end{example}
+
+\sec{Concentrations of functions of random variables}
+We now introduce some important inequalities related to the second of our two goals, namely showing that for independent $X_1, \dotsc, X_n$ and certain functions $f$, $f(X_1, \dotsc, X_n)$ concentrates around $\Exp[f(X_1, \dotsc, X_n)]$.
+
+\begin{theorem}[McDiarmid's inequality]
+    Suppose $f : \R^n \to \R$ satisfies the \emph{bounded difference condition}: there exist constants $c_1, \ldots, c_n \in \R$ such that for all real numbers $x_1, \ldots, x_n$ and $x_i'$,
+    \al{\label{lec3:eqn:mcdiarmid_fn_cond}
+        |f(x_1, \ldots, x_n) - f(x_1, \ldots, x_{i - 1}, x_i', x_{i + 1}, \ldots, x_n)| \leq c_i.
+    }
+    (Intuitively, \eqref{lec3:eqn:mcdiarmid_fn_cond} states that $f$ is not overly sensitive to arbitrary changes in a single coordinate.) Then, for any independent random variables $X_1, \ldots, X_n$,
+    \al{
+        \Pr \left[ f(X_1, \ldots, X_n) - \Exp[f(X_1, \ldots, X_n)] \geq t \right] \leq \exp\left(-\frac{2t^2}{\sum_{i = 1}^n c_i^2}\right).
+    }
+    Moreover, $f(X_1, \ldots, X_n)$ is $O\left(\sqrt{\sum_{i = 1}^n c_i^2}\right)$-sub-Gaussian.
+\end{theorem}
+
+\begin{remark}
+    Note that McDiarmid's inequality is a generalization of Hoeffding's inequality with $f(x_1, \dotsc, x_n) = \sum_{i = 1}^n \min\{\max\{x_i, b\}, a\}$.
+\end{remark}
+
+\begin{proof}
+    See the proof of Corollary 2.21 in \cite{wainwright2019high}, which relies on the Azuma-Hoeffding inequality for martingale difference sequences.
+\end{proof}
+
+A more general version of McDiarmid's inequality comes from Theorem 3.18 in~\cite{vanhandel2016high}. The setup for this theorem requires defining the \emph{one-sided differences} of a function $f : \R^n \to \R$:
+\al{
+    D_i^-{f(x)} &= f(x_1, \ldots, x_n) - \inf_z f(x_1, \ldots, x_{i - 1}, z, x_{i + 1}, \ldots, x_n) \\
+    D_i^+{f(x)} &= \sup_z f(x_1, \ldots, x_{i - 1}, z, x_{i + 1}, \ldots, x_n) - f(x_1, \ldots, x_n).
+}
+These two quantities are functions of $x \in \R^n$, and hence can be interpreted as describing the sensitivity of $f$ \emph{at a particular point}. (Contrast this with the bounded difference condition \eqref{lec3:eqn:mcdiarmid_fn_cond}, which bounds the sensitivity of $f$ universally over all points.) For convenience, define
+\al{
+    d^+ &= \Norm{\sum_{i = 1}^n |D_i^+{f}|^2}_\infty = \sup_{x_1, \ldots, x_n}\sum_{i = 1}^n[|D_i^+{f(x_1, \ldots, x_n)}]^2 \\
+    d^- &= \Norm{\sum_{i = 1}^n |D_i^-{f}|^2}_\infty = \sup_{x_1, \ldots, x_n}\sum_{i = 1}^n [D_i^-{f(x_1, \ldots, x_n)}]^2.
+}
+\begin{theorem}[Bounded difference inequality, Theorem 3.18 in~\cite{vanhandel2016high}]
+    Let $f : \R^n \to \R$, and let $X_1, \ldots, X_n$ be independent random variables. Then, for all $t \geq 0$,
+    \al{
+        \Pr[f(X_1, \ldots, X_n) \geq \Exp[f(X_1, \ldots, X_n)] + t] &\leq \exp\left(-\frac{t^2}{4d^-}\right) \\
+        \Pr[f(X_1, \ldots, X_n) \leq \Exp[f(X_1, \ldots, X_n)] - t] &\leq \exp\left(-\frac{t^2}{4d^+}\right).
+    }
+\end{theorem}
+
+\subsec{Bounds for Gaussian random variables}
+Unfortunately, the bounded difference condition (\ref{lec3:eqn:mcdiarmid_fn_cond}) is often only satisfied by bounded random variables or a bounded function. To get similar concentration inequalities for unbounded random variables, we need some other special conditions. The following inequalities assume that the random variables have the standard normal distribution.
+
+\begin{theorem}[Gaussian Poincar\'{e} inequality, Corollary 2.27 in~\cite{vanhandel2016high}]
+    Let $f : \R^n \to \R$ be smooth. If $X_1, \ldots, X_n$ are independently sampled from $\cN(0, 1)$, then
+    \al{
+        \Var(f(X_1, \ldots, X_n)) \leq \Exp \left[ \norm{\nabla{f}(X_1, \ldots, X_n)}_2^2 \right].
+    }
+\end{theorem}
+
+Before introducing the next theorem, we recall that a function $f : \R^n \to \R$ is \emph{$L$-Lipschitz} with respect to the $\ell_2$-norm if there exists a non-negative constant $L \in \R$ such that for all $x, y \in \R^n$,
+\al{
+    |f(x) - f(y)| \leq L\norm{x - y}_2.
+}
+We emphasize that $L$ is universal for all points in $\R^n$.
+
+\begin{theorem}[Theorem 2.26 in~\cite{wainwright2019high}]
+    Suppose $f : \R^n \to \R$ is $L$-Lipschitz with respect to Euclidean distance, and let $X = (X_1, \ldots, X_n)$, where $X_1, \ldots, X_n \iid \cN(0, 1)$. Then for all $t \in \R$,
+    \al{
+        \Pr[|f(X) - \Exp[f(X)]| \geq t] \leq 2\exp\left(-\frac{t^2}{2L^2}\right).
+    }
+In particular, $f(X)$ is sub-Gaussian.
+\end{theorem}
