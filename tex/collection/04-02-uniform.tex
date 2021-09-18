@@ -163,6 +163,7 @@ For intuition on how Rademacher complexity depends on the distribution $P$, cons
 This bound does not depend on $\cF$ (except that it is bounded). This example illustrates that sometimes we only need to depend on the distribution of Rademacher random variables.
 
 \sec{Empirical Rademacher complexity}
+
 In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
 
 \begin{definition}[Empirical Rademacher complexity]
