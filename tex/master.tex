@@ -34,13 +34,18 @@
 %
 %    Remove any commented or uncommented macros you do not use.
 
-\documentclass{book}
+\documentclass[ebook, oneside, openany]{book}
 \usepackage{amsfonts,bm,amsthm,amsmath,bbm,amssymb,mathtools}
 \usepackage{fullpage}
 \usepackage{tikz, pgfplots} % added for Lecture 2	
 \usepackage{float}  % added for Lecture 8
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}  % added for Lecture 15
 \usepackage{booktabs}  % added for Lecture 15
+\usepackage{hyperref}
+\hypersetup{linktocpage}
+\usepackage{natbib}
+\renewcommand{\cite}[1]{\citep{#1}}
+
 
 
 \newtheorem{theorem}{Theorem}[chapter]
@@ -66,110 +71,116 @@
 \def\lectureformat{0}
 \input{macros}
 \begin{document}
-
-\frontmatter
-
-\title{Lecture Notes for Machine Learning Theory (CS229M/STATS214)}
-
-%    Remove any unused author tags.
-
-%    author one information
-\author{Instructor: Tengyu Ma
-}
-%\address{}
-%\curraddr{}
-%\email{}
-%\thanks{}
-
-%    author two information
-%\author{}
-%\address{}
-%\curraddr{}
-%\email{}
-%\thanks{}
-
-%\subjclass[2010]{Primary }
-
-%\keywords{}
-
-%\date{}
-
-%\begin{abstract}
-%\end{abstract}
-
-\maketitle
-
-%    Dedication.  If the dedication is longer than a line or two,
-%    remove the centering instructions and the line break.
-%\cleardoublepage
-%\thispagestyle{empty}
-%\vspace*{13.5pc}
-%\begin{center}
-%  Dedication text (use \\[2pt] for line break if necessary)
-%\end{center}
-%\cleardoublepage
-
-%    Change page number to 6 if a dedication is present.
-\setcounter{page}{4}
-
-\tableofcontents
-
-%    Include unnumbered chapters (preface, acknowledgments, etc.) here.
-%\include{}
-\mainmatter
-\let\sec\section
-\let\subsec\subsection
-
-\chapter{Supervised Learning Formulations}\label{chap:supervised}
-\input{collection/01supervised.tex}
-
-\chapter{Asymptotic Analysis}\label{chap:asymp}
-\input{collection/02asymptotics.tex}
-
-\chapter{Concentration Inequalities}\label{chap:conc}
-\input{collection/03concentration.tex}
-
-\chapter{Generalization Bounds via Uniform Convergence}\label{chap:uc}
-\input{collection/04-01-uniform.tex}
-\input{collection/04-02-uniform.tex}
-\input{collection/04-03-uniform.tex}
-
-\chapter{Rademacher Complexity Bounds for Concrete Models and Losses}\label{chap:gen-bounds}
-\input{collection/05-01-concrete-models.tex}
-\input{collection/05-02-concrete-models}
-
-\chapter{Theoretical Mysteries in Deep Learning}
-\input{collection/06-dltheory}
-
-\chapter{Nonconvex Optimization}
-\input{collection/07-01-nonconvex.tex}
-\input{collection/07-02-nonconvex.tex}
-\input{collection/07-03-nonconvex.tex}
-
-\chapter{Implicit/Algorithmic Regularization Effect}
-\input{collection/08-01-algorithmic.tex}
-\input{collection/08-02-algorithmic.tex}
-\input{collection/08-03-algorithmic.tex}
-
-\chapter{Data-dependent generalization bounds}
-\input{collection/09-01-data-dependent.tex}
-
-\chapter{Online learning}
-\input{collection/10-01-online.tex}
-\input{collection/10-02-online.tex}
-
-
-\appendix
-%    Include appendix "chapters" here.
-
-
-\backmatter
-%    Bibliography styles amsplain or harvard are also acceptable.
-\bibliographystyle{amsalpha}
-\bibliography{bibliography}
-%    See note above about multiple indexes.
-%\printindex
-
+	
+	\frontmatter
+	
+	\title{Lecture Notes for Machine Learning Theory (CS229M/STATS214)}
+	
+	%    Remove any unused author tags.
+	
+	%    author one information
+	\author{Instructor: Tengyu Ma
+	}
+	%\address{}
+	%\curraddr{}
+	%\email{}
+	%\thanks{}
+	
+	%    author two information
+	%\author{}
+	%\address{}
+	%\curraddr{}
+	%\email{}
+	%\thanks{}
+	
+	%\subjclass[2010]{Primary }
+	
+	%\keywords{}
+	
+	%\date{}
+	
+	%\begin{abstract}
+	%\end{abstract}
+	
+	
+	\maketitle
+	
+	%    Dedication.  If the dedication is longer than a line or two,
+	%    remove the centering instructions and the line break.
+	%\cleardoublepage
+	%\thispagestyle{empty}
+	%\vspace*{13.5pc}
+	%\begin{center}
+	%  Dedication text (use \\[2pt] for line break if necessary)
+	%\end{center}
+	%\cleardoublepage
+	
+	%    Change page number to 6 if a dedication is present.
+	%\setcounter{page}{1}
+	
+	\tableofcontents
+	
+	%    Include unnumbered chapters (preface, acknowledgments, etc.) here.
+	%\include{}
+	\mainmatter
+	\let\sec\section
+	\let\subsec\subsection
+	
+	\chapter*{Acknowledgments}
+	\setcounter{page}{5}
+	This monograph is a collection of scribe notes for the course CS229M/STATS214 at Stanford University. The materials in Chapter \ref{chap:supervised}--\ref{chap:gen-bounds} are mostly based on Percy Liang's lecture notes~\cite{percynotes}, and Chapter~\ref{chap:OL} is largely based on Haipeng Luo's lectures~\cite{haipengnotes}. Kenneth Tay contributed significantly to the revision of these notes as a teaching assistant for the course. The original contributor to the scribe notes are Stanford students including but not limited to Anusri Pampari, Gabriel Poesia, Alexander Ke, Trenton Chang, Brad Ross, Robbie Jones, Yizhou Qian, Will Song, Daniel Do, Spencer M. Richards, Thomas Lew, David Lin, Jinhui Wang, Rafael Rafailov, Aidan Perreault,Kevin Han, Han Wu, Andrew Wang, Rohan Taori, Jonathan Lee, Rohith Kuditipudi, Kefan Dong, Roshni Sahoo, Sarah Wu, Tianyu Du, Xin Lu, Soham Sinha, Kevin Guo, Jeff Z. HaoChen, Carrie Wu, Kaidi Cao, and Ruocheng Wang.  The notes will be updated every year with new materials. The reference list is far from complete. 
+	
+	
+	\chapter{Supervised Learning Formulations}\label{chap:supervised}
+	\input{collection/01supervised.tex}
+	
+	\chapter{Asymptotic Analysis}\label{chap:asymp}
+	\input{collection/02asymptotics.tex}
+	
+	\chapter{Concentration Inequalities}\label{chap:conc}
+	\input{collection/03concentration.tex}
+	
+	\chapter{Generalization Bounds via Uniform Convergence}\label{chap:uc}
+	\input{collection/04-01-uniform.tex}
+	\input{collection/04-02-uniform.tex}
+	\input{collection/04-03-uniform.tex}
+	
+	\chapter{Rademacher Complexity Bounds for Concrete Models and Losses}\label{chap:gen-bounds}
+	\input{collection/05-01-concrete-models.tex}
+	\input{collection/05-02-concrete-models}
+	
+	\chapter{Theoretical Mysteries in Deep Learning}
+	\input{collection/06-dltheory}
+	
+	\chapter{Nonconvex Optimization}
+	\input{collection/07-01-nonconvex.tex}
+	\input{collection/07-02-nonconvex.tex}
+	\input{collection/07-03-nonconvex.tex}
+	
+	\chapter{Implicit/Algorithmic Regularization Effect}
+	\input{collection/08-01-algorithmic.tex}
+	\input{collection/08-02-algorithmic.tex}
+	\input{collection/08-03-algorithmic.tex}
+	
+	\chapter{Data-dependent generalization bounds}
+	\input{collection/09-01-data-dependent.tex}
+	
+	\chapter{Online learning}\label{chap:OL}
+	\input{collection/10-01-online.tex}
+	\input{collection/10-02-online.tex}
+	
+	
+	\appendix
+	%    Include appendix "chapters" here.
+	
+	
+	\backmatter
+	%    Bibliography styles amsplain or harvard are also acceptable.
+	\bibliographystyle{plainnat}
+	\bibliography{bibliography}
+	%    See note above about multiple indexes.
+	%\printindex
+	
 \end{document}
 
 %-----------------------------------------------------------------------
