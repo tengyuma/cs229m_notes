@@ -55,7 +55,7 @@ Uniform convergence is one way we can fix this issue. The high-level idea is as 
 \end{itemize}
 In particular, we can use the union-bound inequality to create the general bound described in the second bullet point, using the bound in the first bullet point:
 \al{
-    \Pr \left[\forall \theta \in \Theta; |\hat{L}(\theta) - L(\theta)| \geq \varepsilon' \right] \leq \sum_{\theta \in \Theta} \Pr \left[|\hat{L}(\theta) - L(\theta)| \geq \varepsilon' \right].
+    \Pr \left[\forall \theta \in \Theta, |\hat{L}(\theta) - L(\theta)| \geq \varepsilon' \right] \leq \sum_{\theta \in \Theta} \Pr \left[|\hat{L}(\theta) - L(\theta)| \geq \varepsilon' \right].
 }
 We can then use Hoeffding's inequality to deal with the summands as $\theta$ there is no longer data-dependent. We will talk more later about proving statements of this form.
 
@@ -206,6 +206,7 @@ Let $B,\epsilon>0$ with $\epsilon \le B \sqrt{p}$, and let $S = \{x \in \R^p: \|
 \end{lemma}
 
 \begin{proof}
+	\tnoteimp{I think we should remove the condition ``$\epsilon \le B \sqrt{p}$'' in the lemma, and remark here that if $\epsilon > B \sqrt{p}$, even though the set $C$ contains only 1 point (the origin), the proof still works}
 Set
 \begin{equation}
 C = \left\{ x \in S: x_i = k_i \frac{\epsilon}{\sqrt{p}}, k_i \in \mathbb{Z}, |k_i| \leq  \frac{B\sqrt{p}}{\epsilon}  \right\},
@@ -213,7 +214,7 @@ C = \left\{ x \in S: x_i = k_i \frac{\epsilon}{\sqrt{p}}, k_i \in \mathbb{Z}, |k
 i.e. $C$ is the set of grid points in $\R^p$ of width $\tfrac{\epsilon}{\sqrt{p}}$ that are contained in $S$. See Figure \ref{lec5:fig:ecover} for an illustration. 
 \begin{figure}[ht]
 \centerline{\includegraphics[width=3in]{figures/ECover.png}}
-\caption[lec5:fig:ecover]{Our chosen $\epsilon$-cover (shown in red) of $S$. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$.}
+\caption[lec5:fig:ecover]{Our chosen $\epsilon$-cover (shown in red) of $S$. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$. \tnoteimp{mention which lemma this figure is for}}
 \label{lec5:fig:ecover}
 \end{figure}
 
@@ -243,10 +244,10 @@ $$
 $$
 \end{definition}
 
-Assume that our infinite hypothesis class $\cH$ can be parameterized by $\cH = \{h_{\theta} : \theta \in \mathbb{R}, \Vert \theta \Vert_2 \leq B$. We have the following uniform convergence theorem for our infinite hypothesis class $\cH$:
+Assume that our infinite hypothesis class $\cH$ can be parameterized by $\cH = \{h_{\theta} : \theta \in \mathbb{R}, \Vert \theta \Vert_2 \leq B\}$. We have the following uniform convergence theorem for our infinite hypothesis class $\cH$:
 
 \begin{theorem}\label{lec4:thm:main}
-Suppose $\ell((x,y), \theta) \in [0,1]$, and $\ell((x,y), \theta)$ is $\kappa$-Lipschitz in $\theta$ with respect to the $\ell_2$-norm for all $(x, y)$. Then with probability $\ge 1-O(\exp(-\Omega(p)))$, we have
+Suppose $\ell((x,y), \theta) \in [0,1]$, and $\ell((x,y), \theta)$ is $\kappa$-Lipschitz in $\theta$ with respect to the $\ell_2$-norm for all $(x, y)$. Then, with probability  at least $1-O(\exp(-\Omega(p)))$, we have
 \begin{equation}
     \forall \theta, \quad |\hat L(\theta)- L(\theta)| \leq  O\left(\sqrt{\frac{p \max(\ln{(\kappa Bn), 1)}}{n}}\right).
 \end{equation}
@@ -286,7 +287,7 @@ since $\ln (B\kappa n) \geq 1$ for large enough $n$. Therefore, with probability
 \end{proof}
 
 \begin{remark}\label{lec4:rem:delta}
-Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
+\sloppy Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
 \al{
    2|C| \exp(-2n\delta^2)  = 2\exp(\ln{\vert C \vert} - 2n\delta^2) \leq 2\exp(p - 2p) = 2\exp(-p).
 }

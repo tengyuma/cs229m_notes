@@ -2,6 +2,17 @@
 \usepackage{lipsum}
 
 
+% for potential improvements
+\def\shownotes{0}  %set 1 to show author notes
+\ifnum\shownotes=1
+\newcommand{\authnoteimp}[2]{[#1: #2]}
+\else
+\newcommand{\authnoteimp}[2]{}
+\fi
+\newcommand{\tnoteimp}[1]{{\color{blue}\authnoteimp{todo}{#1}}}
+\newcommand{\todo}[1]{\tnoteimp{#1}}
+
+
 % for course staff to edit or comment
 \def\shownotes{0}  %set 1 to show author notes
 \ifnum\shownotes=1
@@ -22,16 +33,6 @@
 \fi
 \newcommand{\tnotelong}[1]{{\color{blue}\authnotelong{TM}{#1}}}
 
-
-% for potential improvements
-\def\shownotes{0}  %set 1 to show author notes
-\ifnum\shownotes=1
-\newcommand{\authnoteimp}[2]{[#1: #2]}
-\else
-\newcommand{\authnoteimp}[2]{}
-\fi
-\newcommand{\tnoteimp}[1]{{\color{blue}\authnoteimp{todo}{#1}}}
-\newcommand{\todo}[1]{\tnoteimp{#1}}
 
 
 
