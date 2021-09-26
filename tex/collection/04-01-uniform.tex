@@ -287,6 +287,7 @@ since $\ln (B\kappa n) \geq 1$ for large enough $n$. Therefore, with probability
 \end{proof}
 
 \begin{remark}\label{lec4:rem:delta}
+	\tnoteimp{I suggest we move this remark to the proofs (so that it should up before the actual proof which is harder to understand.)}
 \sloppy Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
 \al{
    2|C| \exp(-2n\delta^2)  = 2\exp(\ln{\vert C \vert} - 2n\delta^2) \leq 2\exp(p - 2p) = 2\exp(-p).
