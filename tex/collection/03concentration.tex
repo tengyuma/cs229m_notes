@@ -16,7 +16,7 @@ As it turns out, the material from this chapter constitutes arguably the importa
 
 \sec{The big-O notation}
 
-Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(g(x))$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cg(x)$ for some absolute/universal constant $C$. In other words, suppose $O(g_1(n)),\dots, O(g_k(n))$ occur in a statement, it means that \textbf{there exists} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(n)|\le C_ig_i(n)$ for all $n$, such that after replacing each occurrence $O(g_i(n))$ by $f_i(n_i)$,  the statement is true.  (The difference with traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O".)
+Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(g(x))$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cg(x)$ for some absolute/universal constant $C$. In other words, suppose $O(g_1(n)),\dots, O(g_k(n))$ occur in a statement, it means that \textbf{there exists} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(n)|\le C_ig_i(n)$ for all $n$, such that after replacing each occurrence $O(g_i(n))$ by $f_i(n)$,  the statement is true.  (The difference with traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O".)
 
 Also, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some absolute constant $c > 0$ such that $a \leq cb$.
 
