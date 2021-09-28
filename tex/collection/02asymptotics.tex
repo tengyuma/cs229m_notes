@@ -10,7 +10,7 @@ In this chapter, we use an asymptotic approach (i.e assuming number of training 
 
 For the asymptotic analysis of ERM, we would like to prove that excess risk is bounded as shown below:
 \al{
-    L(\hat{\theta}) - \argmin_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right). 
+    L(\hat{\theta}) - \inf_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right). 
     \label{lec1:eqn:erm-bound}
 }
 Here $c$ is a problem dependent constant that does not depend on $n$, and $o(1/n)$ hides all dependencies except $n$. The equation above shows that as we have more training data (i.e as $n$ increases) the excess risk of ERM decrease at the rate of $\frac{1}{n}$.
@@ -25,9 +25,9 @@ Then,
 \begin{enumerate}
     \item $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, i.e. for every $\epsilon > 0$, there is an $M$ such that $\sup_n \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) < \epsilon$. (This means that the sequence $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ is ``bounded in probability".)
     
-    \item  $\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right)$.
+    \item  $\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}\Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right)$.
      \item $n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)$.
-    \item $n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2}$ where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2} \right)$.
+    \item $n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2}$ where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}\Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2} \right)$.
     \item $\lim_{n \to \infty} \E \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)$.
 \end{enumerate}
 \label{lec1:thm:asymp}
@@ -80,17 +80,17 @@ Rearranging, we have
 
 Multiplying by $\sqrt{n}$ on both sides,
  \al{
-\sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(||\hat{\theta}-\theta^{*}||_{2}^{2})) \\
+\sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(\sqrt{n} ||\hat{\theta}-\theta^{*}||_{2}^{2})) \\
 &\approx -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})). \label{lec1:eqn:interm}}
 
  
 Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \nabla \ell ((x^{(i)}, y^{(i)}), \theta^*)$ and $\widehat{X} = \nabla \hatL(\theta^*)$, and noticing that $\E[\nabla \hatL(\theta^{*})] = \nabla L(\theta^{*})$, we have
- \al{ \sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,Cov(\ell((x, y), \theta^{*}))).} 
+ \al{ \sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\ell((x, y), \theta^{*}))).} 
  
 Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$, so $\sqrt{n} (\nabla \hatL(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,Cov(\ell((x, y), \theta^{*})))$. By the law of large numbers, $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. Applying these results to \eqref{lec1:eqn:interm} (together with an application of Slutsky's theorem),
 \al{
-\sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,Cov(\ell((x,y),\theta^{*})) \\
-&\stackrel{d}{=} \mathcal{N} \left( 0,\nabla^{2}L(\theta^{*})^{-1}Cov(\ell((x,y), \theta^{*})) \nabla^{2}L(\theta^{*})^{-1} \right),
+\sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,\Cov(\ell((x,y),\theta^{*})) \\
+&\stackrel{d}{=} \mathcal{N} \left( 0,\nabla^{2}L(\theta^{*})^{-1}\Cov(\ell((x,y), \theta^{*})) \nabla^{2}L(\theta^{*})^{-1} \right),
 }
 
 where the second step is due to Lemma~\ref{lec1:lem:dist}. This proves Part 2 of Theorem~\ref{lec1:thm:asymp}.
