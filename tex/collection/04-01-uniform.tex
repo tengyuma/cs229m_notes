@@ -141,7 +141,7 @@ If we take $\delta$ such that $2\vert \cH \vert \exp(-2n\epsilon^2) = \delta$, t
 }
 which proves \eqref{lec4:eqn:finiteuniformbound}. \eqref{lec4:eqn:finiteexcessriskbound} follows by the inequality we stated in Section \ref{sec:uc-gen} and taking $\epsilon = \sqrt{\frac{ 2(\ln{\vert \cH \vert} + \ln{(2 / \delta)}) }{n}}$:
 \begin{align}
-\Pr \left( | L(\hat{h}) - L(h^{*}) | \geq \epsilon \right) &\leq \Pr \left( 2 \sup_{h \in \cH} | L(\hat{h}) - L(h^{*}) | \geq \epsilon \right) \\
+\Pr \left( | L(\hat{h}) - L(h^{*}) | \geq \epsilon \right) &\leq \Pr \left( 2 \sup_{h \in \cH} | \hat{L}(h) - L(h) | \geq \epsilon \right) \\
 &\leq 2 |\cH| \exp \left( -\frac{n\epsilon^2}{2} \right).
 \end{align}
 \end{proof}
