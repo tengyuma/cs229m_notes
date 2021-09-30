@@ -203,6 +203,7 @@ We now provide several examples of classes of random variables that are sub-Gaus
 \end{example}
 We now provide an even more general class of sub-Gaussian random variables that subsume the random variables in Example \ref{lec3:ex:rand_var_bound_dist_to_mean}:
 \begin{example}[Bounded random variables]
+    \label{lec3:ex:bounded_rand_var_subg}
     If $X$ is a random variable such that $a \leq X \leq b$ almost surely for some constants $a, b \in \R$, then
     \begin{equation*}
         \Exp\left[e^{\lambda(X - \Exp[X])}\right] \leq \exp \left[ \frac{\lambda^2(b - a)^2}{8} \right],
@@ -224,7 +225,7 @@ We now introduce some important inequalities related to the second of our two go
     }
     (Intuitively, \eqref{lec3:eqn:mcdiarmid_fn_cond} states that $f$ is not overly sensitive to arbitrary changes in a single coordinate.) Then, for any independent random variables $X_1, \ldots, X_n$,
     \al{
-        \Pr \left[ f(X_1, \ldots, X_n) - \Exp[f(X_1, \ldots, X_n)] \geq t \right] \leq \exp\left(-\frac{2t^2}{\sum_{i = 1}^n c_i^2}\right).
+        \Pr \left[ f(X_1, \ldots, X_n) - \Exp[f(X_1, \ldots, X_n)] \geq t \right] \leq \exp\left(-\frac{2t^2}{\sum_{i = 1}^n c_i^2}\right). \label{lec3:eqn:mcdiarmid_bound}
     }
     Moreover, $f(X_1, \ldots, X_n)$ is $O\left(\sqrt{\sum_{i = 1}^n c_i^2}\right)$-sub-Gaussian.
 \end{theorem}
@@ -236,8 +237,45 @@ We now introduce some important inequalities related to the second of our two go
 \end{remark}
 
 \begin{proof}
-    See the proof of Corollary 2.21 in \cite{wainwright2019high}, which relies on the Azuma-Hoeffding inequality for martingale difference sequences.
-    \tnoteimp{to add a proof here}
+    The idea of this proof is to take the quantity $f(X_1,\dots,X_n) - \Exp[f(X_1,\dots,X_n)]$ and break it into manageable components by conditioning on portions of the sample. To this end, we begin by defining:
+	\begin{align*}
+	 	Z_0 &= \Exp \left[f(X_1,\dots,X_n) \right] &&\text{constant}\\
+	 	Z_1 &= \Exp \left[f(X_1,\dots,X_n) \lvert X_1 \right] &&\text{a function of $X_1$} \\
+        &\cdots \\
+        Z_i &= \Exp \left [f(X_1,\dots,X_n) | X_1,\dots,X_i \right] &&\text{a function of $X_1,\dots,X_i$} \\
+	 	&\cdots \\
+        Z_n &= f(X_1,\dots,X_n)
+	\end{align*}
+    Using the law of total expectation, we show also that the expectation of $Z_i$ equals $Z_0$ for all $i$.
+    \begin{align*}
+        \Exp [Z_i] &= \Exp \left [ \Exp \left [f(X_1,\dots,X_n) | X_1,\dots,X_i \right] \right] \\
+        &= \Exp[f(X_1,\dots,X_n)] \\
+        &= Z_0
+    \end{align*}
+    The fact that $\E[D_i] = 0$, where $D_i = Z_i - Z_{i - 1}$, is an immediate corollary of this result. Next, we observe that we can rewrite the quantity of interest, $Z_n - Z_0$, as a telescoping sum in the increments $Z_i - Z_{i - 1}$:
+    \begin{align*}
+        Z_n - Z_0 &= (Z_n - Z_{n - 1}) + (Z_{n - 1} - Z_{n - 2}) + \cdots + (Z_1 - Z_0) \\
+        &= \sum_{i = 1}^n D_i
+    \end{align*} 
+    Next, we show that conditional on $X_1,\dots,X_{i - 1}$, $D_i$ is a bounded random variable. First, observe that:
+    \begin{align*}
+        A_i = \inf_x \Exp \left[ f(X_1,\dots,X_n) | X_1,\dots,X_{i - 1}, X_i = x \right] - \Exp \left[ f(X_1,\dots,X_n) | X_1,\dots,X_{i - 1} \right] \\
+        B_i = \sup_x \Exp \left [ f(X_1,\dots,X_n) | X_1,\dots,X_{i = 1}, X_i = x \right] - \Exp \left[ f(X_1,\dots,X_n) | X_1,\dots,X_{i - 1} \right]
+    \end{align*}
+    It is clear from their definition that $A_i \leq D_i \leq B_i$. Furthermore, by independence of the $X_i$'s, we have that:
+    \begin{align*}
+        B_i - A_i &\leq \sup_{x_{1:i - 1}} \sup_{x, x'} \int \left (f(x_1,\dots,x_{i - 1}, x, x_{i + 1},\dots,x_n) - f(x_1,\dots,x_{i - 1}, x', x_{i + 1},\dots,x_n)\right) dP(x_{i + 1},\dots,x_n) \\
+        &\leq c_i
+    \end{align*}
+    Using this bound, the properties of conditional expectation, and Example~\ref{lec3:ex:bounded_rand_var_subg}, we can now prove that that $Z_n - Z_0$ is $O\left(\sqrt{\sum_{i = 1}^n c_i^2}\right)$-sub-Gaussian.
+    \begin{align*}
+        \Exp \left[e^{\lambda(Z_n - Z_0)} \right] &= \Exp \left[e^{\lambda \sum_{i = 1}^n (Z_i - Z_{i - 1})} \right] \\
+        &= \Exp \left[ \Exp \left[e^{\lambda (Z_n - Z_{n - 1})} \biggr\lvert X_1,\dots,X_{n - 1} \right]e^{\lambda \sum_{i = 1}^{n - 1} (Z_i - Z_{i - 1})} \right] \\
+        &\leq e^{\lambda^2 c_n^2/8} \Exp \left[ e^{\lambda \sum_{i = 1}^{n - 1} (Z_i - Z_{i - 1})} \right] \\
+        &\cdots \\
+        &\leq e^{\lambda^2 (\sum_{i = 1}^n c_i^2)/8}
+    \end{align*}
+    The final inequality given in \eqref{lec3:eqn:mcdiarmid_bound} follows by Theorem~\ref{lec3:thm:subgausstail}.
 \end{proof}
 
 A more general version of McDiarmid's inequality comes from Theorem 3.18 in~\cite{vanhandel2016high}. The setup for this theorem requires defining the \emph{one-sided differences} of a function $f : \R^n \to \R$:
