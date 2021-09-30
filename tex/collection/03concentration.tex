@@ -230,11 +230,14 @@ We now introduce some important inequalities related to the second of our two go
 \end{theorem}
 
 \begin{remark}
-    Note that McDiarmid's inequality is a generalization of Hoeffding's inequality with $f(x_1, \dotsc, x_n) = \sum_{i = 1}^n \min\{\max\{x_i, b\}, a\}$.
+    Note that McDiarmid's inequality is a generalization of Hoeffding's inequality with $f(x_1, \dotsc, x_n) = \sum_{i = 1}^n \min\{\max\{x_i, b\}, a\}$. 
+    \tnoteimp{This remark seems to be a bit problematic. It's a generalization of Hoeffding when $f(x) = \sum x_i$ and $a_i
+  \le x_i\le b_i$?  }
 \end{remark}
 
 \begin{proof}
     See the proof of Corollary 2.21 in \cite{wainwright2019high}, which relies on the Azuma-Hoeffding inequality for martingale difference sequences.
+    \tnoteimp{to add a proof here}
 \end{proof}
 
 A more general version of McDiarmid's inequality comes from Theorem 3.18 in~\cite{vanhandel2016high}. The setup for this theorem requires defining the \emph{one-sided differences} of a function $f : \R^n \to \R$:
