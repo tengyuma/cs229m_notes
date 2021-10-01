@@ -26,7 +26,7 @@ Also, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some 
 We provide a brief overview of Hoeffding's inequality, an important concentration inequality for bounded random variables:
 
 \begin{theorem}[Hoeffding's inequality]
-    Let $X_1, X_2, \dots, X_n$ be i.i.d. real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
+    Let $X_1, X_2, \dots, X_n$ be independent real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
     \al {
     \Pr \left[ |\bar{X} - \mu | \leq \varepsilon \right] \geq 1 - 2  \exp\left(\frac{-2n^2\varepsilon^2}{\sum_{i=1}^n (b_i - a_i)^2}\right). \label{lec2:eqn:hoeffding}
     }
