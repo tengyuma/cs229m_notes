@@ -136,7 +136,7 @@ Fix $t > 0$. For any $\lambda > 0$,
     &\leq \exp(-\lambda t)\exp(\sigma^2\lambda^2/2) && \text{(by \eqref{lec3:eqn:subgassdefn})} \\
     &= \exp(-\lambda t + \sigma^2\lambda^2/2). \label{lec3:eqn:non_opt_tail_bound}
 }
-Because the bound \eqref{lec3:eqn:non_opt_tail_bound} holds for any choice of $\lambda$ and $\exp(\cdot)$ is monotonically increasing, we can optimize the bound \eqref{lec3:eqn:non_opt_tail_bound} by finding $\lambda$ which minimizes the exponent $-\lambda t + \sigma^2 \lambda^2/2$. Differentiating and setting the derivative equal to zero, we find that the optimal choice is $\lambda = t/\sigma^2$, yielding the one-sided tail bound
+Because the bound \eqref{lec3:eqn:non_opt_tail_bound} holds for any choice of $\lambda > 0$ and $\exp(\cdot)$ is monotonically increasing, we can optimize the bound \eqref{lec3:eqn:non_opt_tail_bound} by finding $\lambda$ which minimizes the exponent $-\lambda t + \sigma^2 \lambda^2/2$. Differentiating and setting the derivative equal to zero, we find that the optimal choice is $\lambda = t/\sigma^2$, yielding the one-sided tail bound
 \al{\label{lec3:eqn:opt_tail_bound_right}
     \Pr[X - \mu \geq t] \leq \exp\left(-\frac{t^2}{2\sigma^2}\right).
 }
