@@ -32,7 +32,7 @@ With the complexity measure to be introduced, we will prove a bound of the form
     L(\hat h) - \hat L(\hat h) \leq \tilde O\l(\sqrt{\frac{\text{Complexity}(\Theta)}{n}}\r).
 \end{align}
 
-This complexity measure will depend on the distribution $p$ over $\cX \times \cY$ (the input and output spaces), and hence takes into account how easy it is to learn $p$. If $p$ is easy to learn, then this complexity measure will be small even if the hypothesis space is big.
+This complexity measure will depend on the distribution $p$ over $\cX \times \cY$ (the input and output spaces), and hence takes into account how easy it is to learn $p$. If $p$ is easy to learn, then this complexity measure will be small even if the hypothesis space is big. \tnoteimp{distribution should be $P$ instead of $p$; please check globally}
 
 One of the practical implications of having such a complexity measure is that we can restrict the hypothesis space by regularizing the complexity measure (assuming it is something we can evaluate and train with). If we successfully find a low complexity model, then this generalization bound guarantees that we have not overfit.
 
@@ -42,7 +42,7 @@ In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L
 \begin{equation}
 \bbE_{z \sim X \times Y}\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
 \end{equation}
-The expectation is over the randomness in the training data ($\cX \times \cY$). (Note: We cannot just swap the order of $\bbE$ and $\sup$!)
+The expectation is over the randomness in the training data ($\cX \times \cY$). (Note: We cannot just swap the order of $\bbE$ and $\sup$! \tnoteimp{more formal})
 
 To do so, we first define \textit{Rademacher complexity}.
 
@@ -52,11 +52,12 @@ Let $\cF$ be a family of functions mapping $Z \mapsto \bbR$, and let $P$ be a di
     R_n(F) \triangleq {\bbE}_{z_1, \dots, z_n \iid P} \l[ 
     {\bbE}_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
 \end{align}
+\tnoteimp{should use the given official macro $\Exp$, which also put the symbols below the E. remove completely the new macro bbE} 
 where $\sigma_1, \dots, \sigma_n$ are independent \textit{Rademacher random variables}, i.e. each taking on the value of $1$ or $-1$ with probability $1/2$.
 \end{definition}
 
 \begin{remark}
-For our applications we will take $\cZ = \cX \times \cY$. However, Definition \ref{lec5:dfn:rc} holds for abstract input spaces $\cZ$ as well.
+For our applications \tnoteimp{to clarify; it seems to mean an empirical application} we will take $\cZ = \cX \times \cY$. However, Definition \ref{lec5:dfn:rc} holds for abstract input spaces $\cZ$ as well.
 \end{remark}
 
 \begin{remark}
@@ -71,18 +72,18 @@ The following theorem is the main theorem involving Rademacher complexity:
     \begin{align}
        {\bbE}_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
     \end{align}
+    \tnoteimp{typo: $f(x)$ to $f(z)$}
 \end{theorem}
 
 \begin{remark}
-We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\bbE_{z\sim P} f(x)$ as a population average.
+We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\bbE_{z\sim P} f(x)$     \tnoteimp{typo: $f(x)$ to $f(z)$} as a population average.
 \end{remark}
-
-\textit{Why is Theorem \ref{lec5:thm:thm1} useful to us?} We can set $\cF$ to be the family of loss functions, i.e.
+\noindent\textit{Why is Theorem \ref{lec5:thm:thm1} useful to us?} We can set $\cF$ to be the family of loss functions, i.e.
 \begin{equation}
 \cF = \l\{ z = (x,y) \in \cZ \mapsto \ell((x,y),h) \in \bbR : h \in \cH \r\}.
 \end{equation}
-
 This is the family of losses induced from the hypothesis functions in $\cH$. Then by Theorem \ref{lec5:thm:thm1},
+\tnoteimp{$\E[f]$ }
 \begin{align}
     \bbE_{z_i} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE(f)\r)\r] 
     &= {\bbE}_{(x^{(i)}, y^{(i)})} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
@@ -103,9 +104,10 @@ Hence,
     &= \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[ \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} \l(\frac{-h(x^{(i)})y^{(i)}+1}{2}\r)\sigma_i \r] &(\text{by } \eqref{lec5:eqn:01}) \\
     &= \frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[ \frac{1}{n}\sum^n_{i=1}\sigma_i + \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\sup \text{only over } \cH) \\
     &= \frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\bbE [\sigma_i] = 0) \\
-    &=\frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} h(x^{(i)})\sigma_i \r] &(-y_i \sigma_i \stackrel{d}{=} \sigma_i) \\
+    &=\frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} h(x^{(i)})\sigma_i \r] &(-y_i \sigma_i \stackrel{d}{=} \sigma_i) \tnoteimp{typo} \\
     &= \frac{1}{2}R_n(\cH). &(\text{by definition})
 \end{align}
+\tnoteimp{what's below the expectation should be $\{(x^{(i)}, y^{(i)})\}$ }
 
 In this setting, $R_n(\cF)$ and $R_n(\cH)$ are the same (except for the factor of 2). $R_n(\cH)$ has a slightly more intuitive interpretation: it represents how well $h \in \cH$ can fit random patterns.
 
@@ -130,7 +132,7 @@ The last inequality is because in general,
 \begin{align}
     \sup_u \l(\bbE_v[g(u,v)]\r) \leq \sup_u \l( \bbE_v\l[\sup_{u'}g(u',v)\r]\r) = \bbE_v \l[\sup_u (g(u,v))\r]
 \end{align}
-since the outer $\sup$ becomes vacuous.
+since the outer $\sup$ \tnoteimp{which outer sup?}becomes vacuous.
 
 Now, if we take the expectation over $z_1, \dots, z_n$ for both sides of \eqref{lec5:eqn:thm1-pf1},
 \begin{align}
