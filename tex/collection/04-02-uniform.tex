@@ -181,6 +181,7 @@ Note that, as the name suggests, the expectation of the empirical Rademacher com
     R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}{\bbE}}\l[ R_S(\cF) \r].
 \end{align}
 
+
 Here is the theorem involving empirical Rademacher complexity:
 
 \begin{theorem}\label{lec5:thm:thm2}
@@ -266,6 +267,7 @@ R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n
 &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n}\langle\sigma, v\rangle \r],
 \end{align}
 where $\sigma=(\sigma_1,\dots,\sigma_n)$. (See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea.) This perspective will be helpful later on when proving bounds on the empirical Rademacher complexity.
+
 
 \begin{figure}[ht!]
 \begin{center}
