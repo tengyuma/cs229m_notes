@@ -9,7 +9,6 @@ In this chapter, we take a little diversion and develop the notion of \emph{conc
     \item $X_1 + \ldots + X_n$ concentrates around $\Exp[X_1 + \ldots + X_n]$.
     \item More generally, $f(X_1, \ldots, X_n)$ concentrates around $\Exp[f(X_1, \ldots, X_n)]$.
 \end{enumerate}
-
 These inequalities will be used in subsequent chapters to bound several key quantities of interest.
 
 As it turns out, the material from this chapter constitutes arguably the important mathematical tools in the entire course. No matter what area of machine learning one wants to study, if it involves sample complexity, some kind of concentration result will typically be required. Hence, concentration inequalities are some of the most important tools in modern statistical learning theory.
@@ -20,47 +19,9 @@ Throughout the rest of this course, we will use ``big-O" notation in the followi
 
 Also, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some absolute constant $c > 0$ such that $a \leq cb$.
 
+\sec{Chebyshev's inequality} 
 
-\sec{Hoeffding's inequality}\label{lec2:subsec:hoeffding}
-
-We provide a brief overview of Hoeffding's inequality, an important concentration inequality for bounded random variables:
-
-\begin{theorem}[Hoeffding's inequality]
-    Let $X_1, X_2, \dots, X_n$ be independent real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
-    \al {
-    \Pr \left[ |\bar{X} - \mu | \leq \varepsilon \right] \geq 1 - 2  \exp\left(\frac{-2n^2\varepsilon^2}{\sum_{i=1}^n (b_i - a_i)^2}\right). \label{lec2:eqn:hoeffding}
-    }
-\end{theorem}
-
-Note that the demoninator within the exponential term, $\sum_{i=1}^n (b_i - a_i)^2$, can be thought of as an upper bound or proxy for the variance $\Var(X_i)$. In fact, under the i.i.d. assumption, we can show
-\begin{align}
-    \Var\left(\bar{X} \right) &= \frac{1}{n^2}\sum_{i=1}^n \Var(x_i) \leq \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2.
-\end{align}
-
-Let $\sigma^2 = \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2$. If we take $\varepsilon = O(\sigma \sqrt{\log{n}}) = \sigma \sqrt{c \log n}$; i.e. $\varepsilon$ bounded above by some large (i.e., $c \geq 10$) multiple of the standard deviation of the $x_i$'s times $\sqrt{\log{n}}$, we can substitute this value of $\varepsilon$ into \eqref{lec2:eqn:hoeffding} to reach the following conclusion: 
-\begin{align}
-    \Pr \left[ |\bar{X} - \mu| \leq \varepsilon \right] &\geq 1 - 2\exp\left(\frac{-2 \varepsilon^2}{\sigma^2}\right)\\
-    &= 1 - 2 \exp(-2 c \log n)\\
-    &= 1 - 2 n^{-2c}
-\end{align}
-
-We can see that as $n$ grows, the right-most term tends to zero such that $\Pr[|\bar{X} - \mu| \leq \varepsilon]$ very quickly approaches 1. Intuitively, this result tells us that, with high probability, the sample mean $\bar{X}$ will not be ``much farther" from the population mean $\mu$ by some sublogarithmic ($\sqrt{c \log n}$) factor of the standard deviation.\footnote{This is with the caveat, of course, that $\sigma$ is not exactly standard deviation but a loose upper bound on standard deviation.} Thus, we can restate the above claim we reached as follows:
-
-\begin{remark}
-    For sufficiently large $n$, $|\bar{X} - \mu | \leq O(\sigma \sqrt{\log{n}})$ with high probability.
-\end{remark}
-
-\begin{remark}\label{lec2:rem:hoeffding}
-    If, in addition, we have $a_i = -O(1)$ and $b_i = O(1)$, then $\sigma^2 = O \left( \frac{1}{n}\right)$, and $|\bar{X} - \mu | \leq O\left(\sqrt{\frac{\log n}{n}}\right) = \tilO\left(\frac{1}{\sqrt{n}}\right)$.\footnote{$\tilO$ is analogous to Big-$O$ notation, in that $\tilO$ hides logarithmic factors. That is; if $f(n) = O(\log n)$, then $f(n) = \tilO(1)$.}
-\end{remark}
-
-Remark~\ref{lec2:rem:hoeffding} provides a compact form of the Hoeffding bound that we can use when the $X_i$ are bounded almost surely.
-
-\sec{Chebyshev's inequality}
-
-\tnoteimp{This subsection should go before the subsection Hoelfding inequality; the transition sentences and the discussion around the end of this subsection need to be rephrased a bit after reorganizing the subsections}
-
-Consider an arbitrary random variable $Z$ with finite variance. One of the most famous results characterizing its tail behavior is the following theorem:
+We begin by considering an arbitrary random variable $Z$ with finite variance. One of the most famous results characterizing its tail behavior is the following theorem:
 
 \begin{theorem}[Chebyshev's inequality]
     Let $Z$ be a random variable with finite expectation and variance. Then
@@ -90,16 +51,48 @@ while Chebyshev's inequality gives us the weaker result
     |Z - \Exp[Z]| \leq \sd(Z) \cdot \sqrt{O(n^c)} = \sd(Z) \cdot O(n^{c / 2})  \quad w.p. \; 1 - \delta.
 }
 
-Despite the previous example, Chebyshev's inequality is actually optimal without further assumptions, in the sense that there exist distributions with finite variance for which the bound is tight. With that in mind, we will need to assume more about our random variables if we want to improve upon the Chebyshev inequality's $1/t^2$ rate of tail decay. As an example, recall that when $0 \leq X_i \leq 1$ for $i = 1, \ldots, n$, Hoeffding's inequality is applicable:
-\al{
-    \Pr[|Z - \Exp[Z]| \geq t] \leq 2\exp(-2t^2 / n).
-}
-This tail probability is exponentially decaying in $t$ instead of polynomially decaying as in Chebyshev's inequality! Certainly requiring boundedness in $[0, 1]$ (or $[a, b]$ more generally) is limiting, so it is worth asking what types of distributions permit such an exponential tail bound. The following section will explore such a class of random variables: \emph{sub-Gaussian} random variables.
+Chebyshev's inequality is actually optimal without further assumptions, in the sense that there exist distributions with finite variance for which the bound is tight. However, in many cases, we will be able to improve the $1/t^2$ rate of tail decay in Chebyshev's inequality to an $e^{-t}$ rate. In the next two sections, we will demonstrate how to construct tail bounds with exponential decay rates.
+
+\sec{Hoeffding's inequality}\label{lec2:subsec:hoeffding}
+
+We next provide a brief overview of Hoeffding's inequality, a concentration inequality for bounded random variables with an exponential tail bound:
+
+\begin{theorem}[Hoeffding's inequality]
+    Let $X_1, X_2, \dots, X_n$ be independent real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
+    \al {
+    \Pr \left[ |\bar{X} - \mu | \leq \varepsilon \right] \geq 1 - 2  \exp\left(\frac{-2n^2\varepsilon^2}{\sum_{i=1}^n (b_i - a_i)^2}\right). \label{lec2:eqn:hoeffding}
+    }
+\end{theorem}
+
+Note that the demoninator within the exponential term, $\sum_{i=1}^n (b_i - a_i)^2$, can be thought of as an upper bound or proxy for the variance $\Var(X_i)$. In fact, under the independence assumption, we can show
+\begin{align}
+    \Var\left(\bar{X} \right) &= \frac{1}{n^2}\sum_{i=1}^n \Var(X_i) \leq \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2.
+\end{align}
+
+Let $\sigma^2 = \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2$. If we take $\varepsilon = O(\sigma \sqrt{\log{n}}) = \sigma \sqrt{c \log n}$ so that $\varepsilon$ is bounded above by some large (i.e., $c \geq 10$) multiple of the standard deviation of the $X_i$'s times $\sqrt{\log{n}}$, we can substitute this value of $\varepsilon$ into \eqref{lec2:eqn:hoeffding} to reach the following conclusion: 
+\begin{align}
+    \Pr \left[ |\bar{X} - \mu| \leq \varepsilon \right] &\geq 1 - 2\exp\left(\frac{-2 \varepsilon^2}{\sigma^2}\right)\\
+    &= 1 - 2 \exp(-2 c \log n)\\
+    &= 1 - 2 n^{-2c}
+\end{align}
+
+We can see that as $n$ grows, the right-most term tends to zero such that $\Pr[|\bar{X} - \mu| \leq \varepsilon]$ very quickly approaches 1. Intuitively, this result tells us that, with high probability, the sample mean $\bar{X}$ will not be ``much farther" from the population mean $\mu$ by some sublogarithmic ($\sqrt{c \log n}$) factor of the standard deviation.\footnote{This is with the caveat, of course, that $\sigma$ is not exactly standard deviation but a loose upper bound on standard deviation.} Thus, we can restate the above claim we reached as follows:
+
+\begin{remark}
+    For sufficiently large $n$, $|\bar{X} - \mu | \leq O(\sigma \sqrt{\log{n}})$ with high probability.
+\end{remark}
+
+\begin{remark}\label{lec2:rem:hoeffding}
+    If, in addition, we have $a_i = -O(1)$ and $b_i = O(1)$, then $\sigma^2 = O \left( \frac{1}{n}\right)$, and $|\bar{X} - \mu | \leq O\left(\sqrt{\frac{\log n}{n}}\right) = \tilO\left(\frac{1}{\sqrt{n}}\right)$.\footnote{$\tilO$ is analogous to Big-$O$ notation, in that $\tilO$ hides logarithmic factors. That is; if $f(n) = O(\log n)$, then $f(n) = \tilO(1)$.}
+\end{remark}
+
+Remark~\ref{lec2:rem:hoeffding} provides a compact form of the Hoeffding bound that we can use when the $X_i$ are bounded almost surely. 
+
+So far, we have only shown how to construct exponential tail bounds for bounded random variables. Since requiring boundedness in $[0, 1]$ (or $[a, b]$ more generally) is limiting, it is worth asking what types of distributions permit such an exponential tail bound. The following section will explore such a class of random variables: \emph{sub-Gaussian} random variables.
 
 \sec{Sub-Gaussian random variables}
 
-\tnoteimp{add motivations---we will extend Hoelfding inequality to unbounded random variables} 
-We begin by defining the class of sub-Gaussian random variables by way of a bound on their moment generating functions, after which we will see how this bound guarantees the exponential tail decay we are after.
+We begin by defining the class of sub-Gaussian random variables by way of a bound on their moment generating functions. After estabishing this definition, we will see how this bound guarantees the exponential tail decay we desire.
 
 \begin{definition}[Sub-Gaussian Random Variables]
     A random variable $X$ with finite mean $\mu$ is \textit{sub-Gaussian} with parameter $\sigma$ if
@@ -115,7 +108,7 @@ We begin by defining the class of sub-Gaussian random variables by way of a boun
     \al{
         \Exp[\exp(\lambda X)] = \Exp\left[\sum_{k = 0}^\infty \frac{(\lambda X)^k}{k!}\right] = \sum_{k = 0}^\infty\frac{\lambda^k}{k!}\Exp[X^k].
     }
-    A bound on the moment generating function then is a bound on infinitely many moments of $X$, i.e. a requirement that the moments of $X$ are all finite and grow slowly enough to allow the power series to converge.
+    A bound on the moment generating function then is a bound on infinitely many moments of $X$, i.e. a requirement that the moments of $X$ are all finite and grow slowly enough to allow the power series to converge. Though a proof of this result is beyond the scope of this monograph, Proposition 2.5.2 in \cite{vershynin2018high} shows that \eqref{lec3:eqn:subgassdefn} is equivalent to $\Exp \left [|X|^p \right ]^{1/p} \lesssim \sqrt{p}$ for all $p \geq 1$.
 \end{remark}
 
 \noindent Although \eqref{lec3:eqn:subgassdefn} is not a particularly intuitive definition, it turns out to imply exactly the type of exponential tail bound we want:
@@ -156,10 +149,10 @@ We can then obtain \eqref{lec3:eqn:subgausstail} by applying the union bound:
 \end{remark}
 
 \begin{remark}
-    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\E[|X-\mu|^k]$) only requires that the second central moment $\E[(X-\mu)^2]$ (more generally, the $k$th central moment $\E[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\E[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently, which is why most researchers use exponential tail bounds in practice.
+    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\E[|X-\mu|^k]$) only requires that the second central moment $\E[(X-\mu)^2]$ (more generally, the $k$th central moment $\E[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\E[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently. This ``tensorization'' property is why most researchers use exponential tail bounds in practice.
 \end{remark}
 
-Having defined and derived exponential tail bounds for sub-Gaussian random variables, we can now accomplish the first of the goals we set out at the beginning of the chapter: to show that under certain conditions, namely independence and sub-Gaussianity of $X_1, \dotsc, X_n$, the sum $Z = \sum_{i = 1}^n X_i$ concentrates around $\Exp[Z] = \Exp[\sum_{i = 1}^n X_i]$.
+Having defined and derived exponential tail bounds for sub-Gaussian random variables, we can now accomplish the first of the goals we set out at the beginning of the chapter: show that under certain conditions, namely independence and sub-Gaussianity of $X_1, \dotsc, X_n$, the sum $Z = \sum_{i = 1}^n X_i$ concentrates around $\Exp[Z] = \Exp[\sum_{i = 1}^n X_i]$.
 
 \begin{theorem}[Sum of sub-Gaussian random variables is sub-Gaussian]\label{lec3:thm:sum_sub_gaussian}
     If $X_1, \ldots, X_n$ are independent sub-Gaussian random variables with variance proxies $\sigma_1^2, \ldots, \sigma_n^2$, then $Z = \sum_{i = 1}^n X_i$ is sub-Gaussian with variance proxy $\sum_{i = 1}^n \sigma_i^2$. As a consequence, we have the tail bound
@@ -231,9 +224,8 @@ We now introduce some important inequalities related to the second of our two go
 \end{theorem}
 
 \begin{remark}
-    Note that McDiarmid's inequality is a generalization of Hoeffding's inequality with $f(x_1, \dotsc, x_n) = \sum_{i = 1}^n \min\{\max\{x_i, b\}, a\}$. 
-    \tnoteimp{This remark seems to be a bit problematic. It's a generalization of Hoeffding when $f(x) = \sum x_i$ and $a_i
-  \le x_i\le b_i$?  }
+    Note that McDiarmid's inequality is a generalization of Hoeffding's inequality with $f(x_1, \dotsc, x_n) = \sum_{i = 1}^n x_i$ and $a_i \leq x_i \leq b_i$. 
+    \tnoteimp{This remark seems to be a bit problematic. It's a generalization of Hoeffding when $f(x) = \sum x_i$ and $a_i \le x_i\le b_i$? }
 \end{remark}
 
 \begin{proof}

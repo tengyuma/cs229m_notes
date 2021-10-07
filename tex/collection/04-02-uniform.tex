@@ -21,11 +21,11 @@ In the previous sections, we derived bounds for the generalization gap in two ca
 	L(\hat h) - \hat L(\hat h) \leq \tilde O \l( \sqrt{\frac{p}{n}} \r).
 	\end{equation}
 \end{enumerate} 
-Both of these bounds have a $\frac{1}{\sqrt{n}}$-dependency on $n$, which is known as the ``slow rate". The terms in the numerator ($\log |\cH|$ and $p$ resp.) can be thought of as complexity measure of $\cH$.
+Both of these bounds have a $\frac{1}{\sqrt{n}}$-dependency on $n$, which is known as the ``slow rate". The terms in the numerator ($\log |\cH|$ and $p$ resp.) can be thought of as complexity measures of $\cH$.
 
 The bound \eqref{lec5:eqn:bound-p} is not precise enough: it depends solely on $p$ and is not always optimal. For example, this would be a poor bound if the hypothesis class $\cH$ has very high dimension but small norm. One specific example is for the following two hypothesis classes:
 $$ \{\theta : \|\theta\|_1 \leq B\} \qquad \text{vs.} \qquad \{\theta : \|\theta\|_2 \leq B\},$$
-\eqref{lec5:eqn:bound-p} would give both hypothesis classes the same bound of $\tilde O \l( \sqrt{\frac{p}{n}} \r)$. Intuitively, we should take into account the norms for a better bound.
+\eqref{lec5:eqn:bound-p} would give both hypothesis classes the same bound of $\tilde O \l( \sqrt{\frac{p}{n}} \r)$. Intuitively, we should take into account the norms to prove a better bound.
 
 With the complexity measure to be introduced, we will prove a bound of the form
 \begin{align}
@@ -40,24 +40,23 @@ One of the practical implications of having such a complexity measure is that we
 
 In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L(h) - \hat L (h))$. Here we have a weaker goal: we try to obtain an upper bound for its expectation instead, i.e.
 \begin{equation}
-\bbE_{z \sim X \times Y}\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
+\Exp_{z \sim X \times Y}\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
 \end{equation}
-The expectation is over the randomness in the training data ($\cX \times \cY$). (Note: We cannot just swap the order of $\bbE$ and $\sup$! \tnoteimp{more formal})
+The expectation is over the randomness in the training data ($\cX \times \cY$).\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
 
 To do so, we first define \textit{Rademacher complexity}.
 
 \begin{definition}[Rademacher complexity] \label{lec5:dfn:rc}
 Let $\cF$ be a family of functions mapping $Z \mapsto \bbR$, and let $P$ be a distribution over $Z$. The \textit{(average) Rademacher complexity} of $\cF$ is defined as 
 \begin{align}
-    R_n(F) \triangleq {\bbE}_{z_1, \dots, z_n \iid P} \l[ 
-    {\bbE}_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
+    R_n(F) \triangleq {\Exp}_{z_1, \dots, z_n \iid P} \l[ 
+    {\Exp}_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
 \end{align}
-\tnoteimp{should use the given official macro $\Exp$, which also put the symbols below the E. remove completely the new macro bbE} 
 where $\sigma_1, \dots, \sigma_n$ are independent \textit{Rademacher random variables}, i.e. each taking on the value of $1$ or $-1$ with probability $1/2$.
 \end{definition}
 
 \begin{remark}
-For our applications \tnoteimp{to clarify; it seems to mean an empirical application} we will take $\cZ = \cX \times \cY$. However, Definition \ref{lec5:dfn:rc} holds for abstract input spaces $\cZ$ as well.
+For applications to empirical risk minimization, we will take $\cZ = \cX \times \cY$. However, Definition \ref{lec5:dfn:rc} holds for abstract input spaces $\cZ$ as well.
 \end{remark}
 
 \begin{remark}
@@ -70,13 +69,12 @@ The following theorem is the main theorem involving Rademacher complexity:
 
 \begin{theorem} \label{lec5:thm:thm1}
     \begin{align}
-       {\bbE}_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
+       {\Exp}_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \Exp_{z\sim P} [f(z)] \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
     \end{align}
-    \tnoteimp{typo: $f(x)$ to $f(z)$}
 \end{theorem}
 
 \begin{remark}
-We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\bbE_{z\sim P} f(x)$     \tnoteimp{typo: $f(x)$ to $f(z)$} as a population average.
+We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\Exp_{z\sim P} [f(z)]$ as a population average.
 \end{remark}
 \noindent\textit{Why is Theorem \ref{lec5:thm:thm1} useful to us?} We can set $\cF$ to be the family of loss functions, i.e.
 \begin{equation}
@@ -85,9 +83,9 @@ We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\
 This is the family of losses induced from the hypothesis functions in $\cH$. Then by Theorem \ref{lec5:thm:thm1},
 \tnoteimp{$\E[f]$ }
 \begin{align}
-    \bbE_{z_i} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE(f)\r)\r] 
-    &= {\bbE}_{(x^{(i)}, y^{(i)})} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
-    &= \bbE\l[ \sup_{h \in \cH}\l( \hat L (h) - L(h) \r) \r] \\
+    \Exp_{z_i} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)]\r)\r] 
+    &= {\Exp}_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
+    &= \Exp\l[ \sup_{h \in \cH}\l( \hat L (h) - L(h) \r) \r] \\
     &\leq 2 R_n(\cF),
 \end{align}
 where $z_i = (x^{(i)}, y^{(i)})$. Thus, $2R_n(\cF)$ is an upper bound for the generalization error. In this context, $R_n(\cF)$ can be interpreted as how well the loss sequence $\ell((x^{(1)}, y^{(1)}), h), \dots \ell((x^{(n)}, y^{(n)}), h)$ correlates with $\sigma_1, \dots, \sigma_n$.
@@ -100,14 +98,13 @@ Consider the binary classification setting where $y \in \{\pm 1\}$. Let $\ell_{0
 
 Hence,
 \begin{align}
-    R_n(\cF) &= \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[ \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} \ell_{0-1}((x^{(i)}, y^{(i)}),h)\sigma_i \r] &(\text{by definition}) \\
-    &= \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[ \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} \l(\frac{-h(x^{(i)})y^{(i)}+1}{2}\r)\sigma_i \r] &(\text{by } \eqref{lec5:eqn:01}) \\
-    &= \frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[ \frac{1}{n}\sum^n_{i=1}\sigma_i + \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\sup \text{only over } \cH) \\
-    &= \frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\bbE [\sigma_i] = 0) \\
-    &=\frac{1}{2} \bbE_{(x^{(i)}, y^{(i)}), \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} h(x^{(i)})\sigma_i \r] &(-y_i \sigma_i \stackrel{d}{=} \sigma_i) \tnoteimp{typo} \\
+    R_n(\cF) &= \Exp_{\{(x^{(i)}, y^{(i)})\}, \sigma_i} \l[ \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} \ell_{0-1}((x^{(i)}, y^{(i)}),h)\sigma_i \r] &(\text{by definition}) \\
+    &= \Exp_{\{(x^{(i)}, y^{(i)})\}, \sigma_i} \l[ \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} \l(\frac{-h(x^{(i)})y^{(i)}+1}{2}\r)\sigma_i \r] &(\text{by } \eqref{lec5:eqn:01}) \\
+    &= \frac{1}{2} \Exp_{\{(x^{(i)}, y^{(i)})\}, \sigma_i} \l[ \frac{1}{n}\sum^n_{i=1}\sigma_i + \sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\sup \text{only over } \cH) \\
+    &= \frac{1}{2} \Exp_{\{(x^{(i)}, y^{(i)})\}, \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} -h(x^{(i)})y^{(i)}\sigma_i \r] &(\Exp [\sigma_i] = 0) \\
+    &=\frac{1}{2} \Exp_{\{(x^{(i)}, y^{(i)})\}, \sigma_i} \l[\sup_{h \in \cH} \frac{1}{n}\sum^n_{i=1} h(x^{(i)})\sigma_i \r] &(-y_i \sigma_i \stackrel{d}{=} \sigma_i) \\
     &= \frac{1}{2}R_n(\cH). &(\text{by definition})
 \end{align}
-\tnoteimp{what's below the expectation should be $\{(x^{(i)}, y^{(i)})\}$ }
 
 In this setting, $R_n(\cF)$ and $R_n(\cH)$ are the same (except for the factor of 2). $R_n(\cH)$ has a slightly more intuitive interpretation: it represents how well $h \in \cH$ can fit random patterns.
 
@@ -115,7 +112,7 @@ In this setting, $R_n(\cF)$ and $R_n(\cH)$ are the same (except for the factor o
 \end{example}
 
 \begin{remark}
-Rademacher complexity is invariant to translation. One example of this in play is in how the $+1$ in the $\l(\frac{-h(x^{(i)})y^{(i)}+1}{2}\r)$ term essentially vanishes in the computation.
+Rademacher complexity is invariant to translation. This property manifests in the previous example when the $+1$ in the $\l(\frac{-h(x^{(i)})y^{(i)}+1}{2}\r)$ term essentially vanishes in the computation.
 \end{remark}
 
 Let us now prove Theorem \ref{lec5:thm:thm1}.
@@ -123,23 +120,23 @@ Let us now prove Theorem \ref{lec5:thm:thm1}.
 \begin{proof}[Proof of Theorem \ref{lec5:thm:thm1}]
 We use a technique called \textit{symmetrization}, which is a very important technique in probability theory. We first fix $z_1, \dots, z_n$and draw $ z_1', \dots z_n' \iid P$. Then we can rewrite the term in the expectation on the LHS of \eqref{lec5:eqn:thm1}:
 \begin{align}
-    \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE[f] \r) &= \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE_{z_1',\dots, z_n'} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r) \\
-    &= \sup_{f \in \cF} \l( \bbE_{z_1',\dots, z_n'} \l[\frac{1}{n} \sum^n_{i=1} f(z_i) -  \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r)\\
-    &\leq \bbE_{z_1',\dots, z_n'} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) -  \frac{1}{n} \sum^n_{i=1} f(z_i')\r)\r]. \label{lec5:eqn:thm1-pf1}
+    \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f] \r) &= \sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp_{z_1',\dots, z_n'} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r) \\
+    &= \sup_{f \in \cF} \l( \Exp_{z_1',\dots, z_n'} \l[\frac{1}{n} \sum^n_{i=1} f(z_i) -  \frac{1}{n} \sum^n_{i=1} f(z_i')\r] \r)\\
+    &\leq \Exp_{z_1',\dots, z_n'} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) -  \frac{1}{n} \sum^n_{i=1} f(z_i')\r)\r]. \label{lec5:eqn:thm1-pf1}
 \end{align}
 
 The last inequality is because in general,
 \begin{align}
-    \sup_u \l(\bbE_v[g(u,v)]\r) \leq \sup_u \l( \bbE_v\l[\sup_{u'}g(u',v)\r]\r) = \bbE_v \l[\sup_u (g(u,v))\r]
+    \sup_u \l(\Exp_v[g(u,v)]\r) \leq \sup_u \l( \Exp_v\l[\sup_{u'}g(u',v)\r]\r) = \Exp_v \l[\sup_u (g(u,v))\r]
 \end{align}
-since the outer $\sup$ \tnoteimp{which outer sup?}becomes vacuous.
+since the $\sup$ over $u$ becomes vacuous after we replace $u$ with $u'$.
 
 Now, if we take the expectation over $z_1, \dots, z_n$ for both sides of \eqref{lec5:eqn:thm1-pf1},
 \begin{align}
-    \bbE_{z_1, \dots, z_n} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE[f] \r) \r] 
-    &\leq \bbE_{z_i} \l[ \bbE_{z_i'} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \l(f(z_i) -  f(z_i')\r)\r)\r]\r]\\
-    &= \bbE_{z_i,z_i'} \l[ \bbE_{\sigma_i} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \sigma_i\l(f(z_i) -  f(z_i')\r)\r)\r]\r] \label{lec5:eqn:thm1-pf2} \\
- &\leq \bbE_{z_i,z_i', \sigma_i} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r)+\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} -\sigma_i f(z_i')\r)\r] \\
+    \Exp_{z_1, \dots, z_n} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f] \r) \r] 
+    &\leq \Exp_{z_i} \l[ \Exp_{z_i'} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \l(f(z_i) -  f(z_i')\r)\r)\r]\r]\\
+    &= \Exp_{z_i,z_i'} \l[ \Exp_{\sigma_i} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \sigma_i\l(f(z_i) -  f(z_i')\r)\r)\r]\r] \label{lec5:eqn:thm1-pf2} \\
+ &\leq \Exp_{z_i,z_i', \sigma_i} \l[\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r)+\sup_{f \in \cF} \l( \frac{1}{n} \sum^n_{i=1} -\sigma_i f(z_i')\r)\r] \\
     &= 2R_n(\cF),
 \end{align}
 where \eqref{lec5:eqn:thm1-pf2} is because $\sigma_i(f(z_i) - f(z_i')) \stackrel{d}{=} f(z_i) - f(z_i')$ since $f(z_i) - f(z_i')$ has a symmetric distribution. The last equality holds since $-\sigma_i \overset{d}{=} \sigma_i$ and $z_i, z_i'$ are drawn iid from the same distribution. 
@@ -147,53 +144,53 @@ where \eqref{lec5:eqn:thm1-pf2} is because $\sigma_i(f(z_i) - f(z_i')) \stackrel
 
 Here is an intuitive understanding of what Theorem \ref{lec5:thm:thm1} achieves. Consider the quantities on the LHS and RHS of \eqref{lec5:eqn:thm1}:
 \begin{align*}
-    \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n f(z_i) - \bbE[f]\r) \qquad \text{v.s.} \qquad \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n \sigma_i f(z_i)\r).
+    \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n f(z_i) - \Exp[f(z)]\r) \qquad \text{v.s.} \qquad \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n \sigma_i f(z_i)\r).
 \end{align*}
-First, we removed $\bbE[f]$, which is hard to control quantitatively since it is deterministic. Second, we added more randomness in the form of Rademacher variables. This will allow us to shift our focus from the randomness in the $z_i$'s to the randomness in the $\sigma_i$'s. In the future, our bounds on the Rademacher complexity will typically only depend on the randomness from the $\sigma_i$'s.
+First, we removed $\Exp[f(z)]$, which is hard to control quantitatively since it is deterministic. Second, we added more randomness in the form of Rademacher variables. This will allow us to shift our focus from the randomness in the $z_i$'s to the randomness in the $\sigma_i$'s. In the future, our bounds on the Rademacher complexity will typically only depend on the randomness from the $\sigma_i$'s.
 
 \subsec{Dependence of Rademacher complexity on $P$}
 For intuition on how Rademacher complexity depends on the distribution $P$, consider the extreme example where $P$ is a point mass, i.e. $z = z_0$ almost surely. Assume that $-1 \leq f(z_0) \leq 1$ for all $f \in \cF$. Then
 \begin{align}
-    \bbE_{z_1, \dots, z_n \sim P} \l[ \sup_{f \in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]
-    &= \bbE_{\sigma_1, \dots, \sigma_n} \l[ \sup_{f \in \cF} \frac{1}{n}f(z_0) \sum^n_{i=1} \sigma_i \r] \\
-    &\leq \bbE_{\sigma_1, \dots, \sigma_n} \l[ \l| \frac{1}{n} \sum^n_{i=1} \sigma_i \r|\r] &(\text{since } f(z_0) \in [-1,1]) \\
-    &\leq \bbE_{\sigma_i} \l[ \l( \frac{1}{n} \sum^n_{i=1} \sigma_i \r)^2\r]^\frac{1}{2} &(\text{Jensen's Inequality}) \\
-    &= \frac{1}{n}\l( \bbE_{\sigma_i, \sigma_j} \l[ \sum^n_{i, j=1} \sigma_i\sigma_j \r] \r)^\frac{1}{2}\\
-    &= \frac{1}{n}\l( \bbE_{\sigma_i} \l[ \sum^n_{i=1} \sigma_i^2 \r] \r)^\frac{1}{2} \\
+    \Exp_{z_1, \dots, z_n \sim P} \l[ \sup_{f \in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]
+    &= \Exp_{\sigma_1, \dots, \sigma_n} \l[ \sup_{f \in \cF} \frac{1}{n}f(z_0) \sum^n_{i=1} \sigma_i \r] \\
+    &\leq \Exp_{\sigma_1, \dots, \sigma_n} \l[ \l| \frac{1}{n} \sum^n_{i=1} \sigma_i \r|\r] &(\text{since } f(z_0) \in [-1,1]) \\
+    &\leq \Exp_{\sigma_i} \l[ \l( \frac{1}{n} \sum^n_{i=1} \sigma_i \r)^2\r]^\frac{1}{2} &(\text{Jensen's Inequality}) \\
+    &= \frac{1}{n}\l( \Exp_{\sigma_i, \sigma_j} \l[ \sum^n_{i, j=1} \sigma_i\sigma_j \r] \r)^\frac{1}{2}\\
+    &= \frac{1}{n}\l( \Exp_{\sigma_i} \l[ \sum^n_{i=1} \sigma_i^2 \r] \r)^\frac{1}{2} \\
     &= \frac{1}{n} \cdot \sqrt{n} = \frac{1}{\sqrt{n}}.
 \end{align}
-This bound does not depend on $\cF$ (except that it is bounded). This example illustrates that sometimes we only need to depend on the distribution of Rademacher random variables.
+This bound does not depend on $\cF$ (except that it is bounded). This example illustrates that a bound on the Rademacher complexity can sometimes only depend on the (known) distribution of the Rademacher random variables.
 
 \sec{Empirical Rademacher complexity}
 
-In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \bbE_{z\sim P} f(x) \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
+In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \Exp_{z\sim P} [f(z)] \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
 
 \begin{definition}[Empirical Rademacher complexity]
 Given a dataset $S = \{z_1, \dots, z_n\}$, the \textit{emprical Rademacher complexity} is defined as
 \begin{equation}
-R_S(\cF) \overset{\Delta}{=} \bbE_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r].
+R_S(\cF) \overset{\Delta}{=} \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r].
 \end{equation}
 $R_S(\cF)$ is a function of both the function class $\cF$ and the dataset $S$.
 \end{definition}
 
 Note that, as the name suggests, the expectation of the empirical Rademacher complexity is the Rademacher complexity:
 \begin{align}
-    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}{\bbE}}\l[ R_S(\cF) \r].
+    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}{\Exp}}\l[ R_S(\cF) \r].
 \end{align}
 
 
 Here is the theorem involving empirical Rademacher complexity:
 
 \begin{theorem}\label{lec5:thm:thm2}
-    Suppose for all $f \in \cF$, $0 \leq f(x) \leq 1$. Then, with probability at least $1-\delta$,
+    Suppose for all $f \in \cF$, $0 \leq f(z) \leq 1$. Then, with probability at least $1-\delta$,
     \begin{align}
-        \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE[f] \r] \leq 2 R_S(F) + 3\sqrt{\frac{\log{(2/\delta)}}{2n}}.
+        \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)] \r] \leq 2 R_S(F) + 3\sqrt{\frac{\log{(2/\delta)}}{2n}}.
     \end{align}
 \end{theorem}
 
 \begin{proof}
 For conciseness, define
-\begin{equation} g(z_1, \dots, z_n) \triangleq \sup_{f\in F} \l[ \frac{1}{n} \sum^{n}_{i=1} f(z_i) - \bbE[f]\r]. \end{equation}
+\begin{equation} g(z_1, \dots, z_n) \triangleq \sup_{f\in F} \l[ \frac{1}{n} \sum^{n}_{i=1} f(z_i) - \Exp[f(z)]\r]. \end{equation}
 
 We prove the theorem in 4 steps.
 
@@ -206,33 +203,33 @@ We prove the theorem in 4 steps.
 \end{align}
 \eqref{lec5:eqn:thm2-pf1} holds because in general, $\sup_f A(f) - \sup_f B(f) \leq \sup_f [A(f) - B(f)]$, and \eqref{lec5:eqn:thm2-pf2} holds since $f$ is bounded by $[0,1]$. We can thus apply McDiarmid's Inequality with parameters $c_1 = \dots = c_n = 1/n$:
 \begin{align}
-    \bbP\l[ g(z_1, \dots, z_n) \geq \bbE_{z_1,\dots, z_n \iid P}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
+    \Pr\l[ g(z_1, \dots, z_n) \geq \Exp_{z_1,\dots, z_n \iid P}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
 \end{align}
 
 \textbf{Step 2:} We apply Theorem \ref{lec5:thm:thm1} to get 
 \begin{align}
- \bbE_{z_1,\dots, z_n \iid P}[g] \leq 2R_n(\cF).
+ \Exp_{z_1,\dots, z_n \iid P}[g] \leq 2R_n(\cF).
 \end{align}
 
 \textbf{Step 3:} Define
-\begin{equation} \tilde g (z_1, \dots, z_n) = R_S(\cF) \triangleq \bbE_{\sigma_i}\l[\sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]. \end{equation}
+\begin{equation} \tilde g (z_1, \dots, z_n) = R_S(\cF) \triangleq \Exp_{\sigma_i}\l[\sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]. \end{equation}
 
 Using a similar argument like that in Step 1, we show that $\tilde g$ satisfies the bounded difference condition:
 \begin{align}
     &\tilde g(z_1, \dots, z_n) - \tilde g(z_1, \dots, z_i', \dots, z_n) \nonumber \\
-    &\leq \bbE_{\sigma_i} \l[\sup_{f\in F} \l[ \frac{1}{n} \sum^{n}_{j=1} \sigma_j f(z_j) \r] - \sup_{f\in F} \l[ \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} \sigma_j f(z_j)\r) + \frac{1}{n} \sigma_if(z_i')\r]\r]\\
-    &\leq \bbE_{\sigma_i}\l[\sup_{f\in F} \l(\frac{1}{n} \sigma_i(f(z_i) - f(z_i'))\r)\r] \\
+    &\leq \Exp_{\sigma_i} \l[\sup_{f\in F} \l[ \frac{1}{n} \sum^{n}_{j=1} \sigma_j f(z_j) \r] - \sup_{f\in F} \l[ \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} \sigma_j f(z_j)\r) + \frac{1}{n} \sigma_if(z_i')\r]\r]\\
+    &\leq \Exp_{\sigma_i}\l[\sup_{f\in F} \l(\frac{1}{n} \sigma_i(f(z_i) - f(z_i'))\r)\r] \\
     &\leq \frac{1}{n},
 \end{align}
 since the term inside the $\sup$ is always upper bounded by 1. We can thus apply McDiarmid's Inequality with parameters $c_1 = \dots = c_n = 1/n$:
 \begin{align}
-    \bbP\l[ \tilde g - \bbE[\tilde g] \geq \epsilon \r] \leq \exp(-2n \epsilon^2), \quad\text{and}\quad
-    \bbP\l[ \tilde g - \bbE[\tilde g] \leq -\epsilon \r] \leq \exp(-2n \epsilon^2).
+    \Pr\l[ \tilde g - \Exp[\tilde g] \geq \epsilon \r] \leq \exp(-2n \epsilon^2), \quad\text{and}\quad
+    \Pr\l[ \tilde g - \Exp[\tilde g] \leq -\epsilon \r] \leq \exp(-2n \epsilon^2).
 \end{align}
 
 \textbf{Step 4:} We set $\delta$ such that $\exp(-2n \epsilon^2) = \delta/2$. (This implies that $\epsilon = \sqrt{\frac{\log(2/\delta)}{2n}}$.) Then, with probability $\geq 1 - \delta$,
 \begin{align}
-    \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \bbE[f]\r] = g &\leq \bbE[g] + \epsilon &\text{(Step 1)} \\
+    \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f]\r] = g &\leq \Exp[g] + \epsilon &\text{(Step 1)} \\
     &\leq 2R_n(\cF) + \epsilon &\text{(Step 2)} \\
     &\leq 2(R_S(\cF) + \epsilon) + \epsilon &\text{(Step 3)} \\
     &= 2R_S(\cF) + 3\epsilon,

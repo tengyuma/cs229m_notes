@@ -44,11 +44,11 @@ L(\hat{\theta}) - L(\theta^*) \le |\hat{L}(\theta^*) - L(\theta^*)|+  L(\hat{\th
 This will make some of our future derivations technically slightly more convenient, but the nuanced difference between Equations~\eqref{lec2:eqn:1} and~\eqref{lec2:eqn:2} does not change the fundamental idea and the discussions in this chapter. 
 
 Let us try to apply our knowledge of concentration inequalities to this problem. Earlier we assumed that $\ell((x, y); \theta)$ is bounded, so we can bound $\circled{3}$ \todo{replace $\circled{3}$ etc by something that looks more aesthetic} 
-by $\tilO\left(\frac{1}{\sqrt{n}}\right)$ via Hoeffding's inequality (Remark \ref{lec2:rem:hoeffding}). However, we cannot apply the same concentration inequality to $\circled{1}$: since $\hat{\theta}$ is data-dependent by definition, the i.i.d. assumption no longer holds. (To see this, note that $\hat\theta$ depends on the training dataset $(x\sp{i}, y\sp{i})$, so the terms in $\hatL (\theta)$, $\ell ((x\sp{i}, y\sp{i}); \hat\theta)$, all depend on the training dataset too.) This is concerning: it is certainly possible that $L(\hat{\theta}) - \hat{L}(\hat{\theta})$ is large. You've probably encountered this yourself when a model exhibits low training loss, but high validation/testing loss. 
+by $\tilO\left(\frac{1}{\sqrt{n}}\right)$ via Hoeffding's inequality (Remark \ref{lec2:rem:hoeffding}). However, we cannot apply the same concentration inequality to $\circled{1}$: since $\hat{\theta}$ is data-dependent by definition, the i.i.d. assumption no longer holds. (To see this, note that $\hat\theta$ depends on the training dataset $\{(x\sp{i}, y\sp{i})\}$, so the terms in $\hatL (\hat\theta)$, $\ell ((x\sp{i}, y\sp{i}); \hat\theta)$, all depend on the training dataset too.) This is concerning: it is certainly possible that $L(\hat{\theta}) - \hat{L}(\hat{\theta})$ is large. You've probably encountered this yourself when a model exhibits low training loss, but high validation/testing loss. 
 
 \subsec{Deriving uniform convergence bounds}
 
-Uniform convergence is one way we can fix this issue. The high-level idea is as follows: 
+Uniform convergence is one way we can control this issue. The high-level idea is as follows: 
 \begin{itemize}
     \item Suppose we have a bound of the form $\Pr[|\hat{L}(\theta) - L(\theta)| \geq \varepsilon'] \leq \delta'$ for some single, fixed choice of $\theta$.
     \item If we know \emph{all possible values of $\theta$} in advance, we can use the above bound to create a more general bound over all values of $\theta$.
@@ -65,33 +65,39 @@ Since uniform convergence implies generalization, if we know that population ris
 
 \begin{figure}[t]
     \centering
-    \begin{tikzpicture}
-    \draw[help lines, color=gray!30, dashed] (-4.9,-4.9) grid (4.9,4.9);
-    \draw[->,ultra thick] (-5,0)--(5,0) node[right]{$\theta$};
-    \draw[->,ultra thick] (0,-5)--(0,5) node[above]{$L$};
-    \draw[blue, thick]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x)});
-    \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) + 1});
-    \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) - 1});
-    \draw[green, thick]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) + 0.8 * sin(3000 * \x)});
-\end{tikzpicture}
-    \caption{Empirical risk landscape under uniform convergence: \textcolor{green}{Green:} empirical risk, \textcolor{blue}{blue:} population risk, \textcolor{red}{red, dashed:} $\varepsilon$ additive error bounds for excess risk.
-    \todo{make the figure slightly smaller, and have a more self-contained caption}
-    }
-    \label{lec2:fig:uc}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \begin{tikzpicture}
-    \draw[help lines, color=gray!30, dashed] (-4.9,-4.9) grid (4.9,4.9);
-    \draw[->,ultra thick] (-5,0)--(5,0) node[right]{$\theta$};
-    \draw[->,ultra thick] (0,-5)--(0,5) node[above]{$L$};
-    \draw[black, thick]   plot[smooth,domain=-5:5] (\x, {0.01*\x*\x*\x*\x - 0.3*\x*\x + 2});
-    \draw[blue, thick]   plot[smooth,domain=-5:5] (\x, {0.011*\x*\x*\x*\x -0.003*\x*\x*\x - 0.32*\x*\x + 2.15});
-\end{tikzpicture}
-    \caption{Empirical risk landscape under uniform convergence: \textcolor{blue}{Blue:} empirical risk, \textcolor{black}{black:} population risk.\todo{a bit more self-contained caption, and perhaps merge with the previous figure (making them both subfigures)}
-    }
-    \label{lec2:fig:shape}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \hspace*{0.8em}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[help lines, color=gray!30, dashed] (-4.9,-4.9) grid (4.9,4.9);
+            \draw[->,ultra thick] (-5,0)--(5,0) node[right]{$\theta$};
+            \draw[->,ultra thick] (0,-5)--(0,5) node[above]{$L$};
+            \draw[blue, thick]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x)});
+            \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) + 1});
+            \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) - 1});
+            \draw[green, thick]   plot[smooth,domain=-5:5] (\x, {0.1* (\x*\x) + 0.8 * sin(3000 * \x)});
+        \end{tikzpicture}
+        \caption{}
+        \label{lec2:fig:uc}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.49\textwidth}
+        \hspace*{0.8em}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[help lines, color=gray!30, dashed] (-4.9,-4.9) grid (4.9,4.9);
+            \draw[->,ultra thick] (-5,0)--(5,0) node[right]{$\theta$};
+            \draw[->,ultra thick] (0,-5)--(0,5) node[above]{$L$};
+            \draw[blue, thick]   plot[smooth,domain=-5:5] (\x, {0.01*\x*\x*\x*\x - 0.3*\x*\x + 2});
+            \draw[green, thick]   plot[smooth,domain=-5:5] (\x, {0.011*\x*\x*\x*\x -0.003*\x*\x*\x - 0.32*\x*\x + 2.15});
+            \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.011*\x*\x*\x*\x -0.003*\x*\x*\x - 0.32*\x*\x + 3.05});
+            \draw[red, dashed]   plot[smooth,domain=-5:5] (\x, {0.011*\x*\x*\x*\x -0.003*\x*\x*\x - 0.32*\x*\x + 1.25});
+        \end{tikzpicture}
+        \caption{}
+        \label{lec2:fig:shape}
+    \end{subfigure}
+    \caption{These curves demonstrate how we apply uniform convergence to bound the population risk. The \textcolor{blue}{blue} curves are the unobserved population risk we aim to bound. The \textcolor{green}{green} curves denote the empirical risk we observe. Though this curve is often depicted as the fluctuating curve used in Figure~\ref{lec2:fig:uc}, it is more often a smooth curve whose shape mimics that of the population risk (Figure~\ref{lec2:fig:shape}). Uniform convergence allows us to construct additive error bounds for the excess risk, which are depicted using the \textcolor{red}{red, dashed} lines.}
+    \label{lec2:fig:uc_shape}
 \end{figure}
 
 \sec{Finite hypothesis class}
@@ -202,19 +208,18 @@ S &\subseteq \bigcup_{x \in C} \mathrm{Ball}(x, \epsilon, \rho), \quad \text{whe
 (We note that in some definitions it is possible for points in $C$ to lie outside of $S$; we do not worry about this technicality the class.) The following lemma tells us that our parameter space $S = \{\theta \in \R^p: \|\theta\|_2 \le B\}$ has an $\epsilon$-cover with not too many elements:
 
 \begin{lemma}[$\epsilon$-cover of $\ell_2$ ball]\label{lec4:lem:ECSize}
-Let $B,\epsilon>0$ with $\epsilon \le B \sqrt{p}$, and let $S = \{x \in \R^p: \|x\|_2 \le B\}.$ Then there exists an $\epsilon$-cover of $S$ with respect to the $\ell_2$-norm with at most $\left(\frac{3B\sqrt{p}}{\epsilon}\right)^p$ elements.
+Let $B,\epsilon>0$, and let $S = \{x \in \R^p: \|x\|_2 \le B\}.$ Then there exists an $\epsilon$-cover of $S$ with respect to the $\ell_2$-norm with at most $\max \left (\left(\frac{3B\sqrt{p}}{\epsilon}\right)^p, 1 \right)$  elements.
 \end{lemma}
 
 \begin{proof}
-	\tnoteimp{I think we should remove the condition ``$\epsilon \le B \sqrt{p}$'' in the lemma, and remark here that if $\epsilon > B \sqrt{p}$, even though the set $C$ contains only 1 point (the origin), the proof still works}
-Set
+Note that if $\epsilon > B\sqrt{p}$, then $S$ is trivially contained in the ball centered at the origin with radius $\epsilon$ and the $\epsilon$-cover has size 1. Assume $\epsilon \leq B \sqrt{p}$. Set
 \begin{equation}
 C = \left\{ x \in S: x_i = k_i \frac{\epsilon}{\sqrt{p}}, k_i \in \mathbb{Z}, |k_i| \leq  \frac{B\sqrt{p}}{\epsilon}  \right\},
 \end{equation}
 i.e. $C$ is the set of grid points in $\R^p$ of width $\tfrac{\epsilon}{\sqrt{p}}$ that are contained in $S$. See Figure \ref{lec5:fig:ecover} for an illustration. 
 \begin{figure}[ht]
 \centerline{\includegraphics[width=3in]{figures/ECover.png}}
-\caption[lec5:fig:ecover]{Our chosen $\epsilon$-cover (shown in red) of $S$. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$. \tnoteimp{mention which lemma this figure is for}}
+\caption[lec5:fig:ecover]{The $\epsilon$-cover (shown in red) of $S$ we construct in the proof of Lemma~\ref{lec4:lem:ECSize}. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$.}
 \label{lec5:fig:ecover}
 \end{figure}
 
@@ -226,10 +231,6 @@ We now bound the size of $C$. Since each $k_i$ in the definition of $C$ has at m
 |C| \le \left( \frac{2B\sqrt{p}}{\epsilon} +1\right)^p \le \left(\frac{3B\sqrt{p}}{\epsilon}\right)^p.
 \end{equation}
 \end{proof}
-
-\begin{remark}
-If $\epsilon > B\sqrt{p}$, then $S$ is contained in the ball centered at the origin with radius $\epsilon$ and the $\epsilon$-cover has size 1.
-\end{remark}
 
 \begin{remark}\label{lec4:rem:enet}
 We can actually prove a stronger version of Lemma \ref{lec4:lem:ECSize}: there exists an $\epsilon$-cover of $S$ with at most $\left(\frac{3B}{\epsilon}\right)^p$ elements. We will be using this version of the lemma in the proof below. (We will leave the proof of this stronger version as a homework exercise.)
@@ -272,7 +273,13 @@ It remains to choose suitable parameters $\delta$ and $\epsilon$ to get the desi
     |\hat L(\theta) -  L(\theta)| \le 2\delta.
 \end{equation}
 
-If we set $\delta = \sqrt{\frac{c_0 p \max(1, \ln{(\kappa Bn)})}{n}}$ with $c_0 = 36$ (see Remark \ref{lec4:rem:delta} for some intuition), then by Remark \ref{lec4:rem:enet},
+To choose the correct $\delta$, we must reason about the probability of $E$ under different choices of the parameter. The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
+\al{
+   2|C| \exp(-2n\delta^2)  = 2\exp(\ln{\vert C \vert} - 2n\delta^2) \leq 2\exp(p - 2p) = 2\exp(-p).
+}
+(At the same time, we see from \eqref{lec4:eqn:triangle} that this choice of $\delta$ gives $|\hat L(\theta)- L(\theta)| \le 2 \sqrt{\frac{p}{n}}$, which is roughly the bound we want.)
+
+Since we cannot actually drop the log term in the inequality $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$, we need to make $\delta$ a little big bigger. So, if we set $\delta = \sqrt{\frac{c_0 p \max(1, \ln{(\kappa Bn)})}{n}}$ with $c_0 = 36$, then by Remark \ref{lec4:rem:enet},
 \begin{align}
 \ln{\vert C \vert} - 2n\delta^2 &\leq p \ln\left(\frac{6B \kappa}{\delta}\right) - 2n\delta^2 \\
 &\leq p \ln\left(\frac{6B\kappa \sqrt{n}}{ \sqrt{c_0 p \max(1, \ln{(\kappa Bn)})} }\right) - 2n \frac{c_0p}{n} \ln(\kappa Bn) &(\text{dfn of } \delta)  \\
@@ -286,18 +293,6 @@ since $\ln (B\kappa n) \geq 1$ for large enough $n$. Therefore, with probability
 }
 \end{proof}
 
-\begin{remark}\label{lec4:rem:delta}
-	\tnoteimp{I suggest we move this remark to the proofs (so that it should up before the actual proof which is harder to understand.)}
-\sloppy Here is the intuition for the choice of $\delta$: The event $E$ happens with probability $1 - 2|C|\exp(-2n\delta^2) = 1 - 2 \exp(\ln{|C|} - 2n\delta^2)$. From Remark \ref{lec4:rem:enet}, we know that $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$. If we ignore the log term and assume $\ln{|c|} \leq p$, then this would give us the high probability bound we want:
-\al{
-   2|C| \exp(-2n\delta^2)  = 2\exp(\ln{\vert C \vert} - 2n\delta^2) \leq 2\exp(p - 2p) = 2\exp(-p).
-}
-
-(At the same time, we see from \eqref{lec4:eqn:triangle} that this choice of $\delta$ gives $|\hat L(\theta)- L(\theta)| \le 2 \sqrt{\frac{p}{n}}$, which is roughly the bound we want.)
-
-Since we cannot drop the log term in the inequality, we need to make $\delta$ a little big bigger. $\delta$ in the proof was chosen with this intuition in mind to make the subsequent chain of logic work.
-\end{remark}
-
 \begin{remark}
-We bounded the generalization error $\vert \hat L(\theta) - L(\theta) \vert$ by $\delta + 2\epsilon \kappa \leq \sqrt{\frac{\ln{\vert C \vert}}{n}} + 2\epsilon \kappa$. The term $2\epsilon \kappa$ represents the error from our brute-force discretization. It is not a problem is because we can always choose $\epsilon$ small enough without worrying about the growth of the first term $\sqrt{\frac{\ln{\vert C \vert}}{n}}$. This in turn is because $\ln{\vert C \vert} \approx p\ln{\epsilon^{-1}}$, which is very insensitive to $\epsilon$, even if we let $\epsilon = \frac{1}{poly(n)}$. We also observe that both $\sqrt{\frac{\ln{\vert C \vert}}{n}}$ and $\sqrt{\frac{p}{n}}$ are bounds that depend on the ``size" of our hypothesis class, in terms of either its total size or dimensionality. This possibly explains why one may need more training samples when the hypothesis class is larger.
+We bounded the generalization error $\vert \hat L(\theta) - L(\theta) \vert$ by $\delta + 2\epsilon \kappa \leq \sqrt{\frac{\ln{\vert C \vert}}{n}} + 2\epsilon \kappa$. The term $2\epsilon \kappa$ represents the error from our brute-force discretization. It is not a problem because we can always choose $\epsilon$ small enough without worrying about the growth of the first term $\sqrt{\frac{\ln{\vert C \vert}}{n}}$. This in turn is because $\ln{\vert C \vert} \approx p\ln{\epsilon^{-1}}$, which is very insensitive to $\epsilon$, even if we let $\epsilon = \frac{1}{poly(n)}$. We also observe that both $\sqrt{\frac{\ln{\vert C \vert}}{n}}$ and $\sqrt{\frac{p}{n}}$ are bounds that depend on the ``size" of our hypothesis class, in terms of either its total size or dimensionality. This possibly explains why one may need more training samples when the hypothesis class is larger.
 \end{remark}

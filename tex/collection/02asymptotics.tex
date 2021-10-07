@@ -19,8 +19,7 @@ Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and 
 of the population risk $L$, i.e. $\theta^{*} = \argmin_\theta L(\theta)$. The theorem below quantifies the excess risk $L(\hat{\theta}) - L(\theta^{*})$:
 
 \begin{theorem}[Informally stated]
-Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold. 
-\tnoteimp{Perhaps add some footnote explaining $\overset{p}{\to}$ and $\overset{d}{\to}$ briefly and provide links to wikepdia page; and say these concepts are not essential for this course.}
+Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
 Then,
 \begin{enumerate}
     \item $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, i.e. for every $\epsilon > 0$, there is an $M$ such that $\sup_n \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) < \epsilon$. (This means that the sequence $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ is ``bounded in probability".)
@@ -34,7 +33,7 @@ Then,
 \end{theorem}
 \textbf{Remark:} In the theorem above, Parts 1 and 3 only show the rate or order of convergence, while Parts 2 and 4 define the limiting distribution for the random variables.
 
-Theorem \ref{lec1:thm:asymp} is a powerful conclusion because once we know that $\sqrt{n}(\hat \theta  - \theta^*)$ is (asymptotically) Gaussian, we can easily work out the distribution of the excess risk. If we believe in our assumptions and $n$ is large enough such that we can assume $n \to \infty$, this allows us to analytically determine quantities of interest in almost any scenario (for example, if our test distribution changes). The key takeaway is that our parameter error $\hat{\theta} - \theta^*$ decreases in order $1/\sqrt{n}$ and the excess risk decreases in order $1/n$. \ttodo{say the $1/n$ rates do rely on the assumption that $L$ is twice differentiable}
+Theorem \ref{lec1:thm:asymp} is a powerful conclusion because once we know that $\sqrt{n}(\hat \theta  - \theta^*)$ is (asymptotically) Gaussian, we can easily work out the distribution of the excess risk. If we believe in our assumptions and $n$ is large enough such that we can assume $n \to \infty$, this allows us to analytically determine quantities of interest in almost any scenario (for example, if our test distribution changes). The key takeaway is that our parameter error $\hat{\theta} - \theta^*$ decreases in order $1/\sqrt{n}$ and the excess risk decreases in order $1/n$. While we will not discuss the regularity assumptions in Theorem~\ref{lec1:thm:asymp} in great detail, we note that the assumption that $L$ is twice differentiable is crucial. 
 
 \subsec{Key ideas of proofs} 
 
@@ -151,7 +150,7 @@ Theorem \ref{lec1:thm:asymp} is powerful because it is general, avoiding any ass
     }
 \end{theorem}
 
-\textbf{Remark 1:} You may also have seen \eqref{lec2:eqn:applied4} in the following form: under the maximum likelihood estimation (MLE) paradigm, the MLE is asymptotically efficient in the Cramer-Rao lower bound. That is, the parameter error of the MLE estimate converges in distribution to $\mathcal{N}(0, \mathcal{I}(\theta)^{-1})$, where $\mathcal{I}(\theta)$ is the Fisher information matrix (in this case, equivalent to the risk Hessian $\nabla^2 L(\theta^*)$)~\cite{rice2006mathematical}.
+\textbf{Remark 1:} You may also have seen \eqref{lec2:eqn:applied4} in the following form: under the maximum likelihood estimation (MLE) paradigm, the MLE is asymptotically efficient as it achieves the Cramer-Rao lower bound. That is, the parameter error of the MLE estimate converges in distribution to $\mathcal{N}(0, \mathcal{I}(\theta)^{-1})$, where $\mathcal{I}(\theta)$ is the Fisher information matrix (in this case, equivalent to the risk Hessian $\nabla^2 L(\theta^*)$)~\cite{rice2006mathematical}.
 
 \textbf{Remark 2:} \eqref{lec2:eqn:applied3} is also known as Bartlett's identity~\cite{percynotes}.
 
