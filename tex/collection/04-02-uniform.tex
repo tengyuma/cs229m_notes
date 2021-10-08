@@ -40,11 +40,11 @@ One of the practical implications of having such a complexity measure is that we
 
 In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L(h) - \hat L (h))$. Here we have a weaker goal: we try to obtain an upper bound for its expectation instead, i.e.
 \begin{equation}
-\Exp_{z \sim X \times Y}\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
+\Exp\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
 \end{equation}
-The expectation is over the randomness in the training data ($\cX \times \cY$).\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
+The expectation is over the randomness in the training data $\{(x^{(i)}, y^{(i)}\}_{i=1}^n$.\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
 
-\tnoteimp{A student asked a question in \href{https://edstem.org/us/courses/14347/discussion/695044}{https://edstem.org/us/courses/14347/discussion/695044} which makes a lot of sense. Let's add some remarks or explanation about it. }
+\tnoteimp{A student asked a question in \href{https://edstem.org/us/courses/14347/discussion/695044}{https://edstem.org/us/courses/14347/discussion/695044} which makes a lot of sense. Let's add some remarks or explanation about it. hopefully you can just copy Souvik's answer with some modifications :)}
 
 To do so, we first define \textit{Rademacher complexity}.
 
