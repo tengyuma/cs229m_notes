@@ -109,7 +109,7 @@ n (L(\hat \theta) - L(\theta^*)) &= \frac{n}{2} \langle \hat \theta - \theta^*, 
 &= \frac12 \left\|\nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*) \right\|_2^2,
 \end{align}
 
-where the last equality follows by the fact that for any vector $v$ and square symmetric matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^T Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
+where the last equality follows by the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^T Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
 \begin{align}
     S &\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1} \right) \\
     &\stackrel{d}{=} \cN \left(0, \nabla^2 L(\theta^*)^{-1/2} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1/2} \right).
