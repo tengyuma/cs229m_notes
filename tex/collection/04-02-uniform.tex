@@ -44,13 +44,15 @@ In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L
 \end{equation}
 The expectation is over the randomness in the training data ($\cX \times \cY$).\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
 
+\tnoteimp{A student asked a question in \href{https://edstem.org/us/courses/14347/discussion/695044}{https://edstem.org/us/courses/14347/discussion/695044} which makes a lot of sense. Let's add some remarks or explanation about it. }
+
 To do so, we first define \textit{Rademacher complexity}.
 
 \begin{definition}[Rademacher complexity] \label{lec5:dfn:rc}
 Let $\cF$ be a family of functions mapping $Z \mapsto \bbR$, and let $P$ be a distribution over $Z$. The \textit{(average) Rademacher complexity} of $\cF$ is defined as 
 \begin{align}
-    R_n(F) \triangleq {\Exp}_{z_1, \dots, z_n \iid P} \l[ 
-    {\Exp}_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
+    R_n(F) \triangleq \Exp_{z_1, \dots, z_n \iid P} \l[ 
+    \Exp_{\sigma_1, \dots, \sigma_n \iid\{ \pm 1 \}} \l[ \sup_{f\in F} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \r], \label{lec5:eqn:Rn}
 \end{align}
 where $\sigma_1, \dots, \sigma_n$ are independent \textit{Rademacher random variables}, i.e. each taking on the value of $1$ or $-1$ with probability $1/2$.
 \end{definition}
@@ -69,7 +71,7 @@ The following theorem is the main theorem involving Rademacher complexity:
 
 \begin{theorem} \label{lec5:thm:thm1}
     \begin{align}
-       {\Exp}_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \Exp_{z\sim P} [f(z)] \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
+       \Exp_{z_1, \dots, z_n \iid P} \l[ \sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \Exp_{z\sim P} [f(z)] \r]\r] \leq 2 R_n(\cF). \label{lec5:eqn:thm1}
     \end{align}
 \end{theorem}
 
@@ -83,8 +85,8 @@ We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\
 This is the family of losses induced from the hypothesis functions in $\cH$. Then by Theorem \ref{lec5:thm:thm1},
 \tnoteimp{$\E[f]$ }
 \begin{align}
-    \Exp_{z_i} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)]\r)\r] 
-    &= {\Exp}_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
+    \Exp_{z_i's} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)]\r)\r] 
+    &= \Exp_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
     &= \Exp\l[ \sup_{h \in \cH}\l( \hat L (h) - L(h) \r) \r] \\
     &\leq 2 R_n(\cF),
 \end{align}
@@ -175,7 +177,7 @@ $R_S(\cF)$ is a function of both the function class $\cF$ and the dataset $S$.
 
 Note that, as the name suggests, the expectation of the empirical Rademacher complexity is the Rademacher complexity:
 \begin{align}
-    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}{\Exp}}\l[ R_S(\cF) \r].
+    R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}\Exp}\l[ R_S(\cF) \r].
 \end{align}
 
 
