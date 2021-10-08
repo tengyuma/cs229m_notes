@@ -52,7 +52,7 @@ We will begin by introducing the idea of a \textit{surrogate loss}, a loss funct
 
 It is plotted in Figure \ref{lec6:fig:marginloss}. For convenience, define $\ell_\gamma((x,y), h) \triangleq \ell_\gamma(yh(x))$. We can view $\ell_\gamma$ as a continuous version of $\err$ while being more sensitive to the scale of the margin on $[0,\gamma]$. Notice that $\err$ is always less than or equal to the $\ell_\gamma$ when $\gamma\geq 0$, i.e.
 \begin{equation}
-    \err((x,y), h)\leq \ell_\gamma ((x,y), h)
+    \err((x,y), h) = \ind{yh(x < 0)}\leq \ell_\gamma(yh(x)) =\ell_\gamma ((x,y), h)
 \end{equation}
 holds for all $(x,y)\sim P$. Taking the expectation over $(x,y)$ on both sides of this inequality, we see that
 \begin{equation}
@@ -90,7 +90,7 @@ R_S(\cF) &\leq \frac{1}{\gamma}R_S(\cH') \\
 &= \frac{1}{\gamma}R_S(\cH).
 \end{align}
 
-Putting this all together, we have shown that for $\gamma \leq \gamma_{\min}$,
+Putting this all together, we have shown that for $\gamma = \gamma_{\min}$,
 \begin{align}
 \Err(h) \leq L_\gamma(h) &\leq 0 + O \left( \frac{R_S(\cH)}{\gamma} \right) + \tilO \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right) \\
 &= O \left( \frac{R_S(\cH)}{\min_i y\sp{i} h(x\sp{i}) } \right) + \tilO \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right).
