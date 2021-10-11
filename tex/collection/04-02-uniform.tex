@@ -203,6 +203,7 @@ We prove the theorem in 4 steps.
     &\leq \sup_{f\in \cF}\l[ \frac{1}{n} \l( f(z_i) - f(z_i') \r) \r] \label{lec5:eqn:thm2-pf1} \\
     &\leq \frac{1}{n}. \label{lec5:eqn:thm2-pf2}
 \end{align}
+\tnoteimp{there is some question about this on ed \href{https://edstem.org/us/courses/14347/discussion/708006}{https://edstem.org/us/courses/14347/discussion/708006}. Not sure if we need to explain more. If yes, feel free to copy Souvik answer in some way (you can click edit and get the source code I guess)}
 \eqref{lec5:eqn:thm2-pf1} holds because in general, $\sup_f A(f) - \sup_f B(f) \leq \sup_f [A(f) - B(f)]$, and \eqref{lec5:eqn:thm2-pf2} holds since $f$ is bounded by $[0,1]$. We can thus apply McDiarmid's Inequality with parameters $c_1 = \dots = c_n = 1/n$:
 \begin{align}
     \Pr\l[ g(z_1, \dots, z_n) \geq \Exp_{z_1,\dots, z_n \iid P}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
