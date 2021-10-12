@@ -32,7 +32,7 @@ With the complexity measure to be introduced, we will prove a bound of the form
     L(\hat h) - \hat L(\hat h) \leq \tilde O\l(\sqrt{\frac{\text{Complexity}(\Theta)}{n}}\r).
 \end{align}
 
-This complexity measure will depend on the distribution $p$ over $\cX \times \cY$ (the input and output spaces), and hence takes into account how easy it is to learn $p$. If $p$ is easy to learn, then this complexity measure will be small even if the hypothesis space is big. \tnoteimp{distribution should be $P$ instead of $p$; please check globally}
+This complexity measure will depend on the distribution $P$ over $\cX \times \cY$ (the input and output spaces), and hence takes into account how easy it is to learn $P$. If $P$ is easy to learn, then this complexity measure will be small even if the hypothesis space is big.
 
 One of the practical implications of having such a complexity measure is that we can restrict the hypothesis space by regularizing the complexity measure (assuming it is something we can evaluate and train with). If we successfully find a low complexity model, then this generalization bound guarantees that we have not overfit.
 
@@ -40,11 +40,9 @@ One of the practical implications of having such a complexity measure is that we
 
 In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L(h) - \hat L (h))$. Here we have a weaker goal: we try to obtain an upper bound for its expectation instead, i.e.
 \begin{equation}
-\Exp\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}.
+\Exp\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}. \label{lec5:eq:generror}
 \end{equation}
 The expectation is over the randomness in the training data $\{(x^{(i)}, y^{(i)}\}_{i=1}^n$.\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
-
-\tnoteimp{A student asked a question in \href{https://edstem.org/us/courses/14347/discussion/695044}{https://edstem.org/us/courses/14347/discussion/695044} which makes a lot of sense. Let's add some remarks or explanation about it. hopefully you can just copy Souvik's answer with some modifications :)}
 
 To do so, we first define \textit{Rademacher complexity}.
 
@@ -81,17 +79,17 @@ We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\
 \noindent\textit{Why is Theorem \ref{lec5:thm:thm1} useful to us?} We can set $\cF$ to be the family of loss functions, i.e.
 \begin{equation}
 \cF = \l\{ z = (x,y) \in \cZ \mapsto \ell((x,y),h) \in \bbR : h \in \cH \r\}.
-\end{equation}
-This is the family of losses induced from the hypothesis functions in $\cH$. Then by Theorem \ref{lec5:thm:thm1},
-\tnoteimp{$\E[f]$ }
+\end{equation} 
+This is the family of losses induced by the hypothesis functions in $\cH$. We also define the function class $-\cF$ as $\{-f : f \in \cF\}$. It should be obvious from this definition that $R_n(\cF) = R_n(-\cF)$ since $\sigma_i \stackrel{d}{=} -\sigma_i$ for all $i$. Then, letting $z_i = (x^{(i)}, y^{(i)})$,
 \begin{align}
-    \Exp_{z_i's} \l[\sup_{f \in F} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)]\r)\r] 
-    &= \Exp_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[\frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) -L(h)\r] \r] \\
-    &= \Exp\l[ \sup_{h \in \cH}\l( \hat L (h) - L(h) \r) \r] \\
-    &\leq 2 R_n(\cF),
+    \Exp\l[ \sup_{h \in \cH}\l( L(h) - \hat L (h) \r) \r] &= \Exp_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[L(h) - \frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) \r] \r] \\
+    &= \Exp_{\{z_i\}} \l[\sup_{f \in \cF} \l(\Exp[f(z)] - \frac{1}{n} \sum^n_{i=1} f(z_i) \r)\r] \\
+    &= \Exp_{\{z_i\}} \l[\sup_{f \in -\cF} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)] \r)\r] \\
+    &\leq 2 R_n(-\cF) = 2R_n(\cF)
 \end{align}
-where $z_i = (x^{(i)}, y^{(i)})$. Thus, $2R_n(\cF)$ is an upper bound for the generalization error. In this context, $R_n(\cF)$ can be interpreted as how well the loss sequence $\ell((x^{(1)}, y^{(1)}), h), \dots \ell((x^{(n)}, y^{(n)}), h)$ correlates with $\sigma_1, \dots, \sigma_n$.
+where the last step follows by Theorem \ref{lec5:thm:thm1}. 
 
+Thus, $2R_n(\cF)$ is an upper bound for the generalization error. In this context, $R_n(\cF)$ can be interpreted as how well the loss sequence $\ell((x^{(1)}, y^{(1)}), h), \dots \ell((x^{(n)}, y^{(n)}), h)$ correlates with $\sigma_1, \dots, \sigma_n$.
 \begin{example}
 Consider the binary classification setting where $y \in \{\pm 1\}$. Let $\ell_{0-1}$ denote the zero-one loss function. Note that
 \begin{equation}\label{lec5:eqn:01}
@@ -200,10 +198,10 @@ We prove the theorem in 4 steps.
 \begin{align}
     g(z_1, \dots, z_n) - g(z_1, \dots, z_i', \dots, z_n)
     &\leq \sup_{f\in \cF} \l[ \frac{1}{n} \sum^{n}_{j=1} f(z_j) \r] - \sup_{f\in \cF} \l[ \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} f(z_j)\r) + \frac{f(z_i')}{n} \r]  \\
-    &\leq \sup_{f\in \cF}\l[ \frac{1}{n} \l( f(z_i) - f(z_i') \r) \r] \label{lec5:eqn:thm2-pf1} \\
+    &\leq \sup_{f\in \cF} \l[ \frac{1}{n} \sum^{n}_{j=1} f(z_j) - \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} f(z_j)\r) - \frac{f(z_i')}{n} \r] \label{lec5:eqn:thm2-pf1} \\
+    &= \sup_{f\in \cF}\l[ \frac{1}{n} \l( f(z_i) - f(z_i') \r) \r] \\
     &\leq \frac{1}{n}. \label{lec5:eqn:thm2-pf2}
 \end{align}
-\tnoteimp{there is some question about this on ed \href{https://edstem.org/us/courses/14347/discussion/708006}{https://edstem.org/us/courses/14347/discussion/708006}. Not sure if we need to explain more. If yes, feel free to copy Souvik answer in some way (you can click edit and get the source code I guess)}
 \eqref{lec5:eqn:thm2-pf1} holds because in general, $\sup_f A(f) - \sup_f B(f) \leq \sup_f [A(f) - B(f)]$, and \eqref{lec5:eqn:thm2-pf2} holds since $f$ is bounded by $[0,1]$. We can thus apply McDiarmid's Inequality with parameters $c_1 = \dots = c_n = 1/n$:
 \begin{align}
     \Pr\l[ g(z_1, \dots, z_n) \geq \Exp_{z_1,\dots, z_n \iid P}[g] + \epsilon \r] \leq \exp{\l( \frac{-2\epsilon^2}{\sum^n_{i=1} c_i^2 }\r)} = \exp(-2n\epsilon^2).
@@ -217,7 +215,7 @@ We prove the theorem in 4 steps.
 \textbf{Step 3:} Define
 \begin{equation} \tilde g (z_1, \dots, z_n) = R_S(\cF) \triangleq \Exp_{\sigma_i}\l[\sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]. \end{equation}
 
-Using a similar argument like that in Step 1, we show that $\tilde g$ satisfies the bounded difference condition:
+Using a similar argument to that of Step 1, we show that $\tilde g$ satisfies the bounded difference condition:
 \begin{align}
     &\tilde g(z_1, \dots, z_n) - \tilde g(z_1, \dots, z_i', \dots, z_n) \nonumber \\
     &\leq \Exp_{\sigma_i} \l[\sup_{f\in F} \l[ \frac{1}{n} \sum^{n}_{j=1} \sigma_j f(z_j) \r] - \sup_{f\in F} \l[ \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} \sigma_j f(z_j)\r) + \frac{1}{n} \sigma_if(z_i')\r]\r]\\
