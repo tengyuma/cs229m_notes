@@ -59,7 +59,7 @@ Often these implicit biases or implicit regularization effect can be characteriz
 \end{enumerate}
 
 %To explain the success of deep learning, we will cover three tasks in the next two chapters\todo{specify chapter number}:
-We summarize some of the results that we will present in the future chapters. \todo{add chapter number later}
+We summarize some of the results that we will present in the future chapters. \ttodo{add chapter number later}
 
 \begin{enumerate}
     \item \textbf{Optimization.} First, we will prove that under certain data distribution assumption, optimizers such as stochastic gradient decent can converge to an approximate global minimum, even though the objective function is non-convex. Results of this form can be shown on matrix factorization problems and linearized neural networks, even without over-parameterization, but so far are limited to these simple models.  Second, we will discuss a recent approach, called neural tangent kernels (NTK), which proves that for almost any neural networks, with overparameterization, gradient descent can converge to a global minimum, \textit{under specific hyperparameter settings} (e.g, specific learning rate and initialization). However, it turns out that these specific hyperparaemeter settings \textit{does not} provide sufficient implicit regularization effect for the learned models to generalize. (In other words, the optimizer only returns a global minimizer, but not a global minimizer that generalizes well.)

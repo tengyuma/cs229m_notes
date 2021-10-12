@@ -176,7 +176,8 @@ We start with a somewhat weak bound which introduces the technical tools we need
     \end{align}
 \end{theorem}
 
-This bound is not ideal as it depends on the number of neurons~$m$. Empirically, it has been found that the generalization error does \emph{not} increase monotonically with~$m$. As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. This contradicts the bound above, which states that more neurons leads to worse generalization. Nevertheless, we now derive this bound.
+This bound is not ideal as it depends on the number of neurons~$m$. Empirically, it has been found that the generalization error does \emph{not} increase monotonically with~$m$. As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. This contradicts the bound above, which states that more neurons leads to worse generalization. We also note that the theorem can be generalized straightforwardly to the setting where the $w$ and $U$ are jointly constrained in the sense that we set $\mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2\cdot \left(\max_i\Norm{u_i}_2\right) \leq B}$ and obtain the generalization bound $        R_n(\mathcal{H}) \le 2 B C\sqrt{\frac{m}{n}}.$ However, the $\sqrt{m}$ dependency still exists under this formulation of $\cH$. 
+Nevertheless, we now derive this bound.
 
 \begin{proof}
     By definition,
