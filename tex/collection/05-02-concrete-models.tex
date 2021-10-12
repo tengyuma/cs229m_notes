@@ -218,8 +218,8 @@ This upper bound is undesirable since it grows with the number of neurons $m$, c
 
 %*****************************************************************************
 
-\sec{Refined bounds for two-layer neural networks}
-
+\subsec{Refined bounds}
+\newcommand{\boundsforcomp}{B}
 Next, we look at a finer bound that results from defining a new complexity measure. A recurring theme in subsequent proofs will be the functional invariance of two-layer neural networks under a class of rescaling transformations. The key ingredient will be the \textit{positive homogeneity} of the ReLU function, i.e.
 \begin{equation}
 \alpha \phi(x) = \phi(\alpha x) \qquad \forall \alpha > 0.
@@ -228,20 +228,40 @@ This implies that for any $\lambda_i > 0$ ($i = 1, \dots, m$), the transformatio
 \begin{equation}
 w_i\cdot \phi \left(u_i^\top x\sp i \right) = (\lambda_i w_i) \cdot \phi\l(\l( \frac{u_i}{\lambda_i}\r)^\top x\sp i\r).   
 \end{equation}
-In light of this, we devise a new complexity measure $C(\theta)$ that is also invariant under such transformations and use it to prove a better bound for the Rademacher complexity. This positive homogeneity property is absent in the (implicit) complexity measure used in the hypothesis class \eqref{lec7:eqn:thm_3} of Theorem \ref{lec7:thm:thm_3}.
+In light of this, we devise a new complexity measure $C(\theta)$ that is also invariant under such transformations and use it to prove a better bound for the Rademacher complexity. This positive homogeneity property is absent in the complexity measure used in the hypothesis class \eqref{lec7:eqn:thm_3} of Theorem \ref{lec7:thm:thm_3}.
 
 \begin{theorem}\label{lec8:thm:thm-improved-nn-rc}
-$\operatorname{Let} C(\theta)=\sum_{j=1}^{m}\left|w_{j}\right|\left\|u_{j}\right\|_{2},$ and for some constant $B_{C}>0$ consider the hypothesis class
+$\operatorname{Let} C(\theta)=\sum_{j=1}^{m}\left|w_{j}\right|\left\|u_{j}\right\|_{2},$ and for some constant $\boundsforcomp>0$ consider the hypothesis class
 \begin{equation}
-\mathcal{H}=\left\{f_{\theta} \mid C(\theta) \leq B_{C}\right\}.
+\mathcal{H}=\left\{f_{\theta} \mid C(\theta) \leq \boundsforcomp\right\}. \label{eqn:H}
 \end{equation}
 If $\left\|x\sp{i}\right\|_{2} \leq C$ for all $i \in\{1, \ldots, n\},$ then
 \begin{equation}
-R_{S}(\mathcal{H}) \leq \frac{2 B_{C} C}{\sqrt{n}}.
+R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 \end{equation}
 \end{theorem}
 
-\begin{proof}
+\begin{remark}
+	Compared to Theorem~\ref{lec7:thm:thm_3}, this bound does not explicitly depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound if the value of the new complexity measure $C(\theta)$ is reasonable. In contrast, the bound of Theorem \ref{lec7:thm:thm_3} explicitly grows with the total number of neurons. In fact, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is strictly stronger than Theorem~\ref{lec7:thm:thm_3} as elaborated below. Note that 
+	\begin{align}
+		\sum |w_j|\|u_j\|_2 &\le \left(\sum |w_j|^2\right)^{1/2} \left(\sum\|u_j\|_2^2\right)^{1/2} \tag{by Cauchy-Schwarz inequality} \\
+		& \le \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2
+	\end{align}
+	Therefore, if we consider $\cH^1 = \{f_\theta \mid \sum |w_j|\|u_j\|_2\le B'\}$ and $\cH^2 = \{f_\theta \mid \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2 \le B'\}$, then either Theorem~\ref{lec8:thm:thm-improved-nn-rc} on $\cH^1$ or Theorem~\ref{lec7:thm:thm_3} on $\cH^2$ gives the same generalization bound $O(B'/\sqrt{n})$ but $\cH^1 \supset \cH^2$. 
+	
+	Moreover, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is stronger as we have more neurons---this is because the hypothesis class $\cH$ as defined in~\eqref{eqn:H} is bigger as $m$ increases. Because of this, it's possible to obtain a generalization guarantee that decreases as $m$ increases, as shown in Section~\ref{sec:gen-bounds:decreasing-in-m}. 
+	
+%	For example, consider solving the constrained problem
+%	\begin{equation}
+%	\rho_m = \min_\theta C(\theta) 
+%	\quad \text{such that}\quad 
+%	\text{$f_\theta$ fits the data  $\{(x\sp{i}, y\sp{i})\}_{i=1}^n$.}
+%	\end{equation}
+%	In this case, $\rho_m$ monotonically decreases as the number of neurons $m$ increases. Indeed, models with more parameters necessarily include models with a lower number of parameters and thus those of lower complexity.  As a result, it is possible to obtain lower complexity models by increasing the number of parameters $m$.
+\end{remark}
+
+\begin{proof}[Proof of Theorem~\ref{lec8:thm:thm-improved-nn-rc}]
+	\tnoteimp{replace $^T$ by $^\top$ systematically}
 Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^T x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^T x)$. The empirical Rademacher complexity satisfies
 \allowdisplaybreaks
 \al{
@@ -251,11 +271,11 @@ R_S(\cH) &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{
     && \text{(by positive homogeneity of $\phi$)}\\
 &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right] \\ 
 &\leq \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
-&\leq \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq B_C$)} \\
-&=  \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{B_C}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{2B_C}{n}  \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
-&= 2B_C R_S(\cH '),
+&\leq \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq \boundsforcomp$)} \\
+&=  \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{2\boundsforcomp}{n}  \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
+&= 2\boundsforcomp R_S(\cH '),
 }
 where $\cH' = \l\{x \mapsto \phi(\bar{u}^T x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^T x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.
 
@@ -286,22 +306,12 @@ Letting $\phi$ be the ReLU function, the lemma's assumption implies that $\sup_{
 Taking the expectation over $\sigma$ (and noting that $\sigma \overset d = -\sigma$), we get the desired conclusion.
 \end{proof}
 
-\begin{remark}
-Compared to Theorem~\ref{lec7:thm:thm_3}, this bound does not explicitly depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound if the value of the new complexity measure $C(\theta)$ is reasonable. In contrast, the bound of Theorem \ref{lec7:thm:thm_3} only looks at the total number of neurons. With the result above, it is possible to regularize $C(\theta)$ and obtain a tighter bound for any number~$m$ of neurons. This would lead to an accurate model with better generalization guarantees for a high number neurons. 
 
-For example, consider solving the constrained problem
-\begin{equation}
-    \rho_m = \min_\theta C(\theta) 
-    \quad \text{such that}\quad 
-    \text{$f_\theta$ fits the data  $\{(x\sp{i}, y\sp{i})\}_{i=1}^n$.}
-\end{equation}
-In this case, $\rho_m$ monotonically decreases as the number of neurons $m$ increases. Indeed, models with more parameters necessarily include models with a lower number of parameters and thus those of lower complexity.  As a result, it is possible to obtain lower complexity models by increasing the number of parameters $m$.
-\end{remark}
 
 \sec{More implications and discussions on neural networks}
 In this section, we discuss practical implications of the refined neural network bound. 
 
-\subsec{Connection to $\ell_2$ regularization}
+\subsec{Connection to $\ell_2$ regularization}\label{sec:gen-bounds:impliciation}
 
 Recall that margin theory yields
 \begin{equation}
@@ -333,7 +343,7 @@ where we have used the equality case of the AM-GM inequality, attainable by $\la
 
 This connects our $C(\theta)$ regularization to $\ell_2$-norm penalties that are more prevalent in practice. In retrospect, we see this equivalence is essentially due to the positive homogeneity of the neural network which ``homogenizes'' any inhomogeneous objective such as $C_{\ell_2}$. Hence, we can just deal with $C(\theta)$ which is transparently homogeneous.
 
-\subsec{Stable generalization bound in $m$} 
+\subsec{Generalization bounds that is decreasing in $m$} \label{sec:gen-bounds:decreasing-in-m}
 
 Next, we show that the generalization bound given by Theorem \ref{lec8:thm:thm-improved-nn-rc} does not deteriorate with the network width (number of neurons) $m$, which is consistent with experimental results. To this end, the perspective of \eqref{lec8:eqn:opt2} enables us to isolate all dependencies of $m$ in $\gammamin$. Letting $\widehat \theta_m$ denote the minimizer of program \eqref{lec8:eqn:opt2} with width $m$ and defining optimal value $\gamma_m^* = \gammamin\l(\widehat \theta_m\r)$, we can rewrite the margin bound \eqref{lec8:eqn:margin-bound} as 
 \begin{equation}
