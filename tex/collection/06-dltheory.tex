@@ -58,12 +58,13 @@ Often these implicit biases or implicit regularization effect can be characteriz
     
 \end{enumerate}
 
-To explain the success of deep learning, we will cover three tasks in the next two chapters\todo{specify chapter number}:
+%To explain the success of deep learning, we will cover three tasks in the next two chapters\todo{specify chapter number}:
+We summarize some of the results that we will present in the future chapters. \todo{add chapter number}
 
 \begin{enumerate}
-    \item Prove that our optimization algorithm converges to an approximate global minimum, even though the objective function is non-convex. Our results here will mostly be for simplified models (e.g. linearized neural nets). (We will also show later that this can be accomplished separately from the other tasks using a special optimization setup (the ``NTK approach"). However, the generalization of this approach can be poor.)
+    \item \textbf{Optimization.} First, we will prove that under certain data distribution assumption, optimizers such as stochastic gradient decent can converge to an approximate global minimum, even though the objective function is non-convex. Results of this form can be shown on matrix factorization problems and linearized neural networks, even without over-parameterization, but so far are limited to these simple models.  Second, we will discuss a recent approach, called neural tangent kernels (NTK), which proves that for almost any neural networks, with overparameterization, gradient descent can converge to a global minimum, \textit{under specific hyperparameter settings} (e.g, specific learning rate and initialization). However, it turns out that these specific hyperparaemeter settings \textit{does not} provide sufficient implicit regularization effect for the learned models to generalize. (In other words, the optimizer only returns a global minimizer, but not a global minimizer that generalizes well.)
     
-    \item Show that the solution $\hat{\theta}$ has low complexity $R(\hat{\theta})\leq C$. We can only answer this question for some special cases of models (e.g. logistic regression, matrix factorization) and optimizers (e.g. gradient descent, label noise in SGD, dropout, learning rate).
+    \item \textbf{Implicit regularization effect.} This involves showing that the solution $\hat{\theta}$ obtained by a particular optimizer has low complexity $R(\hat{\theta})\leq C$ according to some complexity measure $R(\cdot)$ (which depends on the choice of optimizers). It's believed and empirically observed that any changes or tricks in the optimizers (e.g., learning rate schedule, batch size, initialization, batchnorm) could introduce additional implicit regularization effects. We will only demonstrate these on some special cases of models (e.g. logistic regression, matrix factorization) and optimizers (e.g. gradient descent, label noise in SGD, dropout, learning rate). Recently, there are also more general results with label noise SGD. 
     
     \item Show that for all $\theta$ such that $R(\theta)\leq C$ with $\hat{L}(\theta)\approx 0$, we have $L(\theta)$ is small. That is, we show that low-complexity solutions to the empirical risk problem generalize well. We will be working with more fine-grained complexity measures, and several of the tools we used in classical machine learning can still apply.
 \end{enumerate}
