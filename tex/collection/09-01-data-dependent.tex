@@ -26,7 +26,7 @@ L(\theta) \leq \frac{R_S (\cF) }{\gamma},
 \end{equation}
 where $\gamma$ is the margin of the model, and $R_S (\cF)$ is some complexity that satisfies
 \begin{equation}
-R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{\textup{op}} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^T\|^{2/3}_{2,1}}{\|W_i\|_{\textup{op}}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
+R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{\textup{op}} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^\top\|^{2/3}_{2,1}}{\|W_i\|_{\textup{op}}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
 \end{equation}
 The first term is essentially the upper bound on the Lipschitzness of the model w.r.t. to the input over the entire space. 
 

@@ -261,8 +261,7 @@ R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 \end{remark}
 
 \begin{proof}[Proof of Theorem~\ref{lec8:thm:thm-improved-nn-rc}]
-	\tnoteimp{replace $^T$ by $^\top$ systematically}
-Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^T x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^T x)$. The empirical Rademacher complexity satisfies
+Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
 \allowdisplaybreaks
 \al{
 R_S(\cH) &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
@@ -277,14 +276,14 @@ R_S(\cH) &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{
 &\le \frac{2\boundsforcomp}{n}  \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
 &= 2\boundsforcomp R_S(\cH '),
 }
-where $\cH' = \l\{x \mapsto \phi(\bar{u}^T x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^T x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.
+where $\cH' = \l\{x \mapsto \phi(\bar{u}^\top x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^\top x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.
 
 \end{proof}
 
 We complete the proof by deriving the Lemma \ref{lec8:lemma:absfortwo} used in the second last inequality. Notably, the lemma's assumption holds in the current context, since
 \al{
 \sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle = \sup_{\bar{u}: \norm{\bar{u}}_2 \leq 1} 
-\sum_{i=1}^n \sigma_i \phi \l(\bar{u}^T x\sp i \r)  \geq 0.
+\sum_{i=1}^n \sigma_i \phi \l(\bar{u}^\top x\sp i \r)  \geq 0.
 }
 since one can take $\bar{u} = 0$ for any $\sigma = (\sigma_1, \dots, \sigma_n)$.
 
@@ -343,7 +342,7 @@ where we have used the equality case of the AM-GM inequality, attainable by $\la
 
 This connects our $C(\theta)$ regularization to $\ell_2$-norm penalties that are more prevalent in practice. In retrospect, we see this equivalence is essentially due to the positive homogeneity of the neural network which ``homogenizes'' any inhomogeneous objective such as $C_{\ell_2}$. Hence, we can just deal with $C(\theta)$ which is transparently homogeneous.
 
-\subsec{Generalization bounds that is decreasing in $m$} \label{sec:gen-bounds:decreasing-in-m}
+\subsec{Generalization bounds that are decreasing in $m$} \label{sec:gen-bounds:decreasing-in-m}
 
 Next, we show that the generalization bound given by Theorem \ref{lec8:thm:thm-improved-nn-rc} does not deteriorate with the network width (number of neurons) $m$, which is consistent with experimental results. To this end, the perspective of \eqref{lec8:eqn:opt2} enables us to isolate all dependencies of $m$ in $\gammamin$. Letting $\widehat \theta_m$ denote the minimizer of program \eqref{lec8:eqn:opt2} with width $m$ and defining optimal value $\gamma_m^* = \gammamin\l(\widehat \theta_m\r)$, we can rewrite the margin bound \eqref{lec8:eqn:margin-bound} as 
 \begin{equation}
@@ -390,7 +389,7 @@ The case of $p=1$ is particularly useful in practice as $\ell_1$-regularization 
 \begin{theorem}\label{lec8:thm:thm8.5}
 Define the feature map $\phirelu: \mathbb{R}^d \to \mathcal{G}$ such that $x$ is mapped to $\phi(u^\top x)$ for all vectors $u$ on the $d-1$-dimensional sphere $\mathcal{S}^{d-1}$. Informally, 
 $$\phirelu(x) := \begin{bmatrix} \vdots \\ \phi(u^\top x) \\ \vdots \end{bmatrix}_{u\in S^{d-1}}$$
-is an ``infinite-dimensional vector'' that contains an entry $\phi(u^T x)$ for each vector $u \in \mathcal{S}^{d-1}$, and we let $\phirelu(x)[u]$ denote the ``$u$''-th entry of this vector. Noting that $\mathcal{G}$ is the space of functions which can be indexed by $u \in S^{d-1}$, the inner product structure on $\mathcal{G}$ is defined by $\langle f, g \rangle = \int_{S^{d-1}} f[u]g[u] du$.
+is an ``infinite-dimensional vector'' that contains an entry $\phi(u^\top x)$ for each vector $u \in \mathcal{S}^{d-1}$, and we let $\phirelu(x)[u]$ denote the ``$u$''-th entry of this vector. Noting that $\mathcal{G}$ is the space of functions which can be indexed by $u \in S^{d-1}$, the inner product structure on $\mathcal{G}$ is defined by $\langle f, g \rangle = \int_{S^{d-1}} f[u]g[u] du$.
 
 Under this set-up, we have
 \begin{equation}

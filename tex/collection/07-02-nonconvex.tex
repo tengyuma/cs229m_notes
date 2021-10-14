@@ -5,7 +5,7 @@
 \metadata{11}{Andrew Wang}{Feb 22nd, 2021}
 
 \subsec{Matrix Completion \cite{ge2016}}
-We consider rank-1 matrix completion for simplicity. Let $M = zz^T$ be a rank-1 symmetric and positive semi-definite matrix for some $z\in \bbR^d$. Given random entries of $M$, our goal is to recover the rest of entries. Formally, we have the following definitions:
+We consider rank-1 matrix completion for simplicity. Let $M = zz^\top$ be a rank-1 symmetric and positive semi-definite matrix for some $z\in \bbR^d$. Given random entries of $M$, our goal is to recover the rest of entries. Formally, we have the following definitions:
 
 \begin{definition}
 Suppose $M\in \bbR^{d\times d}$ and $\Omega \subseteq [d] \times [d]$, we define $P_{\Omega}(M)$ to be the matrix obtained by zeroing out every entry outside $\Omega$. 
@@ -24,16 +24,16 @@ We need $d$ parameters to describe a rank-1 matrix $M$ and the number of observa
 We define our non-convex loss functions to be 
 \begin{align}
     \min_{x \in \bbR^d} f(x) & \triangleq \frac{1}{2}\sum_{(i,j)\in \Omega}(M_{ij}-x_ix_j)^2 \\
-     & = \frac{1}{2}\|P_{\Omega}(M-xx^T)\|_F^2.
+     & = \frac{1}{2}\|P_{\Omega}(M-xx^\top)\|_F^2.
 \end{align}
 
-To really solve our problem we need some regularity condition on the ground truth vector $z$ (recall $M = zz^T$). \textit{Incoherence} is one such condition:
+To really solve our problem we need some regularity condition on the ground truth vector $z$ (recall $M = zz^\top$). \textit{Incoherence} is one such condition:
 \begin{definition}[Incoherence]
 Without loss of generality, assume the ground truth vector $z\in\bbR^d$ satisfies $\|z\|_2 = 1$. $z$ satisfies the \textit{incoherence condition} if $\|z\|_{\infty} \leq \frac{\mu}{\sqrt{d}}$, where $\mu$ is considered to be a constant or log in dimension $d$. 
 \end{definition}
 
 \begin{remark}
-A nice counterexample to think about why such condition is necessary is when $z = e_1$ and $M = e_1 e_1^T$. All entries of $M$ are 0 except for a 1 in the top-left corner. There is no way to recover $M$ without observing the top-left corner.
+A nice counterexample to think about why such condition is necessary is when $z = e_1$ and $M = e_1 e_1^\top$. All entries of $M$ are 0 except for a 1 in the top-left corner. There is no way to recover $M$ without observing the top-left corner.
 \end{remark}
 
 The goal is to prove that local minima of this objective function are close to a global minimum:
@@ -45,7 +45,7 @@ Assume $p = \dfrac{\textrm{poly}(\mu, \log d)}{d\epsilon^2}$ for some sufficient
 Before presenting the proof, we make some observations that will guide the proof strategy.
 
 \begin{remark}
-$f(x)$ can be viewed as a sampled version of the PCA loss function $g(x) = \frac{1}{2}\norm{M - xx^T}_F^2 = \frac{1}{2}\sum_{(i,j) \in [d]\times[d]} (M_{ij} - x_ix_j)^2$, in which we only observe a subset of the matrix entries. Thus, we would like to claim that $f(x) \approx g(x)$. However, matching the values of $f$ and $g$ is not sufficient to prove the theorem: even a small margin of error between $f$ and $g$ could lead to creation of many spurious local minima (see Figure~\ref{lec11:fig:matrix_completion_f_g} for an illustration). In order to ensure that the local minima of $f$ look like the local minima of $g$, we will need further conditions like $\nabla f(x) \approx \nabla g(x)$ and $\nabla^2 f(x) \approx \nabla^2 g(x)$.
+$f(x)$ can be viewed as a sampled version of the PCA loss function $g(x) = \frac{1}{2}\norm{M - xx^\top}_F^2 = \frac{1}{2}\sum_{(i,j) \in [d]\times[d]} (M_{ij} - x_ix_j)^2$, in which we only observe a subset of the matrix entries. Thus, we would like to claim that $f(x) \approx g(x)$. However, matching the values of $f$ and $g$ is not sufficient to prove the theorem: even a small margin of error between $f$ and $g$ could lead to creation of many spurious local minima (see Figure~\ref{lec11:fig:matrix_completion_f_g} for an illustration). In order to ensure that the local minima of $f$ look like the local minima of $g$, we will need further conditions like $\nabla f(x) \approx \nabla g(x)$ and $\nabla^2 f(x) \approx \nabla^2 g(x)$.
 \end{remark}
 
 \begin{figure}
@@ -72,12 +72,12 @@ with high probability. This suggests the strategy of casting the estimation of o
 
 To make use of this observation to understand the quantities of interest ($\nabla f(x)$ and $\nabla^2 f(x)$), we compute the bilinear and quadratic forms for $\nabla f(x)$ and $\nabla^2 f(x)$ respectively:
 \begin{equation}
-\langle v, \nabla f(x) \rangle = \langle v, P_\Omega(M-xx^T)x \rangle = \langle vx^T, P_\Omega(M-xx^T) \rangle,
+\langle v, \nabla f(x) \rangle = \langle v, P_\Omega(M-xx^\top)x \rangle = \langle vx^\top, P_\Omega(M-xx^\top) \rangle,
 \end{equation}
-where we have used the fact that $\langle A,BC \rangle = \langle AC^T,B\rangle$. Also note that $vx^T$ is a rank-1 matrix and $M-xx^T$ is a rank-2 matrix.
+where we have used the fact that $\langle A,BC \rangle = \langle AC^\top,B\rangle$. Also note that $vx^\top$ is a rank-1 matrix and $M-xx^\top$ is a rank-2 matrix.
 \begin{align}
-\langle v, \nabla^2 f(x) v \rangle &= \norm{P_\Omega(vx^T + xv^T)}_F^2 - 2\langle P_\Omega(M-xx^T), vv^T \rangle \\
-&=  \langle P_\Omega(vx^T + xv^T), vx^T + xv^T \rangle - 2\langle P_\Omega(M-xx^T), vv^T \rangle,
+\langle v, \nabla^2 f(x) v \rangle &= \norm{P_\Omega(vx^\top + xv^\top)}_F^2 - 2\langle P_\Omega(M-xx^\top), vv^\top \rangle \\
+&=  \langle P_\Omega(vx^\top + xv^\top), vx^\top + xv^\top \rangle - 2\langle P_\Omega(M-xx^\top), vv^\top \rangle,
 \end{align}
 
 where we have used the fact that $\norm{P_\Omega(A)}_F^2 = \langle P_\Omega(A), P_\Omega(A)\rangle = \langle P(\Omega(A), A\rangle$.
@@ -85,7 +85,7 @@ where we have used the fact that $\norm{P_\Omega(A)}_F^2 = \langle P_\Omega(A), 
 The key lemma that applies the scalar concentration to these matrix quantities is as follows:
 
 \begin{lemma}
-Let $\epsilon>0$, $p = \dfrac{\textrm{poly}(\mu, \log d)}{d\epsilon^2}$. Given that $A = uu^T, B=vv^T$ for some $u, v$ satisfying $\norm{u}_2 \leq 1$, $\norm{v}_2 \leq 1$, $\norm{u}_\infty \leq \mu / \sqrt{d}$, $\norm{v}_\infty \leq \mu / \sqrt{d}$, we have $|\langle P_\Omega(A), B \rangle/p - \langle A, B\rangle| \leq \epsilon$ w.h.p.
+Let $\epsilon>0$, $p = \dfrac{\textrm{poly}(\mu, \log d)}{d\epsilon^2}$. Given that $A = uu^\top, B=vv^\top$ for some $u, v$ satisfying $\norm{u}_2 \leq 1$, $\norm{v}_2 \leq 1$, $\norm{u}_\infty \leq \mu / \sqrt{d}$, $\norm{v}_\infty \leq \mu / \sqrt{d}$, we have $|\langle P_\Omega(A), B \rangle/p - \langle A, B\rangle| \leq \epsilon$ w.h.p.
 \label{lec11:lem:concentration_lemma}
 \end{lemma}
 
@@ -100,7 +100,7 @@ If $x$ satisfies $\nabla g(x) = 0$, then $\langle x,z \rangle^2 = \norm{x}_2^4$.
 \begin{proof}
 \begin{align}
     \nabla g(x) = 0 &\implies \langle x, \nabla g(x) \rangle = 0 \\
-   & \implies \langle x, (zz^T-xx^T)x \rangle = 0 & (\because \nabla g(x) = (M - xx^T)x) \\
+   & \implies \langle x, (zz^\top-xx^\top)x \rangle = 0 & (\because \nabla g(x) = (M - xx^\top)x) \\
    & \implies \langle x,z \rangle^2 = \norm{x}_2^4.
 \end{align}
 \end{proof}
@@ -114,7 +114,7 @@ Suppose $\norm{x}_\infty \leq 2\mu / \sqrt{d}$. If $x$ satisfies $\nabla f(x) = 
 \begin{align}
     \nabla f(x) = 0 &\implies \langle x, \nabla f(x) \rangle = 0 \\
     & \implies \langle x, \nabla g(x) \rangle \approx \langle x, \nabla f(x) \rangle/p \pm \epsilon & \text{(by Lemma \ref{lec11:lem:concentration_lemma})} \\
-   & \implies |\langle x, (zz^T-xx^T)x \rangle| \leq \epsilon & \text{w.h.p.} \\
+   & \implies |\langle x, (zz^\top-xx^\top)x \rangle| \leq \epsilon & \text{w.h.p.} \\
    & \implies \langle x,z \rangle^2 \geq \norm{x}_2^4 - \epsilon & \text{w.h.p.}
 \end{align}
 \end{proof}
@@ -127,7 +127,7 @@ Suppose $\norm{x}_\infty \leq 2\mu / \sqrt{d}$. If $x$ satisfies $\nabla f(x) = 
 \begin{align}
     \nabla^2 g(x) \succeq 0
     &\implies \langle z, \nabla^2 g(x)z\rangle \geq 0 \\
-    &\implies \norm{zx^T + xz^T}_F^2 - 2z^T(zz^T-xx^T)z \geq 0 \\
+    &\implies \norm{zx^\top + xz^\top}_F^2 - 2z^\top(zz^\top-xx^\top)z \geq 0 \\
     &\implies 1 \leq \norm{x}_2^2 + 2\langle x,z \rangle^2 \leq \norm{x}_2^2 + 2\norm{x}_2^2 = 3\norm{x}_2^2 &\text{(by Cauchy-Schwarz)} \\
     &\implies \norm{x}_2^2 \geq 1/3.
 \end{align}
@@ -154,7 +154,7 @@ Suppose $\norm{x}_\infty \leq 2\mu / \sqrt{d}$. If $x$ satisfies $\nabla f(x) = 
 \begin{align}
     \nabla g(x) = 0
     & \implies \langle z, \nabla g(x) \rangle = 0 \\
-    & \implies \langle z, (zz^T-xx^T)x \rangle = 0 \\
+    & \implies \langle z, (zz^\top-xx^\top)x \rangle = 0 \\
     & \implies \langle x,z\rangle (1-\norm{x}_2^2) = 0.
 \end{align}
 Since $|\langle x,z \rangle| \geq 1/3 \neq 0$ (by Lemma~\ref{lec11:lem:bound-g}), we must have $\norm{x}_2^2 = 1$. But then Lemma~\ref{lec11:lem:inner-g} implies $\langle x, z\rangle^2 = \norm{x}_2^4 = 1$, so $x = \pm z$ by Cauchy-Schwarz.

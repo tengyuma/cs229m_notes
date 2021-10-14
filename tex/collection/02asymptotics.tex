@@ -59,9 +59,9 @@ Let $X_1, \cdots, X_n$, be i.i.d. random variables, where $\widehat{X}=\frac{1}{
 \begin{lemma}\label{lec1:lem:dist}
 \quad\quad
     \begin{enumerate}
-        \item If $Z \sim N(0, \Sigma)$ and $A$ is a deterministic matrix, then $AZ \sim N(0, A \Sigma A^T)$.
+        \item If $Z \sim N(0, \Sigma)$ and $A$ is a deterministic matrix, then $AZ \sim N(0, A \Sigma A^\top)$.
         
-        \item If $Z \sim N(0, \Sigma^{-1})$ and $Z \in \bbR^p$, then $Z^T \Sigma Z \sim \chi^2(p)$, where $\sim \chi^2(p)$ is the chi-squared distribution with $p$ degrees of freedom.
+        \item If $Z \sim N(0, \Sigma^{-1})$ and $Z \in \bbR^p$, then $Z^\top \Sigma Z \sim \chi^2(p)$, where $\sim \chi^2(p)$ is the chi-squared distribution with $p$ degrees of freedom.
     \end{enumerate}
 \end{lemma}
 
@@ -109,7 +109,7 @@ n (L(\hat \theta) - L(\theta^*)) &= \frac{n}{2} \langle \hat \theta - \theta^*, 
 &= \frac12 \left\|\nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*) \right\|_2^2,
 \end{align}
 
-where the last equality follows by the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^T Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
+where the last equality follows by the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^\top Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
 \begin{align}
     S &\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1} \right) \\
     &\stackrel{d}{=} \cN \left(0, \nabla^2 L(\theta^*)^{-1/2} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1/2} \right).

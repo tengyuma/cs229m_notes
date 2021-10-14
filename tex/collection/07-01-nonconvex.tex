@@ -104,7 +104,7 @@ So far, we have focused on general results. Next, we give two concrete examples 
 \subsec{Principal components analysis (PCA)}
 Let matrix $M \in \bbR^{d \times d}$ be symmetric and positive semi-definite. Consider the problem of finding the best rank-1 approximation of the matrix $M$. The objective function here is non-convex:
 \begin{equation}
-    \min_{x \in \bbR^d}g(x) \triangleq \frac{1}{2}\|M - xx^T\|_F^2.
+    \min_{x \in \bbR^d}g(x) \triangleq \frac{1}{2}\|M - xx^\top \|_F^2.
 \end{equation}
 
 \begin{theorem}
@@ -124,7 +124,7 @@ For $d = 1$, $g(x) = \frac{1}{2}(m - x^2)^2$ for some constant $m$. Figure~\ref{
 
 \begin{proof}
 
-\textit{Step 1: Show that all stationary points must be eigenvectors.} From HW0, we know that $\nabla g(x) = -(M - xx^T)x$, hence
+\textit{Step 1: Show that all stationary points must be eigenvectors.} From HW0, we know that $\nabla g(x) = -(M - xx^\top )x$, hence
 \begin{equation}\label{lec10:eqn:pca-firstorder}
 \nabla g(x) = 0 \implies Mx = \|x\|_2^2\cdot x,
 \end{equation}
@@ -137,21 +137,21 @@ which implies that $x$ is an eigenvector of $M$ with eigenvalue $\|x\|_2^2$. Fro
 To compute $\langle v, \nabla^2g(x) v \rangle$, we use the following trick: expand $g(x + v)$ into $g(x) + \text{linear term in } v + \text{quadratic term in } v$, then the quadratic term will be $\frac{1}{2}\langle v, \nabla^2g(x) v \rangle$ (see HW0 Problem 2d for an example). Using this trick, we get 
 
 \begin{align}
-    g(x+v) &= \frac{1}{2}\|M - (x+v)(x+v)^T\|_F^2 \\
-           &= \frac{1}{2}\|M-xx^T\|_F^2 - \langle M-xx^T, xv^T + vx^T\rangle + \frac{1}{2}\langle xv^T + vx^T, xv^T + vx^T \rangle \nonumber \\
-          & \quad -\langle M-xx^T, vv^T\rangle + \text{higher order terms in }v.
+    g(x+v) &= \frac{1}{2}\|M - (x+v)(x+v)^\top \|_F^2 \\
+           &= \frac{1}{2}\|M-xx^\top\|_F^2 - \langle M-xx^\top , xv^\top + vx^\top\rangle + \frac{1}{2}\langle xv^\top + vx^\top , xv^\top + vx^\top \rangle \nonumber \\
+          & \quad -\langle M-xx^\top, vv^\top\rangle + \text{higher order terms in }v.
 \end{align}
 Hence, we have 
 \begin{align}
-    \frac{1}{2}\langle v, \nabla^2g(x) v \rangle & = \frac{1}{2}\langle xv^T + vx^T, xv^T + vx^T \rangle
-          -\langle M-xx^T, vv^T\rangle  \\
-          &= \langle x, v\rangle^2 + \|x\|_2^2\|v\|_2^2 - v^TMv + \langle x, v\rangle^2 \\
-          & = 2\langle x, v\rangle^2 + \|x\|_2^2\|v\|_2^2 - v^TMv.
+    \frac{1}{2}\langle v, \nabla^2g(x) v \rangle & = \frac{1}{2}\langle xv^\top + vx^\top, xv^\top + vx^\top \rangle
+          -\langle M-xx^\top, vv^\top\rangle  \\
+          &= \langle x, v\rangle^2 + \|x\|_2^2\|v\|_2^2 - v^ Mv + \langle x, v\rangle^2 \\
+          & = 2\langle x, v\rangle^2 + \|x\|_2^2\|v\|_2^2 - v^\top Mv.
 \end{align}
 
 Picking $v = v_1$, the unit eigenvector with the largest eigenvalue (denoted $\lambda_1$), for $x$ to be a local minimum it must satisfy 
 \begin{equation}
-\langle v_1, \nabla^2g(x) v_1 \rangle = 2\langle x, v_1 \rangle^2 - v_1^TMv_1 + \|x\|_2^2 \geq 0.
+\langle v_1, \nabla^2g(x) v_1 \rangle = 2\langle x, v_1 \rangle^2 - v_1^\top Mv_1 + \|x\|_2^2 \geq 0.
 \end{equation}
 
 Note that by \eqref{lec10:eqn:pca-firstorder}, all our candidates for local minima are eigenvectors of $M$ so naturally we have two cases:
@@ -159,7 +159,7 @@ Note that by \eqref{lec10:eqn:pca-firstorder}, all our candidates for local mini
 \item \textit{Case 1: $x$ has eigenvalue $\lambda_1$}. Then x is the global minimum (by the Eckart–Young–Mirsky theorem).
 \item \textit{Case 2: $x$ has eigenvalue $\lambda < \lambda_1$}. Then we know $x$ and $v_1$ are orthogonal (eigenvectors with different eigenvalues are always orthogonal), hence 
 \begin{equation}
-2\langle x, v_1 \rangle^2 - v_1^TMv_1 + \|x\|_2^2 = 0  -\lambda_1 + \lambda \geq 0,
+2\langle x, v_1 \rangle^2 - v_1^\top Mv_1 + \|x\|_2^2 = 0  -\lambda_1 + \lambda \geq 0,
 \end{equation}
 which implies $\lambda \geq \lambda_1$, a contradiction. 
 \end{itemize}

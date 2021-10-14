@@ -173,10 +173,10 @@ f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
 
 where $W_i$ are layer-wise weights and $\sigma$ is an activation function which is 1-Lipschitz. For this setup we have the following Rademacher complexity bound:
 \begin{equation}
-R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{\textup{op}} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^T\|^{2/3}_{2,1}}{\|W_i\|_{\textup{op}}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
+R_S (\cF) \leq \underbrace{\l(\prod_{i=1}^r\|W_i\|_{\textup{op}} \r)}_{\text{relatively large}} \cdot \underbrace{\l( \sum_{i=1}^r\frac{\|W_i^\top\|^{2/3}_{2,1}}{\|W_i\|_{\textup{op}}^{2/3}}\r)^{3/2}}_{\text{relatively small}}.
 \end{equation}
         
-Here $\|W\|_{\textup{op}}$ is the operator norm (or spectral norm) of $W$, and $\|W_i^T\|_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms. This first term comes from composition of Lipschitz functions as in \eqref{lec9:eqn:covering-num-lipschitz} above, since the Lipschitz constant of a linear operator is its spectral norm. The full details are presented in \cite{bartlett2017}.
+Here $\|W\|_{\textup{op}}$ is the operator norm (or spectral norm) of $W$, and $\|W_i^\top\|_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms. This first term comes from composition of Lipschitz functions as in \eqref{lec9:eqn:covering-num-lipschitz} above, since the Lipschitz constant of a linear operator is its spectral norm. The full details are presented in \cite{bartlett2017}.
 \end{enumerate}
 
 

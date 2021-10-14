@@ -23,7 +23,7 @@ f_\theta(x) &= \underbrace{f_{\theta^0}(x) + \langle \nabla_\theta f_{\theta^0}(
 
 In other words, we take the tangent plane to $f_\theta$ at $x$ (a linear approximation). We observe that $g_\theta$ is an affine function of $\theta$. Additionally, defining $\Delta \theta = \theta - \theta^0$, we see that the first term does not depend on $\Delta \theta$ while the second term $\langle \nabla_\theta f_{\theta^0}(x), \theta - \theta^0 \rangle$ is linear in $\Delta \theta$. (For convenience, we will sometimes choose to design $\theta^0$ such that $f_{\theta^0}(x) = 0$ so that $g_\theta$ is linear in $\theta^0$. However, the difference is not very important since $f_{\theta^0}(x)$ can simply be subsumed in the training labels $y$ via $y' = y - f_{\theta^0}(x)$.)
 
-Now we have that $y \approx \nabla_\theta f_{\theta^0}(x)^T \Delta \theta$. We can view $\phi(x) \triangleq \nabla_\theta f_{\theta^0}(x)$ as a feature map, i.e. we can rewrite the expression as $\phi(x)^T \Delta \theta$ where $\phi(x)$ is fixed (only depends on $\theta^0$ and the architecture). This observation motivates the definition of the \textit{neural tangent kernel}:
+Now we have that $y \approx \nabla_\theta f_{\theta^0}(x)^\top \Delta \theta$. We can view $\phi(x) \triangleq \nabla_\theta f_{\theta^0}(x)$ as a feature map, i.e. we can rewrite the expression as $\phi(x)^\top \Delta \theta$ where $\phi(x)$ is fixed (only depends on $\theta^0$ and the architecture). This observation motivates the definition of the \textit{neural tangent kernel}:
 
 \begin{definition}[Neural tangent kernel]
 The \emph{neural tangent kernel} $K$ is defined as the function
@@ -34,9 +34,9 @@ K(x, x') = \langle \phi(x), \phi(x')\rangle = \langle \nabla f_{\theta^0}(x), \n
 
 Suppose we fit $g_\theta(x)$ to $y$, i.e. we minimize the loss 
 \begin{equation}
-\textrm{Loss} = \ell(\phi(x)^T \Delta \theta, y),
+\textrm{Loss} = \ell(\phi(x)^\top \Delta \theta, y),
 \end{equation}
-where $\phi(x)^T\Delta \theta$ is linear and the loss as a whole is convex.
+where $\phi(x)^\top\Delta \theta$ is linear and the loss as a whole is convex.
 We will show that for a sufficiently wide neural network with proper initialization $\theta^0$, optimizing $f_\theta(x)$ starting from $\theta^0$ never leaves the neighborhood of $\theta^0$, effectively behaving the same as optimizing $g_\theta(x)$. In particular, two questions have to be answered:
 
 \begin{enumerate}
