@@ -253,29 +253,21 @@ If we want to bound the generalization gap by the average Rademacher complexity 
 \paragraph{Interpretation of  Corollary \ref{lec6:cor:ggap-rsbound}.}
 \sloppy It is typically the case that $O\l(\sqrt{\frac{\log (2/\delta)}{n}}\r) \ll R_S(\cF)$ and $O\l(\sqrt{\frac{\log (2/\delta)}{n}}\r) \ll R_n(\cF)$. This is the case because $R_S(\cF)$ and $R_n(\cF)$ often take the form $\frac{c}{\sqrt{n}}$ where $c$ is a big constant depending on the complexity of $\cF$, whereas we only have a logarithmic term in the numerator of $O\l(\sqrt{\frac{\log (2/\delta)}{n}}\r)$. As a result, we can view the $3\sqrt{\frac{\log (2/\delta)}{n}}$ term in the RHS of Corollary \ref{lec6:cor:ggap-rsbound} as negligible. Another way of seeing this is noting that a $\tilO \left( \frac{1}{\sqrt{n}} \right)$ term is necessary even for the concentration bound of a single function $h\in\cH$. Previously, we bounded $L(h)-\hat{L}(h)$ using a union bound over $h\in\cH$, which necessarily needs to be larger than $\tilO \left(\frac{1}{\sqrt{n}} \right)$. As a result, the $O\l(\sqrt{\frac{\log (2/\delta)}{n}}\r)$ term is not significant.
 
-\subsec{Empirical Rademacher complexity viewed in the output/function space}
-Assume we have a fixed dataset $S = \{z_1, \dots, z_n\}$. Since $z_1,\dots, z_n$ is fixed, each function $f\in\cF$ corresponds to a single output $(f(z_1),\dots,f(z_n))\in \R^n$. Hence, we can express the set of outputs for every function $f\in\cF$ as
-\begin{align}
-    Q_\cF = \left\{ \begin{pmatrix}f(z_1), \dots, f(z_n) \end{pmatrix} \mid f\in\cF \right\}.
-\end{align}
+%\subsec{Empirical Rademacher complexity viewed in the output/function space}
+%Assume we have a fixed dataset $S = \{z_1, \dots, z_n\}$. Since $z_1,\dots, z_n$ is fixed, each function $f\in\cF$ corresponds to a single output $(f(z_1),\dots,f(z_n))\in \R^n$. Hence, we can express the set of outputs for every function $f\in\cF$ as
+%\begin{align}
+%    Q_\cF = \left\{ \begin{pmatrix}f(z_1), \dots, f(z_n) \end{pmatrix} \mid f\in\cF \right\}.
+%\end{align}
+%
+%Now we can mathematically re-express the empirical Rademacher complexity as an inner product:
+%\begin{align}
+%R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
+%&= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n}\langle\sigma, v\rangle \r],
+%\end{align}
+%where $\sigma=(\sigma_1,\dots,\sigma_n)$. (See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea.) This perspective will be helpful later on when proving bounds on the empirical Rademacher complexity.
 
-Now we can mathematically re-express the empirical Rademacher complexity as an inner product:
-\begin{align}
-R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
-&= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n}\langle\sigma, v\rangle \r],
-\end{align}
-where $\sigma=(\sigma_1,\dots,\sigma_n)$. (See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea.) This perspective will be helpful later on when proving bounds on the empirical Rademacher complexity.
 
 
-\begin{figure}[ht!]
-\begin{center}
-\includegraphics[width=.5\textwidth]{figures/remark2.png}
-\end{center}
-\caption{We can view empirical Rademacher complexity as the expectation of the maximum inner product between $\sigma$ and $v\in Q$.}
-\label{lec6:fig:rs-innerprod}
-\end{figure}
-
-Another corollary of this is that the empirical Rademacher complexity doesn't depend on the exact parameterization of $\cF$. For example, suppose we have two parameterizations $\cF = \left\{f(x)=\sum \theta_{i} x_{i} \mid \theta \in \mathbb{R}^{d}\right\}$ and $\cF' = \left\{f(x)=\sum \theta_{i}^{3} \cdot w_{i} x_{i} \mid \theta \in \R^{d}, w \in \mathbb{R}^{d}\right\}$. Since $Q_\cF$ and $Q_{\cF'}$ are the same, we see that $R_S(\cF) = R_S(\cF')$ since our earlier expression for $R_S(\cF)$ only depends on $\cF$ through $Q_\cF$. 
 
 \subsec{Rademacher complexity is translation invariant}
 A useful fact is that both empirical Rademacher complexity and average Rademacher complexity are translation invariant. (This is not obvious when thinking of how translation affects the picture in Figure \ref{lec6:fig:rs-innerprod}.)

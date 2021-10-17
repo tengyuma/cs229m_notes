@@ -17,10 +17,25 @@ which may be drastically smaller than $\cF$. Correspondingly, the empirical Rade
 \al{
     R_S(\cF) &= \E_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}.
 }
-Now, for finite $|\cQ|$, we immediately obtain the following bound by Massart's lemma:
+In other words, the complexity of $\cF$ can be also interpreted as how much the vectors in $Q$ can be correlated with a random vector $\sigma.$ See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea. One can also view $\E_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}$ as a complexity measure for the set $Q$. If we replace $\sigma$ by a Gaussian vector with spherical covariance, then the corresponding quantity (without the $\frac 1 n$ scaling), $\E_{g\sim N(0,I)} \sbr{\sup_{v\in \cQ} \inprod{g, v}}$, is often referred to as the Gaussian complexity of the set $Q$. (It turns out that Gaussian complexity and Rademacher complexity are closely related.)
+
+Another corollary of this is that the empirical Rademacher complexity only depends on the functionality of $\cF$ but not on the exact parameterization of $\cF$ . For example, suppose we have two parameterizations $\cF = \left\{f(x)=\sum \theta_{i} x_{i} \mid \theta \in \mathbb{R}^{d}\right\}$ and $\cF' = \left\{f(x)=\sum \theta_{i}^{3} \cdot w_{i} x_{i} \mid \theta \in \R^{d}, w \in \mathbb{R}^{d}\right\}$. Since $Q_\cF$ and $Q_{\cF'}$ are the same, we see that $R_S(\cF) = R_S(\cF')$ since our earlier expression for $R_S(\cF)$ only depends on $\cF$ through $Q_\cF$. 
+
+\tnoteimp{replace backslash E by backslash Exp in all displayed equations in all files; (I think it's perhaps even okay to replace in all occurrences because for inaligned texts I think they are the same? Need to be checked)}
+
+\begin{figure}[ht!]
+	\begin{center}
+		\includegraphics[width=.5\textwidth]{figures/remark2.png}
+	\end{center}
+	\caption{We can view empirical Rademacher complexity as the expectation of the maximum inner product between $\sigma$ and $v\in Q$.}
+	\label{lec6:fig:rs-innerprod}
+\end{figure}
+
+\paragraph{Rademacher complexity of finite hypothesis class.} Now, for finite $|\cQ|$, we immediately obtain the following bound by Massart's lemma: \tnoteimp{I realize that we didn't have the Massart lemma formally in the lecture notes. Could you add it here with some transition texts, John? You can perhaps reuse the equations in homework (where they are asked to prove the Massart lemma)}
 \begin{equation}
 R_S(\cF) \le \sqrt{\frac {2\log|\cQ|} n}.
 \end{equation}
+\paragraph{Bounding Rademacher complexity using $\epsilon$-cover }
 When $|\cQ|$ is infinite, we can use the same discretization trick that we used to prove the generalization bound for an infinite-hypothesis space. Instead of trying to cover the parameter space, we try to cover the output space. To this end, we firstly recall a few definitions concerning $\epsilon$-covers.
 
 \begin{definition}
