@@ -188,7 +188,7 @@ Nevertheless, we now derive this bound.
         \\&= \frac{B_w}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
             &&\text{($\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
         \\&\leq \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
-            &&\text{($\Norm{v}_2 \leq m\Norm{v}_\infty$)}
+            &&\text{($\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
         \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
         \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }

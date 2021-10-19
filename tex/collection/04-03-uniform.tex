@@ -210,7 +210,7 @@ R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n
 
 Notice that the supremum is now over $Q$ instead of $\cF$. If $n$ is sufficiently large, then it is typically the case that $|Q|>|\cF|$. To see why this is the case, note that each function $f$ corresponds to a single element in $Q$. However, as $n$ increases, $|Q|$ increases as well. For any particular $v\in Q$, notice that $\langle v, \sigma\rangle$ is a sum of bounded random variables, so we can use Hoeffding's inequality to obtain
 \begin{equation}
-\Pr\left[\frac{1}{n}(\sigma, v) \geq t\right] \leq \exp (-n t^2 / 2).
+\Pr\left[\frac{1}{n}\langle\sigma, v\rangle\geq t\right] \leq \exp (-n t^2 / 2).
 \end{equation}
 Taking the union bound over $v\in Q$, we see that 
 \begin{equation}
