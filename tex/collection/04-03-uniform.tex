@@ -11,7 +11,7 @@ The first important observation is that for purposes of computing the \textbf{em
 }
 we only care about each function's $f \in \cF$ behavior on $\{z_1, ..., z_n\}$. Hence, we can forget the rest of the input space and characterize $f \in \cF$ by its outputs $(f(z_1),\dots, f(z_n))$. Thus, there is a paradigm shift from the space of all functions $\cF$ to the \textit{output space}
 \begin{equation}
-\cQ \triangleq \cbr{ \begin{pmatrix} f(z_1), \dots, f(z_n) \end{pmatrix}^\top: f\in \cF} \subseteq \R^n,
+\cQ \triangleq \cbr{ \begin{pmatrix} f(z_1), \dots, f(z_n) \end{pmatrix}^\top: f\in \cF} \subseteq \R^n, \label{lec6:eqn:shattercoef}
 \end{equation}
 which may be drastically smaller than $\cF$. Correspondingly, the empirical Rademacher complexity can be rewritten as a maximization over the output space $\cQ$ instead of the function space $\cF$: 
 \al{
@@ -29,11 +29,17 @@ Another corollary of this is that the empirical Rademacher complexity only depen
 	\label{lec6:fig:rs-innerprod}
 \end{figure}
 
-\paragraph{Rademacher complexity of finite hypothesis class.} Now, for finite $|\cQ|$, we immediately obtain the following bound by Massart's lemma: \tnoteimp{I realize that we didn't have the Massart lemma formally in the lecture notes. Could you add it here with some transition texts, John? You can perhaps reuse the equations in homework (where they are asked to prove the Massart lemma)}
-\begin{equation}
-R_S(\cF) \le \sqrt{\frac {2\log|\cQ|} n}.
-\end{equation}
-\paragraph{Bounding Rademacher complexity using $\epsilon$-cover.}
+\paragraph{Rademacher complexity of finite hypothesis classes.} In practice, we cannot directly evaluate the Rademacher complexity, so we instead bound its value using quantities that are computable. Given finite $|\cQ|$, we often rely on the following bound, which is also known as Masssart's finite lemma: 
+\begin{proposition}
+    Let $\cF$ be a collection of functions mapping $Z \mapsto \mathbb{R}$ and let $\cQ$ be defined as in \eqref{lec6:eqn:shattercoef}. Assume that $\sigma^2_n = n^{-1} \Exp \left[\max_{f \in \cF } \sum_{i = 1}^n f(X_i)^2 \right] < \infty$. Then,
+    \begin{align}
+        R_S(\cF) \leq \sqrt{\frac{2 \sigma^2_n \log |\cQ|}{n}}
+    \end{align}
+    \label{lec6:prop:massartlemma}
+\end{proposition}
+We prove a (slightly) simplified version of this result in Problem 3(c) of Homework 2, so we omit the proof of Massart's lemma here. In practice, we rarely apply Massart's lemma directly since $|\cQ|$ is typically infinite. In the sequel, we discuss alternative approaches to bounding the Rademacher complexity that are appropriate for this setting.
+
+\paragraph{Bounding Rademacher complexity using $\epsilon$-covers.}
 When $|\cQ|$ is infinite, we can use the same discretization trick that we used to prove the generalization bound for an infinite-hypothesis space. Instead of trying to cover the parameter space, we try to cover the output space. To this end, we firstly recall a few definitions concerning $\epsilon$-covers.
 
 \begin{definition}
