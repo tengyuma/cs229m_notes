@@ -59,7 +59,7 @@ Chebyshev's inequality is actually optimal without further assumptions, in the s
 We next provide a brief overview of Hoeffding's inequality, a concentration inequality for bounded random variables with an exponential tail bound:
 
 \begin{theorem}[Hoeffding's inequality]
-    Let $X_1, X_2, \dots, X_n$ be independent real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \E [\bar{X}]$. Then for any $\varepsilon > 0$,
+    Let $X_1, X_2, \dots, X_n$ be independent real-valued random variables drawn from some distribution, such that $a_i \leq X_i \leq b_i$ almost surely. Define $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$, and let $\mu = \Exp [\bar{X}]$. Then for any $\varepsilon > 0$,
     \al {
     \Pr \left[ |\bar{X} - \mu | \leq \varepsilon \right] \geq 1 - 2  \exp\left(\frac{-2n^2\varepsilon^2}{\sum_{i=1}^n (b_i - a_i)^2}\right). \label{lec2:eqn:hoeffding}
     }
@@ -150,7 +150,7 @@ We can then obtain \eqref{lec3:eqn:subgausstail} by applying the union bound:
 \end{remark}
 
 \begin{remark}
-    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\E[|X-\mu|^k]$) only requires that the second central moment $\E[(X-\mu)^2]$ (more generally, the $k$th central moment $\E[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\E[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently. This ``tensorization'' property is why most researchers use exponential tail bounds in practice.
+    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\Exp[|X-\mu|^k]$) only requires that the second central moment $\Exp[(X-\mu)^2]$ (more generally, the $k$th central moment $\Exp[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\Exp[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently. This ``tensorization'' property is why most researchers use exponential tail bounds in practice.
 \end{remark}
 
 Having defined and derived exponential tail bounds for sub-Gaussian random variables, we can now accomplish the first of the goals we set out at the beginning of the chapter: show that under certain conditions, namely independence and sub-Gaussianity of $X_1, \dotsc, X_n$, the sum $Z = \sum_{i = 1}^n X_i$ concentrates around $\Exp[Z] = \Exp[\sum_{i = 1}^n X_i]$.
@@ -244,7 +244,7 @@ We now introduce some important inequalities related to the second of our two go
         &= \Exp[f(X_1,\dots,X_n)] \\
         &= Z_0
     \end{align*}
-    The fact that $\E[D_i] = 0$, where $D_i = Z_i - Z_{i - 1}$, is an immediate corollary of this result. Next, we observe that we can rewrite the quantity of interest, $Z_n - Z_0$, as a telescoping sum in the increments $Z_i - Z_{i - 1}$:
+    The fact that $\Exp[D_i] = 0$, where $D_i = Z_i - Z_{i - 1}$, is an immediate corollary of this result. Next, we observe that we can rewrite the quantity of interest, $Z_n - Z_0$, as a telescoping sum in the increments $Z_i - Z_{i - 1}$:
     \begin{align*}
         Z_n - Z_0 &= (Z_n - Z_{n - 1}) + (Z_{n - 1} - Z_{n - 2}) + \cdots + (Z_1 - Z_0) \\
         &= \sum_{i = 1}^n D_i

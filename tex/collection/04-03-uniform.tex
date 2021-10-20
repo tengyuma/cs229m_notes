@@ -7,7 +7,7 @@ In Chapter \ref{chap:gen-bounds}, we will prove Rademacher complexity bounds tha
 
 The first important observation is that for purposes of computing the \textbf{empirical} Rademacher complexity on samples $z_1, ..., z_n$, 
 \al{
-    R_S(\cF) = \E_\sigma \sbr{\sup_{f \in \cF} \frac 1 n \sum_{i=1}^n \sigma_i f(z_i)},
+    R_S(\cF) = \Exp_\sigma \sbr{\sup_{f \in \cF} \frac 1 n \sum_{i=1}^n \sigma_i f(z_i)},
 }
 we only care about each function's $f \in \cF$ behavior on $\{z_1, ..., z_n\}$. Hence, we can forget the rest of the input space and characterize $f \in \cF$ by its outputs $(f(z_1),\dots, f(z_n))$. Thus, there is a paradigm shift from the space of all functions $\cF$ to the \textit{output space}
 \begin{equation}
@@ -15,13 +15,11 @@ we only care about each function's $f \in \cF$ behavior on $\{z_1, ..., z_n\}$. 
 \end{equation}
 which may be drastically smaller than $\cF$. Correspondingly, the empirical Rademacher complexity can be rewritten as a maximization over the output space $\cQ$ instead of the function space $\cF$: 
 \al{
-    R_S(\cF) &= \E_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}.
+    R_S(\cF) &= \Exp_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}.
 }
-In other words, the complexity of $\cF$ can be also interpreted as how much the vectors in $Q$ can be correlated with a random vector $\sigma.$ See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea. One can also view $\E_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}$ as a complexity measure for the set $Q$. If we replace $\sigma$ by a Gaussian vector with spherical covariance, then the corresponding quantity (without the $\frac 1 n$ scaling), $\E_{g\sim N(0,I)} \sbr{\sup_{v\in \cQ} \inprod{g, v}}$, is often referred to as the Gaussian complexity of the set $Q$. (It turns out that Gaussian complexity and Rademacher complexity are closely related.)
+In other words, the complexity of $\cF$ can be also interpreted as how much the vectors in $Q$ can be correlated with a random vector $\sigma.$ See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea. One can also view $\Exp_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{\sigma, v}}$ as a complexity measure for the set $Q$. If we replace $\sigma$ by a Gaussian vector with spherical covariance, then the corresponding quantity (without the $\frac 1 n$ scaling), $\Exp_{g\sim N(0,I)} \sbr{\sup_{v\in \cQ} \inprod{g, v}}$, is often referred to as the Gaussian complexity of the set $Q$. (It turns out that Gaussian complexity and Rademacher complexity are closely related.)
 
 Another corollary of this is that the empirical Rademacher complexity only depends on the functionality of $\cF$ but not on the exact parameterization of $\cF$ . For example, suppose we have two parameterizations $\cF = \left\{f(x)=\sum \theta_{i} x_{i} \mid \theta \in \mathbb{R}^{d}\right\}$ and $\cF' = \left\{f(x)=\sum \theta_{i}^{3} \cdot w_{i} x_{i} \mid \theta \in \R^{d}, w \in \mathbb{R}^{d}\right\}$. Since $Q_\cF$ and $Q_{\cF'}$ are the same, we see that $R_S(\cF) = R_S(\cF')$ since our earlier expression for $R_S(\cF)$ only depends on $\cF$ through $Q_\cF$. 
-
-\tnoteimp{replace backslash E by backslash Exp in all displayed equations in all files; (I think it's perhaps even okay to replace in all occurrences because for inaligned texts I think they are the same? Need to be checked)}
 
 \begin{figure}[ht!]
 	\begin{center}
@@ -83,8 +81,8 @@ For every point $v\in \cQ$, we can express it as $v=v'+z$, where $v'\in \cC$ and
 }
 Taking the expectation of the supremum on both sides of this inequality gives
 \al{
-    R_S(\cF) &= \E_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{v,\sigma} }\\
-    &\le \E_\sigma \sbr{\sup_{v'\in \cC} \rbr{\frac 1 n \inprod{v',\sigma} + \epsilon}}\\ 
+    R_S(\cF) &= \Exp_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{v,\sigma} }\\
+    &\le \Exp_\sigma \sbr{\sup_{v'\in \cC} \rbr{\frac 1 n \inprod{v',\sigma} + \epsilon}}\\ 
     &\le \sqrt{ \frac {2\log \abs{\cC}} n } + \epsilon. &\text{(Massart's lemma)}
 }
 Choosing $\cC$ to be a minimal $\epsilon$-cover allows us to set $|\cC| = N(\epsilon, \cF , L_2(p_n))$. Since the argument above holds for any $\epsilon > 0$, we can take the infimum over all $\epsilon$ to arrive at Equation \eqref{lec8:eqn:rc-covering-bd}, completing the proof.
@@ -203,9 +201,9 @@ We will focus on classification and will be working within the framework of supe
 
 The first approach is to reason directly about the Rademacher complexity of $\err$ loss, i.e. considering the family of functions $\cF = \left\{ z = (x, y) \mapsto \err((x, y), h) : h \in \cH \right\}$. Define $Q$ to be the set of all possible outputs on our dataset: $Q=\left\{\left(\sgn\left(h\left(x^{(1)}\right)\right), \dots, \sgn \left(h\left(x^{(n)}\right)\right)\right)\mid  h \in \cH \right\}$. Then, using our earlier remark about viewing the empirical Rademacher complexity as an inner product between $v\in Q$ and $\sigma$, we have
 \begin{align}
-R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i \frac{1-\sgn(h(x^{(i)}))y_i}{2} \r] \\
-&= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i \frac{\sgn(h(x^{(i)}))}{2} \r] \\
-&= \frac{1}{2}\E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n} \langle \sigma, v\rangle \r].
+R_S(\cF) &= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i \frac{1-\sgn(h(x^{(i)}))y_i}{2} \r] \\
+&= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i \frac{\sgn(h(x^{(i)}))}{2} \r] \\
+&= \frac{1}{2}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n} \langle \sigma, v\rangle \r].
 \end{align}
 
 Notice that the supremum is now over $Q$ instead of $\cF$. If $n$ is sufficiently large, then it is typically the case that $|Q|>|\cF|$. To see why this is the case, note that each function $f$ corresponds to a single element in $Q$. However, as $n$ increases, $|Q|$ increases as well. For any particular $v\in Q$, notice that $\langle v, \sigma\rangle$ is a sum of bounded random variables, so we can use Hoeffding's inequality to obtain
@@ -216,7 +214,7 @@ Taking the union bound over $v\in Q$, we see that
 \begin{equation}
 \Pr\left[\exists v\in Q \text{ such that } \frac{1}{n}\langle\sigma, v\rangle \geq t\right] \leq |Q| \exp (-nt^2 / 2).
 \end{equation}
-Thus, with probability at least $1-\delta$, it is true that $\sup _{v \in Q} \frac{1}{n}\langle v, \sigma \rangle \leq \sqrt{\frac{2(\log|Q| + \log (2/\delta))}{n}}$. Similarly, we can show that $\E \left[ \sup _{v \in Q} \frac{1}{n}\langle v, \sigma \rangle \right] \leq O\l(\sqrt{\frac{\log|Q| + \log (2/\delta)}{n}}\r)$ holds.
+Thus, with probability at least $1-\delta$, it is true that $\sup _{v \in Q} \frac{1}{n}\langle v, \sigma \rangle \leq \sqrt{\frac{2(\log|Q| + \log (2/\delta))}{n}}$. Similarly, we can show that $\Exp \left[ \sup _{v \in Q} \frac{1}{n}\langle v, \sigma \rangle \right] \leq O\l(\sqrt{\frac{\log|Q| + \log (2/\delta)}{n}}\r)$ holds.
 
 The key point to notice here is that the upper bound on $R_S(\cF)$ depends on $\log |Q|$. \textit{VC dimension} is one way that we deal with bounding the size of $Q$ We will not delve into the details of this approach (for those interested, see Section 3.11 of \cite{percynotes}). VC dimension, however, has a number of limitations. For one, we will always end up with a bound that depends somehow on the dimension. For linear models, we obtain a bound $\log |Q| \lesssim d \log n$, corresponding to a bound on Rademacher complexity that looks like
 \begin{equation}

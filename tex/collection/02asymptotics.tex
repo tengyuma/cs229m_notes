@@ -27,7 +27,7 @@ Then,
     \item  $\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}\Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right)$.
      \item $n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)$.
     \item $n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2}$ where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}\Cov(\ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2} \right)$.
-    \item $\lim_{n \to \infty} \E \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)$.
+    \item $\lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)$.
 \end{enumerate}
 \label{lec1:thm:asymp}
 \end{theorem}
@@ -51,8 +51,8 @@ First, we state the CLT for i.i.d. means and a lemma that we will use in the pro
 \begin{theorem}[Central Limit Theorem] \label{lec1:thm:CLT}
 Let $X_1, \cdots, X_n$, be i.i.d. random variables, where $\widehat{X}=\frac{1}{n} \sum_{i=1}^{n} X_i$ and the covariance matrix $\Sigma$ is finite. Then, as $n \to \infty$ we have
 \begin{enumerate}
-    \item $\widehat{X} \overset{p}{\to} \E[X]$, and
-    \item $\sqrt{n} (\widehat{X}-\E[X]) \overset{d}{\to} \mathcal{N}(0,\Sigma)$. In particular, $\sqrt{n} (\widehat{X}-\E[X]) = O_P(1)$.
+    \item $\widehat{X} \overset{p}{\to} \Exp[X]$, and
+    \item $\sqrt{n} (\widehat{X}-\Exp[X]) \overset{d}{\to} \mathcal{N}(0,\Sigma)$. In particular, $\sqrt{n} (\widehat{X}-\Exp[X]) = O_P(1)$.
 \end{enumerate}
 \end{theorem}
 
@@ -83,7 +83,7 @@ Multiplying by $\sqrt{n}$ on both sides,
 &\approx -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})). \label{lec1:eqn:interm}}
 
  
-Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \nabla \ell ((x^{(i)}, y^{(i)}), \theta^*)$ and $\widehat{X} = \nabla \hatL(\theta^*)$, and noticing that $\E[\nabla \hatL(\theta^{*})] = \nabla L(\theta^{*})$, we have
+Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \nabla \ell ((x^{(i)}, y^{(i)}), \theta^*)$ and $\widehat{X} = \nabla \hatL(\theta^*)$, and noticing that $\Exp[\nabla \hatL(\theta^{*})] = \nabla L(\theta^{*})$, we have
  \al{ \sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\ell((x, y), \theta^{*}))).} 
  
 Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$, so $\sqrt{n} (\nabla \hatL(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,Cov(\ell((x, y), \theta^{*})))$. By the law of large numbers, $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. Applying these results to \eqref{lec1:eqn:interm} (together with an application of Slutsky's theorem),
@@ -117,10 +117,10 @@ where the last equality follows by the fact that for any vector $v$ and positive
 
 This proves Part 4, and Part 3 follows directly from the definition of the $O_P$ notation.
 
-Finally, for Part 5, using the fact that the trace operator is invariant under cyclic permutations, the fact that $\E [S] = 0$, and some regularity conditions,
+Finally, for Part 5, using the fact that the trace operator is invariant under cyclic permutations, the fact that $\Exp [S] = 0$, and some regularity conditions,
 \begin{align}
-    \lim_{n \to \infty} \E \left[ n (L(\hat \theta) - L(\theta^*)) \right] &= \frac12 \E\left[ \|S\|_2^2 \right] = \frac12 \E \left[ \tr(S^\top S) \right] \\
-    &= \frac12 \E \left[ \tr(S S^\top) \right]  = \frac12 \tr \left(\E[S S^\top] \right) \\
+    \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] &= \frac12 \Exp\left[ \|S\|_2^2 \right] = \frac12 \Exp \left[ \tr(S^\top S) \right] \\
+    &= \frac12 \Exp \left[ \tr(S S^\top) \right]  = \frac12 \tr \left(\Exp[S S^\top] \right) \\
     &= \frac12 \tr \left( \Cov(S) \right) \\
     &= \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right).
 \end{align}
@@ -138,7 +138,7 @@ Theorem \ref{lec1:thm:asymp} is powerful because it is general, avoiding any ass
     }
     \al{
     \label{lec2:eqn:applied2}
-        \E \left[ \nabla \ell ((x, y), \theta^*) \right] = 0,
+        \Exp \left[ \nabla \ell ((x, y), \theta^*) \right] = 0,
     }
     \al{
     \label{lec2:eqn:applied3}
@@ -159,37 +159,37 @@ Although the proofs were not presented in live lecture, we include them here.
 \begin{proof}
 From the definition of the population loss,
 \begin{align}
-    L(\theta) &= \E \left[ \ell((x\sp{i}, y\sp{i}), \theta) \right]\\
-    &= \E \left[ - \log P(y \mid x; \theta) \right] \\
-    &= \E \left[ - \log P(y \mid x; \theta) + \log P(y \mid x; \theta_*) \right] + \E \left[ - \log P(y \mid x; \theta_*) \right] \\
-    &= \E \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \right] + \E \left[ - \log P(y \mid x; \theta_*) \right].
+    L(\theta) &= \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta) \right]\\
+    &= \Exp \left[ - \log P(y \mid x; \theta) \right] \\
+    &= \Exp \left[ - \log P(y \mid x; \theta) + \log P(y \mid x; \theta_*) \right] + \Exp \left[ - \log P(y \mid x; \theta_*) \right] \\
+    &= \Exp \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \right] + \Exp \left[ - \log P(y \mid x; \theta_*) \right].
 \end{align}
 Notice that the second term is a constant which we will express as $\cH(y \mid x; \theta_*)$. We expand the first term using the tower rule (or law of total expectation):
 \begin{align}
-    L(\theta) &= \E \left[ \E \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \biggr\vert x \right] \right] + \cH(y \mid x; \theta_*).
+    L(\theta) &= \Exp \left[ \Exp \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \biggr\vert x \right] \right] + \cH(y \mid x; \theta_*).
 \end{align}
 The term in the expectation is just the KL divergence between the two probabilities, so 
 \begin{align}
-    L(\theta) &= \E \left[ \KL \left( y \mid x; \theta_* \| y \mid x; \theta \right) \right] + \cH(y \mid x; \theta_*) \\
+    L(\theta) &= \Exp \left[ \KL \left( y \mid x; \theta_* \| y \mid x; \theta \right) \right] + \cH(y \mid x; \theta_*) \\
     &\geq \cH(y \mid x; \theta_*),
 \end{align}
 since KL divergence is always non-negative. Since $\theta_*$ makes the KL divergence term 0, it minimizes $L(\theta)$ and so $\theta_* \in \argmin_\theta L(\theta)$. However, the minimizer of $L(\theta)$ is unique because of consistency, so  we must have $\argmin_\theta L(\theta) = \theta^*$ which proves (\ref{lec2:eqn:applied1}).
 
 For \eqref{lec2:eqn:applied2}, recall $\nabla L(\theta^*) = 0$, so we have
 \begin{equation}
-0 = \nabla L(\theta^*) = \nabla \E \left[ \ell((x\sp{i}, y\sp{i}), \theta^*) \right] = \E \left[ \nabla \ell((x\sp{i}, y\sp{i}), \theta^*) \right],
+0 = \nabla L(\theta^*) = \nabla \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta^*) \right] = \Exp \left[ \nabla \ell((x\sp{i}, y\sp{i}), \theta^*) \right],
 \end{equation}
 where we can switch the gradient and expectation under some regularity conditions.
 
 To prove \eqref{lec2:eqn:applied3}, we first expand the RHS using the definition of covariance and express the marginal distributions as integrals:
 \begin{align}
-    \Cov \left( \nabla \ell ((x, y), \theta^*) \right) &= \E \left[ \nabla \ell ((x, y), \theta^*) \nabla \ell ((x, y), \theta^*)^\top \right] \\
+    \Cov \left( \nabla \ell ((x, y), \theta^*) \right) &= \Exp \left[ \nabla \ell ((x, y), \theta^*) \nabla \ell ((x, y), \theta^*)^\top \right] \\
     &= \int P(x) \left( \int P(y \mid x; \theta^*) \nabla \log P( y\sp{i} \mid x\sp{i} ; \theta^*) \nabla \log P( y\sp{i} \mid x\sp{i} ; \theta^*)^\top dy \right) dx \\
     &= \int P(x) \left( \int \frac{\nabla P(y \mid x; \theta^*) \nabla P(y \mid x; \theta^*)^\top}{P(y \mid x; \theta^*)}dy \right) dx.
 \end{align}
 Now we expand the LHS using the definition of the population loss and differentiate repeatedly:
 \begin{align}
-    \nabla^2 L(\theta^*) &= \E \left[ \nabla^2 \log P(y \mid x; \theta^*) \right] \\
+    \nabla^2 L(\theta^*) &= \Exp \left[ \nabla^2 \log P(y \mid x; \theta^*) \right] \\
     &= \int P(x) \left( \int - \nabla^2 P(y \mid x; \theta^*) + \frac{\nabla P(y \mid x; \theta^*) \nabla P(y \mid x; \theta^*)^\top}{P(y \mid x; \theta^*)}dy  \right) dx.
 \end{align}
 Note that we can express 
@@ -203,7 +203,7 @@ Finally, \eqref{lec2:eqn:applied4} follows directly from Part 2 of Theorem~\ref{
 Using similar logic to our proof of Part 4 and 5 of Theorem~\ref{lec1:thm:asymp}, we can see that $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where $S \sim N(0, I)$. Since a chi-squared distribution with $p$ degrees of freedom is defined as a sum of the squares of $p$ independent standard normals, it quickly follows that $2n (L(\hat \theta) - L(\theta^*)) \sim  \chi^2(p)$, where $\theta \in \R^p$ and $n \to \infty$. We can thus characterize the excess risk in this case using the properties of a chi-squared distribution:
 
 \al{
-    \lim_{n \to \infty} \E \left[ L(\hat \theta) - L(\theta^*) \right] = \frac{p}{2n}.
+    \lim_{n \to \infty} \Exp \left[ L(\hat \theta) - L(\theta^*) \right] = \frac{p}{2n}.
 }
 
 \sec{Limitations of asymptotic analysis}

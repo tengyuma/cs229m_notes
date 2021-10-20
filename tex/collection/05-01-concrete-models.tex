@@ -56,14 +56,14 @@ It is plotted in Figure \ref{lec6:fig:marginloss}. For convenience, define $\ell
 \end{equation}
 holds for all $(x,y)\sim P$. Taking the expectation over $(x,y)$ on both sides of this inequality, we see that
 \begin{equation}
-    L(h) = \E_{(x,y)\sim P} \left[ \err((x,y), h) \right] \leq \E_{(x,y)\sim P} \left[ \ell_\gamma ((x,y), h) \right].
+    L(h) = \Exp_{(x,y)\sim P} \left[ \err((x,y), h) \right] \leq \Exp_{(x,y)\sim P} \left[ \ell_\gamma ((x,y), h) \right].
 \end{equation}
 
 Therefore, the population loss is bounded by the expectation of the margin loss, and so it is sufficient to bound the expectation of the margin loss in order to bound the population loss.
 
 Define the population and empirical version of the margin loss:
 \begin{equation}
-L_\gamma(h) = \E_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gamma(h) = \sum_{i=1}^n\l [\ell_\gamma((x^{(i)},y^{(i)}), h)\r].
+L_\gamma(h) = \Exp_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gamma(h) = \sum_{i=1}^n\l [\ell_\gamma((x^{(i)},y^{(i)}), h)\r].
 \end{equation}
 
 By Corollary \ref{lec6:cor:ggap-rsbound}, we see that with probability at least $1-\delta$ that
@@ -85,8 +85,8 @@ We can use Talagrand's lemma directly with $\phi(t) = \ell_\gamma(t)$, which is 
 
 \begin{align}
 R_S(\cF) &\leq \frac{1}{\gamma}R_S(\cH') \\
-&= \frac{1}{\gamma}\E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i y^{(i)}h(x^{(i)}) \r] \\
-&= \frac{1}{\gamma}\E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i h(x^{(i)})  \r] \\
+&= \frac{1}{\gamma}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i y^{(i)}h(x^{(i)}) \r] \\
+&= \frac{1}{\gamma}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i h(x^{(i)})  \r] \\
 &= \frac{1}{\gamma}R_S(\cH).
 \end{align}
 

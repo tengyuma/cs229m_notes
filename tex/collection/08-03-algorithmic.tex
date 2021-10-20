@@ -64,6 +64,6 @@ Finally, we note that in general, when the loss has multiple global minima, any 
 \theta_{t+1} = \theta_t - \eta(\nabla\hat{L}(\theta_t) + \xi_t),
 \end{equation}
 
-where $\xi_t$ is a random noise term, typically with $\E\left[\xi_t\right]=0$ so the noise will not affect the result too much. The variance of $\xi_t$ can sometimes be time-dependent: for example, $\xi_t$ could be dependent on the parameter $\theta_t$. 
+where $\xi_t$ is a random noise term, typically with $\Exp\left[\xi_t\right]=0$ so the noise will not affect the result too much. The variance of $\xi_t$ can sometimes be time-dependent: for example, $\xi_t$ could be dependent on the parameter $\theta_t$. 
 
 In practice, it turns out that larger gradient noise can lead to better generalization performance, as long as the algorithm can optimize under such level of noise. The intuition behind this phenomenon is that SGD converges to a ``flat'' global minimum, i.e. one with small curvature and small noise covariance. On the other hand, if you have a ``sharp'' local/global minimum with a large amount of noise, SGD will not converge to it stably. There are a number of works on this topic~\cite{haochen2020shape,blanc2020implicit}, but a lot of questions in this space remained to be answered.

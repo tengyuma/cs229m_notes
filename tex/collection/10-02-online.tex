@@ -257,7 +257,7 @@ p_t = \argmin_{p \in \Delta(N)} \sum_{i=1}^{t+1} f_t(p) - \frac{1}{\eta} H(p).
 
 \begin{lemma}[Gibbs variational principle] \label{lec17:lem:gibbs}
 Let $\nu, \mu$ be probability distributions on $[N]$. Then 
-\al{\sup_\nu \left(\E_\nu[f] - KL(\nu||\mu)\right) = \log \E_\mu \left[e^f\right],} where $\E_\nu[f] = \E_{x \sim \nu} [f(x)] = \langle v, f\rangle$ and $\E_\mu \left[e^f\right] = \E_{x \sim \mu}  \left[e^{f(x)}\right]$. Moreover, the optimal solution is attained at \al{\nu(x) \propto \mu(x) \cdot e^{f(x)}.}
+\al{\sup_\nu \left(\Exp_\nu[f] - KL(\nu||\mu)\right) = \log \Exp_\mu \left[e^f\right],} where $\Exp_\nu[f] = \Exp_{x \sim \nu} [f(x)] = \langle v, f\rangle$ and $\Exp_\mu \left[e^f\right] = \Exp_{x \sim \mu}  \left[e^{f(x)}\right]$. Moreover, the optimal solution is attained at \al{\nu(x) \propto \mu(x) \cdot e^{f(x)}.}
 \end{lemma}
 
 Intuitively, Lemma~\ref{lec17:lem:gibbs} says that taking the supremum over distributions $\mu$ of a linear function plus the KL divergence as the regularizer will give us the same distribution as exponentiating $f$. 
@@ -266,7 +266,7 @@ If we take $\mu$ to be the uniform distribution on $[N]$ and replace $f$ with $-
 
 \begin{corollary}\label{lec17:cor:gibbs}
 	Let $\nu$ be a probability distribution. Then, 
-	$\E_\nu[f] - H(\nu)$ is minimized at $\nu(x) \propto e^{-f(x)}$.
+	$\Exp_\nu[f] - H(\nu)$ is minimized at $\nu(x) \propto e^{-f(x)}$.
 \end{corollary} 
 
 \begin{proof}
@@ -277,7 +277,7 @@ KL(\nu||\mu) &= \sum_x \nu(x) \log \frac{\nu(x)}{\mu(x)} \\
 &= \log N - H(\nu).
 \end{align}
 
-So $\sup_\nu \left(\E_\nu[-f] - KL(\nu||\mu)\right) = -\inf_\nu \left(\E_\nu[f] - H(\nu) + \log N\right)$. This means that the value of $\nu$ that attains the infimum of $\E_\nu[f] - H(\nu)$ is the same $\nu$ attaining the supremum of $\E_\nu[-f] - KL(\nu||\mu)$, which by Lemma~\ref{lec17:lem:gibbs} is proportional to $e^{-f(x)}$.
+So $\sup_\nu \left(\Exp_\nu[-f] - KL(\nu||\mu)\right) = -\inf_\nu \left(\Exp_\nu[f] - H(\nu) + \log N\right)$. This means that the value of $\nu$ that attains the infimum of $\Exp_\nu[f] - H(\nu)$ is the same $\nu$ attaining the supremum of $\Exp_\nu[-f] - KL(\nu||\mu)$, which by Lemma~\ref{lec17:lem:gibbs} is proportional to $e^{-f(x)}$.
 \end{proof}
 
 We now apply the Gibbs variational principle to the expert problem. Notice that our FTRL update for the expert problem at time $t$ can be written as

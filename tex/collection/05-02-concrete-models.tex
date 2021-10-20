@@ -24,21 +24,21 @@ Generally speaking, there are two methods with which we can bound the Rademacher
 We start with the proof of \eqref{lec7:eqn:linear-sample}. By definition,
 \begin{align}
     R_S(\mathcal{H}) 
-    &= \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} }
-    \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} }
-    \\&= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_2 }
+    &= \Exp_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} }
+    \\&= \frac{1}{n} \Exp_\sigma\sbr{ \sup_{\Norm{w}_2 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} }
+    \\&= \frac{B}{n} \Exp_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_2 }
         &&\text{($\textstyle\sup_{\Norm{w}_2 \le B} \langle w,v\rangle =B\Norm{v}_2$)}
-    \\&\leq \frac{B}{n} \sqrt{ \E_\sigma\sbr{\Norm{ \sum_{i=1}^n \sigma_i x\sp{i} }_2^2} }
+    \\&\leq \frac{B}{n} \sqrt{ \Exp_\sigma\sbr{\Norm{ \sum_{i=1}^n \sigma_i x\sp{i} }_2^2} }
         &&\text{(Jensen's ineq. for $\alpha \mapsto \alpha^2$)} 
-    \\&= \frac{B}{n} \sqrt{ \E_\sigma \sbr{\sum_{i=1}^n \rbr{\sigma_i^2 \Norm{x\sp{i}}_2^2 + \inprod{\sigma_ix\sp{i},\sum_{j \ne i}^n \sigma_j x\sp{j}} }} }
+    \\&= \frac{B}{n} \sqrt{ \Exp_\sigma \sbr{\sum_{i=1}^n \rbr{\sigma_i^2 \Norm{x\sp{i}}_2^2 + \inprod{\sigma_ix\sp{i},\sum_{j \ne i}^n \sigma_j x\sp{j}} }} }
     \\&= \frac{B}{n} \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
-        &&\text{($\sigma_i$ indep. and $\E[\sigma_i]=0$)}
+        &&\text{($\sigma_i$ indep. and $\Exp[\sigma_i]=0$)}
 \end{align}
 This completes the proof of \eqref{lec7:eqn:linear-sample} for the empirical Rademacher complexity. The bound on the average Rademacher complexity in \eqref{lec7:eqn:linear} follows from taking the expectation of both sides to get
 \begin{equation}
-    R_n(\mathcal{H}) = \E\sbr{ R_S(\mathcal{H}) }
-    = \frac{B}{n} \E\sbr{ \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2} }
-    \le \frac{B}{n} \sqrt{ \sum_{i=1}^n \E\sbr{\Norm{x\sp{i}}_2^2} }
+    R_n(\mathcal{H}) = \Exp\sbr{ R_S(\mathcal{H}) }
+    = \frac{B}{n} \Exp\sbr{ \sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2} }
+    \le \frac{B}{n} \sqrt{ \sum_{i=1}^n \Exp\sbr{\Norm{x\sp{i}}_2^2} }
     \le \frac{BC}{\sqrt{n}},
 \end{equation}
 where the first inequality is another application of Jensen's inequality, and the second follows from the assumption $\Exp_{x \sim P}\sbr{\Norm{x}_2^2} \leq C^2$.
@@ -70,7 +70,7 @@ To prove the theorem, we will need Massart's lemma, which provides a bound for t
         \end{equation}
         Then, for Rademacher variables $\sigma = (\sigma_1,\sigma_2,\dots,\sigma_n) \in \R^n$,
         \begin{equation}
-            \E_\sigma \left[ \sup_{v\in \mathcal{Q}} \frac{1}{n}\inprod{\sigma,v} \right] \leq M\sqrt{\frac{2\log|\mathcal{Q}|}{n}}.
+            \Exp_\sigma \left[ \sup_{v\in \mathcal{Q}} \frac{1}{n}\inprod{\sigma,v} \right] \leq M\sqrt{\frac{2\log|\mathcal{Q}|}{n}}.
         \end{equation}
         As a corollary, if $\mathcal{F}$ is a set of real-valued functions satisfying
         \begin{equation}
@@ -90,15 +90,15 @@ We will now prove Theorem \ref{lec7:thm:l1-thm}:
 \begin{proof}[Proof of Theorem \ref{lec7:thm:l1-thm}]
     By definition,
     \begin{align}
-        R_S(\mathcal{H}) &= \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} } \\
-        &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1\le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
-        &= \frac{B}{n} \E_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_\infty  },
+        R_S(\mathcal{H}) &= \Exp_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \frac{1}{n} \sum_{i=1}^n\sigma_i \inprod{w,x\sp{i}} } \\
+        &= \frac{1}{n} \Exp_\sigma\sbr{ \sup_{\Norm{w}_1\le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \Exp_\sigma\sbr{ \Norm{\sum_{i=1}^n \sigma_i  x\sp{i}}_\infty  },
     \end{align}
     
     where the last equality is because $\sup_{\Norm{w}_1 \leq B}\inprod{w,v} = B\Norm{v}_\infty$, i.e., the $\ell_\infty$-norm is the dual of the $\ell_1$-norm, which is a consequence of H\"older's inequality. However, the $\ell_\infty$-norm is difficult to simplify further. Instead, we use the fact that $\sup_{\Norm{w}_1 \leq 1} \inprod{w,v}$ for any $v \in \R^d$ is always attained at one of the vertices $\mathcal{W} = \bigcup_{i=1}^d \{-e_i,e_i\}$, where $e_i \in \R^d$ is the $i$-th coordinate unit vector. Defining the restricted hypothesis class $\bar{\mathcal{H}} = \{x \mapsto \inprod{w,x} \mid w \in \mathcal{W}\} \subset \mathcal{H}$, this yields
     \begin{align}
-        R_S(\mathcal{H}) &= \frac{1}{n} \E_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
-        &= \frac{B}{n} \E_\sigma\sbr{ \max_{w\in\mathcal{W}} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        R_S(\mathcal{H}) &= \frac{1}{n} \Exp_\sigma\sbr{ \sup_{\Norm{w}_1 \le B} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
+        &= \frac{B}{n} \Exp_\sigma\sbr{ \max_{w\in\mathcal{W}} \inprod{w,\sum_{i=1}^n\sigma_i x\sp{i}} } \\
         &= BR_S(\bar{\mathcal{H}}).
     \end{align}
     
@@ -170,7 +170,7 @@ We start with a somewhat weak bound which introduces the technical tools we need
     \begin{equation}
         \mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2 \leq B_w,\ \Norm{u_i}_2 \leq B_u,\ \forall i \in \{1,2,\dots,m\} }, \label{lec7:eqn:thm_3}
     \end{equation}
-    and suppose $\E\sbr{\Norm{x}_2^2} \leq C^2$. Then
+    and suppose $\Exp\sbr{\Norm{x}_2^2} \leq C^2$. Then
     \begin{align}
         R_n(\mathcal{H}) \le 2 B_w B_u C\sqrt{\frac{m}{n}}.
     \end{align}
@@ -183,17 +183,17 @@ Nevertheless, we now derive this bound.
     By definition,
     \begin{align}
         R_S(\mathcal{H}) 
-        &= \E_\sigma\sbr{ \sup_\theta \frac{1}{n} \sum_{i=1}^n \sigma_i \inprod{w,\phi(Ux\sp{i})} }
-        \\&= \frac{1}{n} \E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \sup_{\Norm{w}_2 \leq B_w} \inprod{w,\sum_{i=1}^n \sigma_i \phi(Ux\sp{i})} }
-        \\&= \frac{B_w}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
+        &= \Exp_\sigma\sbr{ \sup_\theta \frac{1}{n} \sum_{i=1}^n \sigma_i \inprod{w,\phi(Ux\sp{i})} }
+        \\&= \frac{1}{n} \Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \sup_{\Norm{w}_2 \leq B_w} \inprod{w,\sum_{i=1}^n \sigma_i \phi(Ux\sp{i})} }
+        \\&= \frac{B_w}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
             &&\text{($\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
-        \\&\leq \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
+        \\&\leq \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
             &&\text{($\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
-        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
-        \\&= \frac{B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
-        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
+        \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
+        \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
             &&\text{(by Lemma \ref{lec8:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
-        \\&\leq \frac{2B_w\sqrt{m}}{n}\E_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
+        \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
     \end{align}
     where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
     
@@ -204,8 +204,8 @@ Nevertheless, we now derive this bound.
     
     Taking the expectation of both sides and using similar steps to those in the proof of Theorem~\ref{lec7:thm:l1-thm} gives us
     \begin{align}
-        R_n(\mathcal{H})  &= \E\left[ R_S(\mathcal{H})\right] \\
-        &\leq \frac{2B_wB_u\sqrt{m}}{n} \E\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
+        R_n(\mathcal{H})  &= \Exp\left[ R_S(\mathcal{H})\right] \\
+        &\leq \frac{2B_wB_u\sqrt{m}}{n} \Exp\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
         &\leq \frac{2B_wB_u\sqrt{m}}{n} C\sqrt{n} \\
         &= 2 B_w B_u C\sqrt{\frac{m}{n}},
     \end{align}
@@ -263,16 +263,16 @@ R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
 \allowdisplaybreaks
 \al{
-R_S(\cH) &= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
-&= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \phi\left(u_j ^ T x\sp{i}\right) \right] \right] &&\text{(by dfn of $f_\theta$)} \\
-&=  \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \norm{u_j}_2  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right]  
+R_S(\cH) &= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
+&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \phi\left(u_j ^ T x\sp{i}\right) \right] \right] &&\text{(by dfn of $f_\theta$)} \\
+&=  \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \norm{u_j}_2  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right]  
     && \text{(by positive homogeneity of $\phi$)}\\
-&= \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right] \\ 
-&\leq \frac{1}{n}\E_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
-&\leq \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq \boundsforcomp$)} \\
-&=  \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{\boundsforcomp}{n} \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{2\boundsforcomp}{n}  \E_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
+&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right] \\ 
+&\leq \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
+&\leq \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq \boundsforcomp$)} \\
+&=  \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
+&\le \frac{2\boundsforcomp}{n}  \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
 &= 2\boundsforcomp R_S(\cH '),
 }
 where $\cH' = \l\{x \mapsto \phi(\bar{u}^\top x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^\top x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.

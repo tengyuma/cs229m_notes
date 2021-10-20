@@ -133,13 +133,13 @@ In this section we prepare the ground work for the proof of Theorem~\ref{lec13:t
 
 We start by showing several basic properties about $\hatL(\beta)$. Note that for any fixed vector $v\in\R^{d}$ and $x\in \R^{d}$, when $x$ is drawn from $\cN(0,I)$, we have
 \begin{equation}\label{lec13:eqn:gaussian-product}
-    \E \l[\langle x, v\rangle^2 \r]=\E \l[ v^\top xx^\top v \r]=v^\top\E \l[ xx^\top \r]v=\|v\|_2^2.
+    \Exp \l[\langle x, v\rangle^2 \r]=\Exp \l[ v^\top xx^\top v \r]=v^\top\Exp \l[ xx^\top \r]v=\|v\|_2^2.
 \end{equation}
 
 It follows that 
 \begin{align}
-    L(\beta)&=\frac{1}{4}\E_{x\sim \cN(0,I)} \l[(y-\langle \beta\odot\beta,x\rangle^2 \r] \\
-    &=\frac{1}{4}\E_{x\sim \cN(0,I)} \l[\langle \beta^\star\odot\beta^\star-\beta\odot\beta,x\rangle^2 \r] &\text{(by definition of $y$)} \\
+    L(\beta)&=\frac{1}{4}\Exp_{x\sim \cN(0,I)} \l[(y-\langle \beta\odot\beta,x\rangle^2 \r] \\
+    &=\frac{1}{4}\Exp_{x\sim \cN(0,I)} \l[\langle \beta^\star\odot\beta^\star-\beta\odot\beta,x\rangle^2 \r] &\text{(by definition of $y$)} \\
     &=\frac{1}{4} \l\| \beta^\star\odot\beta^\star-\beta\odot\beta \r\|_2^2.\label{lec13:eqn:loss-form} &\text{(by \eqref{lec13:eqn:gaussian-product})}
 \end{align}
 Note that \eqref{lec13:eqn:loss-form} is the metric that we use to characterize how close $\beta$ is to the ground-truch parameter $\beta^\star$ (see \eqref{lec13:eqn:non-linear-main}).

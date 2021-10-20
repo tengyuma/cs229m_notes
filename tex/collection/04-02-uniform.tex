@@ -261,8 +261,8 @@ If we want to bound the generalization gap by the average Rademacher complexity 
 %
 %Now we can mathematically re-express the empirical Rademacher complexity as an inner product:
 %\begin{align}
-%R_S(\cF) &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
-%&= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n}\langle\sigma, v\rangle \r],
+%R_S(\cF) &= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
+%&= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{v\in Q} \frac{1}{n}\langle\sigma, v\rangle \r],
 %\end{align}
 %where $\sigma=(\sigma_1,\dots,\sigma_n)$. (See Figure \ref{lec6:fig:rs-innerprod} for an illustration of this idea.) This perspective will be helpful later on when proving bounds on the empirical Rademacher complexity.
 
@@ -279,11 +279,11 @@ Let $\cF$ be a family of functions mapping $Z \mapsto \R$ and define $\cF' = \{f
 \begin{proof}
 We will prove here that empirical Rademacher complexity is translation invariant.
 \begin{align}
-R_S(\cF') &= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f'\in \cF'} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
-&= \E_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i (f(z_i)+c_0) \r] \\
-&= \E_{\sigma_1,\dots, \sigma_n} \l[ \frac{1}{n} \sum^n_{i=1} \sigma_i c_0 + \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
-&= \E_{\sigma_1,\dots, \sigma_n} \l[\sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] = R_S(\cF), \label{lec6:eqn:rs-translation}
+R_S(\cF') &= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f'\in \cF'} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
+&= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i (f(z_i)+c_0) \r] \\
+&= \Exp_{\sigma_1,\dots, \sigma_n} \l[ \frac{1}{n} \sum^n_{i=1} \sigma_i c_0 + \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] \\
+&= \Exp_{\sigma_1,\dots, \sigma_n} \l[\sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r] = R_S(\cF), \label{lec6:eqn:rs-translation}
 \end{align}
-where \eqref{lec6:eqn:rs-translation} follows because $\E_{\sigma_1,\dots,\sigma_n} \frac{1}{n}\sum_{i=1}^n \sigma_i c_0 = 0$, since the $\sigma_i$'s are Rademacher random variables.
+where \eqref{lec6:eqn:rs-translation} follows because $\Exp_{\sigma_1,\dots,\sigma_n} \frac{1}{n}\sum_{i=1}^n \sigma_i c_0 = 0$, since the $\sigma_i$'s are Rademacher random variables.
 \end{proof}
 
