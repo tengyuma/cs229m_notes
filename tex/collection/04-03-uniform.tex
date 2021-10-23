@@ -176,20 +176,20 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
 \end{figure}
 
 \begin{proof} 
-    Let $\epsilon_0 = \sup_{f\in \cF} \max_i \abs{f(z_i)}$, so that $\forall v \in \cQ$,
+    Let $\epsilon_0 = \sup_{f\in \cF} \max_i \abs{f(z_i)}$, so that for all $v \in \cQ$,
     \begin{equation}
         \epsilon_0 \ge \sqrt{\frac 1 n \sum_{i=1}^nf(z_i)^2}  = \sqrt{\frac 1 n \sum_{i=1}^n \norm{v}_2^2}.
     \end{equation}
     
-    Define $\epsilon_1 = 2^{-1}\epsilon_0, \epsilon_2 = 2^{-2}\epsilon_0, \epsilon_j = 2^{-j}\epsilon_0$ and let $\cC_j$ be an $\epsilon_j$-cover of $\cQ$. Then, $\cC_0$ is the coarsest cover of $\cQ$, and as $j$ increases, we obtain progressively more fine-grained covers $\cC_j$.
+    Define $\epsilon_j = 2^{-j}\epsilon_0$ and let $\cC_j$ be an $\epsilon_j$-cover of $\cQ$. Then, $\cC_0$ is the coarsest cover of $\cQ$, and as $j$ increases, we obtain progressively more fine-grained covers $\cC_j$. We use this sequence of covers to define a telescoping series that equals $v$; the terms in this series can then be analyzed using tools that we have developed in the prequel. 
     
-    We use this sequence of covers to define a telescoping series that equals $v$ whose terms can be analyzed using tools that we have developed in the prequel. In particular, for $v \in \cQ$, let $\pi_i(v)$ denote the nearest neighbor of $v$ in $\cC_i$. Taking $\pi_0(v) = 0$, it follows from our definition of $\cC_i$ that
+    For $v \in \cQ$, let $\pi_i(v)$ denote the nearest neighbor of $v$ in $\cC_i$. Taking $\pi_0(v) = 0$, it follows from our definition of $\cC_i$ that
     \begin{align}
         v &= \pi_1(v) + \sum_{i = 2}^\infty (\pi_i(v) - \pi_{i - 1}(v)) \\
-        &= \sum_{i = 1}^\infty (\pi_i(v) - \pi_{i - 1}(v)).
+        &= \sum_{i = 1}^\infty (\pi_i(v) - \pi_{i - 1}(v)). \label{lec9:eqn:telescope_chain}
     \end{align}
     
-    By definition, $\rho(v, \pi_i(v)) \le \epsilon_i$ and thus $\frac 1 {\sqrt n} \norm{v - \pi_i(v)}_2 \le \epsilon_i$. Examining our previous expression of interest, 
+    By definition, $\rho(v, \pi_i(v)) \le \epsilon_i$ and thus $\frac 1 {\sqrt n} \norm{v - \pi_i(v)}_2 \le \epsilon_i$. Substituting \eqref{lec9:eqn:telescope_chain} in the Rademacher complexity we aim to bound, we obtain
     \al{
         \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma}\r]&= \Exp\l[\sup_{v \in \cQ} \frac 1 n \sum_{i=1}^\infty \inprod{\pi_i(v)-\pi_{i - 1}(v), \sigma}\r]\\
         &\le \Exp\l[\sum_{i=1}^\infty \sup_{u_i \in \cC_i, u_{i - 1} \in \cC_{i - 1}} \frac 1 n\inprod{u_i - u_{i - 1}, \sigma}\r]\\
@@ -199,7 +199,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
     \begin{equation}
         \Exp\l[ \sup_{u_i \in \cC_i, u_{i - 1} \in \cC_{i - 1}} \frac 1 n\inprod{u_i-u_{i - 1}, \sigma}\r]
     \end{equation}
-    is a Rademacher complexity defined over the \emph{finite} space $\cC_i \times \cC_{i - 1}$, so we can use Massart's lemma to obtain a tractable upper bound. To do so, we must first compute an upper bound on $\frac{1}{\sqrt{n}} \norm{u_i - u_{i - 1}}_2$, i.e. compute $M$ from Proposition~\ref{lec6:prop:massartlemma}:
+    is a Rademacher complexity defined over the \emph{finite} space $\cC_i \times \cC_{i - 1}$, so we can use Proposition~\ref{lec6:prop:massartlemma} (Massart's Lemma) to obtain a tractable upper bound. To do so, we must first compute an upper bound on $\frac{1}{\sqrt{n}} \norm{u_i - u_{i - 1}}_2$:
     \al{
         \frac 1 {\sqrt n} \norm{u_i - u_{i - 1}}_2 &= \frac 1 {\sqrt{n}} \norm{(u_i - v) - (u_{i - 1} - v)}_2\\
         &\le \frac 1 {\sqrt{n}} \l(\norm{u_i - v}_2 - \norm{u_{i - 1} - v}_2 \r)\\
@@ -223,7 +223,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
         \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} \label{lec9:eqn:dudley_rriemann} \\
         &\le \frac{12}{\sqrt{n}} \int_{0}^{\epsilon_0} \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon, \label{lec9:eqn:dudley_almost}
     \end{align}
-    where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$ (illustrated in Figure~\ref{lec9:fig:chaining_riemann}).
+    where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$. The monotonicity of $\log N(\epsilon, \cF, L_2[P_n])$ is also illustrated in Figure~\ref{lec9:fig:chaining_riemann}.
 
     \begin{figure}[h!]
         \begin{center}
@@ -235,7 +235,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
 
     To complete the proof, observe that $\log N(\epsilon, \cF, L_2[P_n]) = 0$ for all $\epsilon > \epsilon_0$. This allows us to extend the upper limit of the integral given by \eqref{lec9:eqn:dudley_almost} to $\infty$ and yields the desired result:
     \begin{align}
-        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \frac{12}{\sqrt{n}} \int_{0}^\infty \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon
+        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \frac{12}{\sqrt{n}} \int_{0}^\infty \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon.
     \end{align}
 \end{proof}
 
