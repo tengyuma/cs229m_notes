@@ -220,7 +220,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
     
     Recognizing that $\epsilon_i - \epsilon_{i + 1} = \frac{\epsilon_i}{2}$, we can rewrite \eqref{lec9:eqn:dudley_sumbound} as a right Riemann sum. In particular,
     \begin{align}
-        \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} \\
+        \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} \label{lec9:eqn:dudley_rriemann} \\
         &\le \frac{12}{\sqrt{n}} \int_{0}^{\epsilon_0} \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon, \label{lec9:eqn:dudley_almost}
     \end{align}
     where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$ (illustrated in Figure~\ref{lec9:fig:chaining_riemann}).
@@ -229,7 +229,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
         \begin{center}
             \includegraphics[width=.6\textwidth]{figures/chaining_riemann.png}
         \end{center}
-        \caption{We observe that $\log N(\epsilon, \cF, L_2[P_n])$ is monotone decreasing in $\epsilon$. Thus, the right Riemann sum will underestimate the area under this curve.}
+        \caption{We observe that $\log N(\epsilon, \cF, L_2[P_n])$ is monotone decreasing in $\epsilon$. As a result, the right Riemann sum in \eqref{lec9:eqn:dudley_rriemann} will be upper bounded by the integral.}
         \label{lec9:fig:chaining_riemann}
     \end{figure}    
 
