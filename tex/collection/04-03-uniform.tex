@@ -141,7 +141,7 @@ If $\cF$ is a function class from $Z$ to $\R$, then
 Note that this theorem does not require the functions to be bounded.
 
 \begin{remark}
-\tnote{I like the idea of moving the intuitions before the theorem, though let's reserve remark environment for more or less modularized discussions. So I think we can just directly have the texts here without the remark environment}
+	\tnote{let's use remark environment only for modularized points (such as interpretation or extensino of theorems); here we can leave this as plain texts without the remark environment}
 It is not obvious how \eqref{lec9:eqn:dudley} improves upon the one-step discretization bound given by \eqref{lec8:eqn:rc-covering-bd}. At a high level, we can interpret this bound as removing the discretization error term by averaging over different scales of $\epsilon$.  But before we can explicitly prove this claim, we motivate our approach. In the proof of Theorem~\ref{lec8:thm:rc-covering-bd}, we approximated $v$ with $v' + z$ where $v'$ is the closest point to $v$ in the minimal $\epsilon$-cover of $\cQ$, and $z$ is the vector between $v'$ and $v$. In particular,
 \begin{equation}
     \frac 1 n \inprod{v, \sigma} = \frac 1 n \inprod{v', \sigma} + \frac 1 n \inprod{z, \sigma} \label{lec9:eqn:disc_decomp}
@@ -188,7 +188,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
     Define $\epsilon_j = 2^{-j}\epsilon_0$ and let $\cC_j$ be an $\epsilon_j$-cover of $\cQ$. Then, $\cC_0$ is the coarsest cover of $\cQ$, and as $j$ increases, we obtain progressively more fine-grained covers $\cC_j$. We use this sequence of covers to define a telescoping series that equals $v$; the terms in this series can then be analyzed using tools that we have developed in the prequel. 
     
     For $v \in \cQ$, let $\pi_i(v)$ denote the nearest neighbor of $v$ in $\cC_i$. 
-    \tnote{I don't know why change to $\pi_i(v)$. Then should be $u_i$}
+    \tnote{I'm not sure why change to $\pi_i(v)$. Then should be $u_i$}
     Taking $\pi_0(v) = 0$, it follows from our definition of $\cC_i$ that
     \begin{align}
         v &= \pi_1(v) + \sum_{i = 2}^\infty (\pi_i(v) - \pi_{i - 1}(v)) \\
@@ -229,13 +229,13 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
         \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} \label{lec9:eqn:dudley_rriemann} \\
         &\le \frac{12}{\sqrt{n}} \int_{0}^{\epsilon_0} \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon, \label{lec9:eqn:dudley_almost}
     \end{align}
-    where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$. The monotonicity of $\log N(\epsilon, \cF, L_2[P_n])$ is also illustrated in Figure~\ref{lec9:fig:chaining_riemann}.
+\tnote{expand this more; please see how I explain this in the lecture. I think I made very intuitive but those intuitions are lost here}    where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$. The monotonicity of $\log N(\epsilon, \cF, L_2[P_n])$ is also illustrated in Figure~\ref{lec9:fig:chaining_riemann}. 
 
     \begin{figure}[h!]
         \begin{center}
             \includegraphics[width=.6\textwidth]{figures/chaining_riemann.png}
         \end{center}
-        \caption{We observe that $\log N(\epsilon, \cF, L_2[P_n])$ is monotone decreasing in $\epsilon$. As a result, the right Riemann sum in \eqref{lec9:eqn:dudley_rriemann} will be upper bounded by the integral.\tnote{improve the figure according to my email}}
+        \caption{We observe that $\log N(\epsilon, \cF, L_2[P_n])$ is monotone decreasing in $\epsilon$. As a result, the right Riemann sum in \eqref{lec9:eqn:dudley_rriemann} will be upper bounded by the integral.\tnote{improve the figure according to my email} \tnote{the caption perhaps should be improved or we should refer to the particular part of the texts. The current caption is not quite understandable}}
         \label{lec9:fig:chaining_riemann}
     \end{figure}    
 
