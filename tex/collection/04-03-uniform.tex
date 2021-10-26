@@ -37,12 +37,16 @@ Another corollary of this is that the empirical Rademacher complexity only depen
     \end{align}
     \label{lec6:prop:massartlemma}
 \end{proposition}
-We prove a (slightly) simplified version of this result in Problem 3(c) of Homework 2, so we omit the proof of Massart's lemma here. 
+We prove a (slightly) simplified version of this result in Problem 3(c) of Homework 2, so we omit the proof of Massart's lemma here. Using Massart's lemma, we can also bound the Rademacher complexity in terms of $\cF$. Restating the assumption accordingly, 
 
-\begin{remark}
-    Using Massart's lemma, we can bound the Rademacher complexity without referring to $\cQ$. Restating the assumption accordingly, we observe that if $\sqrt{\frac{1}{n}\sum_{i=1}^n f(z_i)^2} \le M$ for all $f \in \cF$, then $R_s(\cF) \le \sqrt{\frac{2M^2\log \abs{\cF}}{n}}$. \tnote{I probably would like to have an displayed equation or even a formal statement for this given that it might be used in the future?} Note that this corollary yields a looser bound than Massart's lemma since $|\cQ| \leq |\cF|$. 
-    \tnote{$R_s$ to $R_S$}
-\end{remark}
+\begin{corollary}
+    Let $\cF$ be a collection of functions mapping $Z \mapsto \mathbb{R}$. If $\sqrt{\frac{1}{n}\sum_{i=1}^n f(z_i)^2} \le M$ for all $f \in \cF$, then 
+    \begin{align}
+        R_S(\cF) \le \sqrt{\frac{2M^2\log \abs{\cF}}{n}}.
+    \end{align}
+    \label{lec6:cor:massartlemmafunc}
+\end{corollary}
+Note that Corollary~\ref{lec6:cor:massartlemmafunc} yields a looser bound than Massart's lemma since $|\cQ| \leq |\cF|$. 
     
 In practice, we rarely apply Massart's lemma directly since $|\cQ|$ is typically infinite. In the sequel, we discuss alternative approaches to bounding the Rademacher complexity that are appropriate for this setting.
 
@@ -62,20 +66,19 @@ The \emph{covering number} is defined as the minimum size of an $\epsilon$-cover
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[width=.5\textwidth]{figures/onestep_bound.png}
+		\includegraphics[width=.5\textwidth]{figures/chaining_1.png}
 	\end{center}
-	\caption{We can visualize the $\epsilon$-cover $\cC$ by depicting a set of $\epsilon$-balls that cover the output space $\cQ$. The yellow circles denote the $\epsilon$-neighborhoods of the covering points $v \in \cC$.\tnote{the figure needs to be improved to be more consistent with the following figure, see my email.}
-	}
+	\caption{We can visualize the $\epsilon$-cover $\cC$ by depicting a set of $\epsilon$-balls that cover the output space $\cQ$. The yellow circles denote the $\epsilon$-neighborhoods of the covering points $u_i \in \cC$.}
 	\label{lec9:fig:eps-cover}
 \end{figure}
 
 In subsequent derivations, we will use the metric $\rho(v,v') = \frac 1 {\sqrt{n}} \norm{v-v'}_2$. 
 
 \begin{remark}
-We normalize the $\ell_2$ norm in $\rho$ by $\frac{1}{\sqrt{n}}$ to simplify comparisons to the functional analysis view of the Rademacher complexity. In the literature, the $\epsilon$-cover of $\cQ$ defined above is also referred to as an $\epsilon$-cover of the function class $\cF$ under the $L_2[P_n]$ metric.\footnote{$P_n$ denotes the empirical distribution, i.e. the uniform distribution over the observations $z_1,\dots,z_n$. More generally the $L_p[Q]$ metric is defined by $\Exp_Q \left [\left (f(z) - f'(z) \right )^p \right]^{1/p}$.} \tnote{I think it's more typical to have $L_2(P_n)$---let's change it to parenthesis because I perhaps won't be able to consistently use bracket in the future}
+We normalize the $\ell_2$ norm in $\rho$ by $\frac{1}{\sqrt{n}}$ to simplify comparisons to the functional analysis view of the Rademacher complexity. In the literature, the $\epsilon$-cover of $\cQ$ defined above is also referred to as an $\epsilon$-cover of the function class $\cF$ under the $L_2(P_n)$ metric.\footnote{$P_n$ denotes the empirical distribution, i.e. the uniform distribution over the observations $z_1,\dots,z_n$. More generally the $L_p(Q)$ metric is defined by $\Exp_Q \left [\left (f(z) - f'(z) \right )^p \right]^{1/p}$.}
 In particular, 
 \begin{align}
-L_2[P_n](f,f') = \sqrt{ \frac 1 n \sum_{i=1}^n (f(z_i) - f'(z_i))^2 }.
+L_2(P_n)(f,f') = \sqrt{ \frac 1 n \sum_{i=1}^n (f(z_i) - f'(z_i))^2 }.
 \end{align}
 Recall we have established the following correspondences between the set of functions $\cF$ and the output space $\cQ$:
 \begin{align}
@@ -96,20 +99,20 @@ Equipped with the definition of minimal $\epsilon$-covers, we can prove the foll
 \begin{theorem}\label{lec8:thm:rc-covering-bd}
 Let $\cF$ be a family of functions $Z \mapsto [-1,1]$. Then
 \begin{equation}
-R_S(\cF) \le \inf_{\epsilon > 0} \rbr{ \epsilon + \sqrt{ \frac {2\log N(\epsilon, \cF, L_2[P_n])} n } }. \label{lec8:eqn:rc-covering-bd}
+R_S(\cF) \le \inf_{\epsilon > 0} \rbr{ \epsilon + \sqrt{ \frac {2\log N(\epsilon, \cF, L_2(P_n))} n } }. \label{lec8:eqn:rc-covering-bd}
 \end{equation}
 \end{theorem}
 
-The $\epsilon$ term can be thought of as the discretization error, while the second term follows from Proposition~\ref{lec6:prop:massartlemma}.
+The $\epsilon$ term can be thought of as the discretization error, while the second term is the Rademacher complexity of the finite $\epsilon$-cover. The precise form of this complexity bound follows from Proposition~\ref{lec6:prop:massartlemma}.
 
 \begin{proof}
-Fix any $\epsilon > 0$. Let $\cC$ be the minimal $\epsilon$-cover $\cC$ of $\cQ$ with respect to the metric $\rho(v,v') = \frac 1 {\sqrt{n}} \norm{v-v'}_2$. 
+Fix any $\epsilon > 0$. Let $\cC$ be the minimal $\epsilon$-cover of $\cQ$ with respect to the metric $\rho(v,v') = \frac 1 {\sqrt{n}} \norm{v-v'}_2$. Note that $\abs{\cC} = N(\epsilon, \cQ, \frac{1}{\sqrt{n}} \norm{\cdot}_2) = N(\epsilon, \cF, L_2(P_n))$.
 
-For every point $v\in \cQ$, $v=v'+z$, where $v'\in \cC$ and $z$ is small (specifically, $\frac 1 {\sqrt{n}} \norm{z}_2 \le \epsilon$). This gives
+We aim to bound $R_S(\cF) = \Exp_\sigma[\sup_{v \in \cQ} \frac{1}{n} \inprod{v, \sigma}]$ by approximating $v$ with $v' \in \cC$. In particular, for every point $v \in \cQ$, choose $v' \in \cC$ such that $\rho(v, v') \leq \epsilon$. and $z$ is small (specifically, $\frac 1 {\sqrt{n}} \norm{z}_2 \le \epsilon$). This gives
 \al{
-    \frac 1 n \inprod{v, \sigma} &= \frac 1 n \inprod{v',\sigma} + \frac 1 n \inprod{z, \sigma}\\
+    \frac 1 n \inprod{v, \sigma} &= \frac 1 n \inprod{v',\sigma} + \frac 1 n \inprod{v - v', \sigma}\\
     &\le \frac 1 n \inprod{v', \sigma} + \frac 1 n \norm{z}_2 \norm{\sigma}_2 
-        &&\text{(Cauchy-Schwarz)} \label{lec8:eqn:cs-step}\\
+        &&\text{($z \defeq v - v'$, Cauchy-Schwarz)} \label{lec8:eqn:cs-step}\\
     &\le \frac 1 n \inprod{v', \sigma} + \epsilon.
         &&\text{(since $\norm{z}_2\le \sqrt{n}\epsilon$ and $\norm{\sigma}_2 \le \sqrt{n}$)}
 }
@@ -117,9 +120,10 @@ Taking the expectation of the supremum on both sides of this inequality gives
 \al{
     R_S(\cF) &= \Exp_\sigma \sbr{\sup_{v\in \cQ} \frac 1 n \inprod{v,\sigma} }\\
     &\le \Exp_\sigma \sbr{\sup_{v'\in \cC} \rbr{\frac 1 n \inprod{v',\sigma} + \epsilon}}\\ 
+    &= \epsilon + \Exp_\sigma \sbr{\sup_{v'\in \cC} \rbr{\frac 1 n \inprod{v',\sigma}}} \\
     &\le \epsilon + \sqrt{ \frac {2\log \abs{\cC}} n } &\text{(Proposition~\ref{lec6:prop:massartlemma})} \\
     &= \epsilon + \sqrt{ \frac {2\log N(\epsilon, \cQ , \rho)} n } \\
-    &= \epsilon + \sqrt{ \frac {2\log N(\epsilon, \cF , L_2[P_n])} n } &\text{(Remark~\ref{lec8:rmk:l2pncover})}
+    &= \epsilon + \sqrt{ \frac {2\log N(\epsilon, \cF , L_2(P_n))} n } &\text{(Remark~\ref{lec8:rmk:l2pncover})}
 }
 Since the argument above holds for any $\epsilon > 0$, we can take the infimum over all $\epsilon$ to arrive at Equation \eqref{lec8:eqn:rc-covering-bd}.
 
@@ -127,33 +131,34 @@ Since the argument above holds for any $\epsilon > 0$, we can take the infimum o
 
 \subsec{Chaining and Dudley's theorem}
 
-While Theorem \ref{lec8:thm:rc-covering-bd} is useful, the bound in Equation \eqref{lec8:eqn:cs-step} is rarely tight as $z$ might not be perfectly correlated with $\sigma$. It is possible to obtain a stronger theorem by constructing a chained $\epsilon$-covering scheme. Specifically, when we decompose $v=v'+z$, we can construct a finer-grained covering of the ball $B(v',\epsilon)$, and then we can decompose $z$ into smaller components and so on (see Figure \ref{lec9:fig:chaining_diag} for an illustration).
+While Theorem \ref{lec8:thm:rc-covering-bd} is useful, the bound in \eqref{lec8:eqn:cs-step} is rarely tight as $z$ might not be perfectly correlated with $\sigma$. It is possible to obtain a stronger theorem by constructing a chained $\epsilon$-covering scheme. Specifically, when we decompose $v=v'+z$, we can construct a finer-grained covering of the ball $B(v',\epsilon)$, and then we can decompose $z$ into smaller components and so on (see Figure \ref{lec9:fig:chaining_diag} for an illustration).
 
 Using this method of chaining, we can obtain the following (stronger) result:
 
 \begin{theorem}[Dudley's Theorem]
-If $\cF$ is a function class from $Z$ to $\R$, then
+If $\cF$ is a function class from $Z \mapsto \R$, then
 \begin{equation}
-    R_S(\mathcal{F})\leq 12\int_{0}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon. \label{lec9:eqn:dudley}
+    R_S(\mathcal{F})\leq 12\int_{0}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon. \label{lec9:eqn:dudley}
 \end{equation}
 \end{theorem}
 
-Note that this theorem does not require the functions to be bounded.
+Note that unlike Theorem~\ref{lec8:thm:rc-covering-bd}, we do not require $f \in \cF$ to be bounded.
 
-\begin{remark}
-	\tnote{let's use remark environment only for modularized points (such as interpretation or extensino of theorems); here we can leave this as plain texts without the remark environment}
 It is not obvious how \eqref{lec9:eqn:dudley} improves upon the one-step discretization bound given by \eqref{lec8:eqn:rc-covering-bd}. At a high level, we can interpret this bound as removing the discretization error term by averaging over different scales of $\epsilon$.  But before we can explicitly prove this claim, we motivate our approach. In the proof of Theorem~\ref{lec8:thm:rc-covering-bd}, we approximated $v$ with $v' + z$ where $v'$ is the closest point to $v$ in the minimal $\epsilon$-cover of $\cQ$, and $z$ is the vector between $v'$ and $v$. In particular,
 \begin{equation}
     \frac 1 n \inprod{v, \sigma} = \frac 1 n \inprod{v', \sigma} + \frac 1 n \inprod{z, \sigma} \label{lec9:eqn:disc_decomp}
 \end{equation}
-The difficult term to deal with is the last one, $\frac 1 n \inprod{z, \sigma}$. In the previous derivation, we naively upper bounded $\inprod{z, \sigma}$ using Cauchy-Schwarz,
+Then, to obtain a bound, we take a $\sup$ of both sides, but apply the $\sup$ separately to each term on the right hand side. Namely, we show that:
+\begin{align}
+    \Exp \left[\sup_v \frac{1}{n} \inprod{v, \sigma} \right] \leq \Exp \left[\sup_{v' \in \cC} \frac 1 n \inprod{v', \sigma} \right ] + \Exp \left[ \sup_{z \in B_{v'}} \frac{1}{n} \inprod{z, \sigma} \right]
+\end{align}
+This bound follows by observing that $\Exp[\sup (A + B)] \leq \Exp[\sup A] + \Exp[\sup B]$ since the $\sup$ on the RHS is taken separately over both terms. The difficult term to tightly bound is the last one, $\frac 1 n \inprod{z, \sigma}$. In the previous derivation, we naively upper bounded $\inprod{z, \sigma}$ using Cauchy-Schwarz,
 \begin{equation}
     \frac 1 n \inprod{z,\sigma} \le \frac{\norm{z}_2\cdot \norm{\sigma}_2} n,
 \end{equation}
-but this bound is only tight if $z$ is perfectly correlated with $\sigma$. We claim that such perfect correlation is unlikely. Recall that the output space is defined by possible outputs of $f \in \cF$ given $n$ inputs. Unless our function class is extremely expressive, the set of radius $\epsilon$ around $v'$ contained in $\cQ$ will only be a small subset of the $\epsilon$-ball centered at $v'$; thus, $\sup_{z} \frac{1}{n} \inprod{z, \sigma} \ll \frac{\norm{z}_2 \cdot \norm{\sigma}_2}{n}$.
+but this bound is only tight if there exists $z \in B_{v'}$ that is perfectly correlated with $\sigma$. We claim that such perfect correlation is unlikely. Recall that the output space is defined by possible outputs of $f \in \cF$ given $n$ inputs. Unless our function class is extremely expressive, the set of radius $\epsilon$ around $v'$ contained in $\cQ$ will only be a small subset of the $\epsilon$-ball centered at $v'$; thus, $\sup_{z} \frac{1}{n} \inprod{z, \sigma} \ll \frac{\norm{z}_2 \cdot \norm{\sigma}_2}{n}$.
 
-To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat the $\epsilon$-covering argument again with a smaller choice of $\epsilon$. Intuitively, this  procedure amounts to decomposing $\inprod{z, \sigma}$ from \eqref{lec9:eqn:disc_decomp} into another pair of terms corresponding to the new $\epsilon$-cover and the discretization error. ``Chaining'' then repeats this decomposition countably many times. Putting this argument in terms of Rademacher complexity, we can think of each chaining iteration as bounding $R_S(B_{v} \cap \cQ)$ where $B_{v}$ denotes the $\epsilon$-ball around $v \in \cC$ for the $\epsilon$-cover $\cC$ defined in the previous iteration. This procedure is illustrated visually by Figure~\ref{lec9:fig:chaining_diag}, and we formalize this argument in the sequel.
-\end{remark}
+To precisely set up our approach, we observe that $\Exp[\sup_{z \in B_{v'}} \frac 1 n \inprod{z, \sigma}]$ is itself a Rademacher complexity: $R_S(B_{v'} \cap \cQ)$. To more tightly bound $\Exp \l[ \sup_{z \in B_{v'}} \frac 1 n \inprod{z,\sigma}\r]$, we then repeat the $\epsilon$-covering argument again with a smaller choice of $\epsilon$. Intuitively, this procedure amounts to decomposing $\inprod{z, \sigma}$ from \eqref{lec9:eqn:disc_decomp} into another pair of terms corresponding to the new $\epsilon$-cover and the discretization error. ``Chaining'' then repeats this decomposition countably many times. This procedure is illustrated visually by Figure~\ref{lec9:fig:chaining_diag}, and we formalize this argument in the sequel.
 
 \begin{figure}[ht!]
     \centering
@@ -181,23 +186,21 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
 \begin{proof} 
     Let $\epsilon_0 = \sup_{f\in \cF} \max_i \abs{f(z_i)}$, so that for all $v \in \cQ$,
     \begin{equation}
-        \epsilon_0 \ge \sqrt{\frac 1 n \sum_{i=1}^nf(z_i)^2}  = \sqrt{\frac 1 n \sum_{i=1}^n \norm{v}_2^2}.
+        \epsilon_0 \ge \sqrt{\frac 1 n \sum_{i=1}^nf(z_i)^2}  = \sqrt{\frac 1 n \norm{v}_2^2}.
     \end{equation}
-    \tnote{The RHS seems to be weird}
     
-    Define $\epsilon_j = 2^{-j}\epsilon_0$ and let $\cC_j$ be an $\epsilon_j$-cover of $\cQ$. Then, $\cC_0$ is the coarsest cover of $\cQ$, and as $j$ increases, we obtain progressively more fine-grained covers $\cC_j$. We use this sequence of covers to define a telescoping series that equals $v$; the terms in this series can then be analyzed using tools that we have developed in the prequel. 
+    Define $\epsilon_j = 2^{-j}\epsilon_0$ and let $\cC_j$ be an $\epsilon_j$-cover of $\cQ$. Then, $\cC_0$ is the coarsest cover of $\cQ$, and as $j$ increases, we obtain progressively more fine-grained covers $\cC_j$. We can intuitively think of these covers as nested, but this is not necessary for the proof to hold. We next use this sequence of covers to define a telescoping series that equals $v$; the terms in this series can then be analyzed using the tools that we have developed in the prequel. 
     
-    For $v \in \cQ$, let $\pi_i(v)$ denote the nearest neighbor of $v$ in $\cC_i$. 
-    \tnote{I'm not sure why change to $\pi_i(v)$. Then should be $u_i$}
-    Taking $\pi_0(v) = 0$, it follows from our definition of $\cC_i$ that
+    For $v \in \cQ$, let $u_i$ denote the nearest neighbor of $v$ in $\cC_i$. Note that by definition $\rho(u, v_j) \leq \epsilon_j$. Taking $u_0 = 0$, it follows from our definition of $\cC_i$ that as $j \to \infty$, $\epsilon_j \to 0$ and $u_j \to v$. Leveraging these observations, we can express $v$ using the following series:
     \begin{align}
-        v &= \pi_1(v) + \sum_{i = 2}^\infty (\pi_i(v) - \pi_{i - 1}(v)) \\
-        &= \sum_{i = 1}^\infty (\pi_i(v) - \pi_{i - 1}(v)). \label{lec9:eqn:telescope_chain}
+        v &= u_1 + (u_2 - u_1) + (u_3 - u_2) + \cdots \\
+        &= (u_1 - u_0) + (u_2 - u_1) + (u_3 - u_2) + \cdots \\
+        &= \sum_{i = 1}^\infty (u_i - u_{i - 1}). \label{lec9:eqn:telescope_chain}
     \end{align}
     
-    By definition, $\rho(v, \pi_i(v)) \le \epsilon_i$ and thus $\frac 1 {\sqrt n} \norm{v - \pi_i(v)}_2 \le \epsilon_i$. Substituting \eqref{lec9:eqn:telescope_chain} in the Rademacher complexity we aim to bound, we obtain
+    Substituting \eqref{lec9:eqn:telescope_chain} in the Rademacher complexity we aim to bound, we obtain
     \al{
-        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma}\r]&= \Exp\l[\sup_{v \in \cQ} \frac 1 n \sum_{i=1}^\infty \inprod{\pi_i(v)-\pi_{i - 1}(v), \sigma}\r]\\
+        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma}\r]&= \Exp\l[\sup_{v \in \cQ} \frac 1 n \sum_{i=1}^\infty \inprod{u_i - u_{i - 1}, \sigma}\r]\\
         &\le \Exp\l[\sum_{i=1}^\infty \sup_{u_i \in \cC_i, u_{i - 1} \in \cC_{i - 1}} \frac 1 n\inprod{u_i - u_{i - 1}, \sigma}\r]\\
         &= \sum_{i=1}^\infty \Exp\l[ \sup_{u_i \in \cC_i, u_{i - 1} \in \cC_{i - 1}} \frac 1 n\inprod{u_i - u_{i - 1}, \sigma}\r]. \label{lec9:eqn:chaining_expansion}
     }
@@ -205,7 +208,7 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
     \begin{equation}
         \Exp\l[ \sup_{u_i \in \cC_i, u_{i - 1} \in \cC_{i - 1}} \frac 1 n\inprod{u_i-u_{i - 1}, \sigma}\r]
     \end{equation}
-    is a Rademacher complexity defined over the \emph{finite} space $\cC_i \times \cC_{i - 1}$, so we can use Proposition~\ref{lec6:prop:massartlemma} (Massart's Lemma) to obtain a tractable upper bound. To do so, we must first compute an upper bound on $\frac{1}{\sqrt{n}} \norm{u_i - u_{i - 1}}_2$:
+    is a Rademacher complexity defined over the \emph{finite} space $\cC_i \times \cC_{i - 1}$, so we can use Proposition~\ref{lec6:prop:massartlemma} (Massart's lemma) to obtain a tractable upper bound. To do so, we must first compute an upper bound on $\frac{1}{\sqrt{n}} \norm{u_i - u_{i - 1}}_2$:
     \al{
         \frac 1 {\sqrt n} \norm{u_i - u_{i - 1}}_2 &= \frac 1 {\sqrt{n}} \norm{(u_i - v) - (u_{i - 1} - v)}_2\\
         &\le \frac 1 {\sqrt{n}} \l(\norm{u_i - v}_2 - \norm{u_{i - 1} - v}_2 \r)\\
@@ -219,40 +222,45 @@ To more tightly bound $\Exp \l[ \sup \frac 1 n \inprod{z,\sigma}\r]$, we repeat 
         &\le \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log \abs{\cC_i}} & (\abs{\cC_i} \ge \abs{\cC_{i - 1}}) \label{lec9:eqn:massartbound}
     }
     
-    Applying \eqref{lec9:eqn:massartbound} to each term in \eqref{lec9:eqn:chaining_expansion} and substituting the covering number $N(\epsilon_i, \cF, L_2[P_n])$ for $|\cC_i|$, we obtain the following upper bound on the Rademacher complexity:
+    Applying \eqref{lec9:eqn:massartbound} to each term in \eqref{lec9:eqn:chaining_expansion} and substituting the covering number $N(\epsilon_i, \cF, L_2(P_n))$ for $|\cC_i|$, we obtain the following upper bound on the Rademacher complexity:
     \al{
-        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])}. \label{lec9:eqn:dudley_sumbound}
+        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2(P_n))}. \label{lec9:eqn:dudley_sumbound}
     }
-    
-    Recognizing that $\epsilon_i - \epsilon_{i + 1} = \frac{\epsilon_i}{2}$, we can rewrite \eqref{lec9:eqn:dudley_sumbound} as a right Riemann sum. In particular,
+
+    Finally, we must relate \eqref{lec9:eqn:dudley_sumbound} to the target upper bound of $12 \int \frac{1}{\sqrt{n}} \sqrt{\log N(\epsilon, \cF, L_2(P_n))} d\epsilon$. Examining Figure~\ref{lec9:fig:chaining_riemann}, we can make two crucial observations. First, for sufficiently large $\epsilon$, $\log N(\epsilon, \cF, L_2(P_n)) = 0$ since one point is sufficient to construct a cover. Second, we observe that 
     \begin{align}
-        \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2[P_n])} \label{lec9:eqn:dudley_rriemann} \\
-        &\le \frac{12}{\sqrt{n}} \int_{0}^{\epsilon_0} \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon, \label{lec9:eqn:dudley_almost}
+        (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log \abs{\cC_i}} \leq \int_{\epsilon_{i + 1}}^{\epsilon_i} \sqrt{\log N(\epsilon, \cF, L_2(P_n))} d\epsilon \label{lec9:eqn:riemann_term}
     \end{align}
-\tnote{expand this more; please see how I explain this in the lecture. I think I made very intuitive but those intuitions are lost here}    where the last step follows by observing that $\log N(\epsilon, \cF, L_2[P_n])$ is decreasing in $\epsilon$. The monotonicity of $\log N(\epsilon, \cF, L_2[P_n])$ is also illustrated in Figure~\ref{lec9:fig:chaining_riemann}. 
+    since the LHS of \eqref{lec9:eqn:riemann_term} is the area of the dotted rectangle illustrated in Figure~\ref{lec9:fig:chaining_riemann} while the RHS is the area under the curve for that interval. Formally, this result is equivalent to observing that the right Riemann sum underestimates the integral for monotone decreasing functions $f$.
 
     \begin{figure}[h!]
         \begin{center}
             \includegraphics[width=.6\textwidth]{figures/chaining_riemann.png}
         \end{center}
-        \caption{We observe that $\log N(\epsilon, \cF, L_2[P_n])$ is monotone decreasing in $\epsilon$. As a result, the right Riemann sum in \eqref{lec9:eqn:dudley_rriemann} will be upper bounded by the integral.\tnote{improve the figure according to my email} \tnote{the caption perhaps should be improved or we should refer to the particular part of the texts. The current caption is not quite understandable}}
+        \caption{We observe that $\log N(\epsilon, \cF, L_2(P_n))$ is monotone decreasing in $\epsilon$. The area of the dotted rectangle formed by the vertical lines at $\epsilon_{i + 1}$ and $\epsilon_i$ equals (up to a constant factor) the $i-$th term of the infinite sum derived in our proof of Dudley's theorem \eqref{lec9:eqn:dudley_sumbound}. The figure shows that the area of this rectangle is no larger than the integral of $\log N(\epsilon, \cF, L_2(P_n))$ over this same interval.}
         \label{lec9:fig:chaining_riemann}
-    \end{figure}    
+    \end{figure}  
 
-    To complete the proof, observe that $\log N(\epsilon, \cF, L_2[P_n]) = 0$ for all $\epsilon > \epsilon_0$. This allows us to extend the upper limit of the integral given by \eqref{lec9:eqn:dudley_almost} to $\infty$ and yields the desired result:
+    
+    Recognizing that $\epsilon_i - \epsilon_{i + 1} = \frac{\epsilon_i}{2}$, we note that the LHS of \eqref{lec9:eqn:riemann_term} is equal (up to a constant factor) to the $i$-th term of \eqref{lec9:eqn:dudley_sumbound}. Thus,
     \begin{align}
-        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \frac{12}{\sqrt{n}} \int_{0}^\infty \sqrt{\log N(\epsilon, \cF, L_2[P_n])} d\epsilon.
+        \sum_{i = 1}^\infty \frac{6 \epsilon_i}{\sqrt{n}}\sqrt{\log N(\epsilon_i, \cF, L_2(P_n))} &= \frac{12}{\sqrt{n}} \sum_{i = 1}^\infty (\epsilon_i - \epsilon_{i + 1}) \sqrt{\log N(\epsilon_i, \cF, L_2(P_n))} \label{lec9:eqn:dudley_rriemann} \\
+        &\leq \frac{12}{\sqrt{n}} \int_{\epsilon_{i + 1}}^{\epsilon_i} \sqrt{\log N(\epsilon_i, \cF, L_2(P_n))} d\epsilon \\
+        &= \frac{12}{\sqrt{n}} \int_{0}^{\epsilon_0} \sqrt{\log N(\epsilon, \cF, L_2(P_n))} d\epsilon. \label{lec9:eqn:dudley_almost}
+    \end{align} 
+
+    To complete the proof, observe that $\log N(\epsilon, \cF, L_2(P_n)) = 0$ for all $\epsilon > \epsilon_0$. This allows us to extend the upper limit of the integral given by \eqref{lec9:eqn:dudley_almost} to $\infty$ and yields the desired result:
+    \begin{align}
+        \Exp\l[\sup_{v \in \cQ} \frac 1 n \inprod{v, \sigma} \r] & \le \frac{12}{\sqrt{n}} \int_{0}^\infty \sqrt{\log N(\epsilon, \cF, L_2(P_n))} d\epsilon.
     \end{align}
 \end{proof}
 
 \begin{remark}
-If $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that for all $\epsilon > 1, N(\epsilon, \mathcal{F}, L_2[P_n])=1$. To see this choose $\{f\equiv 0\}$, which is a complete cover for $\epsilon>1$. Hence, the limits of integration in \eqref{lec9:eqn:dudley} can be truncated to $[0,1]$:
-    
-    \begin{equation}
-    R_S(\mathcal{F})\leq 12\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon,
-    \end{equation}
-    
-since $\log N(\epsilon, \mathcal{F}, L_2[P_n])=0$ for $\epsilon >1$.
+If $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that for all $\epsilon > 1, N(\epsilon, \mathcal{F}, L_2(P_n))=1$. To see this choose $\{f\equiv 0\}$, which is a complete cover for $\epsilon>1$. Hence, the limits of integration in \eqref{lec9:eqn:dudley} can be truncated to $[0,1]$:
+\begin{equation}
+    R_S(\mathcal{F})\leq 12\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon,
+\end{equation}
+    since $\log N(\epsilon, \mathcal{F}, L_2(P_n))=0$ for $\epsilon >1$.
 \end{remark}
 
 \subsec{Translating Covering Number Bounds to Rademacher Complexity}
@@ -260,31 +268,31 @@ since $\log N(\epsilon, \mathcal{F}, L_2[P_n])=0$ for $\epsilon >1$.
 Of course, the bound in \eqref{lec9:eqn:dudley} is only useful if the integral on the RHS is finite. Here are some setups where this is the case (we continue to assume that the functions in $\cF$ are bounded in $[-1, 1]$):
 
 \begin{enumerate}
-\item If $N(\epsilon, \mathcal{F}, L_2[P_n])\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2[P_n]) \approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
+\item If $N(\epsilon, \mathcal{F}, L_2(P_n))\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
         
 \begin{equation}
-\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
+\int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
 \end{equation}
             
-\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2[P_n])\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2[P_n]) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
         
 \begin{align}
-\int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
+\int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
 &= \sqrt{\frac{R}{n}\log a} \int_0^1\!\!\sqrt{\frac{1}{\epsilon}}d\epsilon \\
 &= \tilO \l(\sqrt{\frac{R}{n}}\r).
 \end{align}
         
-\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2[P_n])\approx a^{R/\epsilon^2}$, then $\log N(\epsilon, \mathcal{F}, L_2[P_n])\approx \frac{R}{\epsilon^2}\log a$. In this case we have:
+\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon^2}$, then $\log N(\epsilon, \mathcal{F}, L_2(P_n))\approx \frac{R}{\epsilon^2}\log a$. In this case we have:
         
-\begin{equation}\int_0^1\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon \approx \sqrt{\frac{R}{n}\log a} \underbrace{\int_0^1\frac{1}{\epsilon}d\epsilon}_{=\infty}=\infty,
+\begin{equation}\int_0^1\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon \approx \sqrt{\frac{R}{n}\log a} \underbrace{\int_0^1\frac{1}{\epsilon}d\epsilon}_{=\infty}=\infty,
 \end{equation}
 
 i.e. the bound in \eqref{lec9:eqn:dudley} is vacuous. This is because of the behavior of $\epsilon \mapsto 1/\epsilon^2$ near 0: the function goes to infinity too quickly for us to upper bound its integral. Fortunately, there is an ``improved'' version of Dudley's theorem that is applicable here:
         
 \begin{theorem}[Localized Dudley's Theorem]\label{lec9:thm:better-dudley}
-If $\cF$ is a function class from $Z$ to $\R$, then for any fixed cutoff $\alpha \geq 0$ we have the bound
+If $\cF$ is a function class from $Z \mapsto \R$, then for any fixed cutoff $\alpha \geq 0$ we have the bound
 \begin{equation}\label{lec9:eqn:better-dudley}
-R_S(\mathcal{F})\leq 4\alpha + 12\int_{\alpha}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2[P_n])}{n}}d\epsilon.      
+R_S(\mathcal{F})\leq 4\alpha + 12\int_{\alpha}^{\infty}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon.      
 \end{equation}
 \end{theorem}
 The proof of this theorem is similar to the proof of the original Dudley's theorem, except that the iterative covering procedure is stopped at the threshold $\epsilon = \alpha$ at the cost of the extra $4\alpha$ term above.
@@ -293,11 +301,12 @@ Theorem \ref{lec9:thm:better-dudley} allows us to avoid the problematic region a
 \begin{align}
 R_S(\mathcal{F}) &\leq \frac{1}{\mathsf{poly}(n)} + \frac{\sqrt{R\log a}}{\sqrt{n}}\int_{\alpha}^1\frac{1}{\epsilon}d\epsilon \\
 &= \frac{1}{\mathsf{poly}(n)}  + \frac{\sqrt{R\log a}}{\sqrt{n}} \log(1/\alpha) \\
-&= \tilO \l(\sqrt{\frac{R}{n}}\r).
+&= \tilO \l(\sqrt{\frac{R}{n}}\r). \label{lec9:eqn:rademacherbound_three}
 \end{align}
 \end{enumerate}
+The last line follows by observing that $\log(1/\alpha) = \log \mathsf{poly}(n)$.
 
-In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for these three dependencies on $\epsilon$: when $\log N(\epsilon, \mathcal{F}, L_2[P_n]) \approx R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$, and when $\alpha = 1/\mathsf{poly}(n)$, this term leads to a bad dependence on $n$.
+In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for covering numbers of the form $ R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$; then, for $\alpha = 1/\mathsf{poly}(n)$, the second term in Dudley's integral is no longer $\tilO \l(\sqrt{\frac{R}{n}}\r )$.
 
 \sec{Covering number bounds for concrete models}
 The previous section discuss how strong our bounds on covering number need to be in order to get a useful result. 
@@ -306,37 +315,36 @@ Here we describe some situations in which we know how to obtain these covering n
 \subsec{Linear models}
 First, consider the following covering number bound for linear models:
 
-\begin{theorem}[\cite{zhang2002}]
-Suppose $x^{(1)}, \cdots, x^{(n)} \in \mathbb{R}^d$ are $n$ data points, and $p, q$ satisfies $p^{-1} + q^{-1} = 1$ and $2 \le p \le \infty$. Assume that $||x^{(i)}||_p \le C$ for all $i$. Let:
+\begin{theorem}[\cite{zhang2002}] \label{lec9:thm:univariate_rad}
+Suppose $x^{(1)}, \cdots, x^{(n)} \in \mathbb{R}^d$ are $n$ data points, and $p, q$ satisfies $1/p + 1/q = 1$ and $2 \le p \le \infty$. Assume that $||x^{(i)}||_p \le C$ for all $i$. Let:
 \begin{align}
-    F_q = \{x \to w^T x : ||w||_q \le B\}
+    \cF_q = \{x \mapsto w^\top x : ||w||_q \le B\}
 \end{align}
-and let $\rho = L_2[P_n]$. Then, $\log N(\epsilon, F_q, \rho) \le \l [\frac{B^2c^2}{\epsilon^2}\r ] \log_2 (2d + 1)$. When $p = 2, q = 2$, we further obtain that:
+and let $\rho = L_2(P_n)$. Then, $\log N(\epsilon, \cF_q, \rho) \le \l [\frac{B^2C^2}{\epsilon^2}\r ] \log_2 (2d + 1)$. When $p = 2, q = 2$, we further obtain that:
 \begin{align}
-    \log N(\epsilon, F_2, \rho) \le \l [\frac{B^2c^2}{\epsilon^2} \r ] \log_2 (2 \min (n, d ) + 1)
+    \log N(\epsilon, \cF_2, \rho) \le \l [\frac{B^2C^2}{\epsilon^2} \r ] \log_2 (2 \min (n, d ) + 1)
 \end{align}
 \end{theorem}
 \begin{remark}
-Using the covering number bound derived above, it is also possible to show that the Rademacher complexity of this class of linear models is bounded by
+Applying \eqref{lec9:eqn:rademacherbound_three} to the covering number bound derived above with $R = B^2C^2$, we conclude that the Rademacher complexity of this class of linear models satisfies
 \begin{align}
-    R_s(F_q) &\le \tilO{\left( \frac{BC}{\sqrt{n}} \right)}
+    R_S(\cF_q) &\le \tilO{\left( \frac{BC}{\sqrt{n}} \right)}.
 \end{align} 
-\tnote{maybe refer to the theorem where we proved this before (using other approaches)}
+We also prove this result without relying on Dudley's theorem in Theorem~\ref{lec7:thm:l2-thm}.
 \end{remark}
-For multivariate linear functions, let $\norm{M^T}_{2,1}$ denote the sum of the $\ell_2$ norms of the $n$ rows of $M$ where $M = (M_1, \cdots, M_n) \in \mathbb{R}^{m \times n}$. 
-\tnote{$R_S$}
-\begin{theorem}
-Let $\cF = \{x \to Wx : W \in \mathbb{R}^{m \times d}, ||W^T||_{2, 1} \le B\}$ and let $C = \sqrt{\frac{1}{n} \sum_{i = 1}^n ||x^{(i)}||_2^2}$. Then, 
+Next, we consider multivariate linear functions as they are building blocks for multi-layer neural networks. Let $M = (M_1, \cdots, M_n) \in \mathbb{R}^{m \times n}$ and $\norm{M}_{2,1} = \sum_{i = 1}^n \norm{M_i}_2$. Then, $\norm{M^\top}_{2,1}$ denotes the sum of the $\ell_2$ norms of the rows of $M$. 
+\begin{theorem}\label{lec9:thm:multivariate_rad}
+Let $\cF = \{x \to Wx : W \in \mathbb{R}^{m \times d}, ||W^\top||_{2, 1} \le B\}$ and let $C = \sqrt{\frac{1}{n} \sum_{i = 1}^n ||x^{(i)}||_2^2}$. Then, 
 \begin{equation}
-\log N(\epsilon, F, L_2(P_n)) \le \l [\frac{c^2B^2}{\epsilon^2} \r ] \log (2dm).
+\log N(\epsilon, \cF, L_2(P_n)) \le \l [\frac{c^2B^2}{\epsilon^2} \r ] \ln (2dm).
 \end{equation}
 \end{theorem}
-
-\tnote{use $W^\top$}
-
+\begin{remark}
+    In some sense, Theorem~\ref{lec9:thm:multivariate_rad} arises from treating each dimension of the multivariate problem independently. We can view the linear layer as applying $m$ different linear functions. Explicitly, if $W = \begin{pmatrix} w_1^\top \\ \vdots \\ w_m^\top \end{pmatrix}$ and $Wx = \begin{pmatrix} w_1^\top x \\ \vdots \\ w_m^\top x \end{pmatrix}$, then as we expect, $\norm{W^\top}_{2,1} = \sum \norm{w_i}_2$.
+\end{remark}
 \subsec{Lipschitz composition}
-Covering numbers also interact nicely with composition by Lipschitz functions. The following result is the analog of Talagrand's lemma for covering numbers.
-\begin{lemma} Suppose $\phi$ is $\kappa$-Lipschitz, and $\rho = L_2[P_n]$. Then,
+Covering numbers also interact nicely with composition by Lipschitz functions. The following result is the analog of Talagrand's lemma for Rademacher complexity (Lemma~\ref{lec6:lem:talagrand_lemma}). 
+\begin{lemma} Suppose $\phi$ is $\kappa$-Lipschitz, and $\rho = L_2(P_n)$. Then,
     \begin{align}
         \log N(\epsilon, \phi \circ \cF, \rho) \le \log N(\epsilon / \kappa, \cF, \rho) \label{lec9:eqn:covering-num-lipschitz}
     \end{align}
