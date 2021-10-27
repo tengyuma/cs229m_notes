@@ -30,11 +30,10 @@ Before diving into details, we first highlight some observations that will be im
 \end{enumerate}
 Here are some observations to :
 \begin{enumerate}
-    \item[] \textit{Observation 1}: Gradient descent cannot always find the global minimum (see Figure \ref{lec10:fig:gradient_descent} for an illustration).
+    \item[] \textit{Observation 1}: Gradient descent can find a global minimum for convex functions\footnote{A more precise version of this claim is that gradient descent can find a point that has function value arbitrary close to the global minimal value. } but cannot always find the global minimum for any general continuous functions (see Figure \ref{lec10:fig:gradient_descent} for an illustration).
     \item[] \textit{Observation 2}: Finding the global minimum of general non-convex functions is NP-hard.
-    \item[] \textit{Observation 3}: Gradient descent can find the global minimum for convex functions.
-    \item[] \textit{Observation 4}: The objective function in deep learning is non-convex.
-    \item[] \textit{Observation 5}: Gradient descent/stochastic gradient descent typically finds an approximate global minimum of loss function in deep learning.
+%    \item[] \textit{Observation 3}: Gradient descent .
+    \item[] \textit{Observation 3}: The objective function in deep learning is non-convex., but empirically gradient descent/stochastic gradient descent typically finds an approximate global minimum of loss function in deep learning.
 \end{enumerate}
 
 These observations motivate the following two-step plan:

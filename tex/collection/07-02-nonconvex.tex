@@ -51,7 +51,7 @@ $f(x)$ can be viewed as a sampled version of the PCA loss function $g(x) = \frac
 \begin{figure}
     \centering
     \includegraphics[width=2.5in]{figures/matrix-completion-f-g.png}
-    \caption{Even if $f(x)$ and $g(x)$ are no more than $\epsilon$ apart at any given $x$, the local minima of $f$ may look dramatically different from the local minima of $g$.}
+    \caption{Even if $f(x)$ and $g(x)$ are no more than $\epsilon$ apart at any given $x$, without any additional knowledge, the local minima of $f$ may possibly look dramatically different from the local minima of $g$. However, the proofs in this section show that the landscape of $f$ (the matrix completion objective) and $g$ (the PCA objective) are have similar properties by proving more advanced concentration inequalities. }
     \label{lec11:fig:matrix_completion_f_g}
 \end{figure}
 
