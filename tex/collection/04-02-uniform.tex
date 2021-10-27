@@ -184,7 +184,7 @@ Here is the theorem involving empirical Rademacher complexity:
 \begin{theorem}\label{lec5:thm:thm2}
     Suppose for all $f \in \cF$, $0 \leq f(z) \leq 1$. Then, with probability at least $1-\delta$,
     \begin{align}
-        \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)] \r] \leq 2 R_S(F) + 3\sqrt{\frac{\log{(2/\delta)}}{2n}}.
+        \sup_{f\in \cF} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)] \r] \leq 2 R_S(\cF) + 3\sqrt{\frac{\log{(2/\delta)}}{2n}}.
     \end{align}
 \end{theorem}
 
@@ -242,7 +242,7 @@ Setting $\cF$ to be a family of loss functions bounded by $[0,1]$ in Theorem \re
 \begin{corollary}\label{lec6:cor:ggap-rsbound}
 Let $\cF$ to be a family of loss functions $\cF = \l\{ (x,y) \mapsto \ell((x,y),h): h \in \cH \r\}$ with $\ell((x,y), h) \in [0,1]$ for all $\ell$, $(x,y)$ and $h$. Then, with probability $1-\delta,$ the generalization gap is
     \begin{equation}\label{lec6:eqn:ggap-rsbound}
-        L(h) - \hat L(h) \leq 2R_S(F) + 3\sqrt{\frac{\log(2/\delta)}{2n}} \quad \text{for all } h\in \cH.
+        \hat{L}(h) - L(h) \leq 2R_S(\cF) + 3\sqrt{\frac{\log(2/\delta)}{2n}} \quad \text{for all } h\in \cH.
     \end{equation}
 \end{corollary}
 
