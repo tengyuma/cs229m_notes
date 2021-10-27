@@ -308,210 +308,22 @@ The last line follows by observing that $\log(1/\alpha) = \log \mathsf{poly}(n)$
 
 In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for covering numbers of the form $ R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$; then, for $\alpha = 1/\mathsf{poly}(n)$, the second term in Dudley's integral is no longer $\tilO \l(\sqrt{\frac{R}{n}}\r )$.
 
-\sec{Covering number bounds for concrete models}
-The previous section discuss how strong our bounds on covering number need to be in order to get a useful result. 
-Here we describe some situations in which we know how to obtain these covering number bounds for concrete models such as linear models and neural networks. 
-
-\subsec{Linear models}
-First, consider the following covering number bound for linear models:
-
-\begin{theorem}[\cite{zhang2002}] \label{lec9:thm:univariate_rad}
-Suppose $x^{(1)}, \cdots, x^{(n)} \in \mathbb{R}^d$ are $n$ data points, and $p, q$ satisfies $1/p + 1/q = 1$ and $2 \le p \le \infty$. Assume that $||x^{(i)}||_p \le C$ for all $i$. Let:
-\begin{align}
-    \cF_q = \{x \mapsto w^\top x : ||w||_q \le B\}
-\end{align}
-and let $\rho = L_2(P_n)$. Then, $\log N(\epsilon, \cF_q, \rho) \le \l [\frac{B^2C^2}{\epsilon^2}\r ] \log_2 (2d + 1)$. When $p = 2, q = 2$, we further obtain that:
-\begin{align}
-    \log N(\epsilon, \cF_2, \rho) \le \l [\frac{B^2C^2}{\epsilon^2} \r ] \log_2 (2 \min (n, d ) + 1)
-\end{align}
-\end{theorem}
-\begin{remark}
-Applying \eqref{lec9:eqn:rademacherbound_three} to the covering number bound derived above with $R = B^2C^2$, we conclude that the Rademacher complexity of this class of linear models satisfies
-\begin{align}
-    R_S(\cF_q) &\le \tilO{\left( \frac{BC}{\sqrt{n}} \right)}.
-\end{align} 
-We also prove this result without relying on Dudley's theorem in Theorem~\ref{lec7:thm:l2-thm}.
-\end{remark}
-Next, we consider multivariate linear functions as they are building blocks for multi-layer neural networks. Let $M = (M_1, \cdots, M_n) \in \mathbb{R}^{m \times n}$ and $\norm{M}_{2,1} = \sum_{i = 1}^n \norm{M_i}_2$. Then, $\norm{M^\top}_{2,1}$ denotes the sum of the $\ell_2$ norms of the rows of $M$. 
-\begin{theorem}\label{lec9:thm:multivariate_rad}
-Let $\cF = \{x \to Wx : W \in \mathbb{R}^{m \times d}, ||W^\top||_{2, 1} \le B\}$ and let $C = \sqrt{\frac{1}{n} \sum_{i = 1}^n ||x^{(i)}||_2^2}$. Then, 
-\begin{equation}
-\log N(\epsilon, \cF, L_2(P_n)) \le \l [\frac{c^2B^2}{\epsilon^2} \r ] \ln (2dm).
-\end{equation}
-\end{theorem}
-\begin{remark}
-    In some sense, Theorem~\ref{lec9:thm:multivariate_rad} arises from treating each dimension of the multivariate problem independently. We can view the linear layer as applying $m$ different linear functions. Explicitly, if $W = \begin{pmatrix} w_1^\top \\ \vdots \\ w_m^\top \end{pmatrix}$ and $Wx = \begin{pmatrix} w_1^\top x \\ \vdots \\ w_m^\top x \end{pmatrix}$, then as we expect, $\norm{W^\top}_{2,1} = \sum \norm{w_i}_2$.
-\end{remark}
 \subsec{Lipschitz composition}
-Covering numbers also interact nicely with composition by Lipschitz functions. The following result is the analog of Talagrand's lemma for Rademacher complexity (Lemma~\ref{lec6:lem:talagrand_lemma}). 
+Covering numbers also interact nicely with composition by Lipschitz functions. The following result is the analog of Talagrand's lemma for Rademacher complexity (Lemma~\ref{lec6:lem:talagrand_lemma}), but its proof is much more elementary as given below. We will use this Lemma in Section~\ref{sec:deep_nets} when bounding the covering number of deep nets. 
 \begin{lemma} \label{lec9:lma:talagrand}
-    Suppose $\phi$ is $\kappa$-Lipschitz, and $\rho = L_2(P_n)$. Then,
-    \begin{align}
-        \log N(\epsilon, \phi \circ \cF, \rho) \le \log N(\epsilon / \kappa, \cF, \rho) \label{lec9:eqn:covering-num-lipschitz}
-    \end{align}
+	Suppose $\phi$ is $\kappa$-Lipschitz, and $\rho = L_2(P_n)$. Then,
+	\begin{align}
+	\log N(\epsilon, \phi \circ \cF, \rho) \le \log N(\epsilon / \kappa, \cF, \rho) \label{lec9:eqn:covering-num-lipschitz}
+	\end{align}
 \end{lemma}
 \begin{proof}
-Let $\cC$ denote an $\epsilon/\kappa$-cover for $\cF$. Then $\phi \circ \cC$ is an $\epsilon$-cover of $\phi \circ \cF$.
-\begin{align}
-\rho(\phi \circ f', \phi \circ f) &= \sqrt{\frac{1}{n} \sum (\phi(f'(z_i)) - \phi(f(z_i)))^2} \\ 
-&\le \sqrt{\frac{1}{n} \cdot \kappa^2 \sum(f'(z_i) - f(z_i))^2}\\
-&\le \kappa \cdot \frac{\epsilon}{\kappa} = \epsilon
-\end{align}
+	Let $\cC$ denote an $\epsilon/\kappa$-cover for $\cF$. Then $\phi \circ \cC$ is an $\epsilon$-cover of $\phi \circ \cF$.
+	\begin{align}
+	\rho(\phi \circ f', \phi \circ f) &= \sqrt{\frac{1}{n} \sum (\phi(f'(z_i)) - \phi(f(z_i)))^2} \\ 
+	&\le \sqrt{\frac{1}{n} \cdot \kappa^2 \sum(f'(z_i) - f(z_i))^2}\\
+	&\le \kappa \cdot \frac{\epsilon}{\kappa} = \epsilon
+	\end{align}
 \end{proof}
-
-\subsec{Deep neural networks}
-In this lecture, we discuss a bound on the Rademacher complexity of a dense neural network. We set up notation as follows: $W_i$ denotes the linear weight matrix at the $i$-th layer of the neural network, we have a total of $r$ layers, and $\sigma$ is the activation function which is 1-Lipschitz (for example, ReLU, softmax, or sigmoid). If the input is a vector $x$, the neural network's output can be represented as follows:
-
-\begin{align}
-    f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
-\end{align}
-Using this notation, we establish an upper bound on the Rademacher complexity of a dense neural network.
-
-\begin{theorem}[\cite{bartlett2017}]
-\label{lec10:thm:dnn_rademacher}
-Suppose that $\norm{x^{(i)}}_2 \leq c$ and let
-\begin{align}
-    \cF = \{h_\theta : \norm{W_i}_{\text{op}} \leq \kappa_i, \norm{W_i^T}_{2,1} \leq b_i\}.
-\end{align}
-Then,
-\begin{equation}
-    R_S (\cF) \leq \frac{c}{\sqrt{n}} \cdot \underbrace{\left(\prod_{i=1}^r \kappa_i \right)}_{\text{relatively large}} \cdot \underbrace{\left( \sum_{i=1}^r\frac{b_i^{2/3}}{\kappa_i^{2/3}}\right)^{3/2}}_{\text{relatively small}}.
-\end{equation}
-\end{theorem}
-
-\begin{remark}
-    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and $\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms.
-\end{remark}
-
-\begin{remark}
-    As a corollary of the above theorem, we also get a bound on the generalization error for the margin loss of the following form:
-    \begin{equation}
-        \texttt{generalization error} \leq \tilde{O}\left(\frac{1}{\gamma_{\min}} \cdot \frac{1}{\sqrt{n}}\cdot c \cdot \left(\prod_{i=1}^r\norm{W_i}_{\textup{op}} \right) \cdot {\left( \sum_{i=1}^r\frac{\norm{W_i^\top}^{2/3}_{2,1}}{\norm{W_i}_{\textup{op}}^{2/3}}\right)^{3/2}}  \right),
-    \end{equation}
-    where $\gamma_{\min}$ denotes the margin.
-\end{remark}
-	
-First, we motivate the proof by presenting the main idea, and then work through each part of the proof. The main ideas of the proof can be summarized as follows:
-    
-\begin{itemize}
-    \item At a high level, we want to show that the covering number $N(\epsilon, \cF, \rho)$ for a dense neural network is $\leq \frac{R}{\epsilon^2}$. Proving this would enable us to apply the Localized Dudley Theorem to get a bound on the Rademacher Complexity.
-    \item To bound the covering number for a dense neural network, we use $\epsilon$-covers to cover each layer of $f$ separately, and then combine them to prove that there exists an $\epsilon$-cover of the original function $f$. 
-    \item To combine the epsilon covers of each layer, we use the Lipschitzness of each layer.
-    \item We control and approximate the error propagation that is introduced through discretizing each layer using $\epsilon_i$-coverings in order to get a reasonable final $\epsilon$.
-\end{itemize}
-
-As a prelude to the proof, let us think of each layer of $f$ as a separate function $f_i$. Note that $f_i$ corresponds to a matrix multiplication and an activation layer. Thus, $f$ can be written as 
-\begin{align}
-    f = f_r \circ f_{r-1} \circ \cdots \circ f_1,
-\end{align}
-where each $f_i$ is $\kappa_i$-Lipschitz. Let us also assume, for simplicity, that $f_i(0) = 0$. 
-
-We now derive the $\epsilon$-covering of $f(x)$ in three steps:
-\begin{enumerate}
-    \item We take points as input to the $i^{th}$ layer, and devise an $\epsilon_i$ covering of the space spanned by each point passed through the function $f_i$.
-    \item We use the $N(\epsilon_i, \cF_i, \rho)$ points of the $\epsilon_i$ covering as an input to the $(i+1)$-th layer, where $\cF_i$ is the function family of the $i$-th layer and $\rho = L_2(p_n)$.
-    \item Finally, the $\epsilon_r$ covering (i.e covering of the last layer) will be the $\epsilon$ covering of $f(x)$.
-\end{enumerate}
-
-Before stating a critical lemma, we establish some definitions. First, define $c_i$ such that all the inputs to the $i^{th}$ layer, $z_1, z_2, \dots, z_n$ are bounded as $\norm{z_j} \leq c_{i-1}$, and therefore $c_0 = c$. We also assume that there exists a function $g$ such that $\log N (\epsilon_i, \cF_i, \rho) \leq g\left(\epsilon_i, c_{i-1}\right)$. Then, we can state the following lemma:
-
-\begin{lemma}
-    There exists an $\epsilon$ cover of $\mathcal{F} = \{f(x) : f(x) = f_r \circ f_{r-1} \circ \cdots \circ f_1\}$, where $\epsilon = \epsilon_r + \kappa_r\epsilon_{r-1} + \cdots + \kappa_r\kappa_{r-1}\dots\kappa_2\epsilon_1$, and
-    \begin{align}
-    \log N(\epsilon, \cF, \rho) \leq \sum_{i=1}^{r} g\left(\epsilon_i, c_{i-1}\right)
-    \end{align}
-    \label{lec10:lma:additive_cover}
-\end{lemma}
-
-\begin{proof}
-We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
-
-We now note that
-\begin{align}
-    \log \abs{\cC_{2, f_1'}} \leq g\left(\epsilon_2, c_1\right)
-\end{align}
-Taking a union over all $f_1'$, 
-\begin{align}
-    \abs{\cC_{2}} &\leq \abs{\cC_{1}} \exp\left(g\left(\epsilon_2, c_1\right)\right) \\
-    \log\abs{\cC_{2}} &\leq \log\abs{\cC_{1}} + g\left(\epsilon_2, c_1\right) \leq g\left(\epsilon_1, c_0\right) + g\left(\epsilon_2, c_1\right)
-\end{align}
-Similarly, given $\cC_k$, for any $f_k' \circ f_{k-1}' \circ \cdots \circ f_1' \in \cC_k$, we construct a $\cC_{k+1, f_k', \dots, f_1'}$ that is an $\epsilon_{k+1}$-covering of $\cF_{k+1} \circ f_k' \circ \cdots \circ f_1'$. We choose $\cC_{k+1} = \cup_{f_i \in \cC_i, i \leq k} C_{k+1, f_k', \dots, f_1'}$. Then, we have
-\begin{align}
-    \log \abs{\cC_{k+1}} \leq g\left(\epsilon_{k+1}, c_k\right) + \cdots + g\left(\epsilon_1, c_0\right)
-\end{align}
-Next, we show that for the above construction, the radius of the cover for $\cF$ is
-\begin{align}
-    \epsilon = \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_{j}\right).
-\end{align}
-If we consider a function composition $f_r \circ \cdots \circ f_1 \in \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$, then we know that there exists an $f_1' \in \cC_1$ such that $\rho\left(f_1, f_1'\right) \leq \epsilon_1$. Similarly, we know there exists $f_{2, f_1'}' \in \cC_{2, f_1'}$ such that $\rho\left(f_2' \circ f_1', f_2\circ f_1' \right) \leq \epsilon_2$. Using the triangle inequality, we can say that 
-\begin{align}
-   \rho\left(f_2' \circ f_1', f_2 \circ f_1\right) &\leq \rho\left(f_2' \circ f_1', f_2 \circ f_1'\right) + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
-   &\leq \epsilon_2 + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
-   &\leq \epsilon_2 + \kappa_2 \rho\left(f_1', f_1\right) \\ 
-   &\leq \epsilon_2 + \kappa_2\epsilon_1z
-\end{align}
-Using the same logic for a general $k$, we know that there exists $f_{k,f_1',\dots,f_{k-1}'}' \in \cC_k$ such that
-\begin{align}
-    \rho\left(f_k' \circ f_{k-1}' \circ \cdots \circ f_1', f_k \circ \cdots \circ f_1\right) &\leq \rho\left(f_k' \circ f_{k-1}'\circ \cdots \circ f_1', f_k \circ f_{k-1}'\circ \cdots \circ f_1' \right) \\ 
-    &+ \rho\left(f_k \circ f_{k-1}'\circ f_{k-2}' \circ \cdots \circ f_1', f_k \circ f_{k-1}\circ f_{k-2}' \circ \cdots \circ f_1'\right) \\ &+ \cdots + \rho\left(f_k \circ f_{k-1}\circ \cdots \circ f_2 \circ f_1', f_k \circ f_{k-1}\circ \cdots \circ f_1\right) \\ & \leq \sum_{i=1}^{r} \left(\epsilon_i\prod_{j=i+1}^{r}\kappa_{j}\right)
-\end{align}
-\end{proof}
-
-\begin{proof}[Proof of Theorem~\ref{lec10:thm:dnn_rademacher}]
-We now apply Lemma~\ref{lec10:lma:additive_cover} to dense neural networks. Dense neural networks consist of a composition of layers, where each layer is a linear model composed with a 1-Lipschitz activation. Using Theorem~\ref{lec9:thm:multivariate_rad} along with the property that 1-Lipschitz functions will only contribute a factor of at most $1$ (Lemma~\ref{lec9:lma:talagrand}), the covering number of each layer can be bounded by:
-\begin{align}
-    g\left(\epsilon_i, c_{i-1}\right) = \tilde{O}\left(\frac{c_{i-1}^2b_i^2}{\epsilon_i^2}\right),
-\end{align}
-where $c_{i-1}^2$ is the norm of the inputs, $b_i^2$ is $\norm{W_i^T}_{2,1}$, and $\epsilon_i^2$ is the radius. From Lemma~\ref{lec10:lma:additive_cover}, we know that 
-\begin{align}
-    \log N(\epsilon, \cF, \rho) &= \tilde{O}\left(\sum_{i=1}^{r}\frac{c_{i-1}^2b_i^2}{\epsilon_i^2}\right) 
-\end{align}
-for
-\begin{align}
-    \epsilon &= \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_j\right)
-\end{align}
-
-We will now choose $\epsilon_i$ that achieves $\log\left(N\left(\epsilon, \cF, \rho\right)\right) \leq \frac{R}{\epsilon^2}$, where $R$ is some constant independent of $\epsilon$. We motivate this choice of $\epsilon$ using Holder's inequality, which states that
-\begin{align}
-    \langle a,  b \rangle \leq \|a\|_p \|b\|_q
-\end{align}
-when $\frac{1}{p} + \frac{1}{q} = 1$. Writing out the vectors $a, b$, we get that 
-\begin{align}
-    \sum_{i}a_ib_i \leq \left(\sum a_i^p\right)^{\frac{1}{p}}\left(\sum b_i^q\right)^{\frac{1}{q}}
-\end{align}
-
-Letting $\alpha_i^2 = c_{i-1}^2b_i^2, \beta_i = \prod_{j=i+1}^{r}\kappa_j$. By Holder's inequality, using $p = 3, q = \frac{3}{2}$, we get
-\begin{align}
-    \left(\sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2}\right)\left(\sum_{i=1}^{r}\beta_i\epsilon_i\right)^2 &\geq \left(\sum_{i=1}^{r}\left(\alpha_i\beta_i\right)^{\frac{2}{3}}\right)^{\frac{3}{2}} \\
-    \sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2} &\geq \frac{R}{\epsilon^2},
-\end{align}
-where $R = \left(\left(\sum_{i=1}^{r}\left(c_{i-1}b_i\prod_{j=i+1}^{r}\kappa_j\right)\right)^{\frac{2}{3}}\right)^{\frac{3}{2}}$. We note that equality holds when 
-\begin{align}
-    \epsilon_i = \left(\frac{c_{i-1}^2b_i^2}{\prod_{j=i+1}^{r}\kappa_j}\right)^{\frac{1}{3}} \cdot \underbrace{\frac{\epsilon}{\left(\sum_{i=1}^{r}\frac{b_i^{\frac{2}{3}}}{\kappa_i^{\frac{2}{3}}}\right)\prod_{i=1}^{r}\kappa_i^{\frac{2}{3}} }}_{\epsilon'} \label{eqn:lec10:holder_eps_defn}
-\end{align}
-Using this choice of $\epsilon_i$ and letting $\epsilon'$ equal the second factor in \eqref{eqn:lec10:holder_eps_defn} for notational convenience, we know that the log covering number is (up to a constant factor):
-\al{
-    \sum_{i=1}^r \frac{c_{i-1}^2b_i^2}{\epsilon_i^2} &= \sum_{i=1}^r \frac{c_{i-1}^2b_i^2(\kappa_{i+1}\cdots\kappa_r)^\frac{2}{3}}{c_{i-1}^\frac{4}{3}b_i^\frac{4}{3}(\epsilon')^2} \\
-    &= \sum_{i=1}^r (c_{i-1}b_i\kappa_{i+1}\cdots\kappa_r)^\frac{2}{3}\frac{1}{(\epsilon')^2} \\
-    &= c^\frac{2}{3}\sum_{i=1}^r \left(\frac{b_i}{\kappa_i}\right)^\frac{2}{3} \prod_{i=1}^r \kappa_i^\frac{2}{3} \frac{\left(c^\frac{2}{3}\left(\sum_{i=1}^r (\frac{b_i}{\kappa_i})^\frac{2}{3} \prod_{i=1}^r \kappa_i^\frac{2}{3}\right)\right)^2}{\epsilon^2} \\
-    &= \left(c^\frac{2}{3}\sum_{i=1}^r \left(\frac{b_i}{\kappa_i}\right)^\frac{2}{3} \prod_{i=1}^r \kappa_i^\frac{2}{3}\right)^3\frac{1}{\epsilon^2} \\
-    &= c^2\prod_{i=1}^r \kappa_i^2\left(\sum_{i=1}^r \left(\frac{b_i}{\kappa_i}\right)^\frac{2}{3}\right)^3\frac{1}{\epsilon^2}.
-}
-Since this log covering number is of the form $R / \epsilon^2$, we can apply \eqref{lec9:eqn:rademacherbound_three} and conclude that
-\al{
-    \mathcal{R}_S(\cF) \lesssim \sqrt\frac{R}{n}
-}
-Last, plugging in
-\al{
-    R = c^2\prod_{i=1}^r \kappa_i^2\left(\sum_{i=1}^r \left(\frac{b_i}{\kappa_i}\right)^\frac{2}{3}\right)^3
-}
-we obtain the desired result
-\al{
-    \mathcal{R}_S(\cF) \lesssim \frac{c}{\sqrt n}\prod_{i=1}^r \kappa_i\left(\sum_{i=1}^r \left(\frac{b_i}{\kappa_i}\right)^\frac{2}{3}\right)^\frac{3}{2}.
-}
-
-\end{proof}
-
 
 \sec{VC dimension and its limitations}
 We will focus on classification and will be working within the framework of supervised learning stated in Chapter \ref{chap:supervised}. The labels belong to the output space $\mathcal{Y} = \{-1, 1\}$, each classifier is a function $h:\mathcal{X}\to\R$ for all $h \in \cH$, and the prediction is the sign of the output, i.e. $\hat{y} = \sgn(h(x))$. We will look at zero-one loss, i.e. $\err((x,y), h) = \mathbbm{1}(\sgn(h(x))\neq y)$. Note that we can re-express the loss function as
