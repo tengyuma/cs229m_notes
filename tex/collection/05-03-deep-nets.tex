@@ -1,5 +1,5 @@
 \sec{Deep neural nets (via covering number)}\label{sec:deep_nets}
-The previous section \tnoteimp{refer to the section using references}discuss how strong our bounds on covering number need to be in order to get a useful result. 
+In Section~\ref{lec9:sec:cover_to_radem}, we discuss how strong our bounds on covering number need to be in order to get a useful result. 
 Here we describe some situations in which we know how to obtain these covering number bounds for concrete models such as linear models and neural networks. 
 
 \subsec{Preparation: covering number for linear models}
@@ -146,7 +146,9 @@ for
     \epsilon &= \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_j\right)
 \end{align}
 
-We will now choose $\epsilon_i$ that achieves $\log\left(N\left(\epsilon, \cF, \rho\right)\right) \leq \frac{R}{\epsilon^2}$, where $R$ is some constant independent of $\epsilon$. We motivate this choice of $\epsilon$ using Holder's inequality, which states that
+We now have a bound on $N(\epsilon, \cF, \rho)$ that relies on $\epsilon_i$'s, but $N(\epsilon, \cF, \rho)$ should only be a function of $\epsilon$. Since we already know that $\epsilon = \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_j\right)$, we keep $\epsilon$ constant and optimize the upper bound of $N(\epsilon, \cF, \rho)$ over different choices of $\epsilon_i$. To find the optimal $\epsilon_i$, we will first find a lower bound on $N(\epsilon, \cF, \rho)$. We then choose $\epsilon_i$ so that this lower bound is achieved. Ultimately, our optimized $\epsilon_i$ yields a bound on the covering number of the following form: $\log\left(N\left(\epsilon, \cF, \rho\right)\right) \leq \frac{R}{\epsilon^2}$, where $R$ is some constant independent of $\epsilon$. 
+
+We derive this lower bound using Holder's inequality, which states that
 \begin{align}
     \langle a,  b \rangle \leq \|a\|_p \|b\|_q
 \end{align}
@@ -157,7 +159,9 @@ when $\frac{1}{p} + \frac{1}{q} = 1$. Writing out the vectors $a, b$, we get tha
 
 Letting $\alpha_i^2 = c_{i-1}^2b_i^2, \beta_i = \prod_{j=i+1}^{r}\kappa_j$. By Holder's inequality, using $p = 3, q = \frac{3}{2}$, we get
 \begin{align}
-    \left(\sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2}\right)\left(\sum_{i=1}^{r}\beta_i\epsilon_i\right)^2 &\geq \left(\sum_{i=1}^{r}\left(\alpha_i\beta_i\right)^{\frac{2}{3}}\right)^{\frac{3}{2}} \\
+    \left(\sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2}\right)\left(\sum_{i=1}^{r}\beta_i\epsilon_i\right)^2 &\geq \left(\sum_{i=1}^{r}\left(\alpha_i\beta_i\right)^{\frac{2}{3}}\right)^{\frac{3}{2}}
+\end{align}
+\begin{align}
     \sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2} &\geq \frac{R}{\epsilon^2},
 \end{align}
 where $R = \left(\left(\sum_{i=1}^{r}\left(c_{i-1}b_i\prod_{j=i+1}^{r}\kappa_j\right)\right)^{\frac{2}{3}}\right)^{\frac{3}{2}}$. We note that equality holds when 
