@@ -191,11 +191,11 @@ we obtain the desired result
 
 \end{proof}
 
-\sec{Deep neural nets (via data-dependent bounds)}\label{sec:deep_nets_data_dependent}
+\chapter{Data-dependent Generalization Bounds for Deep Nets}\label{sec:deep_nets_data_dependent}
 
 In Theorem~\ref{lec10:thm:dnn_rademacher}, we proved the following bound on the Rademacher complexity of deep neural networks:
 \begin{align}
-    R_S(\cF) \leq \prod_{i = 1}^r \norm{W_i}_{\text{op}} \cdot \mathsf{poly}(\norm{w_i}).
+    R_S(\cF) \leq \prod_{i = 1}^r \norm{W_i}_{\text{op}} \cdot \mathsf{poly}(\norm{W_i}).
 \end{align}
 This bound, however, suffers from multiple deficiencies. In particular, it grows exponentially in the depth, $r$, of the network and $\norm{W_i}_{\text{op}}$ measures the worst-case Lipschitz-ness of the network layers over the input space. As a consequence, the bound fails to accurately predict the good generalization properties of deep nets.
 
@@ -203,11 +203,13 @@ In this section, we obtain a tighter bound for $R_S(\cF)$ by modifying our appro
 
 Ultimately, we aim to prove a tighter bound on the population loss that grows polynomially in the Lipschitz-ness of $f \in \cF$. Namely, given that $f_\theta$ is $\kappa$-Lipschitz on $X^{(1)},\dots,X^{(n)}$, we hope to show that:
 \begin{align}
-    L(\theta) \leq \mathsf{poly} (\kappa, \norm(\theta)).
+    L(\theta) \leq \mathsf{poly} (\kappa, \norm{\theta}).
 \end{align}
+\tnote{something wrong with the equation}
 
-\subsec{Preparation: uniform convergence with a data-dependent hypothesis class}
+\paragraph{Uniform convergence with a data-dependent hypothesis class.}
 Classical uniform convergence does not have a single consistent definition. So far in this course, given some complexity measure we denote as $\text{comp}(\cdot)$, our uniform convergence results always appear in one of the two following forms: 
+\tnote{let's move whp to up front because this phrasing makes the order of the quantifier a bit tricky}
 \begin{align}
     L(f) &\leq \frac{\text{comp}(\cF)}{\sqrt{n}} \text{ (w.h.p.) $\forall f \in \cF$} &&\text{(I)} \\
     L(f) &\leq \frac{\text{comp}(f)}{\sqrt{n}} \text{ (w.h.p.) $\forall f \in \cF$} &&\text{(II)}
@@ -243,7 +245,7 @@ for some function $g$. Then we can consider an \textit{augmented loss}:
 \end{align}
 Suppose we have a region of low complexity in our existing loss function. Because this region is random, so we cannot selectively apply universal convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a implicitly data-dependent hypothesis class \cite{wei2019data}.
 
-\subsec{All-layer margin}
+\sec{All-layer margin}
 We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
 
 Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin is defined as $y f(x)$, with $y$ in $\{-1, 1\}$. We will say that $g_f(x, y)$ is a \textit{generalized margin} if it satisfies
@@ -257,7 +259,7 @@ That is, the generalized margin ``zeroes out" incorrect classifications.
 
 We also define the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho = \norm{\cdot}_\infty$, Precisely,
 \begin{equation}
-\rho(f, f) = \sup_{x \in \mathcal{X}} |f(x) - f'(x)| = |f - f'|_\infty
+\rho(f, f) = \sup_{x \in \mathcal{X}} |f(x) - f'(x)| = \|f - f'\|_\infty
 \end{equation}
 \begin{remark}
     Notice that $N_\infty(\epsilon, \cF) \geq N(\epsilon, \cF, L_2(P_n))$. This is because the $\ell_\infty$ norm is a more demanding measure of error: $f$ and $f'$ must be close on \textit{every} input, not just the empirical data. That is,
@@ -269,7 +271,7 @@ We also define the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ a
 \begin{lemma}
 Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$. (Recall that this is the worst regime that we can tolerate when working with Rademacher complexity.) Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for all $f$ in $\mathcal{F}$ that correctly predict all the examples,
 \begin{equation}
-L_{0/1} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min g_f(x\sp{i}, y\sp{i}} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
+L_{0/1} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min g_f(x\sp{i}, y\sp{i})} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
 \end{equation}
 \label{lec11:genmargin-lemma}
 \end{lemma}
@@ -283,7 +285,7 @@ L_\gamma(\theta) - \hat{L}_\gamma(\theta) \leq R_S(\ell_\gamma \circ \cG) + \til
 \end{equation}
 Next we observe that $\log N(\epsilon, \ell_\gamma \circ \cG, L_2(P_n)) \leq \log N(\epsilon\gamma, G, L_2(P_n))$; this is due to the $\frac{1}{\gamma}$-Lipschitzness of $\ell_\gamma$. The right hand side is also less than $\log N_\infty(\epsilon\gamma, G)$, which is in turn bounded above by $\lfloor \frac{R^2}{\epsilon^2 \gamma^2} \rfloor$ by assumption.
 Then, using our results relating the log of the covering number to a bound on the Rademacher complexity (recall \ref{lec9:eqn:rademacherbound_three} and Theorem~\ref{lec9:thm:better-dudley}), we have that $R_S(\ell_\gamma \circ G) \leq \tilO(\frac{R}{\gamma \sqrt{n}})$.
-Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i}$.\footnote{A caveat: because $\gamma$ is a random variable, proving this result rigorously requires taking a union bound over a discretized $\gamma$. We sketched out this argument more thoroughly in Remark~\ref{lec7:rmk:union_bound_margin}.} Then we have $\hat{L}_{\gamma_\text{min}} (\theta) \leq 0 + \tilO(\frac{R}{\sqrt{n} \cdot \gamma_\text{min}}) + \tilO(\frac{1}{\sqrt{n}})$, as desired.
+Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i})$.\footnote{A caveat: because $\gamma$ is a random variable, proving this result rigorously requires taking a union bound over a discretized $\gamma$. We sketched out this argument more thoroughly in Remark~\ref{lec7:rmk:union_bound_margin}.} Then we have $\hat{L}_{\gamma_\text{min}} (\theta) \leq 0 + \tilO(\frac{R}{\sqrt{n} \cdot \gamma_\text{min}}) + \tilO(\frac{1}{\sqrt{n}})$, as desired.
 \end{proof}
 For which $g_f$ can we bound the covering number? If we take $g_f(x, y) = yf(x)$, then the covering number depends on the product $\norm{w_i}_{\text{op}}$, but we originally set out to do better than this. If we have a linear model $w^T x$, the normalized margin, $\frac{y \cdot w^T x}{\norm{w}}$, governs the generalization performance. But how do we normalize for more general models? 
 
@@ -308,7 +310,7 @@ We can now introduce our main result regarding the all-layer margin.
 \begin{theorem}
 With high probability,
 \begin{equation}
-L_{01}(f) \leq \tilO\l (\frac{1}{\sqrt{n}} \cdot \frac{\sum_{i=1}^n \norm{W_i}_{1, 1}}{\min_i} m_f(x\sp{i}, y\sp{i}\r ) + \tilO\l (\frac{\gamma}{\sqrt{n}}\r ),
+L_{01}(f) \leq \tilO\l (\frac{1}{\sqrt{n}} \cdot \frac{\sum_{i=1}^n \norm{W_i}_{1, 1}}{\min_i} m_f(x\sp{i}, y\sp{i}\r ) + \tilO\l (\frac{r}{\sqrt{n}}\r ),
 \end{equation}
 where
 $\norm{W_i}_{1, 1}$ is the sum of absolute values of entries of W.\footnote{It is not clear that this is the best bound we can hope for.}
@@ -382,6 +384,7 @@ The last step follows by Minkowski's inequality, which states that $\sqrt{\sum \
 But $\sqrt{\sum \norm{\delta_i}_2^2}$ can be bounded above by $m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x} \leq 1} (\sigma(Wx)-\sigma(W'x))^2}$; dividing by the 2-norm here is the same as restricting the 2-norm to be 1. This equals $m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x} \leq 1} (f_i(x)-f_i'(x))^2}$, which is what we wanted to show.
 \end{proof}
 
+\tnote{maybe introduce some remarks below to make the paragraphs below a bit more structured}
 We can compare the above with \cite{bartlett2017},
 \begin{equation}
 f(x, \delta) - f(x) \leq \norm{\delta_r} \cdot \norm{W_{r-1}}_{\text{op}} \cdots \norm{W_1}_{\text{op}} + \norm{W_r}_{\text{op}} \cdot \norm{\delta_{r-1}} \cdots \norm{W_1}_{\text{op}} + \cdots + \norm{W_r}_{\text{op}} \cdots \norm{W_2}_{\text{op}} \cdot \norm{\delta_1}.
