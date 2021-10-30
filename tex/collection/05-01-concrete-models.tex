@@ -102,7 +102,7 @@ In other words, for training data of the form $S = \{(x\sp{i},y\sp{i})\}_{i=1}^n
 \end{equation}
 where $\gamma_\mathrm{min}$ is the minimum margin achievable on~$S$ over those hypotheses in $\cH$ that separate the data, and $R_S(\cH)$ is the empirical Rademacher complexity of $\cH$. Such bounds state that simpler models will generalize better beyond the training data, particularly for data that is strongly separable.
 
-\begin{remark}
+\begin{remark} \label{lec7:rmk:union_bound_margin}
 Note there is a subtlety here. If we think of the dataset as random, it follows that $\gamma_{\min}$ is a random variable. Consequently, the $\gamma$ we choose to define the hypothesis class is random, which is not a valid choice when thinking about Rademacher complexity! Technically we cannot apply Talagrand's lemma with a random $\kappa$ (which we took to be $1/\gamma$). Also, when we used concentration inequalities, we implicitly assume that the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$ are independent of each other. That is not the case if $\gamma$ is dependent on the data.
 
 We sketch out how one might address this issue below. The main idea is to do another union bound over $\gamma$. Choose a family $\Gamma = \left\{ 2^k: k \in [-B, B] \right\}$ for some $B$. Then, for every fixed $\gamma \in \Gamma$, with probability greater than $1 - \delta$,
