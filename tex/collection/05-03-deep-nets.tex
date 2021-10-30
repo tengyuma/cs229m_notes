@@ -46,7 +46,7 @@ Using this notation, we establish an upper bound on the Rademacher complexity of
 \label{lec10:thm:dnn_rademacher}
 Suppose that $\forall i, \norm{x^{(i)}}_2 \leq c$ and let
 \begin{align}
-    \cF = \{h_\theta : \norm{W_i}_{\text{op}} \leq \kappa_i, \norm{W_i^T}_{2,1} \leq b_i\}.
+    \cF = \{h_\theta : \norm{W_i}_{\text{op}} \leq \kappa_i, \norm{W_i^\top}_{2,1} \leq b_i\}.
 \end{align}
 Then,
 \begin{equation}
@@ -137,7 +137,7 @@ We now apply Lemma~\ref{lec10:lma:additive_cover} to dense neural networks. Dens
 \begin{align}
     g\left(\epsilon_i, c_{i-1}\right) = \tilde{O}\left(\frac{c_{i-1}^2b_i^2}{\epsilon_i^2}\right),
 \end{align}
-where $c_{i-1}^2$ is the norm of the inputs, $b_i^2$ is $\norm{W_i^T}_{2,1}$, and $\epsilon_i^2$ is the radius. From Lemma~\ref{lec10:lma:additive_cover}, we know that 
+where $c_{i-1}^2$ is the norm of the inputs, $b_i^2$ is $\norm{W_i^\top}_{2,1}$, and $\epsilon_i^2$ is the radius. From Lemma~\ref{lec10:lma:additive_cover}, we know that 
 \begin{align}
     \log N(\epsilon, \cF, \rho) &= \tilde{O}\left(\sum_{i=1}^{r}\frac{c_{i-1}^2b_i^2}{\epsilon_i^2}\right) 
 \end{align}
@@ -201,22 +201,17 @@ This bound, however, suffers from multiple deficiencies. In particular, it grows
 
 In this section, we obtain a tighter bound for $R_S(\cF)$ by modifying our approach to depend upon the realized Lipschitz-ness of the model on the training data. To further motivate this approach, we also note that stochastic gradient descent, i.e. the typical optimization method typically used to fit deep neural networks, prefers models that are more Lipschitz. This preference must be realized by the model \emph{on empirical data}, however, as no learning algorithm has access to the model's properties over the entire data space.
 
-Ultimately, we aim to prove a tighter bound on the population loss that grows polynomially in the Lipschitz-ness of $f \in \cF$. Namely, given that $f_\theta$ is $\kappa$-Lipschitz on $X^{(1)},\dots,X^{(n)}$, we hope to show that:
-\begin{align}
-    L(\theta) \leq \mathsf{poly} (\kappa, \norm{\theta}).
-\end{align}
-\tnote{something wrong with the equation}
+Ultimately, we aim to prove a tighter bound on the population loss that grows polynomially in the Lipschitz-ness of $f \in \cF$. Namely, given that $f$ is parameterized by some $\theta$, we hope to derive a bound on the population loss at $\theta$ that is a \emph{polynomial} function of the Lipschitz-ness of $f$ on $x\sp{1},\dots,x\sp{n}$ as well as the norm of $\theta$.
 
 \paragraph{Uniform convergence with a data-dependent hypothesis class.}
-Classical uniform convergence does not have a single consistent definition. So far in this course, given some complexity measure we denote as $\text{comp}(\cdot)$, our uniform convergence results always appear in one of the two following forms: 
-\tnote{let's move whp to up front because this phrasing makes the order of the quantifier a bit tricky}
+Classical uniform convergence does not have a single consistent definition. So far in this course, given some complexity measure we denote as $\text{comp}(\cdot)$, our uniform convergence results always appear in one of the two following forms. Namely, with high probability for all $f \in \cF$, either
 \begin{align}
-    L(f) &\leq \frac{\text{comp}(\cF)}{\sqrt{n}} \text{ (w.h.p.) $\forall f \in \cF$} &&\text{(I)} \\
-    L(f) &\leq \frac{\text{comp}(f)}{\sqrt{n}} \text{ (w.h.p.) $\forall f \in \cF$} &&\text{(II)}
+    L(f) &\leq \frac{\text{comp}(\cF)}{\sqrt{n}} &&\text{(I)} \\
+    L(f) &\leq \frac{\text{comp}(f)}{\sqrt{n}}  &&\text{(II)}
 \end{align}
 
 \begin{remark}
-    Most of the results we have obtained so far are of type I, e.g. $\text{comp}(\cF)$ is a Rademacher complexity. We obtain results of type II by considering a restricted set of functions $\cF_C = \{f : \text{comp}(f) \leq C\}$. We then apply a type I bound to $\cF_C$ and take a union bound over all $C$.
+    Most of the results we have obtained so far are of type I, e.g. with $\text{comp}(\cF) = R_n(\cF)$. We obtain results of type II by considering a restricted set of functions $\cF_C = \{f : \text{comp}(f) \leq C\}$. We then apply a type I bound to $\cF_C$ and take a union bound over all $C$.
 \end{remark}
 
 Note, however, that neither of these approaches produce bounds that depend upon the data. By contrast, in the sequel, we will derive a new \textit{data-dependent} generalization bound. These bounds state that with high probability over the choice of the empirical data and for all functions $f$, 
@@ -241,12 +236,12 @@ We get around this by changing the way we think about uniform convergence. Suppo
 \end{align}
 for some function $g$. Then we can consider an \textit{augmented loss}:
 \begin{align}
-    \tilde{\ell}(f) = \ell(f) \mathbf{1}(g(f, x\sp{i} \leq C))
+    \tilde{\ell}(f) = \ell(f) \ind{g(f, x\sp{i} \leq C)}
 \end{align}
-Suppose we have a region of low complexity in our existing loss function. Because this region is random, so we cannot selectively apply universal convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a implicitly data-dependent hypothesis class \cite{wei2019data}.
+Suppose we have a region of low complexity in our existing loss function. Because this region is random, so we cannot selectively apply universal convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a (implicitly) data-dependent hypothesis class \cite{wei2019data}.
 
 \sec{All-layer margin}
-We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
+We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions. Note that in these regions, the generalization error is $0$. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
 
 Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin is defined as $y f(x)$, with $y$ in $\{-1, 1\}$. We will say that $g_f(x, y)$ is a \textit{generalized margin} if it satisfies
 \begin{align}
@@ -257,21 +252,21 @@ Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin 
 \end{align}
 That is, the generalized margin ``zeroes out" incorrect classifications.
 
-We also define the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho = \norm{\cdot}_\infty$, Precisely,
+We also define the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho$ where
 \begin{equation}
-\rho(f, f) = \sup_{x \in \mathcal{X}} |f(x) - f'(x)| = \|f - f'\|_\infty
+\rho(f, f) = \sup_{x \in \mathcal{X}} |f(x) - f'(x)| = \|f - f'\|_\infty.
 \end{equation}
 \begin{remark}
     Notice that $N_\infty(\epsilon, \cF) \geq N(\epsilon, \cF, L_2(P_n))$. This is because the $\ell_\infty$ norm is a more demanding measure of error: $f$ and $f'$ must be close on \textit{every} input, not just the empirical data. That is,
     \begin{equation}
-    \sqrt{\frac{1}{n} \sum_{i=1}^n (f(x_i) - f'(x_i))^2} \leq \sup_{x \in \mathcal{X}} |f(x) - f'(x)|.
+    \sqrt{\frac{1}{n} \sum_{i=1}^n (f(x_i) - f'(x_i))^2} \leq \sup_{x \in \mathcal{X}} |f(x) - f'(x)|. \label{lec11:eqn:l_inf_vs_l2pn}
     \end{equation}
 \end{remark}
 
 \begin{lemma}
-Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$. (Recall that this is the worst regime that we can tolerate when working with Rademacher complexity.) Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for all $f$ in $\mathcal{F}$ that correctly predict all the examples,
+Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$. (Recall that this is the worst regime that we can tolerate when working with Rademacher complexity.) Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for every $f$ in $\mathcal{F}$ that correctly predicts all the training examples,
 \begin{equation}
-L_{0/1} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min g_f(x\sp{i}, y\sp{i})} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
+L_{01} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min g_f(x\sp{i}, y\sp{i})} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
 \end{equation}
 \label{lec11:genmargin-lemma}
 \end{lemma}
@@ -279,121 +274,141 @@ L_{0/1} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min g_f(x\sp{i}, y\sp{
 \begin{proof}
 The high-level idea of our proof is to replace $\cF$ with $\cG$ before repeating a standard margin theory argument.
 
-Let $\ell_\gamma$ be the ramp loss, which is 1 for negative values, 0 for values greater than $\gamma$, and a linear interpolation between 1 and 0 for values between 0 and $\gamma$. We define the surrogate loss as $\hat{L_\gamma(\theta)} = \frac{1}{n} \ell_\gamma(g_{f_\theta}(x\sp{i}, y\sp{i}))$, and the surrogate population loss as $\Exp[\ell_\gamma(g_{f_\theta}(x, y))]$. As before, when we used the Rademacher complexity to control the difference between these two functions, we have that
+Let $\ell_\gamma$ be the ramp loss, which is 1 for negative values, 0 for values greater than $\gamma$, and a linear interpolation between 1 and 0 for values between 0 and $\gamma$. We define the surrogate loss as $\hat{L}_\gamma(\theta) = \frac{1}{n} \sum_{i = 1}^n \ell_\gamma(g_{f_\theta}(x\sp{i}, y\sp{i}))$, and the surrogate population loss as $L_\gamma(\theta) = \Exp[\ell_\gamma(g_{f_\theta}(x, y))]$. Applying Corollary~\ref{lec6:cor:ggap-rsbound}, where we used the Rademacher complexity to control the generalization error, we conclude that
 \begin{equation}
 L_\gamma(\theta) - \hat{L}_\gamma(\theta) \leq R_S(\ell_\gamma \circ \cG) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
 \end{equation}
-Next we observe that $\log N(\epsilon, \ell_\gamma \circ \cG, L_2(P_n)) \leq \log N(\epsilon\gamma, G, L_2(P_n))$; this is due to the $\frac{1}{\gamma}$-Lipschitzness of $\ell_\gamma$. The right hand side is also less than $\log N_\infty(\epsilon\gamma, G)$, which is in turn bounded above by $\lfloor \frac{R^2}{\epsilon^2 \gamma^2} \rfloor$ by assumption.
-Then, using our results relating the log of the covering number to a bound on the Rademacher complexity (recall \ref{lec9:eqn:rademacherbound_three} and Theorem~\ref{lec9:thm:better-dudley}), we have that $R_S(\ell_\gamma \circ G) \leq \tilO(\frac{R}{\gamma \sqrt{n}})$.
-Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i})$.\footnote{A caveat: because $\gamma$ is a random variable, proving this result rigorously requires taking a union bound over a discretized $\gamma$. We sketched out this argument more thoroughly in Remark~\ref{lec7:rmk:union_bound_margin}.} Then we have $\hat{L}_{\gamma_\text{min}} (\theta) \leq 0 + \tilO(\frac{R}{\sqrt{n} \cdot \gamma_\text{min}}) + \tilO(\frac{1}{\sqrt{n}})$, as desired.
+Next we observe that 
+\begin{align}
+    \log N(\epsilon, \ell_\gamma \circ \cG, L_2(P_n)) &\leq \log N(\epsilon\gamma, \cG, L_2(P_n)) &\text{(Lemma~\ref{lec9:lma:talagrand})} \\
+    &\leq \log N_\infty(\epsilon\gamma, \cG) &\text{\eqref{lec11:eqn:l_inf_vs_l2pn}} \\
+    &\leq \l \lfloor \frac{R^2}{\epsilon^2 \gamma^2} \r \rfloor &\text{(by assumption)}.
+\end{align}
+Then, using our results relating the log of the covering number to a bound on the Rademacher complexity (recall \ref{lec9:eqn:rademacherbound_three} and Theorem~\ref{lec9:thm:better-dudley}), we conclude that $R_S(\ell_\gamma \circ \cG) \leq \tilO\l (\frac{R}{\gamma \sqrt{n}}\r )$.
+Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i})$.\footnote{A caveat: because $\gamma$ is a random variable, proving this result rigorously requires taking a union bound over a discretized $\gamma$. We sketched out this argument more thoroughly in Remark~\ref{lec7:rmk:union_bound_margin}.} Using Corollary~\ref{lec6:cor:ggap-rsbound}, we conclude that $\hat{L}_{\gamma_\text{min}} (\theta) \leq 0 + \tilO\l (\frac{R}{\sqrt{n} \cdot \gamma_\text{min}} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r )$, as desired.
 \end{proof}
-For which $g_f$ can we bound the covering number? If we take $g_f(x, y) = yf(x)$, then the covering number depends on the product $\norm{w_i}_{\text{op}}$, but we originally set out to do better than this. If we have a linear model $w^T x$, the normalized margin, $\frac{y \cdot w^T x}{\norm{w}}$, governs the generalization performance. But how do we normalize for more general models? 
+For which $g_f$ can we bound the covering number? If we take $g_f(x, y) = yf(x)$, then the covering number depends on the product $\prod_i \norm{W_i}_{\text{op}}$, but we originally set out to do better than this. If we have a linear model $w^\top x$, the normalized margin, $\frac{y \cdot w^\top x}{\norm{w}}$, governs the generalization performance. But how do we normalize for more general models? 
 
-For a deep neural net, a natural normalizer is the product of the Lipschitz constants of the layers. However, we do not want to normalize by a constant that depends only on the function class, so we take a different approach. We interpret the normalized margin as the minimum $\delta$ such that $w(x + \delta y) < 0$. In plain English, how can we find the minimum perturbation that gets our data point across the boundary?
+For a deep neural net, a natural normalizer is the product of the Lipschitz constants of the layers. However, we do not want to normalize by a constant that depends only on the function class, so we take a different approach. We interpret the normalized margin as the minimum $\delta$ such that $w^\top(x + \delta) y \leq 0$. In plain English, how can we find the minimum perturbation that gets our data point across the boundary?
 
-To define this for all layers simultaneously, we define the \textit{all-layer margin}. We will consider a model in which we perturb all of the layers, not just the input (since perturbing that alone turns out not to suffice). We will consider perturbed models $\delta = (\delta_1, ..., \delta_r)$, where each $\delta_i$ is a vector. We incorporate these perturbations into our model as follows:
+To define this for all layers simultaneously, we define the \textit{all-layer margin}. We will consider perturbed models $\delta = (\delta_1, \dots, \delta_r)$, where each $\delta_i$ is a perturbation vector associated with the $i$-th layer. We incorporate these perturbations into our model as follows:
 \begin{align}
     h_1(x, \delta) &= W_1 x + \delta_1 \cdot \norm{x}_2 \\
-    h_2(x, \delta) &= \sigma(W_2 \cdot h_1(x, \delta)) + \delta_2 \cdot \norm{h_1(x, \delta)}_2 \\
-    &\vdots \\
+    h_2(x, \delta) &= \sigma(W_2 h_1(x, \delta)) + \delta_2 \cdot \norm{h_1(x, \delta)}_2 \\
+    &\vdots \nonumber \\
     f(x, \delta) = h_r(x, \delta) &= \sigma(W_r h_{r - 1}(x, \delta)) + \delta_r \cdot \norm{h_{r - 1}(x, \delta)}_2.
 \end{align}
 We can then ask: what was the smallest perturbation that changed our decision? That is, let
 \begin{align}
     m_f(x, y) \defeq \min_\delta \sqrt{\sum_{i=1}^r ||\delta_i||_2^2} 
 \end{align}
-such that $f(x, \delta)y \leq 0$ (i.e., obtain incorrect predictions).
+such that $f(x, \delta)y \leq 0$ (i.e. the perturbation yields incorrect predictions).
 
-Informally, $m_f(x, y)$ is a measure of how hard it is to perturb the model $f$. $f$ can be hard to perturb for two reasons: $f$ is Lipschitz (in its intermediate layers), or $yf(x)$ is large. Even more informally, large margins imply confidence in our predictions, and so it becomes harder to change the model's mind.
+Informally, $m_f(x, y)$ is a measure of how hard it is to perturb the model $f$. $f$ can be hard to perturb for two reasons: $f$ is Lipschitz (in its intermediate layers) and/or $yf(x)$ is large. Even more informally, large margins imply confidence in our predictions, and so it becomes harder to change the model's mind.
 
-We can now introduce our main result regarding the all-layer margin.
-\begin{theorem}
+We now introduce our main result regarding the all-layer margin.
+\begin{theorem} \label{lec11:thm:poly_gen_bound_deep_nets}
 With high probability,
 \begin{equation}
-L_{01}(f) \leq \tilO\l (\frac{1}{\sqrt{n}} \cdot \frac{\sum_{i=1}^n \norm{W_i}_{1, 1}}{\min_i} m_f(x\sp{i}, y\sp{i}\r ) + \tilO\l (\frac{r}{\sqrt{n}}\r ),
+L_{01}(f) \leq \tilO\l (\frac{1}{\sqrt{n}} \cdot \frac{\sum_{i=1}^r \norm{W_i}_{1, 1}}{\min_{i \in [n]} m_f(x\sp{i}, y\sp{i})}\r ) + \tilO\l (\frac{r}{\sqrt{n}}\r ),
 \end{equation}
 where
-$\norm{W_i}_{1, 1}$ is the sum of absolute values of entries of W.\footnote{It is not clear that this is the best bound we can hope for.}
+$\norm{W}_{1, 1}$ is the sum of the absolute values of the entries of W.
 \end{theorem}
-In summary, robustness to perturbations in intermediate errors implies good generalization. We can show that this bound is strictly better than the ones we obtained previously; we have $\frac{1}{m_f(x, y)} \leq \frac{\prod \norm{W_i}_{\text{op}}}{f(x)}$.
+In summary, robustness to perturbations in intermediate errors implies good generalization. We can show that this bound is strictly better than the one we obtained in Theorem~\ref{lec10:thm:dnn_rademacher}; in the worst case, we still have that $\frac{1}{m_f(x, y)} \leq \frac{\prod \norm{W_i}_{\text{op}}}{f(x)}$.
 
-To prove this theorem, it suffices to bound $N_\infty(\epsilon, \cG)$ by $O(\frac{\sum{||W_i||_{1, 1}}}{\epsilon^2})$. Then we can apply Lemma~\ref{lec11:genmargin-lemma}.
+To prove this theorem, it suffices to bound $N_\infty(\epsilon, \cG)$ by $O(\frac{\sum{\norm{W_i}_{1, 1}}}{\epsilon^2})$ and apply Lemma~\ref{lec11:genmargin-lemma}. Towards this goal, let $\cF_i = \{ z \mapsto \sigma (W_i z) : \norm{W_i}_{1, 1} \leq \beta_i \}$. Then, $\cF = \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$. 
 
-Let $\cF_i = \{ z \mapsto \sigma (W_i z) : ||W_i||_{1, 1} \leq \beta_i \}$. Then $\cF = \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$. Let $m \circ \cF$ denote $\{m_f : f \in \mathcal{F} \}$. Then
+\begin{lemma}[Decomposition Lemma]\label{lec11:lma:decomp}
+Let $m \circ \cF$ denote $\{m_f : f \in \cF \}$. Then, 
 \begin{equation}
-\log N_\infty\l (\sqrt{\sum_{i=1}^n \epsilon_i^2}, m \circ \cF \r ) \leq \sum_{i=1}^r \log N_\infty(\epsilon_i, \cF_i).
+\log N_\infty\l (\sqrt{\sum_{i=1}^r \epsilon_i^2}, m \circ \cF \r ) \leq \sum_{i=1}^r \log N_\infty(\epsilon_i, \cF_i),
 \end{equation}
 where $N_\infty(\epsilon_i, \cF_i)$ is defined with respect to the input domain $\mathcal{X} = \{x : \norm{x}_2 \leq 1 \}$.
-
-That is, we only have to find the covering number for each layer, and then we have the covering number for the (all-layer margin of the) composed function class. Notice the key difference: we used $m \circ \cF$ in the above, not $\cF$.
-
-Then, the desired result follows assuming that the following ``decomposition lemma'' holds:
-
-\begin{lemma}
-    If $\log N_\infty(\epsilon_i, \cF_i) \leq \lfloor \frac{c_i^2}{\epsilon_i^2} \rfloor$, then if we take $\epsilon_i = \epsilon \cdot \frac{c_i}{\sqrt{\sum_i c_i^2}}$, we obtain:
-    \begin{equation}
-    \log N_\infty(\epsilon, m \circ \cF) \leq \frac{\sqrt{\sum_i c_i^2}}{\epsilon^2}.
-    \end{equation}
 \end{lemma}
-This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$.
 
-For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies our main theorem.
+That is, we only have to find the covering number for each layer, and then we have the covering number for the (all-layer margin of the) composed function class. Notice that we bounded the covering number of $m \circ \cF$ in the above lemma, not $\cF$.
 
-\begin{proof}
-Now we will prove a limited form of the decomposition lemma for affine models: $\cF_i = \{ z \mapsto \sigma(w_i z): \norm{w_i}_{1, 1} \leq \beta_i \}$. There are two crucial steps to this problem. First, we prove that $m_f(x, y)$ is 1-Lipschitz in $f$. That is, for all $\cF = \cF_r \circ \cF_{r-1} ... \circ \cF_1$ and $\cF' = \cF_r' \circ 
-cF_{r-1}' ... \circ \cF_1'$, $|m_f(x, y) - m_{f'}(x, y)| \leq \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} \norm{f_i(x) - f_i'(x)}_2}$. Notice that now we are working with a clean sum of differences, with no multipliers!
-
-Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsilon_r$ covers of $\cF_1, ..., \cF_r$, respectively, such that $|U_i| = N_\infty(\epsilon_i, \cF_i)$. By definition, for all $f_i$ in $\cF_i$, there exists a $u_i \in U_i$ such that $\max_{\norm{x} \leq 1} \norm{f_i(x) - u_i(x)}_2 \leq \epsilon_i$. Take $U = U_r \circ U_{r-1} \circ \cdots \circ U_1 = \{u_r \circ u_{r-1} \circ \cdots \circ u_1 \}$ as the cover for $m \circ \cF$. Suppose we were given $f = f_r \circ ... \circ f_1 \in \cF$. Let $u_r, ..., u_1$ be the nearest neighbor of $f_r, ..., f_1$. Then
+Then, the desired result follows directly from the preceding ``decomposition lemma:''
+\begin{corollary}
+If $\log N_\infty(\epsilon_i, \cF_i) \leq \l \lfloor \frac{c_i^2}{\epsilon_i^2} \r \rfloor$ and $\epsilon_i = \epsilon \cdot \frac{c_i}{\sqrt{\sum_i c_i^2}}$,
 \begin{equation}
-|m_f(x, y) - m_u(x, y)| \leq \sqrt{\sum_{i=1}^r \max_{||x|| \leq 1} ||f_i(x) - u_i(x)||_2^2}.
+    \log N_\infty(\epsilon, m \circ \cF) \leq \frac{\sum_i c_i^2}{\epsilon^2}.
 \end{equation}
-Because $f$ and $u$ are close by construction, this is $\leq \sqrt{\sum_{i=1}^r \epsilon_i^2}$.
+\end{corollary}
+This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$. For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}.
 
-Having established the validity of our cover, we now return to our claim of 1-Lipschitz-ness in step 1 of this proof. We will show an upper bound for $m_{f'}(x, y) - m_f(x, y)$; the lower bound follows by symmetry.
+\begin{proof}[Proof of Lemma~\ref{lec11:lma:decomp}]
+Now we will prove a limited form of the decomposition lemma for affine models: $\cF_i = \{ z \mapsto \sigma(W_i z): \norm{W_i}_{1, 1} \leq \beta_i \}$. There are two crucial steps to this problem. First, we will prove that $m_f(x, y)$ is 1-Lipschitz in $f$. That is, for all $\cF = \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$ and $\cF' = \cF_r' \circ 
+cF_{r-1}' \circ \cdots \circ \cF_1'$, $|m_f(x, y) - m_{f'}(x, y)| \leq \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} \norm{f_i(x) - f_i'(x)}_2}$. Notice that now we are working with a clean sum of differences, with no multipliers! 
 
-Let $\delta_1^*, ..., \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into $\hat{\delta}_1, ..., \hat{\delta}_r$, a feasible solution of $m_{f'}(x, y)$. $m_{f'}(x, y) \leq \sqrt{\sigma \norm{\hat{\delta}_i}_2} \leftrightarrow \sqrt{\sigma||\delta_i||^2}$; the solution must be feasible for this bound on $m_{f'}(x, y)$ to hold.
+Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsilon_r$ covers of $\cF_1, \dots, \cF_r$, respectively, such that $\abs{U_i} = N_\infty(\epsilon_i, \cF_i)$. By definition, for all $f_i$ in $\cF_i$, there exists a $u_i \in U_i$ such that $\max_{\norm{x} \leq 1} \norm{f_i(x) - u_i(x)}_2 \leq \epsilon_i$. Take $U = U_r \circ U_{r-1} \circ \cdots \circ U_1 = \{u_r \circ u_{r-1} \circ \cdots \circ u_1 \}$ as the cover for $m \circ \cF$. Suppose we were given $f = f_r \circ \cdots \circ f_1 \in \cF$. Let $u_r, \dots, u_1$ be the nearest neighbors of $f_r, \dots, f_1$. Then
+\begin{align}
+|m_f(x, y) - m_u(x, y)| &\leq \sqrt{\sum_{i=1}^r \max_{||x|| \leq 1} ||f_i(x) - u_i(x)||_2^2} \\
+&\leq \sqrt{\sum_{i=1}^r \epsilon_i^2} &&\text{(by construction).}
+\end{align}
 
-We want to make $(f_1', \hat{\delta}_1, ..., \hat{\delta}_r$ behave the same way under perturbations as $(f_1, \delta_1^*, ..., \delta_r^*$. $f$ has parameters $W_1, ..., W_r$ and $f'$ has parameters $W_1', ..., W_r'$. Then,
+Having established the validity of our cover, we now return to our claim of 1-Lipschitz-ness in step 1 of this proof. By symmetry, it is sufficient to prove an upper bound for $m_{f'}(x, y) - m_f(x, y)$.
+
+Let $\delta_1^*, \dots, \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into a feasible solution of $m_{f'}(x, y)$, which we denote by $\hat{\delta}_1, \dots, \hat{\delta}_r$. In particular, we have that $m_{f'}(x, y) \leq \sqrt{\sigma \norm{\hat{\delta}_i}_2} \leftrightarrow \sqrt{\sigma||\delta_i||^2}$; the solution must be feasible for this bound on $m_{f'}(x, y)$ to hold.
+
+Intuitively, we want to define a perturbation for $f'$ that does the same thing as $\delta_1^*,\dots,\delta_r^*$ for $f$. In plain English, $(f', \hat{\delta}_1, \dots, \hat{\delta}_r)$ should do the same thing as $(f_1, \delta_1^*, \dots, \delta_r^*)$. Recall that $f$ has parameters $W_1, \dots, W_r$ and $f'$ has parameters $W_1', \dots, W_r'$. Then, under the optimal perturbation,
 \begin{align}
     h_1 &= W_1 x + \delta_1^* \norm{x}_2 \\
     h_2 &= \sigma(W_2 h_1) + \delta_2^* \norm{h_1}_2 \\
-    &\vdots \\
+    &\vdots \nonumber \\
     h_r &= \sigma(W_r h_{r - 1}) + \delta_r^* \norm{h_{r - 1}}_2
 \end{align}
 We want to imitate this by perturbing $f'$ in some way. In particular, let
 \begin{equation}
-    h_1 = W_1'x + \delta_1^* \norm{x}_2 + (W_1 - W_1')x,
+    h_1 = W_1'x + \underbrace{\delta_1^* \norm{x}_2 + (W_1 - W_1')x}_{\defeq \text{ }\hat{\delta}_1 \norm{x}_2},
 \end{equation}
-where the last term serves to compensate for the difference between $W_1$ and $W_1'$. Therefore $\hat{\delta}_1^* \defeq \delta_1^* + \frac{(W_1 - W_1')x}{\norm{x}_2}$.
-We repeat this for every layer, e.g.,
-\begin{equation}
-    h_2 = \sigma(W_2' h_1) + \delta_2^*\norm{h_1} + \sigma(W_2 h_1) - \sigma(W_2' h_1),
-\end{equation}
-and $\delta_2 \cdot \norm{h} = h_2 - \sigma(W_2' h_1)$. So $\hat{\delta_2} = \delta_2^* + \frac{\sigma(w_2 h_1) - \sigma(w_2' h_1)}{\norm{h_1}_2}$. In general, 
+where the last term serves to compensate for the difference between $W_1$ and $W_1'$. Thus, $\hat{\delta}_1 \defeq \delta_1^* + \frac{(W_1 - W_1')x}{\norm{x}_2}$.
+We repeat this argument for every layer. Using the second layer as an example, 
 \begin{align}
-    \hat{\delta}_i = \delta_i^* + \frac{\sigma(W_ih_{i-1}) - \sigma(W_i' h_{i-1})}{\norm{h_{i-1}}_2}
+    h_2 &= \sigma(W_2' h_1) + \underbrace{\delta_2^*\norm{h_1} + \sigma(W_2 h_1) - \sigma(W_2' h_1)}_{\defeq \text{ }\hat{\delta}_2 \norm{h}_2}.
+\end{align}
+So, $\hat{\delta}_2 = \delta_2^* + \frac{\sigma(W_2 h_1) - \sigma(W_2' h_1)}{\norm{h_1}_2}$. In general, 
+\begin{align}
+    \hat{\delta}_i \defeq \delta_i^* + \frac{\sigma(W_ih_{i-1}) - \sigma(W_i' h_{i-1})}{\norm{h_{i-1}}_2}
 \end{align} 
 
-Then $\hat{\delta}_1, ..., \hat{\delta}_r$ on $f'$ are making the same predictions as $\delta_1, ..., \delta_r$ on $f'$. Next, we prove that this is a feasible solution.
+Then $\hat{\delta}_1,\dots, \hat{\delta}_r$ on $f'$ are making the same predictions as $\delta_1, \dots, \delta_r$ on $f'$. Last, observe that
 \begin{align}
     m_{f'}(x, y) &\leq \sqrt{\sum ||\hat{\delta}_i||_2^2} \\
-    &\leq \sqrt{\sum \norm{\delta_i}_2^2} + \sqrt{\sum \frac{\sigma(W_i h_{i-1}) - \sigma(W_i' h_{i-1})}{\norm{h_{i-1}}_2}}. 
+    &\leq \sqrt{\sum \norm{\delta_i^*}_2^2} + \sqrt{\sum_{i = 1}^r \frac{\sigma(W_i h_{i-1}) - \sigma(W_i' h_{i-1})}{\norm{h_{i-1}}_2}} &\text{(Minkowski's Ineq.)\footnote{Minkowski's inequality, which states that $\sqrt{\sum \norm{a_i + b_i}_2^2} \leq \sqrt{\sum \norm{a_i}_2^2} + \sqrt{\sum \norm{b_i}_2^2}$. In this setting, this inequality can also be proved using Cauchy-Schwarz.}}\\
+    &\leq m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} (\sigma(W_i x)-\sigma(W'_i x))^2} \label{lec11:eqn:l2_constraint} \\
+    &= m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} (f_i(x)-f_i'(x))^2}
 \end{align} 
-The last step follows by Minkowski's inequality, which states that $\sqrt{\sum \norm{a_i + b_i}_2^2} \leq \sqrt{\sum \norm{a_i}_2^2} + \sqrt{\sum \norm{b_i}_2^2}$. In this setting, this inequality can also be proved using Cauchy-Schwarz.
-
-But $\sqrt{\sum \norm{\delta_i}_2^2}$ can be bounded above by $m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x} \leq 1} (\sigma(Wx)-\sigma(W'x))^2}$; dividing by the 2-norm here is the same as restricting the 2-norm to be 1. This equals $m_f(x, y) + \sqrt{\sum_{i=1}^r \max_{\norm{x} \leq 1} (f_i(x)-f_i'(x))^2}$, which is what we wanted to show.
+Note that in \eqref{lec11:eqn:l2_constraint}, constraining $\norm{x}_2 \leq 1$ is equivalent to dividing by the $\ell_2$-norm of $x$.
 \end{proof}
 
-\tnote{maybe introduce some remarks below to make the paragraphs below a bit more structured}
-We can compare the above with \cite{bartlett2017},
+\begin{remark}
+We can compare the above with Theorem~\ref{lec10:thm:dnn_rademacher} proven in \cite{bartlett2017}.
 \begin{equation}
-f(x, \delta) - f(x) \leq \norm{\delta_r} \cdot \norm{W_{r-1}}_{\text{op}} \cdots \norm{W_1}_{\text{op}} + \norm{W_r}_{\text{op}} \cdot \norm{\delta_{r-1}} \cdots \norm{W_1}_{\text{op}} + \cdots + \norm{W_r}_{\text{op}} \cdots \norm{W_2}_{\text{op}} \cdot \norm{\delta_1}.
+\begin{split}
+f(x, \delta) - f(x) &\leq \norm{\delta_r}_2 \cdot \norm{W_{r-1}}_{\text{op}} \cdots \norm{W_1}_{\text{op}} \\
+&\quad + \norm{W_r}_{\text{op}} \cdot \norm{\delta_{r-1}}_2 \cdot \norm{W_{r - 2}}_{\text{op}} \cdots \norm{W_1}_{\text{op}} \\
+&\quad + \cdots  \\
+&\quad + \norm{W_r}_{\text{op}} \cdots \norm{W_2}_{\text{op}} \cdot \norm{\delta_1}_2.
+\end{split}
 \end{equation}
-Ignoring minor details (e.g. dependency on $r$), and supposing that $y = 1$, if we want $f(x) > 0$ and $f(x + \delta) \leq 0$, then $\norm{\delta}$ must exceed $\frac{1}{\prod\norm{W_i}_{\text{op}}}$ in order to make up the difference. This says that, approximately, $\frac{m_f(x, y)}{y f(x)} \geq \frac{1}{\prod \norm{W_i}_{\text{op}}}$, so $\frac{1}{m_f(x, y)}$, the inverse margin, is $\frac{1}{yf(x)} \cdot \prod \norm{W_i}_{\text{op}}$. So, we conclude that the former is a tighter bound.
+Ignoring minor details (e.g. dependency on $r$), we suppose that $y = 1$. Then, if $f(x) > 0$ and $f(x + \delta) \leq 0$, it must be the case that $\norm{\delta}_2 \lesssim \frac{1}{\prod_{i = 1}^r \norm{W_i}_{\text{op}}}$. This further implies that 
+\begin{align}
+    \frac{m_f(x, y)}{y f(x)} \gtrsim \frac{1}{\prod_{i = 1}^r \norm{W_i}_{\text{op}}}.
+\end{align}
+Rearranging, we conclude that we have obtained a tighter bound since the inverse margin $\frac{1}{m_f(x, y)} \lesssim \frac{1}{yf(x)} \cdot \prod_{i = 1}^r \norm{W_i}_{\text{op}}$.
+\end{remark}
 
-How \textit{much} better is our new bound? Empirically, it seems to be substantially better, since our empirical Lipschitzness is better than the worst-case bound. Another source of hope that this is better is that SGD prefers Lipschitz solutions and Lipschitzness on data points. The algorithm is (in a sense) minimizing Lipschitzness on a data point, making it better than the worst-case Lipschitzness on the entire domain, which likely accounts for the gap between the two bounds. (Implicitly, we are maximizing the all-layer margin.)
+\begin{remark}
+Later, we will show that SGD prefers Lipschitz solutions and Lipschitzness on data points. Implicitly, SGD seems to be maximizing the all-layer margin. Since the algorithm is (in a sense) minimizing Lipschitzness on a data point, this likely accounts for the empirically observed gap between the two bounds. 
+\end{remark}
 
-Moreover, SAM (sharpness-aware regularization) is a form of perturbation, but on the parameter $\theta$ itself rather than on the intermediate hidden parameters $h_i$. However, these two methods are related! If we consider the (single-example) loss $\frac{\partial \ell}{\partial W_i}$, it equals $\frac{\partial \ell}{\partial h_{i+1}} \cdot h_i^T$. Therefore the norm of the term on the left equals the product of the norms of the two terms of the right, relating the Lipschitzness of the parameters.
+\begin{remark}
+The approach we have described here is also similar to other methods in the deep learning literature. Other authors have introduced a method known as SAM (a form of sharpness-aware regularization); this method applies a perturbation to the parameter $\theta$ itself rather than on the intermediate hidden parameters $h_i$. However, these two methods are related! If we consider the (single-example) loss $\frac{\partial \ell}{\partial W_i}$, it equals $\frac{\partial \ell}{\partial h_{i+1}} \cdot h_i^\top$. Note that the norm of the term on the left is bounded by the product of the norms of the two terms of the right; this observation relates the model's Lipschitzness with respect to the parameters to its Lipschitzness with respect to the hidden layer outputs.
+\end{remark}
 
-Finally, we can prove a more general version in which we do not need to worry about the minimum margin of the entire dataset, and instead find an average. We can show that the test error is bounded above by $\frac{1}{n}$ times $\sqrt{\frac{1}{n} \sum_{i=1}^n \frac{1}{m_f(x\sp{i}, y\sp{i})^2}}$ times the sum of complexities of each layer, plus a lower-order term.
-
+\begin{remark}
+Finally, we can prove a more general version of this result in which we do not need to study the minimum margin of the entire dataset, and instead consider the average margin. Using this approach, we can show that the test error is bounded above by 
+$\frac{1}{n} \sqrt{\frac{1}{n} \sum_{i=1}^n \frac{1}{m_f(x\sp{i}, y\sp{i})^2}}$ times the sum of complexities of each layer, plus a low-order term.
+\end{remark}
