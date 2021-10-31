@@ -21,7 +21,7 @@ Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Int
   \label{lec6:fig:margin}
 \end{figure}
 
-\subsec{Formalizing margin theory}
+\subsec{Formalizing margin theory} \label{sec:formal_margin}
 First, assume that the dataset $\cD = ((x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n}))$ is \textit{completely separable}. In other words, there exists some $h_\theta\in\cH$ such that $y^{(i)} = \sgn(h_\theta(x^{(i)}))$ holds for all $( x^{(i)},y^{(i)})\in \cD$. This is not a necessary condition for our final bound but will make the derivation cleaner.
 
 \begin{definition}[(Unnormalized) Margin]
@@ -39,7 +39,7 @@ We will begin by introducing the idea of a \textit{surrogate loss}, a loss funct
       0 & t\geq \gamma \\
       1 & t\leq 0 \\
       1-t/\gamma & 0\leq t\leq \gamma
-   \end{cases}
+   \end{cases} \label{lec6:eqn:ramp_loss}
 \end{equation}
 
 \begin{figure}[ht!]
