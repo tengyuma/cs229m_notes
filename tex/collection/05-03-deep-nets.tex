@@ -40,11 +40,13 @@ In this lecture, we discuss a bound on the Rademacher complexity of a dense neur
 \begin{align}
     f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
 \end{align}
+\tnote{should be $f_\theta$}
 Using this notation, we establish an upper bound on the Rademacher complexity of a dense neural network.
 
 \begin{theorem}[\cite{bartlett2017}]
 \label{lec10:thm:dnn_rademacher}
-Suppose that $\forall i, \norm{x^{(i)}}_2 \leq c$ and let
+Suppose that $\forall i, \norm{x^{(i)}}_2 \leq c$ and let\tnote{$h_\theta$?}
+\tnote{textup for op}
 \begin{align}
     \cF = \{h_\theta : \norm{W_i}_{\text{op}} \leq \kappa_i, \norm{W_i^\top}_{2,1} \leq b_i\}.
 \end{align}
@@ -55,27 +57,27 @@ Then,
 \end{theorem}
 
 \begin{remark}
-    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and $\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term, which is a product of matrix norms.
+    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and \tnote{should define the $2,1$ norm first and then the $2,1$ norm of the transpose}$\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term\tnote{the second term of what?} is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term\tnote{it doesn't sound the first term}, which is a product of matrix norms.
 \end{remark}
 
 \begin{remark}
     As a corollary of the above theorem, we also get a bound on the generalization error for the margin loss of the following form:
     \begin{equation}
-        \texttt{generalization error} \leq \tilde{O}\left(\frac{1}{\gamma_{\min}} \cdot \frac{1}{\sqrt{n}}\cdot c \cdot \left(\prod_{i=1}^r\norm{W_i}_{\textup{op}} \right) \cdot {\left( \sum_{i=1}^r\frac{\norm{W_i^\top}^{2/3}_{2,1}}{\norm{W_i}_{\textup{op}}^{2/3}}\right)^{3/2}}  \right),
+        \textup{generalization error} \leq \tilde{O}\left(\frac{1}{\gamma_{\min}} \cdot \frac{1}{\sqrt{n}}\cdot c \cdot \left(\prod_{i=1}^r\norm{W_i}_{\textup{op}} \right) \cdot {\left( \sum_{i=1}^r\frac{\norm{W_i^\top}^{2/3}_{2,1}}{\norm{W_i}_{\textup{op}}^{2/3}}\right)^{3/2}}  \right),
     \end{equation}
-    where $\gamma_{\min}$ denotes the margin.
+    where $\gamma_{\min}$ denotes the margin. \tnote{what's $c$?}
 \end{remark}
 	
 First, we motivate the proof by presenting the main idea, and then work through each part of the proof. The main ideas of the proof can be summarized as follows:
     
 \begin{itemize}
-    \item At a high level, we want to show that the covering number $N(\epsilon, \cF, \rho)$ for a dense neural network is $\leq \frac{R}{\epsilon^2}$. Proving this would enable us to apply the Localized Dudley Theorem to get a bound on the Rademacher Complexity.
+    \item At a high level, we want to show that the covering number $N(\epsilon, \cF, \rho)$ for a dense neural network is $\leq \frac{R}{\epsilon^2}$. Proving this would enable us to apply the Localized Dudley Theorem \tnote{a reference to previous equations/theorems}to get a bound on the Rademacher Complexity.
     \item To bound the covering number for a dense neural network, we use $\epsilon$-covers to cover each layer of $f$ separately, and then combine them to prove that there exists an $\epsilon$-cover of the original function $f$. 
     \item To combine the epsilon covers of each layer, we use the Lipschitzness of each layer.
     \item We control and approximate the error propagation that is introduced through discretizing each layer using $\epsilon_i$-coverings in order to get a reasonable final $\epsilon$.
 \end{itemize}
 
-As a prelude to the proof, let us think of each layer of $f$ as a separate function $f_i$. Note that $f_i$ corresponds to a matrix multiplication and an activation layer. Thus, $f$ can be written as 
+As a prelude to the proof, let us think of each layer of $f$ as a separate function $f_i$. Note that $f_i$ corresponds to a matrix multiplication and an activation layer\tnote{more precise definition}. Thus, $f$ can be written as 
 \begin{align}
     f = f_r \circ f_{r-1} \circ \cdots \circ f_1,
 \end{align}
@@ -88,10 +90,10 @@ We now derive the $\epsilon$-covering of $f(x)$ in three steps:
     \item Finally, the $\epsilon_r$ covering (i.e covering of the last layer) will be the $\epsilon$ covering of $f(x)$.
 \end{enumerate}
 
-Before stating a critical lemma, we establish some definitions. First, define $c_i$ such that all the inputs to the $i^{th}$ layer, $z_1, z_2, \dots, z_n$ are bounded as $\norm{z_j} \leq c_{i-1}$, and therefore $c_0 = c$. We also assume that there exists a function $g$ such that $\log N (\epsilon_i, \cF_i, \rho) \leq g\left(\epsilon_i, c_{i-1}\right)$. Then, we can state the following lemma:
+Before stating a critical lemma, we establish some definitions. First, define $c_i$ such that all the inputs to the $i^{th}$ layer, $z_1, z_2, \dots, z_n$ \tnote{not sure what $z_i$'s, and the index sounds wrong..}are bounded as $\norm{z_j} \leq c_{i-1}$\tnote{unclear what's the indexing rule here; $i$ and $j$?}, and therefore $c_0 = c$. We also assume that there exists a function $g$ such that $\log N (\epsilon_i, \cF_i, \rho) \leq g\left(\epsilon_i, c_{i-1}\right)$\tnote{move this to the lemma?}. Then, we can state the following lemma:
 
 \begin{lemma}
-    There exists an $\epsilon$ cover of $\mathcal{F} = \{f(x) : f(x) = f_r \circ f_{r-1} \circ \cdots \circ f_1\}$, where $\epsilon = \epsilon_r + \kappa_r\epsilon_{r-1} + \cdots + \kappa_r\kappa_{r-1}\dots\kappa_2\epsilon_1$, and
+    There exists an $\epsilon$ cover \tnote{consistency..$\epsilon$-cover} of $\mathcal{F} = \{f(x) : f(x) = f_r \circ f_{r-1} \circ \cdots \circ f_1\}$, where $\epsilon = \epsilon_r + \kappa_r\epsilon_{r-1} + \cdots + \kappa_r\kappa_{r-1}\dots\kappa_2\epsilon_1$, and \tnote{the conclusion seems to already contain the part " there exists $\epsilon$-cover"; the conclusion should be bounding the log size }
     \begin{align}
     \log N(\epsilon, \cF, \rho) \leq \sum_{i=1}^{r} g\left(\epsilon_i, c_{i-1}\right)
     \end{align}
@@ -99,18 +101,19 @@ Before stating a critical lemma, we establish some definitions. First, define $c
 \end{lemma}
 
 \begin{proof}
-We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
+	\tnote{the figure is very important for the proof}
+We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover \tnote{add dash; check other occurrences}the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. \tnote{what's $ f_2 \in \cF_{2,f_1'} $? not defined}Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover \tnote{grammar}of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
 
 We now note that
 \begin{align}
     \log \abs{\cC_{2, f_1'}} \leq g\left(\epsilon_2, c_1\right)
 \end{align}
-Taking a union over all $f_1'$, 
+Taking a union over all $f_1'$\tnote{more formal, not sure what this means}, 
 \begin{align}
     \abs{\cC_{2}} &\leq \abs{\cC_{1}} \exp\left(g\left(\epsilon_2, c_1\right)\right) \\
     \log\abs{\cC_{2}} &\leq \log\abs{\cC_{1}} + g\left(\epsilon_2, c_1\right) \leq g\left(\epsilon_1, c_0\right) + g\left(\epsilon_2, c_1\right)
 \end{align}
-Similarly, given $\cC_k$, for any $f_k' \circ f_{k-1}' \circ \cdots \circ f_1' \in \cC_k$, we construct a $\cC_{k+1, f_k', \dots, f_1'}$ that is an $\epsilon_{k+1}$-covering of $\cF_{k+1} \circ f_k' \circ \cdots \circ f_1'$. We choose $\cC_{k+1} = \cup_{f_i \in \cC_i, i \leq k} C_{k+1, f_k', \dots, f_1'}$. Then, we have
+Similarly, given $\cC_k$, for any $f_k' \circ f_{k-1}' \circ \cdots \circ f_1' \in \cC_k$, we construct a $\cC_{k+1, f_k', \dots, f_1'}$ that is an $\epsilon_{k+1}$-covering \tnote{consistency}of $\cF_{k+1} \circ f_k' \circ \cdots \circ f_1'$. We choose $\cC_{k+1} = \cup_{f_i \in \cC_i, i \leq k} C_{k+1, f_k', \dots, f_1'}$. Then, we have
 \begin{align}
     \log \abs{\cC_{k+1}} \leq g\left(\epsilon_{k+1}, c_k\right) + \cdots + g\left(\epsilon_1, c_0\right)
 \end{align}
@@ -208,7 +211,7 @@ Ultimately, we aim to prove a tighter bound on the population loss that grows po
 So far in this course, given some complexity measure we denote as $\text{comp}(\cdot)$, our uniform convergence results always appear in one of the two following forms (which are essentially equivalent). Namely, with high probability,
 \begin{align}
 \forall f\in \cF, ~~L(f) &\leq \frac{\text{comp}(\cF)}{\sqrt{n}} &&\text{(I)} \\
-\forall f\in \cF, ~~ L(f) &\leq \frac{\text{comp}(f)}{\sqrt{n}}  &&\text{(II)}
+\forall f, ~~ L(f) &\leq \frac{\text{comp}(f)}{\sqrt{n}}  &&\text{(II)}
 \end{align}
 
 \begin{remark}
@@ -241,6 +244,8 @@ for some function $g$. Then we can consider an \textit{augmented loss}:
 \end{align}
 \tnote{I guess we are waiting for the figures from the scribe notes takers. Just a reminder to have a simple illustrative figure here. Note the notation change from $g$ to $h$.} 
 Suppose we have a region of low complexity in our existing loss function. Because this region is random, so we cannot selectively apply universal convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. The surrogate loss was used in~\cite{wei2019data} to obtain a data-dependent generalization bound, though there are possibly various other ways to define surrogate losses and apply existing uniform convergence guarantees. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a (implicitly) data-dependent hypothesis class \cite{wei2019data}.
+\tnote{reminder: missing a figure}
+
 
 \sec{All-layer margin}
 We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions for which we can expect small generalization gap. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
