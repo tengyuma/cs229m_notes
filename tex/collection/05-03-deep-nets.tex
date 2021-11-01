@@ -121,7 +121,8 @@ Next, we show that for the above construction, the radius of the cover for $\cF$
 \begin{align}
     \epsilon = \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_{j}\right).
 \end{align}
-If we consider a function composition $f_r \circ \cdots \circ f_1 \in \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$, then we know that there exists an $f_1' \in \cC_1$ such that $\rho\left(f_1, f_1'\right) \leq \epsilon_1$. Similarly, we know there exists $f_{2, f_1'}' \in \cC_{2, f_1'}$ \tnote{I think one need to say $f_{2, f_1'}' = f_2'\circ f_1'$; otherwise what's $f_2'$ and $f_1'$?}such that $\rho\left(f_2' \circ f_1', f_2\circ f_1' \right) \leq \epsilon_2$. Using the triangle inequality, we can say that \tnote{explain intermediate steps of the steps belows}
+If we consider a function composition $f_r \circ \cdots \circ f_1 \in \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$, then we know that there exists an $f_1' \in \cC_1$ such that $\rho\left(f_1, f_1'\right) \leq \epsilon_1$. Similarly, we know there exists $f_{2, f_1'}' \in \cC_{2, f_1'}$ \tnote{I think one need to say $f_{2, f_1'}' = f_2'\circ f_1'$; otherwise what's $f_2'$ and $f_1'$?}such that $\rho\left(f_2' \circ f_1', f_2\circ f_1' \right) \leq \epsilon_2$. Using the triangle inequality, we can say that \tnote{explain intermediate steps of the steps below}
+\tnote{stopped commenting here; I think this proof needs requires another pass. }
 \begin{align}
    \rho\left(f_2' \circ f_1', f_2 \circ f_1\right) &\leq \rho\left(f_2' \circ f_1', f_2 \circ f_1'\right) + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
    &\leq \epsilon_2 + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
