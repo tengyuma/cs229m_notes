@@ -57,7 +57,7 @@ Then,
 \end{theorem}
 
 \begin{remark}
-    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and \tnote{should define the $2,1$ norm first and then the $2,1$ norm of the transpose}$\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term\tnote{the second term of what?} is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term\tnote{it doesn't sound the first term}, which is a product of matrix norms.
+    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and \tnote{should define the $2,1$ norm first and then the $2,1$ norm of the transpose} \tnote{oops scratch that --- it was defined before. Maybe here we should say "recall that .."}$\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term\tnote{the second term of what?} is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term\tnote{it doesn't sound the first term}, which is a product of matrix norms.
 \end{remark}
 
 \begin{remark}
@@ -102,7 +102,7 @@ Before stating a critical lemma, we establish some definitions. First, define $c
 
 \begin{proof}
 	\tnote{the figure is very important for the proof}
-We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover \tnote{add dash; check other occurrences}the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. \tnote{what's $ f_2 \in \cF_{2,f_1'} $? not defined}Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover \tnote{grammar}of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
+We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover \tnote{add dash; check other occurrences}the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. \tnote{what's $ f_2 \in \cF_{2,f_1'} $? it seems that it defines using itself?}Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover \tnote{grammar}of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
 
 We now note that
 \begin{align}
@@ -135,6 +135,7 @@ Using the same logic for a general $k$, we know that there exists $f_{k,f_1',\do
     \rho\left(f_k' \circ f_{k-1}' \circ \cdots \circ f_1', f_k \circ \cdots \circ f_1\right) &\leq \rho\left(f_k' \circ f_{k-1}'\circ \cdots \circ f_1', f_k \circ f_{k-1}'\circ \cdots \circ f_1' \right) \\ 
     &+ \rho\left(f_k \circ f_{k-1}'\circ f_{k-2}' \circ \cdots \circ f_1', f_k \circ f_{k-1}\circ f_{k-2}' \circ \cdots \circ f_1'\right) \\ &+ \cdots + \rho\left(f_k \circ f_{k-1}\circ \cdots \circ f_2 \circ f_1', f_k \circ f_{k-1}\circ \cdots \circ f_1\right) \\ & \leq \sum_{i=1}^{r} \left(\epsilon_i\prod_{j=i+1}^{r}\kappa_{j}\right)
 \end{align}
+\tnote{it might be useful to explain expand on how to get the last equation }
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{lec10:thm:dnn_rademacher}]
