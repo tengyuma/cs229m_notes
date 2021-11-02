@@ -303,7 +303,7 @@ Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin 
 %That is, the generalized margin ``zeroes out" incorrect classifications.
 To simplify the exposition of the machinery below, we also introduce the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho$ which is the infinity-norm distance on an input domain $\cX$: 
 \begin{equation}
-\rho(f, f) \triangleq \sup_{x \in \mathcal{X}} |f(x) - f'(x)| \triangleq \|f - f'\|_\infty.\footnote{If $f$ maps $\cX$ to multi-dimensional outputs, we will define $\rho(f, f) \triangleq \sup_{x \in \mathcal{X}} \|f(x) - f'(x)\| \triangleq \|f - f'\|_\infty$ where the norm in $\|f(x) - f'(x)\|$ is a norm in the output space of $f$ (which will be Euclidean norm in this rest of this section.)}
+\rho(f, f) \triangleq \sup_{x \in \mathcal{X}} |f(x) - f'(x)| \triangleq \|f - f'\|_\infty.\footnote{If $f$ maps $\cX$ to multi-dimensional outputs, we will define $\rho(f, f) \triangleq \sup_{x \in \mathcal{X}} \|f(x) - f'(x)\| \triangleq \|f - f'\|_\infty$ where the norm in $\|f(x) - f'(x)\|$ is a norm in the output space of $f$ (which will be the Euclidean norm in this rest of this section).}
 \end{equation}
 \begin{remark}
     Notice that $N_\infty(\epsilon, \cF) \geq N(\epsilon, \cF, L_2(P_n))$. This is because the $\rho = L_\infty(\cX)$ is a more demanding measure of error: $f$ and $f'$ must be close on \textit{every} input, not just the empirical data. That is,
@@ -313,7 +313,7 @@ To simplify the exposition of the machinery below, we also introduce the \textit
 \end{remark}
 
 \begin{lemma}
-Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$.\footnote{Recall that this is the worst dependency on $\epsilon$ that we can tolerate when converting covering number bounds to Rademacher complexity} Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for every $f$ in $\mathcal{F}$ that correctly predicts all the training examples,
+Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$.\footnote{Recall that this is the worst dependency on $\epsilon$ that we can tolerate when converting covering number bounds to Rademacher complexity.} Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for every $f$ in $\mathcal{F}$ that correctly predicts all the training examples,
 \begin{equation}
 L_{01} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min_{i \in [n]} g_f(x\sp{i}, y\sp{i})} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
 \end{equation}
@@ -334,7 +334,7 @@ Next we observe that
     &\leq \log N_\infty(\epsilon\gamma, \cG) &\text{\eqref{lec11:eqn:l_inf_vs_l2pn}} \\
     &\leq \l \lfloor \frac{R^2}{\epsilon^2 \gamma^2} \r \rfloor &\text{(by assumption)}.
 \end{align}
-Then, using our results relating the log of the covering number to a bound on the Rademacher complexity (recall \ref{lec9:eqn:rademacherbound_three} and Theorem~\ref{lec9:thm:better-dudley}), we conclude that $R_S(\ell_\gamma \circ \cG) \leq \tilO\l (\frac{R}{\gamma \sqrt{n}}\r )$.
+Then, using our results relating the log of the covering number to a bound on the Rademacher complexity (recall \eqref{lec9:eqn:rademacherbound_three} and Theorem~\ref{lec9:thm:better-dudley}), we conclude that $R_S(\ell_\gamma \circ \cG) \leq \tilO\l (\frac{R}{\gamma \sqrt{n}}\r )$.
 Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i})$.\footnote{A caveat: because $\gamma$ is a random variable, proving this result rigorously requires taking a union bound over a discretized $\gamma$. We sketched out this argument more thoroughly in Remark~\ref{lec7:rmk:union_bound_margin}.} Using Corollary~\ref{lec6:cor:ggap-rsbound}, we conclude that $\hat{L}_{\gamma_\text{min}} (\theta) \leq 0 + \tilO\l (\frac{R}{\sqrt{n} \cdot \gamma_\text{min}} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r )$, as desired.
 \end{proof}
 For which $g_f$ can we bound the covering number? If we take $g_f(x, y) = yf(x)$, then the covering number depends on the product $\prod_i \norm{W_i}_{\text{op}}$, but we originally set out to do better than this. If we have a linear model $w^\top x$, the normalized margin, $\frac{y \cdot w^\top x}{\norm{w}}$, governs the generalization performance. But how do we normalize for more general models? 
