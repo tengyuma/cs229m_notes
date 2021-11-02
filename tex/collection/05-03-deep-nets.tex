@@ -38,82 +38,107 @@ Let $\cF = \{x \to Wx : W \in \mathbb{R}^{m \times d}, ||W^\top||_{2, 1} \le B\}
 In this lecture, we discuss a bound on the Rademacher complexity of a dense neural network. We set up notation as follows: $W_i$ denotes the linear weight matrix at the $i$-th layer of the neural network, we have a total of $r$ layers, and $\sigma$ is the activation function which is 1-Lipschitz (for example, ReLU, softmax, or sigmoid). If the input is a vector $x$, the neural network's output can be represented as follows:
 
 \begin{align}
-    f(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
+    f_\theta(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
 \end{align}
-\tnote{should be $f_\theta$}
 Using this notation, we establish an upper bound on the Rademacher complexity of a dense neural network.
 
 \begin{theorem}[\cite{bartlett2017}]
 \label{lec10:thm:dnn_rademacher}
-Suppose that $\forall i, \norm{x^{(i)}}_2 \leq c$ and let\tnote{$h_\theta$?}
-\tnote{textup for op}
+Suppose that $\forall i, \norm{x^{(i)}}_2 \leq c$ and let
 \begin{align}
-    \cF = \{h_\theta : \norm{W_i}_{\text{op}} \leq \kappa_i, \norm{W_i^\top}_{2,1} \leq b_i\}.
+    \cF = \{f_\theta : \norm{W_i}_{\textup{op}} \leq \kappa_i, \norm{W_i^\top}_{2,1} \leq b_i\}.
 \end{align}
 Then,
 \begin{equation}
-    R_S (\cF) \leq \frac{c}{\sqrt{n}} \cdot \underbrace{\left(\prod_{i=1}^r \kappa_i \right)}_{\text{relatively large}} \cdot \underbrace{\left( \sum_{i=1}^r\frac{b_i^{2/3}}{\kappa_i^{2/3}}\right)^{3/2}}_{\text{relatively small}}.
+    R_S (\cF) \leq \frac{c}{\sqrt{n}} \cdot \underbrace{\left(\prod_{i=1}^r \kappa_i \right)}_{\textup{(I)}} \cdot \underbrace{\left( \sum_{i=1}^r\frac{b_i^{2/3}}{\kappa_i^{2/3}}\right)^{3/2}}_{\textup{(II)}}. \label{lec10:eqn:bartlett_rad_bound}
 \end{equation}
 \end{theorem}
+We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and recall that $\norm{W_i^\top}_{2,1}$ denotes the sum of the $\ell_2$ norms of the rows of $W_i$. Examining \eqref{lec10:eqn:bartlett_rad_bound}, we see that (II) is relatively small as it is a sum of matrix norms, and so the bound is dominated by (I), which is a product of matrix norms.
 
 \begin{remark}
-    We use $\norm{W}_{\textup{op}}$ to denote the operator norm (or spectral norm) of $W$, and \tnote{should define the $2,1$ norm first and then the $2,1$ norm of the transpose} \tnote{oops scratch that --- it was defined before. Maybe here we should say "recall that .."}$\norm{W_i^\top}_{2,1}$ denotes the sum of the $l_2$ norms of the rows of $W_i$. We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because $\norm{f(x)-f(y)}_2 = \norm{Wx-Wy}_2 \leq \norm{W}_{\textup{op}}\norm{x-y}_2$, since $\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2$. The second term\tnote{the second term of what?} is relatively small as it is a sum of matrix norms, and so the bound is dominated by the first term\tnote{it doesn't sound the first term}, which is a product of matrix norms.
+    We note that $f(x) = Wx$ is Lipschitz with a Lipschitz constant of $\norm{W}_{\textup{op}}$. This is because 
+    \begin{align}
+        \norm{f(x)-f(y)}_2 &= \norm{Wx-Wy}_2 \\
+        &\leq \norm{W}_{\textup{op}}\norm{x-y}_2 &\text{$(\norm{W}_{\textup{op}} = \max_{x:\norm{x}_2=1}\norm{Wx}_2)$}
+    \end{align}. 
 \end{remark}
 
 \begin{remark}
     As a corollary of the above theorem, we also get a bound on the generalization error for the margin loss of the following form:
     \begin{equation}
-        \textup{generalization error} \leq \tilde{O}\left(\frac{1}{\gamma_{\min}} \cdot \frac{1}{\sqrt{n}}\cdot c \cdot \left(\prod_{i=1}^r\norm{W_i}_{\textup{op}} \right) \cdot {\left( \sum_{i=1}^r\frac{\norm{W_i^\top}^{2/3}_{2,1}}{\norm{W_i}_{\textup{op}}^{2/3}}\right)^{3/2}}  \right),
+        \textup{generalization error} \leq \tilde{O}\left(\frac{1}{\gamma_{\min}} \cdot \frac{1}{\sqrt{n}} \cdot \left(\prod_{i=1}^r\norm{W_i}_{\textup{op}} \right) \cdot {\left( \sum_{i=1}^r\frac{\norm{W_i^\top}^{2/3}_{2,1}}{\norm{W_i}_{\textup{op}}^{2/3}}\right)^{3/2}}  \right),
     \end{equation}
-    where $\gamma_{\min}$ denotes the margin. \tnote{what's $c$?}
+    where $\gamma_{\min}$ denotes the margin.
 \end{remark}
 	
 First, we motivate the proof by presenting the main idea, and then work through each part of the proof. The main ideas of the proof can be summarized as follows:
     
 \begin{itemize}
-    \item At a high level, we want to show that the covering number $N(\epsilon, \cF, \rho)$ for a dense neural network is $\leq \frac{R}{\epsilon^2}$. Proving this would enable us to apply the Localized Dudley Theorem \tnote{a reference to previous equations/theorems}to get a bound on the Rademacher Complexity.
-    \item To bound the covering number for a dense neural network, we use $\epsilon$-covers to cover each layer of $f$ separately, and then combine them to prove that there exists an $\epsilon$-cover of the original function $f$. 
-    \item To combine the epsilon covers of each layer, we use the Lipschitzness of each layer.
+    \item At a high level, we want to show that the covering number $N(\epsilon, \cF, \rho)$ for a dense neural network is $\leq \frac{R}{\epsilon^2}$. Proving this would enable us to apply Theorem~\ref{lec9:thm:better-dudley} to get a bound on the Rademacher Complexity.
+    \item To bound the covering number for a dense neural network, we use $\epsilon$-covers to cover each layer of $f_\theta$ separately, and then combine them to prove that there exists an $\epsilon$-cover of the original function $f_\theta$. 
+    \item To combine the $\epsilon$-covers of each layer, we use the Lipschitzness of each layer.
     \item We control and approximate the error propagation that is introduced through discretizing each layer using $\epsilon_i$-coverings in order to get a reasonable final $\epsilon$.
 \end{itemize}
 
-As a prelude to the proof, let us think of each layer of $f$ as a separate function $f_i$. Note that $f_i$ corresponds to a matrix multiplication and an activation layer\tnote{more precise definition}. Thus, $f$ can be written as 
+As a prelude to the proof of Theorem~\ref{lec10:thm:dnn_rademacher}, let us abstractify each layer of $\cF$ as $\cF_i$ where $\cF_i$ corresponds to matrix multiplication by $W_i$ composed with a nonlinear activation function $\sigma$. We then denote $\cF$ as the composition of each of these (single layer) function spaces as follows:
 \begin{align}
-    f = f_r \circ f_{r-1} \circ \cdots \circ f_1,
+    \cF = \cF_r \circ \cF_{r - 1} \circ \cdots \circ \cF_1 = \{f_r \circ f_{r - 1} \circ \cdots f_{1} : f_i \in \cF_i\}
 \end{align}
-where each $f_i$ is $\kappa_i$-Lipschitz. Let us also assume, for simplicity, that $f_i(0) = 0$. 
+We will assume throughout that $f_i$ is $\kappa_i$-Lipschitz, i.e.
+\begin{align}
+    \norm{f_i(x) - f_i(y)}_2 \leq \kappa_i \norm{x - y}_2 \label{lec10:eqn:lipschitz-def}
+\end{align} 
+Let us also assume, for simplicity, that $f_i(0) = 0$ and $\norm{x\sp{j}}_2 \leq c$ for all $j = 1,\dots,n$. Then, by applying the definition of Lipschitz continuity, we obtain that:
+\begin{align}
+    \norm{f_i(f_{i - 1}(\cdots(f_1(x\sp{j}))))}_2 \leq \underbrace{\kappa_{i} \cdot \kappa_{i - 1} \cdots \kappa_1 \cdot c}_{\defeq c_i}
+\end{align}
 
-We now derive the $\epsilon$-covering of $f(x)$ in three steps:
+We now derive an $\epsilon$-covering of $\cF$ in two steps:
 \begin{enumerate}
-    \item We take points as input to the $i^{th}$ layer, and devise an $\epsilon_i$ covering of the space spanned by each point passed through the function $f_i$.
-    \item We use the $N(\epsilon_i, \cF_i, \rho)$ points of the $\epsilon_i$ covering as an input to the $(i+1)$-th layer, where $\cF_i$ is the function family of the $i$-th layer and $\rho = L_2(p_n)$.
-    \item Finally, the $\epsilon_r$ covering (i.e covering of the last layer) will be the $\epsilon$ covering of $f(x)$.
+    \item Given inputs to the $i^{th}$ layer, we construct an $\epsilon_i$-covering of the output space of the function $f_i$.
+    \item Using the $\epsilon_i$-covering as inputs to the $(i + 1)$-th layer, we show that we can use several single layer coverings to construct an $\epsilon$-covering for a multilayer network.
 \end{enumerate}
 
-Before stating a critical lemma, we establish some definitions. First, define $c_i$ such that all the inputs to the $i^{th}$ layer, $z_1, z_2, \dots, z_n$ \tnote{not sure what $z_i$'s, and the index sounds wrong..}are bounded as $\norm{z_j} \leq c_{i-1}$\tnote{unclear what's the indexing rule here; $i$ and $j$?}, and therefore $c_0 = c$. We also assume that there exists a function $g$ such that $\log N (\epsilon_i, \cF_i, \rho) \leq g\left(\epsilon_i, c_{i-1}\right)$\tnote{move this to the lemma?}. Then, we can state the following lemma:
-
+Formally, the following lemma answers the second step in the above outline. Namely, given a covering number for a single layer, we show how to compute a covering number bound for multiple layers.
 \begin{lemma}
-    There exists an $\epsilon$ cover \tnote{consistency..$\epsilon$-cover} of $\mathcal{F} = \{f(x) : f(x) = f_r \circ f_{r-1} \circ \cdots \circ f_1\}$, where $\epsilon = \epsilon_r + \kappa_r\epsilon_{r-1} + \cdots + \kappa_r\kappa_{r-1}\dots\kappa_2\epsilon_1$, and \tnote{the conclusion seems to already contain the part " there exists $\epsilon$-cover"; the conclusion should be bounding the log size }
+    Under the setup given above, if every input to $f_i$ satisfies $\norm{z\sp{j}}_2 \leq c_{i - 1}$, we assume that  
     \begin{align}
-    \log N(\epsilon, \cF, \rho) \leq \sum_{i=1}^{r} g\left(\epsilon_i, c_{i-1}\right)
+        \log N(\epsilon_i, \cF_i, L_2(P_n)) \leq g(\epsilon_i, c_{i - 1}).\footnotemark \label{lec10:eqn:single_cover_bound}
+    \end{align}
+    \footnotetext{If $\cF_i$ defines a collection of linear models, then $\log N(\epsilon_i, \cF_i, L_2(P_n)) \leq \l \lceil \frac{c_{i - 1}^2}{\epsilon_i^2} \r \rceil$.}
+    Then, there exists an $\epsilon$-cover $\cC$ of $\cF_r \circ \cdots \circ \cF_1$ for $\epsilon = \epsilon_r + \kappa_r\epsilon_{r-1} + \cdots + \kappa_r\kappa_{r-1}\dots\kappa_2\epsilon_1$ such that
+    \begin{align}
+        \log \abs{\cC} \leq \sum_{i=1}^{r} g\left(\epsilon_i, c_{i-1}\right)
     \end{align}
     \label{lec10:lma:additive_cover}
 \end{lemma}
-
 \begin{proof}
-	\tnote{the figure is very important for the proof}
-We define $\cC_1$ to be an $\epsilon_1$-cover of $\cF_1$. For all $f_1' \in \cC_1$, construct $\cC_{2, f_1'}$ to $\epsilon_2$ cover \tnote{add dash; check other occurrences}the set $\cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_{2,f_1'} \right\}$. \tnote{what's $ f_2 \in \cF_{2,f_1'} $? it seems that it defines using itself?}Then, we define $\cC_2 = \cup_{f_1'\in \cC_1}\cC_{2,f_1'}$, and observe that $\cC_2$ a cover \tnote{grammar}of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \times \kappa_2 + \epsilon_2$.
+\tnote{the figure is very important for the proof}
+Let $\epsilon_1,\dots,\epsilon_r$ be the radius for each layer. Let $\cC_1$ be an $\epsilon_1$-cover of $\cF_1$. Then, for all $f_1' \in \cC_1$, we define $\cC_{2, f_1'}$ as an $\epsilon_2$-covering of  the set 
+\begin{equation}
+    \cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_2 \right\}.
+\end{equation}
+Taking a union of this covering over all $f_1' \in \cC_1$ clearly yields an $\epsilon$-covering for $\cF_2 \circ \cF_2$. In paricular, if 
+\begin{align}
+    \cC_2 = \bigcup_{f_1'\in \cC_1}\cC_{2,f_1'},
+\end{align} 
+then $\cC_2$ is an $\epsilon$-cover of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \cdot \kappa_2 + \epsilon_2$. We prove this claim rigorously in the sequel.
 
-We now note that
+Next, we bound the sizes of these covers. Directly applying the assumption given by \eqref{lec10:eqn:single_cover_bound}, we conclude that
 \begin{align}
-    \log \abs{\cC_{2, f_1'}} \leq g\left(\epsilon_2, c_1\right)
+    \log \abs{\cC_{2, f_1'}} \leq g\left(\epsilon_2, c_1\right).
 \end{align}
-Taking a union over all $f_1'$\tnote{more formal, not sure what this means}, 
+Then, because $\cC_2 = \bigcup_{f_1'\in \cC_1}\cC_{2,f_1'}$, it immediately follows that
 \begin{align}
-    \abs{\cC_{2}} &\leq \abs{\cC_{1}} \exp\left(g\left(\epsilon_2, c_1\right)\right) \\
-    \log\abs{\cC_{2}} &\leq \log\abs{\cC_{1}} + g\left(\epsilon_2, c_1\right) \leq g\left(\epsilon_1, c_0\right) + g\left(\epsilon_2, c_1\right)
+    \abs{\cC_{2}} &\leq \abs{\cC_{1}} \exp\left(g\left(\epsilon_2, c_1\right)\right) \label{lec10:eqn:iterative_cover_bound-1}\\
+    \log\abs{\cC_{2}} &\leq \log\abs{\cC_{1}} + g\left(\epsilon_2, c_1\right) \\
+    &\leq g\left(\epsilon_1, c_0\right) + g\left(\epsilon_2, c_1\right).  \label{lec10:eqn:iterative_cover_bound-3}
 \end{align}
-Similarly, given $\cC_k$, for any $f_k' \circ f_{k-1}' \circ \cdots \circ f_1' \in \cC_k$, we construct a $\cC_{k+1, f_k', \dots, f_1'}$ that is an $\epsilon_{k+1}$-covering \tnote{consistency}of $\cF_{k+1} \circ f_k' \circ \cdots \circ f_1'$. We choose $\cC_{k+1} = \cup_{f_i \in \cC_i, i \leq k} C_{k+1, f_k', \dots, f_1'}$. Then, we have
+Similarly, given $\cC_k$, for any $f_k' \circ f_{k-1}' \circ \cdots \circ f_1' \in \cC_k$, we construct a $\cC_{k+1, f_k', \dots, f_1'}$ that is an $\epsilon_{k+1}$-covering of $\cF_{k+1} \circ f_k' \circ \cdots \circ f_1'$. We similarly define 
+\begin{equation}
+    \cC_{k+1} = \bigcup_{\substack{f_i \in \cC_i \\ i \leq k}} C_{k+1, f_k', \dots, f_1'}.
+\end{equation}
+Then, inducting on the argument given in \eqref{lec10:eqn:iterative_cover_bound-1}-\eqref{lec10:eqn:iterative_cover_bound-3}, we conclude that
 \begin{align}
     \log \abs{\cC_{k+1}} \leq g\left(\epsilon_{k+1}, c_k\right) + \cdots + g\left(\epsilon_1, c_0\right)
 \end{align}
@@ -121,21 +146,36 @@ Next, we show that for the above construction, the radius of the cover for $\cF$
 \begin{align}
     \epsilon = \sum_{i=1}^{r} \left(\epsilon_i \prod_{j=i+1}^{r}\kappa_{j}\right).
 \end{align}
-If we consider a function composition $f_r \circ \cdots \circ f_1 \in \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$, then we know that there exists an $f_1' \in \cC_1$ such that $\rho\left(f_1, f_1'\right) \leq \epsilon_1$. Similarly, we know there exists $f_{2, f_1'}' \in \cC_{2, f_1'}$ \tnote{I think one need to say $f_{2, f_1'}' = f_2'\circ f_1'$; otherwise what's $f_2'$ and $f_1'$?}such that $\rho\left(f_2' \circ f_1', f_2\circ f_1' \right) \leq \epsilon_2$. Using the triangle inequality, we can say that \tnote{explain intermediate steps of the steps below}
-\tnote{stopped commenting here; I think this proof needs requires another pass. }
+For any choice of $f_r \circ \cdots \circ f_1 \in \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$,  then, by definition of $\cC_1$, there exists $f_1' \in \cC_1$ such that 
+\begin{equation}
+    \rho(f_1, f_1') \leq \epsilon_1.
+\end{equation} 
+Similarly, we know there exists $f_2' \circ f_1' \in \cC_{2, f_1'}$ such that 
+\begin{equation} 
+    \rho\left(f_2' \circ f_1', f_2\circ f_1' \right) \leq \epsilon_2.
+\end{equation}
+We can leverage these two facts and the triangle inequality to now prove that $f_2' \circ f_1'$ is close to $f_2 \circ f_1$. Namely,
 \begin{align}
-   \rho\left(f_2' \circ f_1', f_2 \circ f_1\right) &\leq \rho\left(f_2' \circ f_1', f_2 \circ f_1'\right) + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
-   &\leq \epsilon_2 + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) \\ 
-   &\leq \epsilon_2 + \kappa_2 \rho\left(f_1', f_1\right) \\ 
-   &\leq \epsilon_2 + \kappa_2\epsilon_1z
+   \rho\left(f_2' \circ f_1', f_2 \circ f_1\right) &\leq \rho\left(f_2' \circ f_1', f_2 \circ f_1'\right) + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) &\text{(triangle ineq.)} \\ 
+   &\leq \epsilon_2 + \rho\left(f_2 \circ f_1', f_2 \circ f_1\right) &\text{(def. of $\cC_{2, f'_1}$)}\\ 
+   &\leq \epsilon_2 + \kappa_2 \rho\left(f_1', f_1\right) &\text{\eqref{lec10:eqn:lipschitz-def}}\\ 
+   &\leq \epsilon_2 + \kappa_2\epsilon_1 &\text{(def. of $\cC_{1}$)}
 \end{align}
-\tnote{$\kappa_2\epsilon_1z$?}
-Using the same logic for a general $k$, we know that there exists $f_{k,f_1',\dots,f_{k-1}'}' \in \cC_k$ such that
+Inducting to prove this argument for arbitrary $k$, we similarly apply the definition of $\cC_{k, f'_{k - 1},\dots,f'_1}$ to conclude that there exists $f'_{k} \circ f'_{k - 1} \circ \cdots \circ f'_1 \in \cC_k$ such that
+\begin{equation}
+    \rho(f'_k \circ f'_{k - 1} \circ \cdots f'_1, f_k \circ f'_{k - 1} \circ \cdots f'_1) \leq \epsilon_k
+\end{equation}
+Then, expanding using the triangle inequality and peeling off terms by applying the definition of our $\epsilon_i$-coverings, we again show that
 \begin{align}
     \rho\left(f_k' \circ f_{k-1}' \circ \cdots \circ f_1', f_k \circ \cdots \circ f_1\right) &\leq \rho\left(f_k' \circ f_{k-1}'\circ \cdots \circ f_1', f_k \circ f_{k-1}'\circ \cdots \circ f_1' \right) \\ 
-    &+ \rho\left(f_k \circ f_{k-1}'\circ f_{k-2}' \circ \cdots \circ f_1', f_k \circ f_{k-1}\circ f_{k-2}' \circ \cdots \circ f_1'\right) \\ &+ \cdots + \rho\left(f_k \circ f_{k-1}\circ \cdots \circ f_2 \circ f_1', f_k \circ f_{k-1}\circ \cdots \circ f_1\right) \\ & \leq \sum_{i=1}^{r} \left(\epsilon_i\prod_{j=i+1}^{r}\kappa_{j}\right)
+    &\quad + \rho\left(f_k \circ f_{k-1}'\circ f_{k-2}' \circ \cdots \circ f_1', f_k \circ f_{k-1}\circ f_{k-2}' \circ \cdots \circ f_1'\right) \nonumber \\ 
+    &\quad + \cdots + \rho\left(f_k \circ f_{k-1}\circ \cdots \circ f_2 \circ f_1', f_k \circ f_{k-1}\circ \cdots \circ f_1\right) \nonumber \\ 
+    &\leq \rho\left(f_k' \circ f_{k-1}'\circ \cdots \circ f_1', f_k \circ f_{k-1}'\circ \cdots \circ f_1' \right) \\
+    &\quad + \kappa_{k} \cdot \rho(f'_{k - 1} \circ \cdots \circ f'_1, f_{k - 1} \circ f'_{k - 2} \circ \cdots \circ f'_1) \\
+    &\quad + \cdots + \left(\prod_{j = 2}^k \kappa_j\right) \rho(f'_1, f_1) \nonumber  \\
+    & \leq \sum_{i=1}^{k} \left(\epsilon_i\prod_{j=i+1}^{k}\kappa_{j}\right).
 \end{align}
-\tnote{it might be useful to explain expand on how to get the last equation }
+Note that the first inequality follows by the triangle inequality, the second by the $\kappa_i$-Lipschitz continuity of $f_i$, and the third by applying the definition of each of our $\epsilon_i$-covers.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{lec10:thm:dnn_rademacher}]
@@ -362,7 +402,7 @@ Now we will prove a limited form of the decomposition lemma for affine models: $
 \end{align}
 Notice that now we are working with a clean sum of differences, with no multipliers! 
 
-Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsilon_r$ covers of $\cF_1, \dots, \cF_r$, respectively, such that $\abs{U_i} = N_\infty(\epsilon_i, \cF_i)$. By definition, for all $f_i$ in $\cF_i$, there exists a $u_i \in U_i$ such that $\max_{\norm{x} \leq 1} \norm{f_i(x) - u_i(x)}_2 \leq \epsilon_i$. Take $U = U_r \circ U_{r-1} \circ \cdots \circ U_1 = \{u_r \circ u_{r-1} \circ \cdots \circ u_1 \}$ as the cover for $m \circ \cF$. Suppose we were given $f = f_r \circ \cdots \circ f_1 \in \cF$. Let $u_r, \dots, u_1$ be the nearest neighbors of $f_r, \dots, f_1$. Then
+Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsilon_r$-covers of $\cF_1, \dots, \cF_r$, respectively, such that $\abs{U_i} = N_\infty(\epsilon_i, \cF_i)$. By definition, for all $f_i$ in $\cF_i$, there exists a $u_i \in U_i$ such that $\max_{\norm{x} \leq 1} \norm{f_i(x) - u_i(x)}_2 \leq \epsilon_i$. Take $U = U_r \circ U_{r-1} \circ \cdots \circ U_1 = \{u_r \circ u_{r-1} \circ \cdots \circ u_1 \}$ as the cover for $m \circ \cF$. Suppose we were given $f = f_r \circ \cdots \circ f_1 \in \cF$. Let $u_r, \dots, u_1$ be the nearest neighbors of $f_r, \dots, f_1$. Then
 \begin{align}
 |m_f(x, y) - m_u(x, y)| &\leq \sqrt{\sum_{i=1}^r \max_{||x|| \leq 1} ||f_i(x) - u_i(x)||_2^2} \\
 &\leq \sqrt{\sum_{i=1}^r \epsilon_i^2} &&\text{(by construction).}
