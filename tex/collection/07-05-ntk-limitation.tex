@@ -1,0 +1,30 @@
+\subsec{Limitations of NTK}
+
+The NTK approach has its limitations.
+\begin{itemize}
+    \item Empirically, optimizing $g_\theta(x)$ as described in the theory does not work as well as state-of-the-art (or even standard) deep learning methods. For example, using the NTK approach (i.e., taking the Taylor expansion and optimizing $g_{\theta}(x)$) with a ResNet generally does not perform as well as ResNet with best-tuned hyperparameters.
+    
+    \item The NTK approach requires a specific initialization scheme and learning rate which may not coincide with what is commonly used in practice.
+    
+    \item The analysis above was for gradient descent, while stochastic gradient descent is used in practice, introducing noise in the procedure. This means that NTK with stochastic gradient descent requires a small learning rate to stay in the initialization neighborhood. Deviating from the requirements can lead to leaving the initialization neighborhood.
+\end{itemize}
+
+One possible explanation for the gap between theory and practice is because NTK effectively requires a fixed kernel, so there is no incentive to select the right features. Furthermore, the minimum $\ell_2$-norm solution is typically dense. This is similar to the difference between sparse and dense combinations of features observed in the $\ell_1$-SVM/two-layer network versus the standard kernel method SVM (or $\ell_2$-SVM) analyzed previously.
+
+To make these ideas more concrete, consider the following example \cite{wei2020regularization}. 
+\begin{example}\label{lec12:ex:sparse123}
+Let $x \in \R^d$ and $y \in \{-1, 1\}$. Assume that each component of $x$ satisfies $x_i \in \{ -1, 1\}$. Define the output $y = x_1x_2$, that is, $y$ is only a function of the first two components of $x$.
+
+This output function can be described exactly by a neural network consisting of a sparse combination of the features (4 neurons to be exact):
+\begin{align}
+\hat y &= \frac{1}{2} \left[ \phirelu(x_1 + x_2) + \phirelu(-x_1 - x_2)  - \phirelu(x_1 - x_2) -  \phirelu(x_2 - x_1)  \right] \\
+&= \frac{1}{2}\left( |x_1 + x_2| - |x_1 - x_2| \right) \label{lec12:eqn:ex1} \\
+&= x_1x_2. \label{lec12:eqn:ex2}
+\end{align}
+\eqref{lec12:eqn:ex1} follows from the fact that $\phirelu(t) + \phirelu(-t) = |t|$ for all $t$, while \eqref{lec12:eqn:ex2} follows from evaluating the 4 possible values of $(x_1, x_2)$. Thus, we can solve this problem exactly with a very sparse combination of features.
+
+However, if we were to use the NTK approach (kernel method), the network's output will always involve $\sigma(w^\top x)$ where $w$ is random so it includes all components of $x$ (i.e. a dense combination of features), and cannot isolate just the relevant features $x_1$ and $x_2$. This is illustrated in the following informal theorem:
+\begin{theorem}
+The kernel method with NTK requires $n = \Omega(d^2)$ samples to learn Example \ref{lec12:ex:sparse123} well. In contrast, the neural network regularized by $\sum_{j = 1}^m | u_j| \| w_j\|_2$ only requires $n = O(d)$ samples.
+\end{theorem}
+\end{example}
