@@ -285,13 +285,27 @@ for some function $g$. Then we can consider an \textit{augmented loss}:
 \begin{align}
     \tilde{\ell}(f) = \ell(f) \ind{h(f, x\sp{i} \leq C)} \label{eqn:5}
 \end{align}
-\tnote{I guess we are waiting for the figures from the scribe notes takers. Just a reminder to have a simple illustrative figure here. Note the notation change from $g$ to $h$.} 
-Suppose we have a region of low complexity in our existing loss function. Because this region is random, so we cannot selectively apply universal convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. The surrogate loss was used in~\cite{wei2019data} to obtain a data-dependent generalization bound, though there are possibly various other ways to define surrogate losses and apply existing uniform convergence guarantees. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a (implicitly) data-dependent hypothesis class \cite{wei2019data}.
-\tnote{reminder: missing a figure}
-
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \draw[->] (0, 0) -- (5, 0) node[right] {$\theta$};
+        \draw[->] (0, 0) -- (0, 5) node[above] {loss};
+        \draw[scale=0.5, domain=0:6, smooth, ultra thick, variable=\x, blue] plot (\x, {7 - \x + sin(\x r)});
+        \draw[scale=0.5, domain=0:5.5, smooth, ultra thick, variable=\x, green] plot (\x, {10 - 1.6*\x + sin(0.90*\x r)});
+        \draw[scale=0.5, domain=6:10, smooth, ultra thick, variable=\x, blue] plot (\x, {\x - 5 + sin(\x r)}) node[right] {test};
+        \draw[scale=0.5, domain=5.5:10, smooth, ultra thick, variable=\x, green] plot (\x, {1.4*\x - 6.67 + sin(\x r)}) node[right] {train};
+        \draw[dashed] (2, 0) -- (2, 5);
+        \draw[dashed] (3.5, 0) -- (3.5, 5);
+        \draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=2ex}]
+        (2,0) -- (3.5,0) node[midway,yshift=-2em]{low-complexity params};
+    \end{tikzpicture}
+    \caption{These curves depict a ``low-complexity'' region in parameter space. The \textcolor{blue}{blue} curve is the unobserved test loss we aim to bound, while the \textcolor{green}{green} curve denotes the empirical training loss we observe. Observe that in the region of $\theta$ that we identify as being ``low-complexity,'' the gap between the train and test losses is smaller than in the high-complexity regions.}
+    \label{lec11:fig:low_vs_high_complexity}
+\end{figure}
+Suppose we have a region of low complexity in our existing loss function as depicted in Figure~\ref{lec11:fig:low_vs_high_complexity}. Because this region is random, so we cannot selectively apply uniform convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. The surrogate loss was used in~\cite{wei2019data} to obtain a data-dependent generalization bound, though there are possibly various other ways to define surrogate losses and apply existing uniform convergence guarantees. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a (implicitly) data-dependent hypothesis class \cite{wei2019data}.
 
 \sec{All-layer margin}
-We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions for which we can expect small generalization gap. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
+We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions for which we can expect small generalization gap. Note that the all-layer margin we analyze will not explicitly zero-out high-complexity regions using an indicator function, but instead implicitly takes into account some data-dependent characteristics of the model. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
 
 Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin is defined as $y f(x)$, with $y$ in $\{-1, 1\}$. We will say that $g_f(x, y)$ is a \textit{generalized margin} if it satisfies
 \begin{align}
@@ -387,12 +401,12 @@ where $N_\infty(\epsilon_i, \cF_i)$ is defined with respect to the input domain 
 That is, we only have to find the covering number for each layer, and then we have the covering number for the (all-layer margin of the) composed function class. Notice that we bounded the covering number of $m \circ \cF$ in the above lemma, not $\cF$.
 
 Then, the desired result follows directly from the preceding decomposition lemma.
-\begin{corollary} Assume that $\log N_\infty(\epsilon_i, \cF_i) \leq \l \lfloor \frac{c_i^2}{\epsilon_i^2} \r \rfloor$ $\cF_i$ for every $\cF_i$ corresponding to the $i$-th layer of $f$ in Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}. Then, by taking $\epsilon_i = \epsilon \cdot \frac{c_i}{\sqrt{\sum_i c_i^2}}$, we have that:
+\begin{corollary} Assume that $\log N_\infty(\epsilon_i, \cF_i) \leq \l \lfloor \frac{c_i^2}{\epsilon_i^2} \r \rfloor$ for every $\cF_i$, i.e. the function class corresponding to the $i$-th layer of $f$ in Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}. Then, by taking $\epsilon_i = \epsilon \cdot \frac{c_i}{\sqrt{\sum_i c_i^2}}$, we have that
 \begin{equation}
     \log N_\infty(\epsilon, m \circ \cF) \leq \frac{\sum_i c_i^2}{\epsilon^2}.
 \end{equation}
 \end{corollary}
-This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$. For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}. Finally, we are only left wit the proof of Lemma~\ref{lec11:lma:decomp}. 
+This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$. For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}. Finally, we are only left with the proof of Lemma~\ref{lec11:lma:decomp}. 
 
 \begin{proof}[Proof of Lemma~\ref{lec11:lma:decomp}]
 Now we will prove a limited form of the decomposition lemma for affine models: $\cF_i = \{ z \mapsto \sigma(W_i z): \norm{W_i}_{1, 1} \leq \beta_i \}$. There are two crucial steps to this problem. First, we will prove that $m_f(x, y)$ is 1-Lipschitz in $f$. That is, for all $\cF = \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$ and $\cF' = \cF_r' \circ 
