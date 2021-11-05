@@ -4,16 +4,18 @@
 %\metadata{lecture ID}{Your names}{date}
 \metadata{13}{Justin Young and Josh Cho}{November 1, 2021}
 
-\sec{Neural Tangent Kernel (NTK)}
+\sec{The Neural Tangent Kernel (NTK) Approach}
 
-In the previous sections, we studied non-convex optimization problems in which all local minima are global. Here we consider an objective for which we can identify particular regions of the input space in which all local minima are also global minima.
+In the previous sections, we studied non-convex optimization problems in which all local minima are global. Here we consider an objective for which we can identify particular regions of the input space in which all local minima are also global minima. \tnote{a bit better transition and positioning, e.g., specify that this only works for certain cases; also add some literature; Tengyu can help edit later}
 
 To be more formal, we take an appropriate parameter initialization $\theta^0$ such that in a neighborhood around it, which we denote by $B(\theta^0)$, the loss function is convex and its global minimum is attained. Figure \ref{lec13:fig:NTKapproach} depicts a function and region for which this condition holds. 
 
 \begin{figure}[ht]
     \centering
     \includegraphics[scale=0.5]{figures/ntk_initialization.png}
-    \caption{Training loss around an initialized $\theta^0$. The dotted lines indicate $B(\theta^0)$, a region where the loss is convex, and where a global minimum exists.}
+    \caption{Training loss around an initialized $\theta^0$. The dotted lines indicate $B(\theta^0)$, a region where the loss is convex, and where a global minimum exists.
+    	\tnote{(a) have two equally good global min. (b) make the global min have y-value zero or near zero. }
+    }
     \label{lec13:fig:NTKapproach}
 \end{figure}
 
@@ -23,7 +25,7 @@ Given a nonlinear $f_\theta(x)$, we examine the Taylor expansion at $\theta^0$:
     f_\theta(x) = \underbrace{f_{\theta^0}(x) + \langle \nabla_\theta f_{\theta^0}(x),\theta-\theta^0 \rangle}_{\defeq g_\theta(x)} + \text{ higher order terms}
 \end{align} 
 
-Note that $g_\theta(x)$ is an affine function in $\theta$, as $f_{\theta^0}(x)$ is a constant for fixed $x,\theta^0$. Similarly, defining $\Delta \theta = \theta-\theta^0$, we can say that $g_\theta(x)$ is linear in $\Delta \theta$. For convenience, we will sometimes choose $\theta^0$ such that $f_{\theta^0}(x) = 0$ for all $x$. It is easy to see why such an initialization exists. Consider splitting a two-layer neural network $f_{\theta}(x)$ into two halves, each with $m$ neurons; the outputs of these two networks are then given by $\sum_{i=1}^m a_i \sigma (w_i^\top x)$ and $\sum_{i=1}^m -a_i \sigma (w_i^\top x)$, respectively. Here, $w_i$ can be randomly chosen so long as $W_i$ is the same in both halves, and $a_i$ can be randomly chosen as long as the other half is initialized with $-a_i$. Summing these two networks together yields $f_{\theta^0}(x) \equiv 0$ for all $x$.
+Note that $g_\theta(x)$ is an affine function in $\theta$, as $f_{\theta^0}(x)$ is a constant for fixed $x,\theta^0$. Similarly, defining $\Delta \theta = \theta-\theta^0$, we can say that $g_\theta(x)$ is linear in $\Delta \theta$. For convenience, we will sometimes choose $\theta^0$ such that $f_{\theta^0}(x) = 0$ for all $x$. It is easy to see why such an initialization exists. Consider splitting a two-layer neural network $f_{\theta}(x)$ with width $2m$ into two halves, each with $m$ neurons; the outputs of these two networks are then given by $\sum_{i=1}^m a_i \sigma (w_i^\top x)$ and $\sum_{i=1}^m -a_i \sigma (w_i^\top x)$, respectively. Here, $w_i$ can be randomly chosen so long as $W_i$ is the same in both halves, and $a_i$ can be randomly chosen as long as the other half is initialized with $-a_i$. Summing these two networks together yields $f_{\theta^0}(x) \equiv 0$ for all $x$.
 
 Letting 
 \begin{align}
@@ -52,18 +54,19 @@ A natural question to ask is: how valid is this approximation? We devote the res
     \hat{L}(f_\theta) & = \frac{1}{n}\sum_{i=1}^n \ell \left( f_\theta\big( x^{(i)} \big) , y^{(i)} \right) \\ 
     \hat{L}(g_\theta) & = \frac{1}{n}\sum_{i=1}^n \ell \left( g_\theta\big( x^{(i)} \big) , y^{(i)} \right).
 \end{align} 
-The key idea is that the Taylor approximation works for certain cases. We defer a more complete enumeration of these cases to a later section of this monograph. For now, we claim that this Taylor expansion is valid for the following situation. We assume that there exists a neighborhood around $\theta^0$ called $B(\theta^0)$, such that we have the following:
+The key idea is that the Taylor approximation works for certain cases. We defer a more complete enumeration of these cases to a later section of this monograph. For now, we claim that this Taylor expansion is valid for the following situation\tnote{rephrase a bit? maybe "Here we outline the high-level approach to validate and use the Taylor expansion.."}. 
+ We assume \tnote{reword -- we will show instead of assume} that there exists a neighborhood around $\theta^0$ called $B(\theta^0)$, such that we have the following:
 \begin{enumerate}
     \item Accurate approximation: $f_\theta(x) \approx g_\theta(x)$, and $\hat{L}(f_\theta) \approx \hat{L}(g_\theta)$ for all $\theta \in B(\theta^0)$.
-    \item It suffices to optimize in $B(\theta^0)$: There exists an approximate global minimum $\hat{\theta} \in B(\theta^0)$, so $\hat{L}(g_{\hat{\theta}}) \approx 0$. Intuitively, this is the lowest possible loss, which implies we are close to the global minimum and that $\hat{L}(f_{\hat{\theta}}) \approx 0$ as well.
-    \item Optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$ and does not leave $B(\theta^0)$, i.e. everything is confined to this region. Intuitively, this last point to some extent is "implied" by (1) and (2), but this claim still requires a formal proof. 
+    \item It suffices to optimize in $B(\theta^0)$: There exists an approximate global minimum $\hat{\theta} \in B(\theta^0)$, so $\hat{L}(g_{\hat{\theta}}) \approx 0$. This is the lowest possible loss (because the loss is nonnegative), which implies we are close to the global minimum. Because of 1, this implies that $\hat{L}(f_{\hat{\theta}}) \approx 0$ as well.
+    \item Optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$ and does not leave $B(\theta^0)$, i.e. everything is confined to this region. Intuitively, this last point to some extent is ``implied" by (1) and (2), but this claim still requires a formal proof. 
 \end{enumerate}
 Note (1), (2), and (3) can all be true in various settings. In particular, to attain all three, we will require: 
 \begin{enumerate}[label=\alph*]
     \item[(a)] Overparametrization and/or a particular scaling of the initialized $\theta^0$. 
     \item[(b)] Small (or even zero) stochasticity, so $\theta$ never leaves $B(\theta^0)$. This condition is guaranteed by a small learning rate or full-batch gradient descent. 
 \end{enumerate} 
-Despite the limitations of (a) and (b), the existence of such a region is still surprising. Given the loss landscape which could potentially be highly non-convex, it is striking to find a neighborhood where the loss function is convex (e.g. quadratic) with a global minimum. This suggests there is some flexibility in the loss landscape.  
+Despite the limitations of the requirements of (a) and (b), the existence of such a region is still surprising. Given the loss landscape which could potentially be highly non-convex, it is striking to find a neighborhood where the loss function is convex (e.g. quadratic) with a global minimum. This suggests there is some flexibility in the loss landscape.  
 
 To begin our formal discussion, we now prove (1) and (2). Let 
 \begin{align}
@@ -98,7 +101,7 @@ where $\vec{y} = \l[ y\sp{1}, \cdots, y\sp{n} \r]^\top \in \R^n$. Note that this
         \norm{\Delta \hat{\theta}}_2 &\leq \norm{\Phi^\dagger}_{\text{op}} \cdot \norm{\vec{y}}_2 \\
         &\leq O\left( \frac{1}{\sigma}\cdot \sqrt{n} \right),
     \end{align} 
-    where the last inequality follows from the fact that $\norm{\vec{y}}_2 \leq O(\sqrt{n})$. 
+    where the last inequality follows from the assumption that $\norm{\vec{y}}_2 \leq O(\sqrt{n})$. 
 \end{proof}
 Next, we prove a lemma that addresses the first of the three conditions we described above.
 \begin{lemma}[for (1)] 
@@ -111,9 +114,10 @@ Next, we prove a lemma that addresses the first of the three conditions we descr
     \begin{align} 
         \left| f_\theta(x) - g_\theta(x) \right| \leq O \left( \beta \norm{\Delta \theta}_2^2 \right|.
     \end{align}  
+    \tnote{typo above}
     If we further restrict our choice of $\theta$ using $B_{\theta^0}$ as defined in Remark~\ref{lec13:rmk:intuitiononlemma}, we obtain that
     \begin{align} 
-        | f_\theta(x) - g_\theta(x) | \leq O \left( \frac{\beta n }{\sigma^2 }\right) \quad \forall \theta \in B_{\theta^0}. \label{lec13:eqn:lemma1bound} 
+        | f_\theta(x) - g_\theta(x) | \leq O \left( \frac{\beta n }{\sigma^2 }\right), \quad \forall \theta \in B_{\theta^0}. \label{lec13:eqn:lemma1bound} 
     \end{align} 
 \end{lemma}
 \begin{proof}
@@ -121,6 +125,7 @@ Next, we prove a lemma that addresses the first of the three conditions we descr
     \begin{align}
         \bigg| \underbrace{h(\theta)}_{f_\theta(x)}  \underbrace{-h(\theta^0) - \inprod{\nabla h(\theta^0), \theta-\theta^0}}_{-g_\theta(x)}\bigg| \leq O\left( \beta \norm{\theta-\theta^0}_2^2 \right).
     \end{align} 
+    \tnotelong{add a lemma in the toolbox section about this}
     As shown above, the proof is as simple as plugging in $f_\theta(x) = h(\theta)$ and $g_\theta(x)=h(\theta^0) + \inprod{\nabla h(\theta^0), \Delta \theta}$. 
 \end{proof}
 
@@ -129,7 +134,7 @@ The lemma above bounds the approximation error. Intuitively, as you move farther
 \end{remark}
 
 \begin{remark}
-Note that if $f_\theta$ involves a $\text{relu}$ function, then $\nabla f_\theta$ is not continuous everywhere. This requires a technical fix outside the scope of our discussion.\footnote{A $\text{relu}$ function is continuous almost everywhere, so we can make some minor fixes and still use some modified notion of Lipschitzness to derive an upper bound.} 
+Note that if $f_\theta$ involves a $\text{relu}$ function, then $\nabla f_\theta$ is not continuous everywhere. This requires a technical fix outside the scope of our discussion.\footnote{A $\text{relu}$ function is continuous almost everywhere, so we can make some minor fixes and still use some modified notion of Lipschitzness to derive an upper bound.} \tnote{Tengyu will add a reference here}
 \end{remark}
 
 \subsec{Tightening our Approximation Error Bound}

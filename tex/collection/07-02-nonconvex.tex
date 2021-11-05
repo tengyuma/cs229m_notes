@@ -208,7 +208,7 @@ Hence we conclude $x$ is $O(\sqrt{\epsilon})$-close to $z$.
 
 We have shown above that matrix completion of a rank-1 matrix has no spurious local minima. This proof strategy can be extended to handle higher-rank matrices and noisy matrices \cite{ge2016}. The proof also demonstrates a generally useful proof strategy: often, reducing a hard problem to an easy problem results in solutions that do not give much insight into the original problem, because the proof techniques do not generalize. It can often be fruitful to seek a proof in the simplified problem that makes use of a restricted set of tools that could generalize to the harder problem. Here we limited ourselves to only using $\langle v, \nabla g(x)\rangle$ and $\langle v, \nabla^2 g(x) v\rangle$ in the easy case; these quantities could then be easily converted to analogous quantities in $f$ via the concentration lemma (Lemma~\ref{lec11:lem:concentration_lemma}).
 
-\sec{Other problems where all local minima are global minima}
+\subsec{Other problems where all local minima are global minima}
 We have now demonstrated that two classes of machine learning problems, rank-1 PCA and rank-1 matrix completion, have no spurious local minima and are thus amenable to being solvable by gradient descent methods. We now outline some major classes of problems for which it is known that there are no spurious local minima.
 
 \begin{itemize}
