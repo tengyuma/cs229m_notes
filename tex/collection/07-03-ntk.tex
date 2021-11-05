@@ -58,9 +58,17 @@ The key idea is that the Taylor approximation works for certain cases. We defer 
  We assume \tnote{reword -- we will show instead of assume} that there exists a neighborhood around $\theta^0$ called $B(\theta^0)$, such that we have the following:
 \begin{enumerate}
     \item Accurate approximation: $f_\theta(x) \approx g_\theta(x)$, and $\hat{L}(f_\theta) \approx \hat{L}(g_\theta)$ for all $\theta \in B(\theta^0)$.
-    \item It suffices to optimize in $B(\theta^0)$: There exists an approximate global minimum $\hat{\theta} \in B(\theta^0)$, so $\hat{L}(g_{\hat{\theta}}) \approx 0$. This is the lowest possible loss (because the loss is nonnegative), which implies we are close to the global minimum. Because of 1, this implies that $\hat{L}(f_{\hat{\theta}}) \approx 0$ as well.
+    \item It suffices to optimize in $B(\theta^0)$: There exists an approximate global minimum $\hat{\theta} \in B(\theta^0)$, so $\hat{L}(g_{\hat{\theta}}) \approx 0$. This is the lowest possible loss (because the loss is nonnegative), which implies we are close to the global minimum. Because of 1, this implies that $\hat{L}(f_{\hat{\theta}}) \approx 0$ as well. See Figure \ref{fig:ntkglobalmin} for an illustration.
     \item Optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$ and does not leave $B(\theta^0)$, i.e. everything is confined to this region. Intuitively, this last point to some extent is ``implied" by (1) and (2), but this claim still requires a formal proof. 
 \end{enumerate}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.5]{figures/ntk_global_min.png}
+    \caption{Here, $\hat{L}(g_{\theta})$ and $\hat{L}(f_{\theta})$ are both plotted. At $\hat{\theta}$, we have reached the approximate global minimum where $\hat{L}(g_{\hat{\theta}}) \approx 0$, in turn implying also that $\hat{L}(f_{\hat{\theta}}) \approx 0$.}
+    \label{fig:ntkglobalmin}
+\end{figure}
+
 Note (1), (2), and (3) can all be true in various settings. In particular, to attain all three, we will require: 
 \begin{enumerate}[label=\alph*]
     \item[(a)] Overparametrization and/or a particular scaling of the initialized $\theta^0$. 
