@@ -372,16 +372,16 @@ Since $\gamma_m^*$ is non-decreasing in $m$, quantity
 \end{equation}
 is well-defined. The next interesting fact is that in this $m \to \infty$ limit, $\gamma_{\infty}^*$ of the two-layer neural network is equivalent to the minimum margin of an $\ell_1$-SVM. As a brief digression, we recap the formulation of $\ell_p$-SVMs and discuss the importance of $\ell_1$-SVMs in particular.
 
-Since a collection of data points with binary class labels may not be a priori separable, a \textit{kernel model} first transforms an input $x$ to $\Phi(x)$ where $\Phi: \mathbb{R}^d \to \mathcal{G}$ is known as the \textit{feature map}. The model then seeks a separating hyperplane in this new (extremely high-dimensional) feature space $\mathcal{G}$, parameterized by a vector $\mu$ pointing from the origin to the hyperplane. The prediction of the model on an input $x$ is then a decision score that quantifies $\Phi(x)$'s displacement with respect to the hyperplane:
+Since a collection of data points with binary class labels may not be a priori separable, a \textit{kernel model} first transforms an input $x$ to $\varphi(x)$ where $\varphi: \mathbb{R}^d \to \mathcal{G}$ is known as the \textit{feature map}. The model then seeks a separating hyperplane in this new (extremely high-dimensional) feature space $\mathcal{G}$, parameterized by a vector $\mu$ pointing from the origin to the hyperplane. The prediction of the model on an input $x$ is then a decision score that quantifies $\varphi(x)$'s displacement with respect to the hyperplane:
 \begin{equation}
-g_{\mu, \Phi}(x) := \l\langle \mu, \Phi(x) \r\rangle.
+g_{\mu, \varphi}(x) := \l\langle \mu, \varphi(x) \r\rangle.
 \end{equation}
 Motivated by margin theory, it is desirable to seek the maximum-margin hyperplane under a constraint on $\mu$ to guarantee the generalizability of the model. In particular, a kernel model with an $\ell_p$-constraint seeks to solve the following program:
 \al{
-\text{maximize} & \qquad \gamma_{min} \coloneqq \min_{i \in [n]} y\sp{i}\langle \mu, \Phi(x\sp{i}) \rangle \\ 
+\text{maximize} & \qquad \gamma_{min} \coloneqq \min_{i \in [n]} y\sp{i}\langle \mu, \varphi(x\sp{i}) \rangle \\ 
 \text{subject to} & \qquad \norm{\mu}_p \le 1. \nonumber
 }
-Observe that both the prediction and optimization of the feature model only rely on inner products in $\mathcal{G}$. The ingenuity of the SVM is to choose maps $\Phi$ such that $K(x, x') = \l\langle \Phi(x), \Phi(x') \r\rangle$ can be directly computed in terms of $x$ and $x'$ in the original space $\mathbb{R}^d$, thereby circumventing the need to perform expensive inner products in the large space $\mathcal{G}$. Remarkably, this ``kernel trick'' enables us to even operate in an implicit, infinite-dimensional $\mathcal{G}$. 
+Observe that both the prediction and optimization of the feature model only rely on inner products in $\mathcal{G}$. The ingenuity of the SVM is to choose maps $\varphi$ such that $K(x, x') = \l\langle \varphi(x), \varphi(x') \r\rangle$ can be directly computed in terms of $x$ and $x'$ in the original space $\mathbb{R}^d$, thereby circumventing the need to perform expensive inner products in the large space $\mathcal{G}$. Remarkably, this ``kernel trick'' enables us to even operate in an implicit, infinite-dimensional $\mathcal{G}$. 
 
 The case of $p=1$ is particularly useful in practice as $\ell_1$-regularization generally produces sparse feature weights (the constrained parameter space is a polyhedron and the optimum tends to lie at one of its vertices). Hence, $\ell_1$-regularization is an important feature selection method when one expects only a few dimensions of $\cG$ to be significant. Unfortunately, the $\ell_1$-SVM is not kernelizable due to the kernel trick relying on $\ell_2$-geometry, and is hence infeasible to implement. However, our next theorem shows that a two-layer neural network can approximate a particular $\ell_1$-SVM in the $m \to \infty$ limit (and in fact, for finite $m$). For the sake of simplicity, we sacrifice rigor in defining the space $\mathcal{G}$ and convey the main ideas.
 
@@ -394,7 +394,7 @@ Under this set-up, we have
 \begin{equation}
 \gamma_{\infty}^* = \gamma_{\ell_1}^*,
 \end{equation}
-where $\gamma_{\ell_1}^*$ is the minimum margin of the optimized $\ell_1$-SVM with $\Phi = \phirelu$.
+where $\gamma_{\ell_1}^*$ is the minimum margin of the optimized $\ell_1$-SVM with $\varphi = \phirelu$.
 \end{theorem}
 
 \begin{proof}
