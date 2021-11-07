@@ -235,7 +235,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
     \end{align} 
     where the penultimate line follows from the law of large numbers, as $\frac{1}{m} \sum_{i=1}^m \left( \sigma'(w_i^\top x ) \right)^2$ can be interpreted as a mean. 
     
-    Note that the scale $\norm{\nabla_\theta f_{\theta^0} (x)}_2$ does not depend on $m$, so the inner product in \eqref{lec13:eqn:phifeature} also does not depend on $m$ either. As above, we can show 
+    Note that the scale of $\norm{\nabla_\theta f_{\theta^0} (x)}_2$ does not depend on $m$, so the inner product in \eqref{lec13:eqn:phifeature} also does not depend on $m$ either. As above, we can show 
     \begin{align} 
         \inprod{\nabla_\theta f_{\theta^0} (x), \nabla_\theta f_{\theta^0} (x')} & = \frac{1}{m}\inprod{ x,x'} \sum_{i=1}^m \sigma'(w^\top x) \sigma'(w^\top x')  \\ 
         & \to \Exp_{w \sim \cN(0,I_d)} \left[ \sigma'(w^\top x) \sigma'(w^\top x') \right] \inprod{ x, x'} \label{lec13:eqn:kernelcalc} 
@@ -245,9 +245,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
     \begin{align}
         K^\infty = \lim_{m \to \infty} \Phi\Phi^\top 
     \end{align}
-    This is precisely the NTK with $m=\infty$. 
-    
-    Though we omit the proof of this claim, it can be shown that $K^\infty$ is full rank. Then, let \begin{align}
+    This is precisely the NTK with $m=\infty$.  Though we omit the proof of this claim, it can be shown that $K^\infty$ is full rank. Then, let \begin{align}
         \sigma_{\min} \triangleq \sigma_{\min} (K^\infty) > 0.
     \end{align}
     We can show that 
