@@ -197,11 +197,11 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
 %    We will plot $D(\alpha)$ as well as $\hat L(\alpha f_\theta(1))$ and $\hat L(\alpha g_\theta(1))$ for $\alpha = 1,2,4$. In the following plots, we use $\beta = 2$. 
 %   
 \end{remark}
-    \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach. Consider a  two-layer network with $m$ neurons. 
+    \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach (e.g., ~\cite{li2018learning,du2019gradient}). Consider a  two-layer network with $m$ neurons. 
     \begin{align}
         \hat{y} = \frac{1}{\sqrt{m}} \sum_{i=1}^m a_i \sigma(w_i^\top x )
     \end{align} 
-    The scaling $1/\sqrt{m}$ will be for convenience, as we see momentarily. We make the following assumptions regarding the network and its inputs.
+    The scaling $1/\sqrt{m}$ is to ensure that a random initialization with constant scale will have output on the right order, as we see momentarily. We make the following assumptions regarding the network and its inputs.
     \begin{align}
         W &= \begin{bmatrix} w_1^\top \\ \vdots \\ w_m^\top \end{bmatrix} \in \R^{m \times d} \\
         \sigma &\text{ is $1$-Lipschitz and twice-differentiable} \\
@@ -210,7 +210,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
         \norm{x}_2 &= \Theta(1) \\
         \theta &= \text{vec}(W) \in \R^{dm} \quad &\text{(vectorized $W$)}
     \end{align} 
-    We will assume $m \to \infty$, and in particular, for fixed $n,d$, $m = \textsf{poly}(n,d)$.
+    We will assume $m \to \infty$ polynomially in $n$ and $d$. In particular, for fixed $n,d$, we have $m = \textsf{poly}(n,d)$.
     
     Why do we use the $1/\sqrt{m}$ scaling? Note that $\sigma\big({w_i^0}^\top x\big) \approx 1$ because $\norm{x}_2 = \Theta(1)$ and $w_i^0$ is drawn from a spherical Gaussian. Thus, as some $a_i$ are positive and others are negative, $\left|\sum_{i=1}^m a_i \sigma \big({w_i^0}^\top x\big) \right| = \Theta \left( \sqrt{m} \right)$, and finally $f_{\theta^0} (x) = \Theta(1)$. 
     
@@ -235,7 +235,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
     \end{align} 
     where the penultimate line follows from the law of large numbers, as $\frac{1}{m} \sum_{i=1}^m \left( \sigma'(w_i^\top x ) \right)^2$ can be interpreted as a mean. 
     
-    Note that $\norm{\nabla_\theta f_{\theta^0} (x)}_2$ does not depend on $m$, so the inner product in \eqref{lec13:eqn:phifeature} also does not depend on $m$ either. As above, we can show 
+    Note that the scale $\norm{\nabla_\theta f_{\theta^0} (x)}_2$ does not depend on $m$, so the inner product in \eqref{lec13:eqn:phifeature} also does not depend on $m$ either. As above, we can show 
     \begin{align} 
         \inprod{\nabla_\theta f_{\theta^0} (x), \nabla_\theta f_{\theta^0} (x')} & = \frac{1}{m}\inprod{ x,x'} \sum_{i=1}^m \sigma'(w^\top x) \sigma'(w^\top x')  \\ 
         & \to \Exp_{w \sim \cN(0,I_d)} \left[ \sigma'(w^\top x) \sigma'(w^\top x') \right] \inprod{ x, x'} \label{lec13:eqn:kernelcalc} 
