@@ -154,10 +154,49 @@ By \eqref{lec13:eqn:lemma1bound}, we have now established a bound on our approxi
     \begin{align} 
         \frac{\beta}{\sigma^2}= \frac{\bar{\beta}}{\bar{\sigma}^2} \cdot \frac{1}{\alpha} \to 0 \quad \text{as} \quad \alpha \to \infty.
     \end{align}
-    Once $\alpha$ becomes big enough, then by Lemma~\ref{lec13:lma:accurate_approximation}, the approximation $|f_\theta(x) - g_\theta(x)| \leq O\left( \beta n / \sigma^2 \right)$ becomes very good.  
-    \begin{remark}
-    Note that this scaling does not scale the loss. Intuitively, while the function $f_\theta$ becomes sharper and non-smooth as $\alpha$ grows big (leading to higher approximation error), we note that we only need to travel a little bit away from $\theta^0$ given the $\beta$-Lipschitz constraint on the gradient of $f_{\theta}$. In particular, the neighborhood around $\theta^0$ shrinks faster than the approximation error grows.  
-    \end{remark}
+    Once $\alpha$ becomes big enough, then by Lemma~\ref{lec13:lma:accurate_approximation}, the approximation $|f_\theta(x) - g_\theta(x)| \leq O\left( \beta n / \sigma^2 \right)$ becomes very good. 
+    
+\begin{remark} A priori, such a phenomenon may appear to be too good to be true. To understand it better, we first note that this re-parameterizaton does not change the scale of the loss, but rather change the shape of the loss function. Intuitively, as $\alpha$ becomes larger, the function $f_\theta$ becomes sharper and more non-smooth (leading to higher approximation error). However, on the other hand, we note that we only need to travel a little bit away from $\theta^0$ to find a global minimum given that there is a global minimum within radius $O(\sqrt{n}/\sigma)$. It turns out that the radius needed shrinks faster than the smoothness grows. 
+    
+    To visualize this effect, we can consider the following example with only 1 data point with 1-dimensional input $(x,y) = (1,1)$ and the quadratic model $\bar{f}_\theta(x) = x(\theta + \beta \theta^2) = \theta + \beta \theta^2$. Using the squared loss, we have 
+    \begin{align}
+    \hatL(\bar{f}_\theta) = (1- (\theta + \beta \theta^2))^2 
+    \end{align}
+    Let $\theta^0 = 0$. Taylor expanding at $\theta^0$ gives the linear approximation $\bar{g}_\theta(x) = \theta x$ = $\theta$, and the resulting loss function that is quadratic 
+    \begin{align}
+    \hatL(\bar{g}_\theta) = (1- \theta)^2 
+    \end{align}
+	In this case,  $\nabla f_{\theta^0}(x) = 2\beta \theta x = 2\beta \theta$ is $2\beta$-Lipschitz, and $ \sigma = 1$. 
+	
+	Now we vary $\alpha$ and get 
+    \begin{align}
+\hatL(\alpha \bar{f}_\theta) = (1- \alpha(\theta + \beta \theta^2))^2 
+\end{align}	
+and 
+\begin{align}
+\hatL(\alpha\bar{g}_\theta) = (1- \alpha\theta)^2 
+\end{align}
+Note that the minimizer of $	\hatL(\alpha\bar{g}_\theta) $ is $1/\alpha$, which is closer to $\theta^0$ as $\alpha\rightarrow \infty$. We zoom into the region $[0, 1/\alpha]$ and find out the difference between $\alpha \bar{f}_\theta$ and $\alpha \bar{g}_\theta$ is $\alpha \beta\theta^2 \le  \beta/\alpha$, which is much smaller than the value of $\alpha \bar{g}_\theta \approx O(1)$. 
+
+We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\hatL(\alpha\bar{g}_\theta) $ becomes a better approximation of $\hatL(\alpha\bar{f}_\theta)$ in the region $[0,1/\alpha]$ as $\alpha \rightarrow \infty$ (though $\hatL(\alpha\bar{g}_\theta)$ is a worse approximation of $\hatL(\alpha\bar{f}_\theta)$ globally.)
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width = 0.6\textwidth]{figures/ntk-1d.png}
+	\caption{\label{fig:ntk-1d} The approximation $\hatL(\alpha\bar{g}_\theta) $ becomes a better approximation of $\hatL(\alpha\bar{f}_\theta)$ in the region $[0,1/\alpha]$ as $\alpha \rightarrow \infty$ (though $\hatL(\alpha\bar{g}_\theta)$ is a worse approximation of $\hatL(\alpha\bar{f}_\theta)$ globally).}
+\end{figure}
+	%The minimum norm solution with $\alpha g_\theta$ is
+%    \[
+%    \argmin{\theta} (1-\alpha  \theta)^2 = 1/\alpha.
+%    \]
+%    Now, for $\alpha\geq 1$ we compute
+%    \[
+%    D(\alpha) = \sup_{\theta\in [0,1/\alpha ]} |\alpha f_\theta(1) - \alpha g_\theta(1)|. 
+%    \]
+%    We will plot $D(\alpha)$ as well as $\hat L(\alpha f_\theta(1))$ and $\hat L(\alpha g_\theta(1))$ for $\alpha = 1,2,4$. In the following plots, we use $\beta = 2$. 
+%   
+\end{remark}
     \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach. Consider a  two-layer network with $m$ neurons. 
     \begin{align}
         \hat{y} = \frac{1}{\sqrt{m}} \sum_{i=1}^m a_i \sigma(w_i^\top x )
