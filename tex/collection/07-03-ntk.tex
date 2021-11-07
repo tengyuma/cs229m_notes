@@ -6,7 +6,9 @@
 
 \sec{The Neural Tangent Kernel (NTK) Approach}
 
-In the previous sections, we studied non-convex optimization problems in which all local minima are global. Here we consider an objective for which we can identify particular regions of the input space in which all local minima are also global minima. \tnote{a bit better transition and positioning, e.g., specify that this only works for certain cases; also add some literature; Tengyu can help edit later}
+In the previous sections, we studied non-convex optimization problems in which all local minima are global. Here we consider an objective for which we can identify particular regions of the input space in which all local minima are also global minima. \tnote{a bit better transition and positioning, e.g., specify that this only works for certain cases; also add some literature}
+
+\tnotelong{Tengyu should  double check this later}
 
 To be more formal, we take an appropriate parameter initialization $\theta^0$ such that in a neighborhood around it, which we denote by $B(\theta^0)$, the loss function is convex and its global minimum is attained. Figure \ref{lec13:fig:NTKapproach} depicts a function and region for which this condition holds. 
 
@@ -68,9 +70,9 @@ Note (1), (2), and (3) can all be true in various settings. In particular, to at
 \end{enumerate} 
 Despite the limitations of the requirements of (a) and (b), the existence of such a region is still surprising. Given the loss landscape which could potentially be highly non-convex, it is striking to find a neighborhood where the loss function is convex (e.g. quadratic) with a global minimum. This suggests there is some flexibility in the loss landscape.  
 
-To begin our formal discussion, we now prove (1) and (2). Let 
+To begin our formal discussion, we  start by providing tools for proving (1) and (2). Let 
 \begin{align}
-    \phi^{(i)} = \phi\l(x\sp{i}\r) = \nabla_\theta f_{\theta^0}\l( x\sp{i} \r)
+    \phi^{(i)} = \phi(x\sp{i}) = \nabla_\theta f_{\theta^0}( x\sp{i}) \in \R^p
 \end{align}
 and 
 \begin{align}
@@ -95,6 +97,10 @@ where $\vec{y} = \l[ y\sp{1}, \cdots, y\sp{n} \r]^\top \in \R^n$. Note that this
     \end{align} 
     In particular, notice that $B_{\theta^0}$ contains a global minimum, so this lemma characterizes how large the ball must be to contain a global minimum. 
     \end{remark} 
+\begin{remark}
+	We also note that the condition $\textup{rank}(\Phi) = n$ and $\sigma > 0$ can be thought of as a ``finite-sample expressivity'' condition, saying that the features $\Phi$ are expressive enough so that there exists a linear model on top of these features that perfectly fit the data. The condition $\textup{rank}(\Phi) = n$ requires $p \ge n$---so we need some amount of over-parameterization to apply these analysis. 
+\end{remark}
+\tnote{replace dagger by $+$ to be consistent with wikipedia (I think this applies to some previous lectures which I commented on as well)}
 \begin{proof}
     Letting $\Phi^\dagger$ denote the Moore-Penrose pseudoinverse of $\Phi$, note that $\Delta \hat{\theta} = \Phi^\dagger \boldsymbol{y}$, and $\norm{\Phi^\dagger} _{\text{op}} = \frac{1}{\sigma_{\min} (\Phi)} = \frac{1}{\sigma}$.  A simple argument shows 
     \begin{align}
@@ -103,7 +109,7 @@ where $\vec{y} = \l[ y\sp{1}, \cdots, y\sp{n} \r]^\top \in \R^n$. Note that this
     \end{align} 
     where the last inequality follows from the assumption that $\norm{\vec{y}}_2 \leq O(\sqrt{n})$. 
 \end{proof}
-Next, we prove a lemma that addresses the first of the three conditions we described above.
+Next, we prove a lemma that addresses the first of the three steps we described above.
 \begin{lemma}[for (1)] 
     \label{lec13:lma:accurate_approximation}
     Suppose $\nabla_\theta f_\theta(x)$ is $\beta$-Lipschitz in $\theta$, i.e. for every $x$, and $\theta, \theta'$, we have 
@@ -137,10 +143,10 @@ The lemma above bounds the approximation error. Intuitively, as you move farther
 Note that if $f_\theta$ involves a $\text{relu}$ function, then $\nabla f_\theta$ is not continuous everywhere. This requires a technical fix outside the scope of our discussion.\footnote{A $\text{relu}$ function is continuous almost everywhere, so we can make some minor fixes and still use some modified notion of Lipschitzness to derive an upper bound.} \tnote{Tengyu will add a reference here}
 \end{remark}
 
-\subsec{Tightening our Approximation Error Bound}
-By \eqref{lec13:eqn:lemma1bound}, we have now established a bound on our approximation error, but we have yet to analyze how good it is, as $\beta n /\sigma^2$ is not obviously either big or small. An important fact to notice is that $\beta/\sigma^2$ is not scaling invariant, so we can play with the scaling in order to drive this term to $0$. In particular, there are two notable cases where $\beta/\sigma^2 \to 0$: 
+\subsec{Two examples of the NTK regime}
+By \eqref{lec13:eqn:lemma1bound}, we have now established a bound on our approximation error, but we have yet to analyze how good it is, as $\beta n /\sigma^2$ is neither obviously either big nor small. An important fact to notice is that $\beta/\sigma^2$ is not scaling invariant, so we can play with the scaling in order to drive this term to $0$. In particular, there are two notable cases (with specific parameterization, initialization, etc) where $\beta/\sigma^2 \to 0$. In the literature, such situation is often referred to as the NTK regime or the lazy training regime~\cite{chizat2018note}. 
 \begin{enumerate}
-    \item  \textbf{Reparametrize with a scalar} \cite{chizat2018note}. Let $f_\theta(x) = \alpha \cdot \bar{f}_\theta(x)$ where $\bar{f}_\theta(x)$ is a standard neural net with fixed width and depth. We only vary $\alpha$, i.e. the scaling, and we see how things change accordingly. Fix an initial $\theta^0$, and let 
+    \item  \textbf{Reparametrize with a scalar} \cite{chizat2018note}. Let $f_\theta(x) = \alpha \cdot \bar{f}_\theta(x)$ where $\bar{f}_\theta(x)$ is an arbitrary neural net with fixed width and depth. We only vary $\alpha$, i.e. the scaling, and we see how the crucial quantity $\beta/\sigma^2$ changes accordingly. Fix an initial $\theta^0$, and let 
     \begin{align}
         \bar{\sigma} = \sigma_{\min}\left( \begin{bmatrix}  \nabla_\theta \bar{f}_{\theta^0} \big( x^{(i)} \big)^\top \\ \vdots \\ \nabla_\theta \bar{f}_{\theta^0} \big(x^{(i)} \big)^\top \end{bmatrix}\right).
     \end{align} 
@@ -152,7 +158,7 @@ By \eqref{lec13:eqn:lemma1bound}, we have now established a bound on our approxi
     \begin{remark}
     Note that this scaling does not scale the loss. Intuitively, while the function $f_\theta$ becomes sharper and non-smooth as $\alpha$ grows big (leading to higher approximation error), we note that we only need to travel a little bit away from $\theta^0$ given the $\beta$-Lipschitz constraint on the gradient of $f_{\theta}$. In particular, the neighborhood around $\theta^0$ shrinks faster than the approximation error grows.  
     \end{remark}
-    \item \textbf{Overparametrize the model}. Early papers on the NTK take this approach. Consider a  two-layer network with $m$ neurons. 
+    \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach. Consider a  two-layer network with $m$ neurons. 
     \begin{align}
         \hat{y} = \frac{1}{\sqrt{m}} \sum_{i=1}^m a_i \sigma(w_i^\top x )
     \end{align} 
