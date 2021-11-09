@@ -371,10 +371,10 @@ This yields the desired exponential decay in the error. Thus, after $T = O \l( \
 }
 
 \subsec{Optimizing $f_\theta$}
-We now transition to an analysis of the optimization of $f_{\theta}$. Our key result is Theorem \ref{theorem_1}. If we compare it against what we have in \eqref{lec14:eqn:g_exponential_decay}, we see the claimed similarity between $f_\theta$ and $g_\theta$ in error decay under optimization. 
+We now transition to an analysis of the optimization of $f_{\theta}$. Our key result is Theorem \ref{lec14:theorem:optimization_f}. If we compare it against what we have in \eqref{lec14:eqn:g_exponential_decay}, we see the claimed similarity between $f_\theta$ and $g_\theta$ in error decay under optimization. 
 
 \begin{theorem}
-There exists a constant $c_0 \in (0, 1)$ such that for $\frac{\beta}{\sigma^2} \leq \frac{c_0}{\sqrt{n}}$ and sufficiently small $\eta$ (which could depend on $\beta, \sigma$, or $p$), $\hat{L}\l(f_{\theta^T}\r) \leq \epsilon$ after $T = O \l(\frac{\log 1/\epsilon}{\eta\sigma^2}\r)$ steps. \label{theorem_1} 
+There exists a constant $c_0 \in (0, 1)$ such that for $\frac{\beta}{\sigma^2} \leq \frac{c_0}{\sqrt{n}}$ and sufficiently small $\eta$ (which could depend on $\beta, \sigma$, or $p$), $\hat{L}\l(f_{\theta^T}\r) \leq \epsilon$ after $T = O \l(\frac{\log 1/\epsilon}{\eta\sigma^2}\r)$ steps. \label{lec14:theorem:optimization_f} 
 \end{theorem}
 
 \begin{proof}
