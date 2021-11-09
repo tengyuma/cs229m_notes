@@ -4,9 +4,9 @@
 %\metadata{lecture ID}{Your names}{date}
 \metadata{10}{Kevin Han and Han Wu}{Feb 17th, 2021}
 
-In the previous chapter, we outlined conceptual topics in deep learning theory and how the situation was different from classical machine learning theory. In particular, we described \textit{approximation theory}, \textit{statistical generalization} and \textit{optimization}. In this chapter, we will focus on optimization theory in deep learning. We will introduce some basics about optimization (Section~\ref{?})\tnote{todo}, discuss how we can make the notion ``all local minima are global minima'' rigorous, and walk through two examples where this is the case (Section~\ref{?}\tnote{todo}). Finally, we introduce the neural tangent kernel approach which allows us to characterize of the loss of general neural networks near a specific initialization (or under specific parameterization).
+In the previous chapter, we outlined conceptual topics in deep learning theory and how the situation was different from classical machine learning theory. In particular, we described \textit{approximation theory}, \textit{statistical generalization} and \textit{optimization}. In this chapter, we will focus on optimization theory in deep learning. We will introduce some basics about optimization (Section~\ref{sec:optim_convergence}), discuss how we can make the notion ``all local minima are global minima'' rigorous, and walk through two examples where this is the case (Section~\ref{sec:two_optim_examples}). Finally, we introduce the neural tangent kernel approach which allows us to characterize of the loss of general neural networks near a specific initialization (or under specific parameterization).
 
-\sec{Optimization landscape}
+\sec{Optimization landscape} \label{sec:optim_intro}
 
 The big question that we have in mind is the following: many existing optimizers are designed for optimizing convex functions. \textbf{Why do they still work well empirically for non-convex functions?} We note that it is not true that these optimizers always work well with non-convex functions: there are still some very hard cases that give trouble (e.g. very deep feed-forward networks are still hard to fit because of issues like vanishing and exploding gradients). One possible reason is that the non-convex functions that we are minimizing in deep learning usually have some nice properties: see Figure \ref{lec10:fig:optimization} for an illustration.
 
@@ -44,7 +44,7 @@ These observations motivate the following two-step plan:
 \end{enumerate}
 \textbf{Basic idea:} Gradient descent can find local minimum $+$ all local minima of $f$ are also global $\Rightarrow$ Gradient descent can find global minima.
 
-\sec{Efficient convergence to (approximate) local minima}
+\sec{Efficient convergence to (approximate) local minima} \label{sec:optim_convergence}
 Let $f$ be a twice-differentiable function. We start with the following definition:
 \begin{definition} [Local minimum of a function]
 We say that $x$ is a \textit{local minimum} of a function $f$ if there exists an open neighborhood $N$ around $x$ such that in $N$, the function values are at least $f(x)$.
@@ -97,7 +97,7 @@ Suppose $f$ is a function that satisfies the following condition: $\exists  \ \e
     \label{lec10:fig:strict-saddle}
 \end{figure}
 
-\sec{All local minima are global minima: two examples}
+\sec{All local minima are global minima: two examples} \label{sec:two_optim_examples}
 So far, we have focused on general results. Next, we give two concrete examples that have the property that all local minima are global minima: (i) principal components analysis (PCA)/matrix factorization/linearized neural nets, and (ii) matrix completion. \tnote{need some quick literature survey; Tengyu will add}%There is a rich literature on this topic and 
 
 \subsec{Principal components analysis (PCA)}

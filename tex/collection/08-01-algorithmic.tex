@@ -15,13 +15,13 @@ We prove that gradient descent initialized at the origin converges to the minimu
 As we are in the overparametrized setting with $n < d$ and $X$ full rank, there exist infinitely many global minimizers that interpolate the data and hence achieve zero loss. In fact, the following lemma shows that the set of global minimizers forms a subspace.
 
 \begin{lemma}\label{lec13:lem:soln-subspace}
-Let $X^\dagger$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^\top$ is invertible and so we have $X^\dagger = X^\top (X X^\top)^{-1}$. Note that $X X^\dagger X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^\dagger y + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
+Let $X^+$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^\top$ is invertible and so we have $X^+ = X^\top (X X^\top)^{-1}$. Note that $X X^+ X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^+ y + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
 \end{lemma}
 
 \begin{proof}
-For any $\beta \in \R^d$, we can decompose it as $\beta = X^\dagger + \zeta$ for some $\zeta \in \R^d$. Since
+For any $\beta \in \R^d$, we can decompose it as $\beta = X^+ + \zeta$ for some $\zeta \in \R^d$. Since
 \begin{equation}
-X\beta = X (X^\dagger y + \zeta) = y + X\zeta,
+X\beta = X (X^+ y + \zeta) = y + X\zeta,
 \end{equation}
 
 $\beta$ is a global minimizer if and only if $X\zeta = 0$, which happens if and only if $\zeta \perp x_1,...,x_n$.
@@ -29,19 +29,18 @@ $\beta$ is a global minimizer if and only if $X\zeta = 0$, which happens if and 
 \end{proof}
 
 From Lemma~\ref{lec13:lem:soln-subspace}, we can derive an explicit formula for the minimum norm interpolant $\beta^\star := \arg \min_{\beta : \hatL(\beta) = 0} ||\beta||_2$.
-\tnote{please check dagger to plus (to be consistent with wikipedia)}
 \begin{corollary}
-$\beta^\star = X^\dagger y$.
+$\beta^\star = X^+ y$.
 \end{corollary}
 
 \begin{proof}
-Take any $\beta$ such that $\hatL(\beta) = 0$, and write $\beta = X^\dagger y + \zeta$. Then from the definition of $X^\dagger$ and the fact that $X \zeta = 0$ (see the proof of Lemma~\ref{lec13:lem:soln-subspace}), we have 
+Take any $\beta$ such that $\hatL(\beta) = 0$, and write $\beta = X^+ y + \zeta$. Then from the definition of $X^+$ and the fact that $X \zeta = 0$ (see the proof of Lemma~\ref{lec13:lem:soln-subspace}), we have 
 \begin{align}
-    ||\beta||_2^2 &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\dagger y, \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\top(X X^\top)^{-1} y, \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^\top)^{-1} y, X \zeta \rangle \\
-    &= ||X^\dagger y||_2^2 + ||\zeta||_2^2 &\text{(because $X\zeta = 0$)} \\
-    &\geq ||X^\dagger y||_2^2,
+    ||\beta||_2^2 &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle X^+ y, \zeta \rangle \\
+    &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\top(X X^\top)^{-1} y, \zeta \rangle \\
+    &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^\top)^{-1} y, X \zeta \rangle \\
+    &= ||X^+ y||_2^2 + ||\zeta||_2^2 &\text{(because $X\zeta = 0$)} \\
+    &\geq ||X^+ y||_2^2,
 \end{align}
 with equality if and only if $\zeta = 0$.
 
@@ -64,7 +63,7 @@ The main idea of the proof is that the iterates of gradient descent always lie i
 \begin{proof}
 We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ for all $t$. For the induction base case, note that $\beta^0 = 0 \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Now suppose $\beta^{t-1} \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Recall that $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$. Since left-multiplying any vector by $X^\top$ amounts to taking a linear combination of the rows of $X$, it follows that $\eta \nabla \hatL(\beta^{t-1}) = \eta X^\top(X\beta^{t-1} - y) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$, and so $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. This proves the induction step.
 
-Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^\dagger y = \hat \beta^\star$.
+Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^+ y = \hat \beta^\star$.
 \end{proof}
 
 \sec{Algorithmic regularization in non-linear models}

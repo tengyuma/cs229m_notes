@@ -81,7 +81,7 @@ This is equivalent to the following optimization problem:
 \begin{align}
     \min_{\Delta \theta} \quad \norm{\vec{y'} - \Phi \Delta\theta}_2^2. \label{lec12:eqn:opt-problem}
 \end{align}
-Since $n \ll dm$, so we have an undetermined linear system. Since our goal is to show that the relevant neighborhood around $\thetazero$ is small, we should choose the minimum norm solution which can be found directly by the pseudoinverse: $\hat{\theta} = \Phi^\dagger \vec{y'}$,  where $\Phi^\dagger$ is the pseudoinverse of $\Phi$ given by $\Phi^\dagger = \Phi^\top (\Phi \Phi^\top)^{-1}$.
+Since $n \ll dm$, so we have an undetermined linear system. Since our goal is to show that the relevant neighborhood around $\thetazero$ is small, we should choose the minimum norm solution which can be found directly by the pseudoinverse: $\hat{\theta} = \Phi^+ \vec{y'}$,  where $\Phi^+$ is the pseudoinverse of $\Phi$ given by $\Phi^+ = \Phi^\top (\Phi \Phi^\top)^{-1}$.
 
 It remains to show that the norm of $\hat{\theta}$ is small. Before we can do that, we will prove some useful claims:
 
@@ -103,7 +103,7 @@ Since $\Phi \in R^{n \times dm}$, $\Phi$ has at most $n$ singular values $\sigma
 \begin{lemma}[Frobenius norm of $\Phi$ is order $1$]\label{lec12:lem:phi-norm}
 $\norm{\Phi}_F \asymp \Theta_{d,n}(1)$, which implies that
 \begin{equation}
-\norm{\Phi}_{\text{op}}, \ \norm{\Phi^\dagger}_{\text{op}}  \asymp \Theta_{d,n}(1).
+\norm{\Phi}_{\text{op}}, \ \norm{\Phi^+}_{\text{op}}  \asymp \Theta_{d,n}(1).
 \end{equation}
 \end{lemma}
 
@@ -124,12 +124,12 @@ The first equality is because $\norm{ab^\top}_2 = \norm{a}_2 \cdot \norm{b}_2 / 
 \norm{\Phi}_F &= \sqrt{\sum_{i=1}^n \norm{\Phi^{(i)}}_2^2} \approx \Theta_{d,n}(1).
 \end{align}
 
-Putting this together with Lemma~\ref{lec12:lem:claim1}, all the singular values of $\Phi$ are $\Theta_{d,n}(1)$. By extension,  $\norm{\Phi^\dagger}_{\text{op}} \asymp \Theta_{d,n}(1)$ as well, since if a matrix $A$ has singular values $\sigma_1, \dots,\sigma_n$, $A^\dagger$ has singular values $1 / \sigma_1, \dots,1/\sigma_n$. 
+Putting this together with Lemma~\ref{lec12:lem:claim1}, all the singular values of $\Phi$ are $\Theta_{d,n}(1)$. By extension,  $\norm{\Phi^+}_{\text{op}} \asymp \Theta_{d,n}(1)$ as well, since if a matrix $A$ has singular values $\sigma_1, \dots,\sigma_n$, $A^+$ has singular values $1 / \sigma_1, \dots,1/\sigma_n$. 
 \end{proof}
 
-Now we can leverage the previous two lemmas to produce a bound on the $\ell_2$-norm of the solution of the optimization problem~\eqref{lec12:eqn:opt-problem}, $\hat \theta$. Recall that $\hat \theta = \Phi^\dagger \vec {y'}$. Upper bounding the norm yields
+Now we can leverage the previous two lemmas to produce a bound on the $\ell_2$-norm of the solution of the optimization problem~\eqref{lec12:eqn:opt-problem}, $\hat \theta$. Recall that $\hat \theta = \Phi^+ \vec {y'}$. Upper bounding the norm yields
 \begin{align}
-    \| \hat \theta\|_2 & \leq \| \Phi^\dagger \|_{\text{op}} \cdot \|\vec{y'} \|_2  \\
+    \| \hat \theta\|_2 & \leq \| \Phi^+ \|_{\text{op}} \cdot \|\vec{y'} \|_2  \\
     & \leq O_{d, n} (1) \cdot \|\vec{y'} \|_2 &\text{(by Lemma~\ref{lec12:lem:phi-norm})} \\
     & \leq  O_{d, n} (1),
 \end{align}
