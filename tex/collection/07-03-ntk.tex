@@ -334,30 +334,30 @@ This analysis considers changes in the output space. Define $\hat{y}^t = \Phi \D
 &= \left( \Phi - \eta \Phi \Phi^\top \Phi\right)\Delta \theta^t - (I - \eta \Phi \Phi^\top)\vec{y}\\
 &= (I - \eta \Phi \Phi^\top )\Phi \Delta \theta^t - (I - \eta \Phi \Phi^\top )\vec{y}\\
 &= (I - \eta \Phi \Phi^\top) (\Phi \Delta \theta^t - \vec{y})\\
-&= (I - \eta \Phi \Phi^\top)(\hat{y}^t - \vec{y}). \label{eq1}
+&= (I - \eta \Phi \Phi^\top)(\hat{y}^t - \vec{y}). \label{lec14:eqn:g_decomp}
 }
-From this decomposition, we see that the residuals, $\hat{y}^t - \vec{y}$, are monotonically shrinking since $\eta \Phi \Phi^\top$, i.e. the term we are subtracting from $I$ in \eqref{eq1}, is positive semidefinite. Next, we quantify how quickly we are shrinking the residuals. Define 
+From this decomposition, we see that the residuals, $\hat{y}^t - \vec{y}$, are monotonically shrinking since $\eta \Phi \Phi^\top$, i.e. the term we are subtracting from $I$ in \eqref{lec14:eqn:g_decomp}, is positive semidefinite. Next, we quantify how quickly we are shrinking the residuals. Define 
 \begin{align}
     \tau^2 &= \sigma_{\text{max}}(\Phi \Phi^\top) \\
     \sigma &= \sigma_\text{min}(\Phi) = \sqrt{\sigma_\text{min}(\Phi\Phi^\top)}. \label{lec14:eqn:sigma_def}
 \end{align}
 Then, when $\eta \leq \frac{1}{\tau^2}$,
 \al{
-\norm{I - \eta \Phi \Phi^\top }_{\text{op}} \leq 1-\eta \sigma^2. \label{14.10}
+\norm{I - \eta \Phi \Phi^\top }_{\text{op}} \leq 1-\eta \sigma^2. \label{lec14:eqn:g_decomp_op}
 }
 Why? Let the eigenvalues of $\Phi \Phi^\top$ be (in descending order) $\tau_1^2, \dots , \tau_n^2$. By definition, $\tau_1^2 = \tau^2$ and $\tau_n^2 = \sigma^2$. Now, given the singular value decomposition, $\Phi = U\Sigma V^\top$, we obtain the eigendecomposition: 
 \al{
 I - \eta \Phi \Phi^\top &= I - \eta U \Sigma^2 U^\top \\
 &= U U^\top - \eta U \Sigma^2 U^\top \\ 
-&= U(I - \eta \Sigma^2)U^\top \label{eq2}.
+&= U(I - \eta \Sigma^2)U^\top \label{lec14:eqn:g_coeff_eigendecomposition}.
 }
-\eqref{eq2} is the eigendecomposition of $I - \eta \Phi \Phi^\top$, so $I - \eta \Phi \Phi^\top$ has eigenvalues $1 - \eta \tau_1^2, \dots, 1 - \eta \tau_n^2$. Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
+\eqref{lec14:eqn:g_coeff_eigendecomposition} is the eigendecomposition of $I - \eta \Phi \Phi^\top$, so $I - \eta \Phi \Phi^\top$ has eigenvalues $1 - \eta \tau_1^2, \dots, 1 - \eta \tau_n^2$. Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
 \al{
 \norm{I - \eta \Phi \Phi^\top}_\text{op} &\leq \max_j |1-\eta \tau_j^2|\\
-&= 1 - \eta \tau_n^2 \label{eq3}\\
+&= 1 - \eta \tau_n^2 \label{lec14:eqn:eigenvalue_bound}\\
 &= 1 - \eta \sigma^2,
 }
-where the non-negativity of $1 - \eta \tau_j^2$ for all $j$ implies \eqref{eq3}.
+where the non-negativity of $1 - \eta \tau_j^2$ for all $j$ implies \eqref{lec14:eqn:eigenvalue_bound}.
 
 Using this result, we obtain our desired result. Namely, assuming $\eta \leq \frac{1}{\tau^2}$,
 \al{
@@ -367,11 +367,11 @@ Using this result, we obtain our desired result. Namely, assuming $\eta \leq \fr
 }
 This yields the desired exponential decay in the error. Thus, after $T = O \l( \frac{\log 1/\epsilon}{\eta \sigma^2}\r)$ iterations, 
 \al{
-\norm{ \hat{y}^T - \vec{y} }_2 \leq \epsilon \norm{\hat{y}^0 - \vec{y}}_2. \label{eq4}
+\norm{ \hat{y}^T - \vec{y} }_2 \leq \epsilon \norm{\hat{y}^0 - \vec{y}}_2. \label{lec14:eqn:g_exponential_decay}
 }
 
 \subsec{Optimizing $f_\theta$}
-We now transition to an analysis of the optimization of $f_{\theta}$. Our key result is Theorem \ref{theorem_1}. If we compare it against what we have in \eqref{eq4}, we see the claimed similarity between $f_\theta$ and $g_\theta$ in error decay under optimization. 
+We now transition to an analysis of the optimization of $f_{\theta}$. Our key result is Theorem \ref{theorem_1}. If we compare it against what we have in \eqref{lec14:eqn:g_exponential_decay}, we see the claimed similarity between $f_\theta$ and $g_\theta$ in error decay under optimization. 
 
 \begin{theorem}
 There exists a constant $c_0 \in (0, 1)$ such that for $\frac{\beta}{\sigma^2} \leq \frac{c_0}{\sqrt{n}}$ and sufficiently small $\eta$ (which could depend on $\beta, \sigma$, or $p$), $\hat{L}\l(f_{\theta^T}\r) \leq \epsilon$ after $T = O \l(\frac{\log 1/\epsilon}{\eta\sigma^2}\r)$ steps. \label{theorem_1} 
@@ -407,9 +407,9 @@ where we have let $b^t = (\Phi^t)^\top\l(\hat{y}^t - \vec{y}\r)$. Following our 
 
 \begin{align}
    f_{\theta^{t+1}}(x^{(i)}) &= f_{\theta^{t}}(x^{(i)}) + \l<\nabla f_{\theta^t}(x^{(i)}), \theta^{t+1} - \theta^t \r> + \text{high order terms} \\
-   &= f_{\theta^{t }}(x^{(i)}) + \l<\nabla f_{\theta^t}(x^{(i)}), -\eta b^t \r> + O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r). \label{eq14.32}
+   &= f_{\theta^{t }}(x^{(i)}) + \l<\nabla f_{\theta^t}(x^{(i)}), -\eta b^t \r> + O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r). \label{lec14:eqn:f_taylor_expansion}
  \end{align}
-Since $O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r)$ is $O\l(\eta^2\r)$, we can ignore this term as $\eta \rightarrow 0$. Vectorizing \eqref{eq14.32} without $O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r)$,
+Since $O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r)$ is $O\l(\eta^2\r)$, we can ignore this term as $\eta \rightarrow 0$. Vectorizing \eqref{lec14:eqn:f_taylor_expansion} without $O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r)$,
 \begin{align}
     \hat{y}^{t+1} &= \hat{y}^t - \eta \Phi^t b^t \\
     &= \hat{y}^t + \eta \Phi^t\l(\Phi^t\r)^\top(\vec{y} - \hat{y}^t).
@@ -417,15 +417,15 @@ Since $O\l(\norm{\theta^{t+1} - \theta^t}_2^2\r)$ is $O\l(\eta^2\r)$, we can ign
 Subtracting $\vec{y}$ and re-arranging,
 \begin{align}
     \hat{y}^{t+1} - \vec{y} &= \hat{y}^t - \vec{y} + \eta \Phi^t\l(\Phi^t\r)^\top(\vec{y} - \hat{y}^t) \\ 
-    &= \l(I - \eta \Phi^t\l(\Phi^t\r)^\top\r)\l(\hat{y}^t - \vec{y}\r). \label{14.36}
+    &= \l(I - \eta \Phi^t\l(\Phi^t\r)^\top\r)\l(\hat{y}^t - \vec{y}\r). \label{lec14:eqn:f_decomposition}
 \end{align}
-Comparing \eqref{14.36} with \eqref{eq1}, we see one difference: in \eqref{14.36}, our convergence depends on $\eta \Phi^t\l(\Phi^t\r)^\top$, which is a matrix that changes as we iterate, whereas in \eqref{eq1}, convergence is controlled by a matrix that is fixed as we iterate. 
+Comparing \eqref{lec14:eqn:f_decomposition} with \eqref{lec14:eqn:g_decomp}, we see one difference: in \eqref{lec14:eqn:f_decomposition}, our convergence depends on $\eta \Phi^t\l(\Phi^t\r)^\top$, which is a matrix that changes as we iterate, whereas in \eqref{lec14:eqn:g_decomp}, convergence is controlled by a matrix that is fixed as we iterate. 
 
-To understand the convergence implications of \eqref{14.36}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. Suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_2 \leq \frac{\sigma}{4}$ by the Lipschitzness of $\Phi$. Then, we claim that 
+To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. Suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_2 \leq \frac{\sigma}{4}$ by the Lipschitzness of $\Phi$. Then, we claim that 
 \begin{align}
-    \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{14.37}
+    \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{lec14:eqn:\Phi_t_eigenvalue_bound}
 \end{align}
-Why does \eqref{14.37} hold? Observe that
+Why does \eqref{lec14:eqn:\Phi_t_eigenvalue_bound} hold? Observe that
 \begin{align}
     \sigma_\text{min}(\Phi^t) &= \underset{\norm{x}_2=1}{\text{min}} x^\top \Phi^tx \\
    &\geq \underset{\norm{x}_2=1}{\text{min}} x^\top (\Phi^t - \Phi)x + \underset{\norm{x}_2=1}{\text{min}}  x^\top \Phi x. \label{lec14:eqn:eigenbound_phi_t}
@@ -437,19 +437,19 @@ We can lower bound the first term of \eqref{lec14:eqn:eigenbound_phi_t} as follo
     &\geq -\norm{\Phi^t - \Phi}_2 &\text{($\norm{x}_2 = 1$)}\\ 
     &\geq -\sigma/4 &\text{(Lipschitzness of $\Phi$)}. \label{lec14:eqn:termone_eigenbound}
 \end{align}
-Next, we note that the second term of \eqref{lec14:eqn:eigenbound_phi_t} is lower bounded by $\sigma$ by simplying. applying the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def}. Combining this observation with \eqref{lec14:eqn:termone_eigenbound}, we conclude that \eqref{14.37} must hold.
+Next, we note that the second term of \eqref{lec14:eqn:eigenbound_phi_t} is lower bounded by $\sigma$ by simplying. applying the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def}. Combining this observation with \eqref{lec14:eqn:termone_eigenbound}, we conclude that \eqref{lec14:eqn:\Phi_t_eigenvalue_bound} must hold.
 
-Applying this lower bound on the eigenvalues of $\Phi^t$, we can use the same argument we used to establish \eqref{14.10} to conclude that
+Applying this lower bound on the eigenvalues of $\Phi^t$, we can use the same argument we used to establish \eqref{lec14:eqn:g_decomp_op} to conclude that
 \begin{align}
-    \norm{I - \eta \Phi^t \l(\Phi^t\r)^\top}_{\text{op}} \leq 1 - 3\eta \sigma/4 \label{14.42},
+    \norm{I - \eta \Phi^t \l(\Phi^t\r)^\top}_{\text{op}} \leq 1 - 3\eta \sigma/4 \label{lec14:eqn:op_norm_bound},
 \end{align}
 and 
 \begin{align}
-    \norm{\hat{y}^{t+1} - \vec{y}}_{2} \leq \l(1 - 3\eta \sigma/4\r)^{t+1} \norm{\hat{y}^{0} - \vec{y}}_{2}. \label{14.43}
+    \norm{\hat{y}^{t+1} - \vec{y}}_{2} \leq \l(1 - 3\eta \sigma/4\r)^{t+1} \norm{\hat{y}^{0} - \vec{y}}_{2}.
 \end{align}
 So, as desired, we see exponential decay in the error at each iteration and after $T = O \l( \frac{\log 1/\epsilon}{n\sigma^2}\r)$ iterations,
 \al{
-\hat{L}(f_{\theta^T}) \leq \epsilon. \label{14.44}
+\hat{L}(f_{\theta^T}) \leq \epsilon.
 }
 
 To complete our proof, observe that this argument is predicated upon the assumption that $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$. This assumption is reasonable, however, given what we have already proven. Recall that in Lemma~\ref{lec13:lma:nearest_minimum}, we proved that 
@@ -460,17 +460,17 @@ Thus, when $\beta/\sigma^2 \rightarrow 0$, eventually, $\sqrt{n}/\sigma \ll \sig
 
 More formally, we claim that for all $t \in \mathbb{N}$, 
 \al{
-\norm{\hat{y}^t - \vec{y}}_2 \leq \cO (\sqrt{n}).  \label{14.45}
+\norm{\hat{y}^t - \vec{y}}_2 \leq \cO (\sqrt{n}).  \label{lec14:eqn:induction}
 }
 We proceed via induction. For $t=0$, because each element of $\hat{y}$ is of order $1$, we know that: 
 \al{
 \frac{1}{\sqrt{n}} \norm{\hat{y}^0 - \vec{y}}_2 \leq O (1).
 }
-Now, suppose that \eqref{14.45} holds for some $t$. Then, because the errors are monotonically decreasing, (cf. \eqref{14.36} and \eqref{14.42}), 
+Now, suppose that \eqref{lec14:eqn:induction} holds for some $t$. Then, because the errors are monotonically decreasing, (cf. \eqref{lec14:eqn:f_decomposition} and \eqref{lec14:eqn:op_norm_bound}), 
 \al{
 \frac{1}{\sqrt{n}} \norm{\hat{y}^{t+1} - \vec{y}}_2 \leq \frac{1}{\sqrt{n}}  \norm{\hat{y}^t - \vec{y}}_2 \leq O(1).
 }
-Thus, \eqref{14.45} holds for all $t \in \mathbb{N}$. Then, recalling that $\vec{y} = \Phi\hat{\theta}$, we obtain that
+Thus, \eqref{lec14:eqn:induction} holds for all $t \in \mathbb{N}$. Then, recalling that $\vec{y} = \Phi\hat{\theta}$, we obtain that
 \al{
 \frac{1}{\sqrt{n}} \norm{\Phi (\theta^t - \hat{\theta})}_2 &\leq O(1).
 }
