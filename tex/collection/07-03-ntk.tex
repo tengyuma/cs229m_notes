@@ -423,9 +423,9 @@ Comparing \eqref{lec14:eqn:f_decomposition} with \eqref{lec14:eqn:g_decomp}, we 
 
 To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. Suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_2 \leq \frac{\sigma}{4}$ by the Lipschitzness of $\Phi$. Then, we claim that 
 \begin{align}
-    \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{lec14:eqn:\Phi_t_eigenvalue_bound}
+    \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{lec14:eqn:phi_t_eigenvalue_bound}
 \end{align}
-Why does \eqref{lec14:eqn:\Phi_t_eigenvalue_bound} hold? Observe that
+Why does \eqref{lec14:eqn:phi_t_eigenvalue_bound} hold? Observe that
 \begin{align}
     \sigma_\text{min}(\Phi^t) &= \underset{\norm{x}_2=1}{\text{min}} x^\top \Phi^tx \\
    &\geq \underset{\norm{x}_2=1}{\text{min}} x^\top (\Phi^t - \Phi)x + \underset{\norm{x}_2=1}{\text{min}}  x^\top \Phi x. \label{lec14:eqn:eigenbound_phi_t}
@@ -437,7 +437,7 @@ We can lower bound the first term of \eqref{lec14:eqn:eigenbound_phi_t} as follo
     &\geq -\norm{\Phi^t - \Phi}_2 &\text{($\norm{x}_2 = 1$)}\\ 
     &\geq -\sigma/4 &\text{(Lipschitzness of $\Phi$)}. \label{lec14:eqn:termone_eigenbound}
 \end{align}
-Next, we note that the second term of \eqref{lec14:eqn:eigenbound_phi_t} is lower bounded by $\sigma$ by simplying. applying the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def}. Combining this observation with \eqref{lec14:eqn:termone_eigenbound}, we conclude that \eqref{lec14:eqn:\Phi_t_eigenvalue_bound} must hold.
+Next, we note that the second term of \eqref{lec14:eqn:eigenbound_phi_t} is lower bounded by $\sigma$ by simplying. applying the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def}. Combining this observation with \eqref{lec14:eqn:termone_eigenbound}, we conclude that \eqref{lec14:eqn:phi_t_eigenvalue_bound} must hold.
 
 Applying this lower bound on the eigenvalues of $\Phi^t$, we can use the same argument we used to establish \eqref{lec14:eqn:g_decomp_op} to conclude that
 \begin{align}
