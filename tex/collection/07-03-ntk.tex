@@ -354,7 +354,7 @@ I - \eta \Phi \Phi^\top &= I - \eta U \Sigma^2 U^\top \\
 &= U(I - \eta \Sigma^2)U^\top \label{lec14:eqn:g_coeff_eigendecomposition}.
 }
 \eqref{lec14:eqn:g_coeff_eigendecomposition} is the eigendecomposition of $I - \eta \Phi \Phi^\top$, so $I - \eta \Phi \Phi^\top$ has eigenvalues $1 - \eta \tau_1^2, \dots, 1 - \eta \tau_n^2$.
-\tnote{maybe explain why this is the case by taking an SVD? see screenshot} Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
+\tnotelong{add more backgrounds about pseudo-inverse and SVD} Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
 \al{
 \norm{I - \eta \Phi \Phi^\top}_\text{op} &\leq \max_j |1-\eta \tau_j^2|\\
 &= 1 - \eta \tau_n^2 \label{lec14:eqn:eigenvalue_bound}\\
