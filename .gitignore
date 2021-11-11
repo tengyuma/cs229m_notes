@@ -274,3 +274,6 @@ TSWLatexianTemp*
 
 # Makeindex log files
 *.lpz
+
+# MacOS filesystem metadata
+*.DS_Store
