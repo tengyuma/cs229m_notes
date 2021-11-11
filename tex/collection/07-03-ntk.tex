@@ -27,10 +27,11 @@ Given a nonlinear $f_\theta(x)$, we examine the Taylor expansion at $\theta^0$:
 
 Note that $g_\theta(x)$ is an affine function in $\theta$, as $f_{\theta^0}(x)$ is a constant for fixed $x,\theta^0$. Similarly, defining $\Delta \theta = \theta-\theta^0$, we can say that $g_\theta(x)$ is linear in $\Delta \theta$. For convenience, we will sometimes choose $\theta^0$ such that $f_{\theta^0}(x) = 0$ for all $x$. It is easy to see why such an initialization exists. Consider splitting a two-layer neural network $f_{\theta}(x)$ with width $2m$ into two halves, each with $m$ neurons; the outputs of these two networks are then given by $\sum_{i=1}^m a_i \sigma (w_i^\top x)$ and $\sum_{i=1}^m -a_i \sigma (w_i^\top x)$, respectively. Here, $w_i$ can be randomly chosen so long as $W_i$ is the same in both halves, and $a_i$ can be randomly chosen as long as the other half is initialized with $-a_i$. Summing these two networks together yields $f_{\theta^0}(x) \equiv 0$ for all $x$.
 
-Letting 
-\begin{align}
-    y' &= y- f_{\theta^0}(x) \\
-    &= \inprod{\nabla_\theta f_{\theta^0}(x), \Delta \theta},
+When $f_{\theta^0}(x) \equiv 0$, we have that 
+%\begin{align}
+  %  y' &= y- f_{\theta^0}(x) \\
+ \begin{align}
+ g_\theta(x)= \inprod{\nabla_\theta f_{\theta^0}(x), \Delta \theta},
 \end{align}
 we observe that $\Delta \theta$ depends upon the parameter we evaluate the network at, while $\nabla_\theta f_{\theta^0}(x)$ can be thought of as a feature map since it is a fixed function of $x$ (given the architecture and $\theta^0$) that does not depend on $\theta$ whatsoever. We thus let $\phi(x) \triangleq \nabla_\theta f_{\theta^0}(x)$, which motivates the following definition: 
 
@@ -283,11 +284,11 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
 We now discuss how to establish the last of the three conditions under which we claimed a Taylor approximation is reasonable. We need to show that  optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$. To do so, we require two steps:
 \begin{enumerate}[label=\alph*]
     \item[(A)] Analyze optimization of $\hat{L}(g_\theta)$.
-    \item[(B)] Analyze optimization of $\hat{L}(f_\theta)$ by re-using the proof in (A).
+    \item[(B)] Analyze optimization of $\hat{L}(f_\theta)$ by re-using or modifying the proofs in (A).
 \end{enumerate}
 There are two approaches in the literature for (A), which implies that there exist two approaches for (B) as well. 
 \begin{enumerate}
-    \item[(i)] We leverage the strong convexity of $\hat{L} (g_\theta)$, and then show an exponential convergence rate.\footnote{Recall that a differentiable function $f$ is strongly convex if 
+    \item[(i)] We leverage the strong convexity of $\hat{L} (g_\theta)$, and then show an exponential convergence rate.\footnote{Recall that a differentiable function $f$ is $\mu$-strongly convex if 
     \begin{align} 
         f(y) \geq f(x) + \nabla f(x)^\top (y-x) + \frac{\mu}{2} \norm{y-x}_2^2
     \end{align} for some $\mu>0$ and all $x,y$.} 
@@ -295,20 +296,20 @@ There are two approaches in the literature for (A), which implies that there exi
 \end{enumerate}
 We will only discuss the first of these two methods in the sequel.
 
-\begin{remark} 
-Suppose at any $\theta^t$, we take the Taylor expansion of $g_\theta$ at $\theta^t$ so 
+\begin{remark} In both either approach (i) or (ii), we will implicitly or explicitly use the following simple fact. 
+Suppose at any $\theta^t$, we take the Taylor expansion of $f_\theta$ at $\theta^t$:
 \begin{align} 
-    g_\theta^t(x) = g_{\theta^t} (x) + \inprod{ \nabla f_{\theta^t} (x),\theta-\theta^t } 
+    g_\theta^t(x) = f_{\theta^t} (x) + \inprod{ \nabla f_{\theta^t} (x),\theta-\theta^t } 
 \end{align} 
 Consider the gradient we are interested in taking: $\nabla \hat{L} ( f_{\theta^t})$. Notice that: \begin{align} 
     \nabla \hat{L} ( f_{\theta^t}) = \nabla \hat{L} ( g_{\theta^t}^t)
 \end{align} 
-This is really saying that $f_\theta$ and $g_\theta^t$ agree up to first-order at $\theta^t$. This implies that $L(f_\theta)$ and $L(g_\theta^t)$ also agree to first-order at $\theta^t$. This means that $T$ steps of gradient descent on $\hat{L}(f_\theta)$ is the same as performing online gradient descent\footnote{See Chapter~\ref{chap:OL}.} on a sequence of changing objectives $L(g_\theta^0), \ldots, L(g_\theta^T)$.
+This is really saying that $f_\theta$ and $g_\theta^t$ agree up to first-order at $\theta^t$. This implies that $L(f_\theta)$ and $L(g_\theta^t)$ also agree to first-order at $\theta^t$. This also means that $T$ steps of gradient descent on $\hat{L}(f_\theta)$ is the same as performing online gradient descent\footnote{Online gradient descent is the algorithm that takes one gradient descent step upon receiving a new objective function. See Chapter~\ref{chap:OL} for more discussions about online learning.} on a sequence of changing objectives $L(g_\theta^0), \ldots, L(g_\theta^T)$, and this online learning perspective is useful in the approach (ii). 
 \end{remark} 
 
-We will now show that under this strong convexity regime, optimizing a neural network $f_\theta$ is equivalent to optimizing a linear model $g_\theta$. We will also observe that this regime is not particularly relevant, but this analysis is nevertheless of interest to us for two reasons. First, the approach used in the subsequent exposition is of technical interest and second, it remains quite interesting that these two methods yield the same results under \emph{any} regime. 
+We will now show that under the strong convexity regime, optimizing a neural network $f_\theta$ is equivalent to optimizing a linear model $g_\theta$. We will also observe that this regime is not particularly practically relevant, but this analysis is nevertheless of interest to us for two reasons. First, the approach used in the subsequent exposition is of technical interest and second, it remains quite interesting that optimizing $f_\theta$ and optimization $g_\theta$ yields the same results under \emph{any} regime. 
 
-\subsec{Optimizing $g_\theta$}
+\subsubsec{Optimizing $g_\theta$}
 We relate the optimization of $g_\theta$ to performing linear regression. Recall that we can think of $\nabla f_{\theta^0}(x)$ as a feature map. Then, the problem of choosing $\Delta \theta$ to get $g_\theta(x)$ to be close to $\vec{y}$ is a linear regression. In particular, we use gradient descent to minimize
 \al{
 \norm{\vec{y} - \Phi\Delta \theta}_2^2,
@@ -321,7 +322,8 @@ where
 \vdots \\
 \nabla f_{\theta^0}(x^{(n)})^\top
 \end{bmatrix}
-\in \R^{n \times p}.
+\in \R^{n \times p}. 
+\quad \quad \vec{y} = \begin{bmatrix} y\sp{1} \\ \vdots\\ y\sp{n} \end{bmatrix} \in \R^n
 }
 For learning rate $\eta$, the gradient descent update rule is 
 \al{
@@ -341,7 +343,7 @@ From this decomposition, we see that the residuals, $\hat{y}^t - \vec{y}$, are m
     \tau^2 &= \sigma_{\text{max}}(\Phi \Phi^\top) \\
     \sigma &= \sigma_\text{min}(\Phi) = \sqrt{\sigma_\text{min}(\Phi\Phi^\top)}. \label{lec14:eqn:sigma_def}
 \end{align}
-Then, when $\eta \leq \frac{1}{\tau^2}$,
+Then, we claim that when $\eta \leq \frac{1}{\tau^2}$,
 \al{
 \norm{I - \eta \Phi \Phi^\top }_{\text{op}} \leq 1-\eta \sigma^2. \label{lec14:eqn:g_decomp_op}
 }
@@ -351,7 +353,8 @@ I - \eta \Phi \Phi^\top &= I - \eta U \Sigma^2 U^\top \\
 &= U U^\top - \eta U \Sigma^2 U^\top \\ 
 &= U(I - \eta \Sigma^2)U^\top \label{lec14:eqn:g_coeff_eigendecomposition}.
 }
-\eqref{lec14:eqn:g_coeff_eigendecomposition} is the eigendecomposition of $I - \eta \Phi \Phi^\top$, so $I - \eta \Phi \Phi^\top$ has eigenvalues $1 - \eta \tau_1^2, \dots, 1 - \eta \tau_n^2$. Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
+\eqref{lec14:eqn:g_coeff_eigendecomposition} is the eigendecomposition of $I - \eta \Phi \Phi^\top$, so $I - \eta \Phi \Phi^\top$ has eigenvalues $1 - \eta \tau_1^2, \dots, 1 - \eta \tau_n^2$.
+\tnote{maybe explain why this is the case by taking an SVD? see screenshot} Note that assuming $\eta \leq \frac{1}{\tau^2}$ ensures that all eigenvalues of $I - \eta \Phi \Phi^\top$ are non-negative. Thus,
 \al{
 \norm{I - \eta \Phi \Phi^\top}_\text{op} &\leq \max_j |1-\eta \tau_j^2|\\
 &= 1 - \eta \tau_n^2 \label{lec14:eqn:eigenvalue_bound}\\
@@ -370,11 +373,11 @@ This yields the desired exponential decay in the error. Thus, after $T = O \l( \
 \norm{ \hat{y}^T - \vec{y} }_2 \leq \epsilon \norm{\hat{y}^0 - \vec{y}}_2. \label{lec14:eqn:g_exponential_decay}
 }
 
-\subsec{Optimizing $f_\theta$}
+\subsubsec{Optimizing $f_\theta$}
 We now transition to an analysis of the optimization of $f_{\theta}$. Our key result is Theorem \ref{lec14:thm:optimization_f}. If we compare it against what we have in \eqref{lec14:eqn:g_exponential_decay}, we see the claimed similarity between $f_\theta$ and $g_\theta$ in error decay under optimization. 
 
 \begin{theorem}
-There exists a constant $c_0 \in (0, 1)$ such that for $\frac{\beta}{\sigma^2} \leq \frac{c_0}{\sqrt{n}}$ and sufficiently small $\eta$ (which could depend on $\beta, \sigma$, or $p$), $\hat{L}\l(f_{\theta^T}\r) \leq \epsilon$ after $T = O \l(\frac{\log 1/\epsilon}{\eta\sigma^2}\r)$ steps. \label{lec14:thm:optimization_f} 
+There exists a constant $c_0 \in (0, 1)$ such that for $\frac{\beta}{\sigma^2} \leq \frac{c_0}{n}$ and sufficiently small $\eta$ (which could depend on $\beta, \sigma$, or $p$), $\hat{L}\l(f_{\theta^T}\r) \leq \epsilon$ after $T = O \l(\frac{\log 1/\epsilon}{\eta\sigma^2}\r)$ steps. \label{lec14:thm:optimization_f} 
 \end{theorem}
 
 \begin{proof}
@@ -421,7 +424,8 @@ Subtracting $\vec{y}$ and re-arranging,
 \end{align}
 Comparing \eqref{lec14:eqn:f_decomposition} with \eqref{lec14:eqn:g_decomp}, we see one difference: in \eqref{lec14:eqn:f_decomposition}, our convergence depends on $\eta \Phi^t\l(\Phi^t\r)^\top$, which is a matrix that changes as we iterate, whereas in \eqref{lec14:eqn:g_decomp}, convergence is controlled by a matrix that is fixed as we iterate. 
 
-To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. Suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_2 \leq \frac{\sigma}{4}$ by the Lipschitzness of $\Phi$. Then, we claim that 
+To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. For now, suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\sqrt{n}\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_F \leq \frac{\sigma}{4}$ by the Lipschitzness of $\nabla f_\theta(x)$ in $\theta$. Here with slight abuse of notations we 
+Then, we claim that 
 \begin{align}
     \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{lec14:eqn:phi_t_eigenvalue_bound}
 \end{align}
@@ -452,11 +456,11 @@ So, as desired, we see exponential decay in the error at each iteration and afte
 \hat{L}(f_{\theta^T}) \leq \epsilon.
 }
 
-To complete our proof, observe that this argument is predicated upon the assumption that $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\beta)$. This assumption is reasonable, however, given what we have already proven. Recall that in Lemma~\ref{lec13:lma:nearest_minimum}, we proved that 
+To complete our proof, observe that this argument is predicated upon the assumption that $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\sqrt{n}\beta)$. This assumption is reasonable, however, given what we have already proven. Recall that in Lemma~\ref{lec13:lma:nearest_minimum}, we proved that 
 \begin{align}
     \norm{\Delta \hat{\theta}}_2 = \norm{\hat{\theta} - \theta^{0}}_2 \lesssim \sqrt{n}/\sigma.
 \end{align}
-Thus, when $\beta/\sigma^2 \rightarrow 0$, eventually, $\sqrt{n}/\sigma \ll \sigma/(4\beta)$. To extend this to $\norm{\hat{\theta} - \theta^t}_2$ for arbitrary $t$, we heuristically argue that since the empirical minimizer is within $\sigma/(4\beta)$ of $\theta^0$, we would not expect to have traveled more than $\sigma/(4\beta)$ from $\theta^0$ at \emph{any} iteration. 
+Thus, when $\beta/\sigma^2 \rightarrow 0$, eventually, $\sqrt{n}/\sigma \ll \sigma/(4\sqrt{n}\beta)$. To extend this to $\norm{\hat{\theta} - \theta^t}_2$ for arbitrary $t$, we heuristically argue that since the empirical minimizer is within $\sigma/(4\sqrt{n}\beta)$ of $\theta^0$, we would not expect to have traveled more than $\sigma/(4\sqrt{n}\beta)$ from $\theta^0$ at \emph{any} iteration. 
 
 More formally, we claim that for all $t \in \mathbb{N}$, 
 \al{
@@ -482,11 +486,10 @@ Recall that in Lemma~\ref{lec13:lma:nearest_minimum}, we proved that
 \al{
 \norm{\hat{\theta} - \theta^0}_2 \leq O(\sqrt{n}/\sigma).
 }
-If $\beta/\sigma^2 \ll 1/\sqrt{n}$, we conclude that
+If $\beta/\sigma^2 \ll 1/n$, we conclude that
 \al{
 \norm{\theta^t - \theta^0}_2 &\leq \norm{\hat{\theta} - \theta^0}_2 + \norm{\theta^t - \hat{\theta}}_2 &\text{(triangle ineq.)}\\
-&\leq O\l (\frac{\sqrt{n}}{\sigma} \r ) \\
-&\leq \frac{\sigma}{4\beta}. 
+&\leq O\l (\frac{\sqrt{n}}{\sigma} \r ) \leq \frac{\sigma}{4\sqrt{n}\beta}. 
 }
 \end{proof}
 \subsec{Limitations of NTK}
