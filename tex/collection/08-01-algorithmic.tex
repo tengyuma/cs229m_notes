@@ -72,7 +72,7 @@ We give an example of algorithmic regularization in a non-convex version of the 
 
 Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, our goal is to find a weight vector that minimizes our empirical loss function
 \begin{equation}
-\hatL(\beta) := \frac{1}{4n}\sum_{i=1}^n \left(y\sp{i} - f_\beta(x\sp{i})\right)^2,
+\hatL(\beta) := \frac{1}{4n}\sum_{i=1}^n \left(y\sp{i} - f_\beta(x\sp{i})\right)^2, \label{lec13:eqn:hadamard_model_1}
 \end{equation}
 where $f_\beta(x):= \langle \beta \odot \beta, x\rangle$. (The operation $\odot$ denotes the Hadamard product: for $u,v \in \bbR^d$, $u \odot v \in \bbR^d$ is defined by $(u \odot v)_i := u_i v_i$ for $i = 1, \dots, d$.)
 

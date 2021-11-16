@@ -1,0 +1,324 @@
+\metadata{16}{Leah Reeder and Trevor Maxfield}{Nov 10th, 2021}
+
+\sec{Implicit Regularization by Initialization}
+
+We have previously discussed how certain initializations of gradient descent converge to minimum-norm solutions. In the sequel, we characterize the effect of initialization more precisely using the concept of gradient flow, i.e. gradient descent with an infinitesimal learning rate.  
+
+We begin by recalling the gradient descent update formula. In our previous description of gradient descent, we indexed the updated parameters by $t = 1,2,\dots$. Anticipating our generalization to infinitesimal steps, we will index the updated parameters using parentheses instead of subscripts. In particular, the standard gradient descent update given a loss function $L(w)$ is
+\al{
+w(t+1) = w(t) - \eta \nabla L(w(t)).
+}
+If we scale the time by $\eta$ so that each update by gradient descent corresponds to a time step of size $\eta$ (rather than size 1), the update becomes
+\al{
+w(t + \eta) = w(t) - \eta \nabla L(w(t)).
+}
+Taking $\eta \to 0$ yields a differential equation, which can be thought of as a continuous process rather than discrete updates:
+\al{
+w(t+dt) = w(t) - dt \cdot \nabla L(w(t)).
+}
+This can also be written as:
+\al{
+\dot{w}(t) = -\nabla L(w(t) \quad \text{ with } \quad \dot{w}(t) = \frac{\partial w(t)}{\partial t}
+}
+This allows us to ignore the $\eta^2$ term (alternatively the $(dt^2)$ term), which will simplify some of the technical details that follow.
+
+\subsec{Linear Models}
+We take our model to be a variant of the one we introduced in \eqref{lec13:eqn:hadamard_model_1}. Recalling that $x^{\odot 2} = x \odot x$, let
+\al{
+f_w(x) = \left(w_+^{\odot 2} - w_-^{\odot 2}\right)^\top x.
+}
+where $w_+, w_- \in \R^d$. Let $w$ denote the concatenation of the two parameter vectors, i.e. $= (w_+, w_-)$.  In \eqref{lec13:eqn:hadamard_model_1}, we defined $f_\beta(x) = (\beta \odot \beta)^\top x$; this model can only represent positive linear combinations of $x$.  By contrast, $f_w(x)$ can represent any linear model. Moreover, if we choose our initialization for $w$ such that $w_+(0) = w_-(0)$, we obtain $f_{w(0)}(x) \equiv 0$ for all $x$. Similar to our analysis of the NTK, this initialization will simplify the subsequent derivations.
+
+For the loss, we define
+\al{
+\hatL(w) = \frac{1}{2} \sum_{i=1}^n \left( y\sp{i} - f_w(x\sp{i})\right)^2
+}
+and consider the initialization
+\al{
+w_+(0) = w_-(0) = \alpha \cdot \vec{\mathbf{1}}
+}
+where $\vec{\mathbf{1}}$ denotes the all-ones vector.
+
+We denote the linear model esimated at each time step using $\theta_w$. In particular,
+\al{
+\theta_w = w_+^{\odot 2} - w_-^{\odot 2}.
+}
+Let $w(\infty)$ denote the limit of the gradient flow, i.e.
+\al{
+w(\infty) = \lim_{t \to \infty} w(t).
+}
+Then, the converged model is defined by $\theta_\alpha(\infty) = \theta_{w(\infty)}$.  For simplicity, we will omit the $\infty$ index and refer to this quantity as $\theta_\alpha$. We assume throughout that the limit exists and all corresponding regularity conditions are met.
+
+Let
+\al{
+X = \begin{bmatrix} x^{(1)^\top} \\ \vdots \\ x^{(n)^\top} \end{bmatrix} \in \R^{n \times d} \quad \text{ and } \quad \hat{y} = \begin{bmatrix} y^{(1)} \\ \vdots \\ y^{(n)} \end{bmatrix}.
+}
+And with this setup we can give the following theorem:
+ % 18:30
+\begin{theorem}[Theorem 1 in \cite{woodworth2020kernel}] \label{lec16:thm:interpolatingAlpha}
+For any $0 < \alpha < \infty$, assume that we converge to a solution that fits the data exactly: $X \theta_{\alpha} = \vec{y}$.\footnote{This assumption is likely not required.}  Then, the solution satisfies the following notion of minimum complexity:
+\al{ 
+\theta_\alpha = \argmin_\theta Q_\alpha(\theta) \quad \textup{ s.t. } \quad X \theta = y \label{lec16:eqn:constrained_complexity}
+}
+where
+\al{
+Q_\alpha(\theta) = \alpha^2 \cdot \sum_{i=1}^n q\left(\frac{\theta_i}{\alpha^2} \right)
+}
+and
+\al{
+q(z) = 2 - \sqrt{4 + z^2} + z \cdot \textup{arcsinh}\left(\frac{z}{2}\right)
+}
+\end{theorem}
+In words, Theorem~\ref{lec16:thm:interpolatingAlpha} claims that $\theta_\alpha$ is the minimum complexity solution for the complexity measure $Q_\alpha$.
+
+%23 minutes.
+\begin{remark}
+In particular, when $\alpha \to \infty$ we have that 
+\begin{align}
+    q(\theta_i /\alpha^2) \asymp \theta_i^2/\alpha^4
+\end{align}
+and so 
+\begin{align}
+    Q_\alpha(\theta) \asymp \frac{1}{\alpha^2} \Norm{\theta}_2^2.
+\end{align}
+This means that if $\alpha \to \infty$ than the complexity measure $Q_\alpha$ is the $\ell_2$-norm, $||\theta||_2$.  If $\alpha \to 0$, then the complexity measure becomes
+\al{
+q\left(\frac{\theta_i}{\alpha^2}\right) &\asymp \frac{\left|\theta_i\right|}{\alpha^2} \log\left(\frac{1}{\alpha^2}\right) \quad\text{(by Taylor expansion)}
+}
+and so,
+\al{
+Q_\alpha\left(\theta\right) &\asymp \frac{\Norm{\theta}_1}{\alpha^2} \log\left(\frac{1}{\alpha^2}\right)
+}
+To summarize, for $\alpha \to \infty$, the constrained minimization problem we solve in \eqref{lec16:eqn:constrained_complexity} yields the minimum $\ell_2$-norm solution of $\theta$ (i.e. the $\ell_4$-norm for $w$).  When $\alpha \to 0$, solving \eqref{lec16:eqn:constrained_complexity} yields the minimum $\ell_1$-norm $\theta$ (which is the $\ell_2$-norm for $w$).  For $0 < \alpha < \infty$, we obtain some interpolation of $\ell_1$ and $\ell_2$ regularization of the optimum.
+\end{remark}
+
+%27.30 minutes
+\begin{remark}
+Note that when $\alpha \to 0$, the intuition is similar to what we had observed in previous analyses; in particular, the solution is the global minimum closest to the initialization.  Note however, that when $\alpha \neq 0$, the solution discovered by gradient descent will not exactly correspond to the solution closest to the initialization.
+\end{remark}
+
+\begin{remark}
+When $\alpha \to \infty$, we claim that the model optimization is in the neural tangent kernel (NTK) regime.  Recall that we had two parameters, $(\sigma, \beta)$, that determined if we could treat the optimization problem as a kernel regression. Further recall that $\sigma$ denotes the minimum singular value of $\Phi$ and $\beta$ is the Lipschitzness of the gradient. Let us now compute $\sigma$ and $\beta$ for large $\alpha$ initializations of our model.
+
+For $w_-(0) = w_+(0) = \alpha \vec{\mathbf{1}}$,
+\al{
+\nabla f_{w(0)}(x) = 2 \begin{bmatrix} W_{+}(0) \cdot x \\ -W_{-}(0) \odot x \end{bmatrix} = 2 \alpha \begin{bmatrix} x \\ -x \end{bmatrix}
+}
+by the chain rule.  It is clear then that both $\sigma$ and $\beta$ linearly depend on $\alpha$.  This implies that
+\al{
+\frac{\beta}{\sigma^2} \to 0 \quad \text{ as } \alpha \to \infty
+}
+since the denominator is $O(\alpha^2)$, while the numerator is $O(\alpha)$.  In particular, the features used in this kernel method are:
+\al{
+\phi(x) = \nabla f_{w(0)} (x) = 2 \alpha \begin{bmatrix} x \\ - x \end{bmatrix}
+}
+The neural tangent kernel perspective then gives an alternative proof of this complexity minimization result for $\alpha \to \infty$. In the NTK regime, the solution (to our convex problem) is always the minimum $\ell_2$-norm solution for the feature matrix, which in this case equals $\begin{bmatrix} x \\ - x \end{bmatrix}$. 
+
+Note that practice tends not to follow the assumptions made here. Often, people either do not use large initializations or do not use infinitesimally small step sizes. But this is a good thing  because we do not want to be in the NTK regime; being in the NTK regime implies that we are doing no different or better than just using a kernel method.
+\end{remark}
+
+We can now prove Theorem~\ref{lec16:thm:interpolatingAlpha}, which is similar to the overparametrized linear regression proof of Theorem~\ref{lec13:thm:linear-main}.
+
+This proof follows in two steps:
+\begin{enumerate}
+\item We find an invariance maintained by the optimizer. In the overparametrized linear regression proof of Theorem~\ref{lec13:thm:linear-main}, we required $\theta \in \text{span}\{x\sp{i}\}$.  For this proof, we will use a slightly more complicated invariance.
+\item We characterize the solution using this invariance.  The invariance, which depends on $\alpha$, will tell us which zero error solution the optimization converges to.
+\end{enumerate}
+Note also that all of these conditions only depend upon the empirically observed samples. The invariance and minimum is not defined with respect to any population quantities.
+\begin{proof}  
+Let
+\al{
+\tilde{X} = \begin{bmatrix}x & -x\end{bmatrix} \in \R^{n \times 2d} \quad \text{ and } \quad w(t) = \begin{bmatrix} w_+(t) \\ w_-(t) \end{bmatrix} \in \mathbb{R}^{2d}.
+}
+Then, the model output on $n$ data points can be described in matrix notation as follows:
+\al{
+\tilde{X} w(t)^{\odot 2} = \begin{bmatrix}x & -x\end{bmatrix} \begin{bmatrix} w_+(t)^{\odot 2} \\ w_-(t)^{\odot 2} \end{bmatrix} = \begin{bmatrix} f_{w(t)} (x\sp{1}) \\ \vdots \\ f_{w(t)}(x\sp{n})\end{bmatrix} \in \R^n.
+}
+Given the loss function,
+\al{
+L(w(t)) = \frac{1}{2} \Norm{X^2 w(t)^{\odot 2} - \vec{y}}_2^2,
+}
+the gradient of $w(t)$ can be computed as
+\al{
+\dot{w}(t) &= -\nabla L(w(t)) \\
+&= - \nabla \left( \Norm{\tilde{X} w(t)^{\odot 2} - \vec{y}}_2^2 \right) \\
+&= \left(\tilde{X}^\top r(t)\right) \odot w(t) \quad \quad \quad \text{(chain rule)}\label{lec16:eqn:Xtrtwt}
+}
+where $r(t) = \tilde{X} w(t)^{\odot 2} - \vec{y}$ denotes the residual vector.  We see that the $\tilde{X}^\top r(t)$ term in \eqref{lec16:eqn:Xtrtwt} is reminiscent of linear regression for which it would correspond to the gradient, although the $\odot w(t)$ reminds us that this problem is indeed quadratic.
+
+We cannot directly solve this differential equation, but we claim that
+\al{ \label{lec16:eqn:w_claim}
+w(t) = w(0) \odot \text{exp}\left(-2\tilde{X}^\top \int_0^\top r(s) ds \right) \quad \text{(exp is applied entry-wise)}
+}
+which is not quite a closed form solution of equation \ref{lec16:eqn:Xtrtwt} since $r(s)$ is still a function of $w(t)$.  To understand how we obtained this ``solution,'' we consider a more abstract setting. Suppose that
+\al{
+\dot{u}(t) &= v(t) \dot u(t)
+}
+We can then ``solve'' this differential equation as follows. Rearranging, we observe that
+\al{
+\frac{\dot{u}(t)}{u(t)} &= v(t) \\
+\frac{d \log u(t)}{dt} &= v(t) \quad \text{(chain rule)} \\
+\log u(t) - \log u(0) &= \int_0^S v(s) ds \quad \text{(integration)} \\
+\frac{u(t)}{u(0)} &= \text{exp} \left( \int_0^S v(s) ds\right)
+}
+In our problem, $u \leftrightarrow w_i$ and $v \leftrightarrow (\tilde{X}^\top r(t))_i$.
+
+We have characterized $w$, but we want to transform this to a characterization that involves $\theta$.
+Recall that \(w_+(0) = \alpha \vec{\mathbf{1}}\) and \(w_-(0) = \alpha \vec{\mathbf{1}}\) so that \(w(0) = \alpha \vec{\mathbf{1}} \in \R^{2d}\). Additionally, we have that \(\theta(t) = w_+(t)^{\odot 2} - w_-(t)^{\odot 2} \).
+
+We can now apply \eqref{lec16:eqn:w_claim} to expand \(w(t)\) and simplify. Note that if we have a vector \(\tilde{x}^\top = \begin{bmatrix} x^\top \\ -x^\top \end{bmatrix}\), then for some vector \(v\),
+\al{
+    \left(\exp(-2\tilde{x}^\top v) \right)^{\odot 2} &=
+    \begin{bmatrix}
+    \exp(-2x^\top v) \\
+    \exp(2x^\top v)
+    \end{bmatrix}^{\odot 2} \\
+    &= \begin{bmatrix}
+    \exp(-4x^\top v) \\
+    \exp(4x^\top v)
+    \end{bmatrix}.
+}
+Applying this result for $v = \int_0^T r(s) ds$, we obtain that:
+\al{
+    \theta(t) &= w_+(t)^{\odot 2} - w_-(t)^{\odot 2} \\
+    &= \alpha^2 \left[ \exp \left( -4 x^\top \int_0^t r(s) ds \right) - \exp \left( 4 x^\top \int_0^t r(s) ds \right)\right] \\
+    &= 2 \alpha^2 \sinh \left(-4 x^\top \int_0^t r(s) ds \right).
+}
+Letting $t \to \infty$, we have that
+\al{\label{lec16:eqn:theta_infty}
+    \theta_\alpha = 2 \alpha^2 \sinh \left(-4x^\top \int_0^\infty r(s) ds \right).
+}
+Lastly, we also know 
+\al{
+    X \theta_\alpha = y \label{lec16:eqn:theta_constraint}
+ } 
+ since this is the constraint defined in our optimization objective \eqref{lec16:eqn:constrained_complexity}. We next show that \eqref{lec16:eqn:theta_infty} and \eqref{lec16:eqn:theta_constraint} are also sufficient conditions for a solution to the constrained optimization problem given by \eqref{lec16:eqn:constrained_complexity}. In particular, \eqref{lec16:eqn:theta_infty} and \eqref{lec16:eqn:theta_constraint} correspond to the Karush-Kuhn-Tucker (or KKT) conditions of \eqref{lec16:eqn:constrained_complexity}.
+
+A KKT condition is an optimality condition for constrained optimization problems. While these conditions can have a variety of formulations, we can motivate the conditions we encountered by considering the following general optimization program:
+\al{
+    \argmin \quad &Q(\theta) \\
+    \text{s.t.} \quad &X\theta = y.
+}
+We say that \(\theta\) satisfies the (first order) KKT conditions if
+\begin{align}
+    \nabla Q(\theta) &= X^\top \nu \text{ for some } \nu \in \R^n \\
+    X\theta &=y
+\end{align}
+More intuitively, we know that optimality implies that there are no first order local improvements that satisfy the constraint (up to first order). Then, consider a perturbation \(\Delta \theta\). In order to satisfy the constraint, we must enforce the following:
+\begin{align}
+\Delta \theta \perp \text{row-span}\{X\}  \quad \text{ so } \quad X \Delta \theta = 0
+\end{align}
+So, if we look at \(\theta + \Delta \theta \) satisfying the constraint, we can use a Taylor expansion to show that
+\al{
+Q(\theta + \Delta \theta) = Q(\theta) + \langle \Delta \theta, \nabla Q(\theta) \rangle \leq Q(\theta)
+}
+because if \( \langle \Delta \theta, \nabla Q(\theta) \rangle\) is positive it violates the optimality assumption.
+In fact, it is very easy to make the sign flip for \( \langle \Delta \theta, \nabla Q(\theta) \rangle\) because you can flip \(\Delta \theta\) to be the opposite direction. This means that
+\al{
+    \forall \, \Delta \theta \perp \text{row-span}\{X\}, \quad \langle \Delta \theta, \nabla Q(\theta) \rangle = 0
+}
+because if it is negative, you can equivalently flip it to be positive which violates optimality.
+This means that \(Q(\theta) \subseteq \text{row-span}\{X\}\), or \(Q(\theta) = X^\top \nu\) for some $\nu$.
+
+Returning to our problem, the KKT condition gives
+\al{
+    \nabla Q(\theta) = X^\top \nu
+}
+and the invariance gives us
+\al{
+    \theta_\alpha &= 2 \alpha^2 \sinh\left(-4x^\top \int_0^\infty r(s) ds \right) \\
+    &= 2\alpha^2 \sinh \left( -4x^\top v'\right)
+}
+where we let \(v' = \int_0^\infty r(s) ds\) for simplicity.
+Taking the gradient of \(Q\) gives
+\al{
+    \nabla Q_\alpha (\theta) = \operatorname{arcsinh}\left(\frac{1}{2\alpha^2} \theta \right)
+}
+Plugging in \(\theta_\alpha\), we get
+\al{
+    \nabla Q(\theta_\alpha) = \operatorname{arcsinh}\left (\frac{1}{2\alpha^2} \theta_\alpha \right ) = -4 x^\top v'
+}
+Thus, \(\theta_\alpha\) satisfies both KKT conditions. Even further, since our problem is convex (we do not formally argue this), we conclude that \(\theta_\alpha\) is a global minimum.
+\end{proof}
+
+\sec{Classification problem}
+We now switch our focus to a classification problem. For this problem formulation, we assume that our data is separable. We will prove that gradient descent converges to the max-margin solution. This result holds for any initialization and does not require any additional regularization; we only require the use of gradient descent and a prescribed loss function.
+
+Assume we have data \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \), where \(x\sp{i} \in \R^d\) and \(y\sp{i} \in \{\pm 1 \}\). We consider the linear model \( h_w(x) = w^\top x\) and the cross entropy loss function \(\hatL (w) = \sum_{i=1}^n \ell\left(y\sp{i}, h_w\l (x\sp{i} \r )\right)\), where \( \ell(t) = \log(1 + \exp(-t))\).
+
+As we have separable data, there can be multiple global minima, as you can trivially take an infinite number of separators. More formally, there are an infinite number of unit vectors \(\bar{w}\) such that $\bar{w}^\top x\sp{i} y\sp{i} > 0$ for all $i$ as one can scale the separator arbitrarily while still maintaining a separation of classes. In fact, we have that \( \hatL(\alpha \bar{w}) \to 0\) as \( \alpha \to \infty\). Thus, even if we arbitrarily scale the unit vector, you still have that the loss goes to zero as \(\ell(t)\) approaches zero as \(t\) gets large. Thus, all choices of $w$ correspond to global minima, as the loss function goes to zero for infinite scalings.
+
+We would like to understand which global minimum gradient descent converges to. We will now show that it finds the max-margin solution. Before we can do so, we recall/introduce the following definitions.
+
+\begin{definition}[Margin]
+Let \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \) be given data. Assuming \(w\) is linearly separable, a \textit{margin} is defined as
+\al{
+    \min_{i \in [1,...,n]} y\sp{i} w^\top x\sp{i}
+}
+\end{definition}
+
+\begin{definition}[Normalized Margin]\label{lec16:def:norm_margin}
+Let \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \) be given data. Assuming \( w\) is linearly separable, a \textit{normalized margin} is defined as
+\al{
+    \gamma(w) = \frac{\min_{i \in [1,...,n]} y\sp{i} w^\top x\sp{i}}{\norm{w}_{2}}
+}
+\end{definition}
+
+\begin{definition}[Max-Margin Solution]
+Using the normalized margin \(\gamma\) defined in Definition~\ref{lec16:def:norm_margin}, we define a \textit{max-margin solution} as
+\al{
+    \bar{\gamma} = \max_{w} \gamma(w)
+}
+and let \(w^*\) be the unit-norm maximizer.
+\end{definition}
+
+Using these definitions, we claim the following result.
+\begin{theorem} \label{lec16:thm:maxmargin_gd}
+Gradient flow converges to the direction of max-margin solution in the sense that
+\al{
+    \gamma(w(t)) \to \bar{\gamma} \text{  as  } t \to \infty
+}
+where \(w(t)\) is the iterate at time \(t\).
+\end{theorem}
+
+The following observations provide some intuition for Theorem~\ref{lec16:thm:maxmargin_gd}.
+\begin{enumerate}
+    \item \(\hatL(w(t)) \to 0\) by a standard optimization argument. This is because if our optimization iteration is working, \(w(t)\) at large \(t\) will cause the loss function to go to zero.
+    \item Using a Taylor expansion, we can show that \( \ell(z) = \log(1 + \exp(-z)) \approx \exp(-z)\) for large \(z\). Thus, logistic loss is close to exponential loss when \(z\) is very large.
+    \item Using observation 1, we see that \(\norm{w(t)}_{2} \to \infty\) because if \(\norm{w(t)}_{2}\) were instead bounded, then the loss \(\hatL (w(t))\) will be bounded below by a constant that is strictly greater than zero, contradicting observation 1. Formally, if
+    \(\norm{w(t)}_{2} \leq B,\)
+    then
+    \al{
+        |y\sp{i} w^t x\sp{i}| \leq B \norm{x\sp{i}},
+    }
+    and therefore we get
+    \al{
+        \hatL(w(t)) \geq \sum_{i=1}^n \exp\left(-B\norm{x\sp{i}}_{2} \right)> 0.
+    }
+    \item Suppose we have \(w\) such that \(\norm{w}_{2} = q \) is very big. Then, using observation 2, we see that
+    \al{
+        \hatL(w) &= \sum_{i=1}^n \ell(y\sp{i} w^\top x\sp{i}) \\
+        &\approx \sum_{i=1}^n \exp\left(-y\sp{i} w^\top x\sp{i} \right) \\
+        \log \hatL(w) &\approx \log \sum_{i=1}^n \exp\left(-y\sp{i} w^\top x\sp{i} \right) \\
+        &= \log \sum_{i=1}^n \exp \left(-q y\sp{i} \bar{w}^\top x\sp{i} \right) \\
+        &\approx \max_{i \in [1,2,...,n]} -q y\sp{i} \bar{w}^\top x\sp{i}
+    }
+    where \( \bar{w} = \frac{w}{\norm{w}_{2}}\) and the last step holds because the log of a sum of exponentials (\textit{log-sum-exp}) is a smooth approximation to the maximum function. To motivate this claim, observe that:  
+    \al{
+         \log \sum_{i=1}^n \exp(a u_i) &\geq q \max_i u_i  \\
+        \log \sum_{i=1}^n \exp(a u_i) &\leq \log \left(n \exp(q \max_i u_i)\right) \\
+        &= \log n + q \max_i u_i \\
+        &\approx q \max_{i \in [1,2,...,n]} u_i + o(q) \text{ as } q \to \infty
+    }
+    Thus, minimizing the loss is the same as
+    \al{
+    \min_w \max_{i \in [1,2,...,n]} -qy\sp{i} \bar{w}^\top x\sp{i}
+    }
+    which can be reformulated as
+    \al{
+    \max_w \min_{i \in [1,2,...,n]} qy\sp{i} \bar{w}^\top x\sp{i}
+    }
+
+\end{enumerate}
+
+The above observations demonstrate that minimizing the logistic loss with gradient descent is equivalent (in the limit) to maximizing the margins. This constitutes an intuitive proof of how gradient flow converges to the direction of the max-margin solution. We will make these arguments more formal in the sequel.
