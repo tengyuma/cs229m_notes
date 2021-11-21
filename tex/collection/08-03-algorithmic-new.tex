@@ -339,7 +339,9 @@ The above observations demonstrate that minimizing the logistic loss with gradie
 
 \sec{Implicit Regularization Effect of Noise in SGD}
 
-In the previous section, we discussed implicit regularization via initialization and the implicit regularization of gradient descent for logistic loss-minimizing classifiers. These methods were based on a specific model setup and limited to gradient flow. In the sequel, we will move forward to the implicit regularization effect of SGD noise. Starting from the quadratic case, we analyze how the SGD noise will affect the optimization solution, and present (heuristically) a result for non-quadratic loss functions. In particular, the main (heuristic) results are:
+In the previous section, we discussed implicit regularization via initialization and the implicit regularization of gradient descent for logistic loss-minimizing classifiers. 
+%These methods were based on a specific model setup and limited to gradient flow. 
+In the sequel, we will move forward to the implicit regularization effect of SGD noise. Starting from the quadratic case, we analyze how the SGD noise will affect the optimization solution, and present (heuristically) a result for non-quadratic loss functions. In particular, the main (heuristic) results are:
 \begin{enumerate}
 \item On the 1-dimensional quadratic function, the iterate can be disentangled into a contraction part and a stochastic part, the latter of which is characterized by the Ornstein–Uhlenbeck (OU) process. The noise makes the iterate bounce around the global minimum.
 \item On the multi-dimensional quadratic function, the iterate can be disentangled into multiple separate 1-D OU processes. The noise makes the iterate bounce around the global minimum, while the fluctuation is closely related to the shape of the noise.
@@ -354,6 +356,7 @@ For the remainder of this section, let $g(x)$ denote the general loss function. 
 where $\eta > 0$ is the learning rate, $\xi_t$ denotes the SGD noise, and $\Exp[\xi_t] = 0$. Note that in the most general case, $\xi_t$ can depend on $x_t$.
 	
 \subsec{Warmup: SGD on the 1-dimensional quadratic function}
+\tnote{change 1-dimensional to one dimensional globally}
 In this section, we consider the 1-dimensional function $g(x) = \frac{1}{2} x^2$. Suppose the noise $\xi_t$ are independent Gaussians, i.e. $\xi_t \sim \mathcal{N}(0,1)$,
 \begin{align}
 x_{t+1} &= x_t - \eta(\nabla g(x_{t}) + \sigma\xi_t)\\
@@ -402,6 +405,8 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 % \end{figure}
 
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
+
+\tnote{need to add some figures}
 
 \subsec{SGD on non-quadratic functions}
 In this section, we analyze SGD on non-quadratic functions based on \cite{damian2021label}. Due to the complexity of the analysis, we provide heuristic derivations to convey the main insights. 
