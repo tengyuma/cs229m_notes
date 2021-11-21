@@ -456,6 +456,8 @@ Namely, the effect of $T[u_k,u_k]$ is slowly accumulating in ${K^\perp}$.
 
 Note that the OU process is a Markov chain and a Gaussian process. Here we assume that $H$ is constructed such that $u_t$ converges to its stationary distribution. Suppose the Markov chain $u_t$ mixes as $t\rightarrow \infty$. Then, $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx tT(S)$, where $S:=\Exp[u_{\infty}u_{\infty}^\top]$ is the covariance of the stationary distribution.
 
+\tnote{need to add figures. I added two figures labelnoise-static.jpg and bias2.png. Also need to refer to this figure in the main texts. I did discuss in length these figures so there should be some paragraphs about these figures. }
+
 \paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$.
 
 \paragraph{Relationship to generalization.} Why is $\textup{tr}(\nabla^2\hat{L}(\theta))$ a good regularizer? \cite{wei2019improved} show that the complexity of neural networks can be controlled by its Lipschitzness. $\textup{tr}(\nabla^2\hat{L}(\theta))$ is intimately related to the Lipschitzness of the networks. \cite{foret2020sharpness} also discover empirically that regularizing the sharpness of the local curvature leads to better generalization performance on a wide range of tasks.

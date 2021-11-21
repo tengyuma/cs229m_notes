@@ -27,6 +27,8 @@ We define our non-convex loss functions to be
      & = \frac{1}{2}\|P_{\Omega}(M-xx^\top)\|_F^2.
 \end{align}
 
+\tnote{does this \url{https://edstem.org/us/courses/14347/discussion/827805} means that we should update this section slightly to avoid the confusions? It perhaps doesn't take much to copy paste some of the texts in the answer to the notes?(I didn't read the question carefully enough though)}
+
 To really solve our problem we need some regularity condition on the ground truth vector $z$ (recall $M = zz^\top$). \textit{Incoherence} is one such condition:
 \begin{definition}[Incoherence]
 Without loss of generality, assume the ground truth vector $z\in\bbR^d$ satisfies $\|z\|_2 = 1$. $z$ satisfies the \textit{incoherence condition} if $\|z\|_{\infty} \leq \frac{\mu}{\sqrt{d}}$, where $\mu$ is considered to be a constant or log in dimension $d$. 
