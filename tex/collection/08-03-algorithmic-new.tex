@@ -343,7 +343,7 @@ In the previous section, we discussed implicit regularization via initialization
 %These methods were based on a specific model setup and limited to gradient flow. 
 In the sequel, we will move forward to the implicit regularization effect of SGD noise. Starting from the quadratic case, we analyze how the SGD noise will affect the optimization solution, and present (heuristically) a result for non-quadratic loss functions. In particular, the main (heuristic) results are:
 \begin{enumerate}
-\item On the 1-dimensional quadratic function, the iterate can be disentangled into a contraction part and a stochastic part, the latter of which is characterized by the Ornstein–Uhlenbeck (OU) process. The noise makes the iterate bounce around the global minimum.
+\item On the one-dimensional quadratic function, the iterate can be disentangled into a contraction part and a stochastic part, the latter of which is characterized by the Ornstein–Uhlenbeck (OU) process. The noise makes the iterate bounce around the global minimum.
 \item On the multi-dimensional quadratic function, the iterate can be disentangled into multiple separate 1-D OU processes. The noise makes the iterate bounce around the global minimum, while the fluctuation is closely related to the shape of the noise.
 \item On non-quadratic functions, SGD with \textit{label noise} on empirical loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$, which is mainly due to the accumulation of a third order effect.
 \end{enumerate}
@@ -355,9 +355,8 @@ For the remainder of this section, let $g(x)$ denote the general loss function. 
 \end{align} 
 where $\eta > 0$ is the learning rate, $\xi_t$ denotes the SGD noise, and $\Exp[\xi_t] = 0$. Note that in the most general case, $\xi_t$ can depend on $x_t$.
 	
-\subsec{Warmup: SGD on the 1-dimensional quadratic function}
-\tnote{change 1-dimensional to one dimensional globally}
-In this section, we consider the 1-dimensional function $g(x) = \frac{1}{2} x^2$. Suppose the noise $\xi_t$ are independent Gaussians, i.e. $\xi_t \sim \mathcal{N}(0,1)$,
+\subsec{Warmup: SGD on the one-dimensional quadratic function}
+In this section, we consider the one-dimensional function $g(x) = \frac{1}{2} x^2$. Suppose the noise $\xi_t$ are independent Gaussians, i.e. $\xi_t \sim \mathcal{N}(0,1)$,
 \begin{align}
 x_{t+1} &= x_t - \eta(\nabla g(x_{t}) + \sigma\xi_t)\\
 &= x_t - \eta(x_{t} + \sigma\xi_t)\\
@@ -378,7 +377,7 @@ The first term in \eqref{lec17:eqn:warmup_expansion} becomes negligible when $\e
 
 From the analysis above, we know that as $t \rightarrow \infty$, $\Var(x_t) \approx \eta^2\sigma^2\sum_{k=0}^{\infty} (1 - \eta)^{2k} = \frac{\eta^2\sigma^2}{2\eta - \eta^2} = {\Theta}(\eta\sigma^2)$. Therefore, as $t \rightarrow \infty$, $x_t \sim \mathcal{N}(0, {\Theta}(\eta\sigma^2))$.
 
-\paragraph{Interpretation.} In the 1-dimensional case, the noise only makes it harder to converge to the global minimum. Classical convex optimization tells us: (1) noisy GD leads to a less accurate solution and (2) noisy GD is faster than GD. What we do in practice is achieve a balance between (1) and (2). This does \textit{not} lead to implicit regularization since $\Exp[x_t] \rightarrow 0$ as $t \rightarrow \infty$. However, this case is important for further analysis because \eqref{lec17:eqn:ou} corresponds to the Ornstein–Uhlenbeck (OU) process which we use more extensively in the multi-dimensional cases.
+\paragraph{Interpretation.} In the one-dimensional case, the noise only makes it harder to converge to the global minimum. Classical convex optimization tells us: (1) noisy GD leads to a less accurate solution and (2) noisy GD is faster than GD. What we do in practice is achieve a balance between (1) and (2). This does \textit{not} lead to implicit regularization since $\Exp[x_t] \rightarrow 0$ as $t \rightarrow \infty$. However, this case is important for further analysis because \eqref{lec17:eqn:ou} corresponds to the Ornstein–Uhlenbeck (OU) process which we use more extensively in the multi-dimensional cases.
 
 \subsec{SGD on multi-dimensional quadratic functions}
 Consider a PSD matrix $A \in \R^{d\times d}$. In this section, $g(x) = \frac{1}{2}x^\top A x$. Suppose $\xi_t \sim \mathcal{N}(0, \Sigma)$. For ease of presentation, assume that $A$ and $\Sigma$ are simultaneously diagonizable (they have the same set of eigenvectors). We use $K$ to denote the span of the eigenvectors of $A$/$\Sigma$. Then, consider the following SGD iterate:
@@ -397,16 +396,25 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 \end{align}
 \paragraph{Interpretation.} Intuitively, $\frac{\sigma_i^2}{d_i}$ here is the iterate fluctuation in the direction of the $i$-th eigenvector. This results tell us that the fluctuation of the iterates depends on the shape of $\Sigma$ and $A$. If $\Sigma$ is not full rank, the fluctuations will be limited to the subspace $K$. Also note that $\Exp[\|x_t\|_2] = \Theta(\sqrt{\eta})$. This reflects the noise accumulation since the scale of noise in each step is $\Theta({\eta})$. However, we still do not have any implicit regularization effect. 
 
-% \begin{figure}[ht]
-% \includegraphics[width=0.90\textwidth]{figures/noise_regularization_sgd.pdf}
-% \centering
-% \caption{Comparison of SGD on quadratic functions (Left) and non-quadratic functions (Right). $K$ is the span of the noise covariance $\Sigma$. In the quadratic case, the iterates will fluctuate in $K$, but remains unchanged in $K^\perp$. When the function is non-quadratic, the third order effect slowly accumulates in $K^\perp$, resulting in implicit regularization. } 
-% \label{lec17:fig:OU}
-% \end{figure}
+\begin{figure}[ht]
+\centering
+ \begin{subfigure}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{figures/quadratic.pdf}
+        \caption{Quadratic functions.}
+        \label{lec17:fig:quadratic}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{figures/non-quadratic.pdf}
+        \caption{Non-quadratic functions.}
+        \label{lec17:fig:non-quadratic}
+    \end{subfigure}
+   
+\caption{Comparison of SGD on quadratic functions (a) and non-quadratic functions (b). $K$ is the span of the noise covariance $\Sigma$. In the quadratic case, the iterates will fluctuate in $K$, but remains unchanged in $K^\perp$. When the function is non-quadratic, the third order effect slowly accumulates in $K^\perp$, resulting in implicit regularization. } 
+\label{lec17:fig:OU}
+\end{figure}
 
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
-
-\tnote{need to add some figures}
 
 \subsec{SGD on non-quadratic functions}
 In this section, we analyze SGD on non-quadratic functions based on \cite{damian2021label}. Due to the complexity of the analysis, we provide heuristic derivations to convey the main insights. 
@@ -456,6 +464,6 @@ Namely, the effect of $T[u_k,u_k]$ is slowly accumulating in ${K^\perp}$.
 
 Note that the OU process is a Markov chain and a Gaussian process. Here we assume that $H$ is constructed such that $u_t$ converges to its stationary distribution. Suppose the Markov chain $u_t$ mixes as $t\rightarrow \infty$. Then, $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx tT(S)$, where $S:=\Exp[u_{\infty}u_{\infty}^\top]$ is the covariance of the stationary distribution.
 
-\paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$.
+\paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2g(0), S\rangle$ small. \cite{damian2021label} further prove that $\Sigma = c\nabla^2\hat{L}(\theta)$ for square loss and logistic loss with label noise. In this case, $\langle\nabla^2g(0), S\rangle = \textup{tr}\left({\langle\nabla^2g(0)^\top S}\right) =  \textup{tr}\left(\text{diag}\left(\frac{\sigma_i^2}{d_i}d_i\right)\right) =  \textup{tr}\left(\Sigma\right) = c \textup{tr}\left(\nabla^2\hat{L}(\theta)\right)$, i.e. SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$.
 
 \paragraph{Relationship to generalization.} Why is $\textup{tr}(\nabla^2\hat{L}(\theta))$ a good regularizer? \cite{wei2019improved} show that the complexity of neural networks can be controlled by its Lipschitzness. $\textup{tr}(\nabla^2\hat{L}(\theta))$ is intimately related to the Lipschitzness of the networks. \cite{foret2020sharpness} also discover empirically that regularizing the sharpness of the local curvature leads to better generalization performance on a wide range of tasks.
