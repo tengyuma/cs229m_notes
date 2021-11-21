@@ -69,7 +69,7 @@ We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\s
 Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^+ y = \hat \beta^\star$.
 \end{proof}
 
-\sec{Implicit regularization of small initialization in nonlinear models}
+\sec{Implicit regularization of small initialization in nonlinear models} \label{sec:small_init_nonlinear}
 We give an example of implicit regularization in a non-convex version of the overparametrized linear regression task considered in the previous section.
 
 Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, our goal is to find a weight vector that minimizes our empirical loss function

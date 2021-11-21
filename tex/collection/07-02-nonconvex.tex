@@ -27,8 +27,6 @@ We define our non-convex loss functions to be
      & = \frac{1}{2}\|P_{\Omega}(M-xx^\top)\|_F^2.
 \end{align}
 
-\tnote{does this \url{https://edstem.org/us/courses/14347/discussion/827805} means that we should update this section slightly to avoid the confusions? It perhaps doesn't take much to copy paste some of the texts in the answer to the notes?(I didn't read the question carefully enough though)}
-
 To really solve our problem we need some regularity condition on the ground truth vector $z$ (recall $M = zz^\top$). \textit{Incoherence} is one such condition:
 \begin{definition}[Incoherence]
 Without loss of generality, assume the ground truth vector $z\in\bbR^d$ satisfies $\|z\|_2 = 1$. $z$ satisfies the \textit{incoherence condition} if $\|z\|_{\infty} \leq \frac{\mu}{\sqrt{d}}$, where $\mu$ is considered to be a constant or log in dimension $d$. 
@@ -130,7 +128,8 @@ Suppose $\norm{x}_\infty \leq 2\mu / \sqrt{d}$. If $x$ satisfies $\nabla f(x) = 
     \nabla^2 g(x) \succeq 0
     &\implies \langle z, \nabla^2 g(x)z\rangle \geq 0 \\
     &\implies \norm{zx^\top + xz^\top}_F^2 - 2z^\top(zz^\top-xx^\top)z \geq 0 \\
-    &\implies 1 \leq \norm{x}_2^2 + 2\langle x,z \rangle^2 \leq \norm{x}_2^2 + 2\norm{x}_2^2 = 3\norm{x}_2^2 &\text{(by Cauchy-Schwarz)} \\
+    &\implies 2 \norm{x}^2_2 + 2 \inprod{x, z}^2 - 2 + 2 \inprod{x, z}^2 \geq 0 &\text{(cyclic trace prop.)} \\
+    &\implies 3\norm{x}_2^2 = \norm{x}_2^2 + 2\norm{x}_2^2 \geq \norm{x}_2^2 + 2\langle x,z \rangle^2 \geq 1 &\text{(by Cauchy-Schwarz)} \\
     &\implies \norm{x}_2^2 \geq 1/3.
 \end{align}
 \end{proof}

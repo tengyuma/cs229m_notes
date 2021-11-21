@@ -4,7 +4,7 @@
 %\metadata{lecture ID}{Your names}{date}
 \metadata{13}{Justin Young and Josh Cho}{November 1, 2021}
 
-\sec{The Neural Tangent Kernel (NTK) Approach}
+\sec{The Neural Tangent Kernel (NTK) Approach} \label{sec:ntk_approach}
 
 In the previous sections, we studied non-convex optimization problems in which all local minima are global. Selecting the parameters of a deep neural network is another commonly encountered non-convex optimization problem, but it is unrealistic to expect that all local minima will also be global minima in this setting. Here we consider a particular objective for which we can identify particular regions of the input space in which all local minima are also global minima. We can show that this objective corresponds to certain types of deep neural networks, but this analysis remains limited. For further reading about this approach to studying neural network optimization, see \cite{liang2018adding} and \cite{du2019gradient}.
 
