@@ -474,11 +474,20 @@ Now, suppose that \eqref{lec14:eqn:induction} holds for some $t$. Then, because 
 \al{
 \frac{1}{\sqrt{n}} \norm{\hat{y}^{t+1} - \vec{y}}_2 \leq \frac{1}{\sqrt{n}}  \norm{\hat{y}^t - \vec{y}}_2 \leq O(1).
 }
-Thus, \eqref{lec14:eqn:induction} holds for all $t \in \mathbb{N}$. Then, recalling that $\vec{y} = \Phi\hat{\theta}$, we obtain that
+Thus, \eqref{lec14:eqn:induction} holds for all $t \in \mathbb{N}$. 
+
+Next, applying Lemma~\ref{lec13:lma:accurate_approximation} with $\theta = \theta^t$ and our assumption that $\frac{\beta}{\sigma^2} \lesssim \frac{1}{n}$, we conclude that:
+\begin{align}
+    \frac{1}{\sqrt{n}} \norm{\Phi \theta^t - \hat{y}^t}_2 \leq O(1)
+\end{align}
+Using this result and \eqref{lec14:eqn:induction}, we can show that $\frac{1}{\sqrt{n}} \norm{\Phi(\theta^t - \hat{\theta})}_2$ is $O(1)$.
 \al{
-\frac{1}{\sqrt{n}} \norm{\Phi (\theta^t - \hat{\theta})}_2 &\leq O(1).
+    \frac{1}{\sqrt{n}} \norm{\Phi(\theta^t - \hat{\theta})}_2 &= \frac{1}{\sqrt{n}} \norm{\Phi \theta^t - \vec{y}}_2 &\text{($\vec{y} = \Phi \hat{\theta}$)} \\
+    &= \frac{1}{\sqrt{n}} \norm{\Phi \theta^t - \hat{y}^t + \hat{y}^t - \vec{y}}_2 \\
+    &\leq \frac{1}{\sqrt{n}} \norm{\Phi \theta^t - \hat{y}^t}_2 + \frac{1}{\sqrt{n}}\norm{\hat{y}^t - \vec{y}}_2 &\text{(triangle ineq.)} \\
+    &\leq O(1).
 }
-Then, leveraging the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def} and rearragning, we obtain (nearly) the desired result:
+Then, leveraging the definition of $\sigma$ given in \eqref{lec14:eqn:sigma_def} and rearranging, we obtain (nearly) the desired result:
 \al{
 \norm{\theta^t - \hat{\theta}}_2 \leq \frac{1}{\sigma}\norm{\Phi (\theta^t - \hat{\theta})}_2 &\leq O(\sqrt{n}/\sigma).
 }
