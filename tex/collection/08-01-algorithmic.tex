@@ -8,10 +8,12 @@ One of the miracles of modern deep learning is the phenomenon of \textit{algorit
 
 The focus of this chapter will be to illustrate algorithmic regularization in simple settings. In particular, we first show that gradient descent (with the right initialization) identifies the minimum norm interpolating solution in overparametrized linear regression. Next, we show that for a certain non-convex reparametrization of the linear regression task where the data is generated from a sparse ground-truth model, gradient descent (again, suitably initialized) approximately recovers a sparse solution with good generalization. Finally, we discuss algorithmic regularization in the classification setting, and how stochasticity can contribute to algorithmic regularization.
 
-\sec{Algorithmic regularization in overparametrized linear regression}\label{lec13:sec:olr}
-We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). Let $X:= \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
+\sec{Implicit regularization effect of zero initialization in overparametrized linear regression}\label{lec13:sec:olr}
+We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). 
+\tnote{replace all the $y$ in this subsection by $\vec{y}$ (this does not apply to $y\sp{i}$}
+Let $X:= \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
 
-\subsec{Analysis of algorithmic regularization}
+%\subsec{Analysis of algorithmic regularization}
 As we are in the overparametrized setting with $n < d$ and $X$ full rank, there exist infinitely many global minimizers that interpolate the data and hence achieve zero loss. In fact, the following lemma shows that the set of global minimizers forms a subspace.
 
 \begin{lemma}\label{lec13:lem:soln-subspace}
@@ -67,8 +69,8 @@ We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\s
 Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^+ y = \hat \beta^\star$.
 \end{proof}
 
-\sec{Algorithmic regularization in non-linear models}
-We give an example of algorithmic regularization in a non-convex version of the overparametrized linear regression task considered in the previous section.
+\sec{Implicit regularization of small initialization in nonlinear models}
+We give an example of implicit regularization in a non-convex version of the overparametrized linear regression task considered in the previous section.
 
 Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, our goal is to find a weight vector that minimizes our empirical loss function
 \begin{equation}

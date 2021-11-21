@@ -1,8 +1,11 @@
 \metadata{16}{Leah Reeder and Trevor Maxfield}{Nov 10th, 2021}
 
-\sec{Implicit Regularization for Linear Models and Classifiers}
+\sec{From Small to Large Initialization: a Precise Characterization} \tnote{please double check consistency of capitalization in section headers}
 
-We have previously discussed how certain initializations of gradient descent converge to minimum-norm solutions. In the sequel, we characterize the effect of initialization more precisely using the concept of gradient flow, i.e. gradient descent with an infinitesimal learning rate.  
+We have previously discussed how certain initializations of gradient descent converge to minimum-norm solutions. In the sequel, we characterize the effect of initialization more precisely---we will show that in a variant of the settings in Section~\ref{?} \tnote{section 9.2}, we can precisely compute the corresponding regularizer induced by any initialization. We will see that when the initialization is small, we obtain the bias towards minimum norm solution (in the parameter space used in optimization), whereas when the initialization is large, we are in the NTK regime (Section~\ref{?} \tnote{ntk section})where the implicit bias is towards the min norm solution under the NTK kernel.  
+
+\subsection{Preparation: gradient flow}
+To simplify the analysis, we will consider the concept of gradient flow, i.e. gradient descent with an infinitesimal learning rate.  This allows us omit the second order effect from the learning rate and simplify the analysis. 
 
 We begin by recalling the gradient descent update formula. In our previous description of gradient descent, we indexed the updated parameters by $t = 1,2,\dots$. Anticipating our generalization to infinitesimal steps, we will index the updated parameters using parentheses instead of subscripts. In particular, the standard gradient descent update given a loss function $L(w)$ is
 \al{
@@ -22,7 +25,7 @@ This can also be written as:
 }
 This allows us to ignore the $\eta^2$ term (alternatively the $(dt^2)$ term), which will simplify some of the technical details that follow.
 
-\subsec{Regularization by Initialization for Linear Models}
+\subsec{Characterizing the implicit bias of initialization}
 We take our model to be a variant of the one we introduced in \eqref{lec13:eqn:hadamard_model_1}. Recalling that $x^{\odot 2} = x \odot x$, let
 \al{
 f_w(x) = \left(w_+^{\odot 2} - w_-^{\odot 2}\right)^\top x.
@@ -241,12 +244,13 @@ Plugging in \(\theta_\alpha\), we get
 Thus, \(\theta_\alpha\) satisfies both KKT conditions. Even further, since our problem is convex (we do not formally argue this), we conclude that \(\theta_\alpha\) is a global minimum.
 \end{proof}
 
-\sec{Max-Margin Classification}
-We now switch our focus to a classification problem. For this problem formulation, we assume that our data is separable. We will prove that gradient descent converges to the max-margin solution. This result holds for any initialization and does not require any additional regularization; we only require the use of gradient descent and a prescribed loss function.
+\sec{Implicit Regularization Towards Max-margin Solutions In Classification Problems}
+We now switch our focus to classification problems. We consider linear models (though these results also apply to nonlinear models with a weaker version of the conclusion). We assume that our data is separable and will prove that gradient descent converges to the max-margin solution. This result holds for any initialization and does not require any additional regularization; we only require the use of gradient descent and the standard logistic loss function.
 
-Assume we have data \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \), where \(x\sp{i} \in \R^d\) and \(y\sp{i} \in \{\pm 1 \}\). We consider the linear model \( h_w(x) = w^\top x\) and the cross entropy loss function \(\hatL (w) = \sum_{i=1}^n \ell\left(y\sp{i}, h_w\l (x\sp{i} \r )\right)\), where \( \ell(t) = \log(1 + \exp(-t))\).
+\tnote{is this backslash parenthesis a latex standard way to replace dollar sign? If not, could you replace them back to dollar sign? It will create overheads for future editing so let's avoid using it now.}
+Assume we have data \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \), where \(x\sp{i} \in \R^d\) and \(y\sp{i} \in \{\pm 1 \}\). We consider the linear model \( h_w(x) = w^\top x\) and the cross entropy loss function \(\hatL (w) = \sum_{i=1}^n \ell\left(y\sp{i}, h_w\l (x\sp{i} \r )\right)\), where \( \ell(t) = \log(1 + \exp(-t))\) is the logistic loss.
 
-As we have separable data, there can be multiple global minima, as you can trivially take an infinite number of separators. More formally, there are an infinite number of unit vectors \(\bar{w}\) such that $\bar{w}^\top x\sp{i} y\sp{i} > 0$ for all $i$ as one can scale the separator arbitrarily while still maintaining a separation of classes. In fact, we have that \( \hatL(\alpha \bar{w}) \to 0\) as \( \alpha \to \infty\). Thus, even if we arbitrarily scale the unit vector, you still have that the loss goes to zero as \(\ell(t)\) approaches zero as \(t\) gets large. Thus, all choices of $w$ correspond to global minima, as the loss function goes to zero for infinite scalings.
+As we have separable data, there can be multiple global minima, as you can trivially take an infinite number of separators. More formally, there are an infinite number of unit vectors \(\bar{w}\) such that $\bar{w}^\top x\sp{i} y\sp{i} > 0$ for all $i$ as one can perturb any strict separator  while still maintaining a separation of classes. Then, we can scale the separator to make the loss arbitrarily small---we have that \( \hatL(\alpha \bar{w}) \to 0\) as \( \alpha \to \infty\). Thus, informally, for any unit vector $\bar{w}$ that separate the data, $\infty \cdot \bar{w}$ is a global minimum.\tnote{this paragraph didn't make much sense before..} %Thus, even if we arbitrarily scale the unit vector, you still have that the loss goes to zero as \(\ell(t)\) approaches zero as \(t\) gets large. Thus, all choices of $w$ correspond to global minima, as the loss function goes to zero for infinite scalings.
 
 We would like to understand which global minimum gradient descent converges to. We will now show that it finds the max-margin solution. Before we can do so, we recall/introduce the following definitions.
 
@@ -256,9 +260,10 @@ Let \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \) be given data. Assuming \(w\) is linear
     \min_{i \in [1,...,n]} y\sp{i} w^\top x\sp{i}
 }
 \end{definition}
+\tnote{change $[1,...,n]$ to $[n]$ (it also applies to other occurrences)}
 
 \begin{definition}[Normalized Margin]\label{lec16:def:norm_margin}
-Let \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \) be given data. Assuming \( w\) is linearly separable, a \textit{normalized margin} is defined as
+Let \(\{(x\sp{i}, y\sp{i}) \}_{i=1}^n \) be given data. Assuming \( w\) is linearly separable\tnote{a classifier cannot be linearly separable}, a \textit{normalized margin} is defined as
 \al{
     \gamma(w) = \frac{\min_{i \in [1,...,n]} y\sp{i} w^\top x\sp{i}}{\norm{w}_{2}}
 }
@@ -269,7 +274,7 @@ Using the normalized margin \(\gamma\) defined in Definition~\ref{lec16:def:norm
 \al{
     \bar{\gamma} = \max_{w} \gamma(w)
 }
-and let \(w^*\) be the unit-norm maximizer.
+and let \(w^*\) be the unit-norm maximizer. \tnote{add a footnote on the scale invariance of this notion}
 \end{definition}
 
 Using these definitions, we claim the following result.
@@ -283,7 +288,7 @@ where \(w(t)\) is the iterate at time \(t\).
 
 The following observations provide some intuition for Theorem~\ref{lec16:thm:maxmargin_gd}.
 \begin{enumerate}
-    \item \(\hatL(w(t)) \to 0\) by a standard optimization argument. This is because if our optimization iteration is working, \(w(t)\) at large \(t\) will cause the loss function to go to zero.
+    \item \(\hatL(w(t)) \to 0\) by a standard optimization argument. This is because if our optimization iteration is working, \(w(t)\) at large \(t\) will cause the loss function to go to zero.\tnote{to reword a bit}
     \item Using a Taylor expansion, we can show that \( \ell(z) = \log(1 + \exp(-z)) \approx \exp(-z)\) for large \(z\). Thus, logistic loss is close to exponential loss when \(z\) is very large.
     \item Using observation 1, we see that \(\norm{w(t)}_{2} \to \infty\) because if \(\norm{w(t)}_{2}\) were instead bounded, then the loss \(\hatL (w(t))\) will be bounded below by a constant that is strictly greater than zero, contradicting observation 1. Formally, if
     \(\norm{w(t)}_{2} \leq B,\)
@@ -323,7 +328,7 @@ The following observations provide some intuition for Theorem~\ref{lec16:thm:max
 
 The above observations demonstrate that minimizing the logistic loss with gradient descent is equivalent (in the limit) to maximizing the margins. This constitutes an intuitive proof of how gradient flow converges to the direction of the max-margin solution.
 
-\sec{Noise Regularization of SGD}
+\sec{Implicit Regularization Effect of Noise in SGD}
 
 In the previous section, we discussed implicit regularization via initialization and the implicit regularization of gradient descent for logistic loss-minimizing classifiers. These methods were based on a specific model setup and limited to gradient flow. In the sequel, we will move forward to the implicit regularization effect of SGD noise. Starting from the quadratic case, we analyze how the SGD noise will affect the optimization solution, and present (heuristically) a result for non-quadratic loss functions. In particular, the main (heuristic) results are:
 \begin{enumerate}
@@ -389,7 +394,7 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
 
-\sec{SGD on non-quadratic functions}
+\subsec{SGD on non-quadratic functions}
 In this section, we analyze SGD on non-quadratic functions based on \cite{damian2021label}. Due to the complexity of the analysis, we provide heuristic derivations to convey the main insights. 
 
 Without loss of generality, suppose a global minimum of $g(x)$ is $x=0$. Therefore, $\nabla_x g(0) = 0$ and $\nabla_x^2 g(0)$ is PSD. We also  assume the iterates $x_t$ are close to $0$, so we can Taylor expand around $0$.
