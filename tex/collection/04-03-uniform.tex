@@ -233,7 +233,7 @@ To precisely set up our approach, we observe that $\Exp[\sup_{z \in B_{v'}} \fra
     \end{align}
     since the LHS of \eqref{lec9:eqn:riemann_term} is the area of the dotted rectangle illustrated in Figure~\ref{lec9:fig:chaining_riemann} while the RHS is the area under the curve for that interval. Formally, this result is equivalent to observing that the right Riemann sum underestimates the integral for monotone decreasing functions $f$.
 
-    \begin{figure}[h!]
+    \begin{figure}[ht!]
         \begin{center}
             \includegraphics[width=.7\textwidth]{figures/chaining_riemann.png}
         \end{center}
@@ -268,13 +268,20 @@ If $\mathcal{F}$ consists of functions bounded in $[-1,1]$, then, we have that f
 Of course, the bound in \eqref{lec9:eqn:dudley} is only useful if the integral on the RHS is finite. Here are some setups where this is the case (we continue to assume that the functions in $\cF$ are bounded in $[-1, 1]$):
 
 \begin{enumerate}
-\item If $N(\epsilon, \mathcal{F}, L_2(P_n))\approx (1 / \epsilon)^R$ (ignoring multiplicative and additive constants), then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
-        
+\item If after ignoring multiplicative and additive constants,
+\begin{equation}
+    N(\epsilon, \mathcal{F}, L_2(P_n))\approx (1 / \epsilon)^R,
+\end{equation}
+then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx  R\log (1/\epsilon)$. We can plug this into the RHS of \eqref{lec9:eqn:dudley} to get
 \begin{equation}
 \int_{0}^{1}\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon = \int_{0}^1\sqrt{\frac{R\log(1/\epsilon)}{n}}d\epsilon \approx \sqrt{\frac{R}{n}}.
 \end{equation}
             
-\item If the covering number has the form $N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon}$ for some $a$, then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
+\item If after ignoring multiplicative and additive constants, for some $a$,
+\begin{equation}
+    N(\epsilon, \mathcal{F}, L_2(P_n))\approx a^{R/\epsilon},
+\end{equation}
+then we have $\log N(\epsilon, \mathcal{F}, L_2(P_n)) \approx \frac{R}{\epsilon}\log a$. The bound in \eqref{lec9:eqn:dudley} becomes
         
 \begin{align}
 \int_0^1\!\!\sqrt{\frac{\log N(\epsilon, \mathcal{F}, L_2(P_n))}{n}}d\epsilon &\approx \int_0^1\!\!\sqrt{\frac{R}{n\epsilon}\log a}\, d\epsilon \\
@@ -306,7 +313,7 @@ R_S(\mathcal{F}) &\leq \frac{1}{\mathsf{poly}(n)} + \frac{\sqrt{R\log a}}{\sqrt{
 \end{enumerate}
 The last line follows by observing that $\log(1/\alpha) = \log \mathsf{poly}(n)$.
 
-In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for covering numbers of the form $ R\log (1/\epsilon),\ \frac{R}{\epsilon} \log a,\text{ or } \frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$; then, for $\alpha = 1/\mathsf{poly}(n)$, the second term in Dudley's integral is no longer $\tilO \l(\sqrt{\frac{R}{n}}\r )$.
+In summary, we have that $R_S(\mathcal{F}) \leq \tilO\l(\sqrt{\frac{R}{n}}\r)$ for covering numbers of the form $R\log (1/\epsilon)$,$\frac{R}{\epsilon} \log a$, or $\frac{R}{\epsilon^2} \log a$ for some $a$. Note that if the dependence on $\epsilon$ is $1/\epsilon^c$ for $c > 2$, then even the improved Dudley's theorem does not help us. This is because the $\log(1/\alpha)$ term above becomes $\alpha^{1-c/2}$; then, for $\alpha = 1/\mathsf{poly}(n)$, the second term in Dudley's integral is no longer $\tilO \l(\sqrt{\frac{R}{n}}\r )$.
 
 \subsec{Lipschitz composition}
 Covering numbers also interact nicely with composition by Lipschitz functions. The following result is the analog of Talagrand's lemma for Rademacher complexity (Lemma~\ref{lec6:lem:talagrand_lemma}), but its proof is much more elementary as given below. We will use this Lemma in Section~\ref{sec:deep_nets} when bounding the covering number of deep nets. 

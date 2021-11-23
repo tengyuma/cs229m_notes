@@ -148,7 +148,7 @@ Here is an intuitive understanding of what Theorem \ref{lec5:thm:thm1} achieves.
 \end{align*}
 First, we removed $\Exp[f(z)]$, which is hard to control quantitatively since it is deterministic. Second, we added more randomness in the form of Rademacher variables. This will allow us to shift our focus from the randomness in the $z_i$'s to the randomness in the $\sigma_i$'s. In the future, our bounds on the Rademacher complexity will typically only depend on the randomness from the $\sigma_i$'s.
 
-\subsec{Dependence of Rademacher complexity on $P$}
+\subsec{Dependence of Rademacher complexity on \texorpdfstring{$P$}{P}}
 For intuition on how Rademacher complexity depends on the distribution $P$, consider the extreme example where $P$ is a point mass, i.e. $z = z_0$ almost surely. Assume that $-1 \leq f(z_0) \leq 1$ for all $f \in \cF$. Then
 \begin{align}
     \Exp_{z_1, \dots, z_n \sim P} \l[ \sup_{f \in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i)\r]
@@ -173,14 +173,12 @@ R_S(\cF) \overset{\Delta}{=} \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF}
 $R_S(\cF)$ is a function of both the function class $\cF$ and the dataset $S$.
 \end{definition}
 
-Note that, as the name suggests, the expectation of the empirical Rademacher complexity is the Rademacher complexity:
+As the name suggests, the expectation of the empirical Rademacher complexity is the Rademacher complexity:
 \begin{align}
     R_n(\cF) = \underset{S=\{z_1,\dots, z_n\}}{\underset{z_1, \dots, z_n \iid P}\Exp}\l[ R_S(\cF) \r].
 \end{align}
 
-
 Here is the theorem involving empirical Rademacher complexity:
-
 \begin{theorem}\label{lec5:thm:thm2}
     Suppose for all $f \in \cF$, $0 \leq f(z) \leq 1$. Then, with probability at least $1-\delta$,
     \begin{align}

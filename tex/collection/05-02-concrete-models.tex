@@ -6,7 +6,7 @@
 
 \sec{Linear models}\label{lec7:sec:lin_models}
 
-\subsec{Linear models with weights bounded in $\ell_2$ norm}
+\subsec{Linear models with weights bounded in \texorpdfstring{$\ell_2$}{L2} norm}
 We begin with the Rademacher complexity of linear models using weights with bounded $\ell_2$ norm.
 
 \begin{theorem}\label{lec7:thm:l2-thm}
@@ -51,7 +51,7 @@ We observe that both the empirical and average Rademacher complexities scale wit
 Note that if we scale the data by some multiplicative factor, the bound on empirical Rademacher complexity $R_S(\cH)$ will scale accordingly. However, at the same time we expect the margin to scale by the same multiplicative factor, so the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} does not change. This lines up with our intuition that the bound should not depend on the scaling of the data.
 \end{remark}
 
-\subsec{Linear models with weights bounded in $\ell_1$ norm}
+\subsec{Linear models with weights bounded in \texorpdfstring{$\ell_1$}{L1} norm}
 Now, we consider linear models again, except we restrict the $\ell_1$-norm of the parameters and assume an $\ell_\infty$-norm bound on the data.
 
 \begin{theorem}\label{lec7:thm:l1-thm}
@@ -113,7 +113,7 @@ We will now prove Theorem \ref{lec7:thm:l1-thm}:
     which completes the proof.
 \end{proof}
 
-\subsec{Comparing the bounds for different $\cH$}
+\subsec{Comparing the bounds for different \texorpdfstring{$\cH$}{H}}
 
 First, we note that for this hypothesis class of linear models, it is possible to obtain an upper bound proportional to $\sqrt{d/n}$ using the VC~dimension, which grows quickly with the data dimension~$d$. Our bound is better since it does not have as strong of a dependence on~$d$, and accounts for the norms of our model parameters and the data.
 
@@ -309,7 +309,7 @@ Taking the expectation over $\sigma$ (and noting that $\sigma \overset d = -\sig
 \sec{More implications and discussions on two-layer neural nets}
 In this section, we discuss practical implications of the refined neural network bound. 
 
-\subsec{Connection to $\ell_2$ regularization}\label{sec:gen-bounds:impliciation}
+\subsec{Connection to \texorpdfstring{$\ell_2$}{L2} regularization}\label{sec:gen-bounds:impliciation}
 
 Recall that margin theory yields
 \begin{equation}
@@ -341,7 +341,7 @@ where we have used the equality case of the AM-GM inequality, attainable by $\la
 
 This connects our $C(\theta)$ regularization to $\ell_2$-norm penalties that are more prevalent in practice. In retrospect, we see this equivalence is essentially due to the positive homogeneity of the neural network which ``homogenizes'' any inhomogeneous objective such as $C_{\ell_2}$. Hence, we can just deal with $C(\theta)$ which is transparently homogeneous.
 
-\subsec{Generalization bounds that are decreasing in $m$} \label{sec:gen-bounds:decreasing-in-m}
+\subsec{Generalization bounds that are decreasing in \texorpdfstring{$m$}{m}} \label{sec:gen-bounds:decreasing-in-m}
 
 Next, we show that the generalization bound given by Theorem \ref{lec8:thm:thm-improved-nn-rc} does not deteriorate with the network width (number of neurons) $m$, which is consistent with experimental results. To this end, the perspective of \eqref{lec8:eqn:opt2} enables us to isolate all dependencies of $m$ in $\gammamin$. Letting $\widehat \theta_m$ denote the minimizer of program \eqref{lec8:eqn:opt2} with width $m$ and defining optimal value $\gamma_m^* = \gammamin\l(\widehat \theta_m\r)$, we can rewrite the margin bound \eqref{lec8:eqn:margin-bound} as 
 \begin{equation}
@@ -364,7 +364,7 @@ Suppose $\theta = \{(w_i, u_i)\}_{1 \leq i \leq m}$ is a two-layer neural networ
 $\widetilde \theta$ is functionally equivalent to $\theta$ and $C(\widetilde \theta) = C(\theta) \le 1$. This means maximizing $\gammamin$ over $\{C(\widetilde \theta): \widetilde \theta\text{ of width }m+1\}$ should give no lower of a value than the maximum of $\gammamin$ over $\{C(\theta): \theta\text{ of width }m\}$.
 \end{proof}
 
-\subsec{Equivalence to an $\ell_1$-SVM in $m \to \infty$ limit}
+\subsec{Equivalence to an \texorpdfstring{$\ell_1$}{L1}-SVM in \texorpdfstring{$m \to \infty$}{m -> inf} limit}
 
 Since $\gamma_m^*$ is non-decreasing in $m$, quantity 
 \begin{equation}

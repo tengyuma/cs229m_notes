@@ -8,7 +8,7 @@
 
 In this chapter, we discuss the Lipschitzness of models and why they seem to generalize better than arbitrary networks. To do so, we introduce a refined notion of uniform convergence that is data-dependent, and use it to derive a generalization bound for generalized margin. We end by introducing the \textit{all-layer margin}, a specific instance of generalized margin that captures model Lipschitzness, thus allowing us to use the data-dependent generalization bound.
 
-\sec{Lipschitzness of models and generalization}
+\sec{Lipschitzness of models and generalization} \label{sec:all_layer_margin}
 It has been found that the Lipschitzness of the model plays an important role in algorithmic regularization. As an illustration, note that the curvature (Hessian) of the loss function, the Lipschitzness of the model, and the noise level in SGD are all closely-related. To give a sense of the connections between them, suppose we have a model $f(x; \theta)$, a single example $(x, y)$, and a loss function $L(\theta) = \ell (f(x), y) = (f(x) - y)^2$. In this setup, we have the decomposition
 \begin{align}
 \nabla^2 L(\theta) = \underbrace{{\frac{\partial^2 \ell}{\partial f^2}}}_{\text{scalar}} \cdot \underbrace{\frac{\partial f}{\partial \theta}}_{\mathbb{R}^p} \cdot \underbrace{\frac{\partial f}{\partial \theta}^\top}_{\mathbb{R}^p} + \frac{\partial \ell}{\partial f} \cdot  \underbrace{\frac{\partial^2 f}{\partial \theta^2}}_{\mathbb{R}^{p\times p}}.

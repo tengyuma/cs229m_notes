@@ -133,8 +133,7 @@ Fix some $\epsilon > 0$. By applying Hoeffding's inequality on the $\ell( (x\sp{
 \label{lec4:eqn:boundedconcentration}
 }
 since we can set $a_i = 0, b_i = 1$. The bound above holds for a single fixed $h$. To prove a similar inequality that holds for all $h \in \cH$, we apply the union bound with $E_h = \{\vert \hat{L}(h) - L(h) \vert \geq \epsilon \}$:
-
-\al {
+\al{
 \Pr \left( \exists h \text{ s.t. } \vert \hat{L}(h) - L(h) \vert \geq \epsilon \right) &\leq \sum_{h \in \cH} \Pr \left(\vert \hat{L}(h) - L(h) \vert \geq \epsilon \right) \\
 &\leq \sum_{h \in \cH} 2\exp(-2n\epsilon^2) \\
 &= 2\vert \cH \vert \exp(-2n\epsilon^2). 
@@ -145,7 +144,11 @@ If we take $\delta$ such that $2\vert \cH \vert \exp(-2n\epsilon^2) = \delta$, t
 \epsilon = \sqrt{\frac{\ln{\vert \cH \vert} + \ln{(2 / \delta)}}{2n}},
 \label{lec4:eqn:probabilitytoerror}
 }
-which proves \eqref{lec4:eqn:finiteuniformbound}. \eqref{lec4:eqn:finiteexcessriskbound} follows by the inequality we stated in Section \ref{sec:uc-gen} and taking $\epsilon = \sqrt{\frac{ 2(\ln{\vert \cH \vert} + \ln{(2 / \delta)}) }{n}}$:
+which proves \eqref{lec4:eqn:finiteuniformbound}. \eqref{lec4:eqn:finiteexcessriskbound} follows by the inequality we stated in Section \ref{sec:uc-gen} and taking 
+\begin{align}
+    \epsilon = \sqrt{\frac{ 2(\ln{\vert \cH \vert} + \ln{(2 / \delta)}) }{n}},
+\end{align}
+we have that
 \begin{align}
 \Pr \left( | L(\hat{h}) - L(h^{*}) | \geq \epsilon \right) &\leq \Pr \left( 2 \sup_{h \in \cH} | \hat{L}(h) - L(h) | \geq \epsilon \right) \\
 &\leq 2 |\cH| \exp \left( -\frac{n\epsilon^2}{2} \right).
@@ -193,7 +196,7 @@ The intuition behind brute-force discretization is as follows: Let $E_\theta = \
 
 We make these ideas precise in the following section.
 
-\subsec{Discretization of the parameter space by $\epsilon$-covers}
+\subsec{Discretization of the parameter space by \texorpdfstring{$\epsilon$}{epsilon}-covers}
 
 We start by defining the notion of an \emph{$\epsilon$-cover} (also \textit{$\epsilon$-net}):
 
@@ -236,7 +239,7 @@ We now bound the size of $C$. Since each $k_i$ in the definition of $C$ has at m
 We can actually prove a stronger version of Lemma \ref{lec4:lem:ECSize}: there exists an $\epsilon$-cover of $S$ with at most $\left(\frac{3B}{\epsilon}\right)^p$ elements. We will be using this version of the lemma in the proof below. (We will leave the proof of this stronger version as a homework exercise.)
 \end{remark}
 
-\subsec{Uniform convergence bound for infinite $\cH$}
+\subsec{Uniform convergence bound for infinite \texorpdfstring{$\cH$}{H}}
 
 \begin{definition}[$\kappa$-Lipschitz functions]
 Let $\kappa \ge 0$ and $\norm{\cdot}$ be a norm on the domain $D$. A function $L:D \to \R$ is said to be \emph{$\kappa$-Lipschitz} with respect to $\norm{\cdot}$ if for all $\theta, \theta' \in D$, we have

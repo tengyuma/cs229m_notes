@@ -22,8 +22,9 @@ Online learning can be viewed as a game between two parties: (i) the learner/age
 
 The game takes place over $T$ rounds or time steps. At each step $t = 1, \dots, T$, the learner receives an input $x_t \in \cX$ from the environment and makes a prediction $\yhat \in \cY$ in response. The learner then receives the label $y_t$ from the environment and suffers some loss. This procedure is outlined in Algorithm \ref{lec15:alg:gen-ol} and is illustrated in Figure \ref{lec15:fig:OLgame}.
 
-    \begin{algorithm}[h]\label{lec15:alg:gen-ol}
+    \begin{algorithm}[h]
         \caption{General online learning problem}
+        \label{lec15:alg:gen-ol}
         \For {$t = 1, ... T$}{
             Learner receives $x_t \in \mathcal{X}$ from environment, which may be chosen adversarially\;
             Learner predicts $\yhat \in \mathcal{Y}$\;
@@ -94,8 +95,9 @@ In the rest of the chapter, we will only focus on the convex loss case, where we
 
 \textit{Online convex optimization (OCO)} is a particularly useful tool to get results for online learning. Many online learning problems (and many other types of problems!) can be reduced to OCO problems, which allow them to be solved and analyzed algorithmically. Algorithm \ref{lec15:alg:oco} describes the OCO problem, which is more general than the online learning problem. (Note: \textit{Online optimization (OO)} refers to Algorithm \ref{lec15:alg:oco} except that the $f_t$'s need not be convex. However, due to the difficulty in non-convex function optimization, most research has focused on OCO.)
 
-    \begin{algorithm}\label{lec15:alg:oco}
+    \begin{algorithm}
     \caption{Online (convex) optimization problem}
+    \label{lec15:alg:oco}
     \For{$t = 1, ..., T$} {
         The learner picks some action $w_t \in \Omega$ from the action space $\Omega$\;
         The environment picks a (convex) function $f_t: \Omega \to [0, 1]$\;

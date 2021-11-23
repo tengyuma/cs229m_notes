@@ -328,7 +328,76 @@ The following observations provide some intuition for Theorem~\ref{lec16:thm:max
 
 \end{enumerate}
 
-The above observations demonstrate that minimizing the logistic loss with gradient descent is equivalent (in the limit) to maximizing the margins. This constitutes an intuitive proof of how gradient flow converges to the direction of the max-margin solution.
+The above observations heuristically demonstrate that minimizing the logistic loss with gradient descent is equivalent (in the limit) to maximizing the margin. Below, we prove Theorem~\ref{lec16:thm:maxmargin_gd} rigorously for the exponential loss function $\ell(t) = \exp(-t)$, which is nearly the same as the logistic loss.
+
+\begin{proof}[Proof of Theorem~\ref{lec16:thm:maxmargin_gd}]
+We begin by defining the smooth margin as
+\begin{align}
+    \tilde \gamma (w) &\defeq \frac{-\log \hat{L}(w)}{\|w\|_2} \label{lec18:eqn:smooth_margin} \\ 
+    &=
+    \frac{-\log\l( \sum_{i=1}^{n} \exp(-y^{(i)}w^\top x^{(i)})\r)}{\|w\|_2}.
+\end{align}
+Note that $\tilde\gamma(w)$ approximates $\gamma(w)$ by the log-sum-exp approximation. To make this precise, recall that $\gamma(w) \geq \tilde\gamma(w)$ because $y^{(i)}w^\top x^{(i)} \geq \gamma(w) \|w\|_2$ for all $i$.
+
+Then, since $\gamma(w) \leq \bar\gamma$ by definition, it suffices to show that
+\begin{align}
+    \lim_{t\to\infty}\tilde\gamma(w(t)) = \bar\gamma. \label{lec18:eqn:target}
+\end{align}
+
+Let $\dot{w}(t)= -\nabla \hat L(w(t))$. Then,
+\begin{align}
+    \diffp{}{t} \l (-\log \hat{L}(w(t)) \r ) &= \inprod{\nabla\l ( -\log  \hat{L}(w(t)) \r ),\dot{w}(t)} \\
+    &=\left \langle -\frac{\nabla\hat{L}(w(t))}{\hat{L}(w(t))},\dot{w}(t) \right \rangle \\
+    &=\frac{\norm{\nabla\hat{L}(w(t))}_2^2}{\hat{L}(w(t))} \\
+    &=\frac{\norm{\dot{w}(t)}_2^2}{\hat{L}(w(t))} \geq 0 \label{lec18:eqn:maxmargin_gf_deriv}
+\end{align}
+This result tells us that the log loss is decreasing at each infinitesimal step of the gradient flow. By integrating \eqref{lec18:eqn:maxmargin_gf_deriv}, we can also evaluate the log loss at time $T$:
+\begin{align}
+    -\log\hat{L} (w(T) ) &= -\log\hat{L}(w(0)) + \int_0^T \diffp{}{t}\log\hat{L}(w(t)) dt \label{lec18:eqn:gf_wt_expansion} \\
+    &= -\log \hat{L}(w(0)) + \int_0^T \frac{\|\dot{w}(t)\|_2^2}{\hat{L}(w(t))} dt.
+\end{align}
+While the derivation above tells us how the numerator of \eqref{lec18:eqn:smooth_margin} is changing, we have yet to relate this to the denominator, i.e. the norm of $w$. Recall that $w^*$ is the direction of the max-margin solution. Then, we have
+\begin{align}
+    \|\dot{w}(t)\|_2 &\geq \inprod{\dot{w}(t), w^*} &\text{(Cauchy-Schwarz)} \label{lec18:eqn:cs-dotw} \\
+    & = \inprod{-\nabla \hat L(w(t)), w^*} \\
+    &= \inprod{ \sum_{i=1}^n y^{(i)}\exp(-y^{(i)}w^\top x^{(i)})\cdot x^{(i)}, w^* } \\
+    &= \sum_{i=1}^n y^{(i)}\exp(-y^{(i)}w^\top x^{(i)})\cdot \inprod{w^*,  x^{(i)}} \\
+    &\geq \bar{\gamma}\sum_{i=1}^n \exp(-y^{(i)}w^\top x^{(i)}) \\
+    &=\bar{\gamma} \cdot \hat{L}(w(t)).
+\end{align}
+This shows that $\dot{w}(t)$ is correlated to $w^*$, and that this correlation depends on $\bar{\gamma}$ and the loss. In addition, $\dot{w}(t)$ is not too small compared to the loss.
+
+Next, we substitute \eqref{lec18:eqn:cs-dotw} into the second term of the right-hand-side of \eqref{lec18:eqn:gf_wt_expansion}:
+\begin{align}
+    \int_{0}^T\frac{\norm{\dot{w}(t)}_2^2}{\hat{L}(w(t))}dt &\geq \bar{\gamma}\cdot\int_{0}^{T}\norm{\dot{w}(t)}_2dt \\
+    &\geq \bar{\gamma}\cdot\l \|\int_{0}^{T}\dot{w}(t)dt \r \|_2 \\
+    &= \bar{\gamma}\norm{w(T)}_2.
+\end{align}
+Applying this bound to the RHS of \eqref{lec18:eqn:gf_wt_expansion}, we obtain
+\begin{align}
+    -\log \hat{L}(w(T)) \geq -\log \hat{L}(w(0)) + \bar{\gamma}\norm{w(T)}_2.
+\end{align}
+Dividing both sides by $\norm{w(T)}_2$,
+\begin{align}
+    -\frac{\log \hat{L}(w(T))}{\norm{w(T)}_2} \geq -\frac{\log \hat{L}(w(0))}{\norm{w(T)}_2} + \bar{\gamma}. \label{lec18:eqn:gf_wt_expansion_lb}
+\end{align}
+Since $\lim_{T \to \infty} \|w(T)\|_2 = \infty$, we know that the first term on the RHS of \eqref{lec18:eqn:gf_wt_expansion_lb} goes to $0$ in the limit. Thus,
+\begin{align}
+    \lim_{T\to \infty} - \frac{\log\hat{L}(w(T))}{\|w(T)\|_2} \geq \bar{\gamma}.
+\end{align}
+Recognizing the LHS as the definition of the smooth margin, i.e. \eqref{lec18:eqn:smooth_margin}, we conclude that
+\begin{align}
+    \lim_{T\to \infty} \tilde{\gamma} (w(T)) \geq \bar{\gamma}.         
+\end{align}
+Meanwhile, since we know that  
+\begin{align}
+    \bar{\gamma} \geq \gamma(w(T)) \geq \tilde{\gamma}(w(T)),
+\end{align}
+we conclude by the squeeze theorem that 
+\begin{align}
+    \lim_{T\to \infty} \gamma (w(T)) = \lim_{T\to \infty} \tilde{\gamma} (w(T)) = \bar{\gamma}.
+\end{align}
+\end{proof}
 
 \sec{Implicit regularization effect of noise in SGD}
 
@@ -450,6 +519,48 @@ Note that the OU process is a Markov chain and a Gaussian process. Here we assum
 
 \tnote{need to add figures. I added two figures labelnoise-static.jpg and bias2.png. Also need to refer to this figure in the main texts. I did discuss in length these figures so there should be some paragraphs about these figures. }
 
-\paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$.
+\paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2_x g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2_\theta \hat{L}(\theta))$. In the next subsection, we will heuristically explain why this regularization term is useful.
 
-\paragraph{Relationship to generalization.} Why is $\textup{tr}(\nabla^2\hat{L}(\theta))$ a good regularizer? \cite{wei2019improved} show that the complexity of neural networks can be controlled by its Lipschitzness. $\textup{tr}(\nabla^2\hat{L}(\theta))$ is intimately related to the Lipschitzness of the networks. \cite{foret2020sharpness} also discover empirically that regularizing the sharpness of the local curvature leads to better generalization performance on a wide range of tasks.
+\subsec{SGD with label noise}
+We previously claimed that SGD with label noise minimizes the regularized loss 
+\begin{equation}
+    \hat{L}(\theta) + \lambda \textup{tr}(\nabla^2_\theta \hat{L}(\theta)).
+\end{equation} 
+
+But why is $\textup{tr}(\nabla^2_\theta \hat{L}(\theta))$ a useful regularizer? This question has been the subject of recent study in the implicit regularization literature. \cite{wei2019improved} show that the complexity of neural networks can be controlled by its Lipschitzness. Indeed, we will see that $\textup{tr}(\nabla^2\hat{L}(\theta))$ is intimately related to the Lipschitzness of the networks. \cite{foret2020sharpness} also discover empirically that regularizing the sharpness of the local curvature leads to better generalization performance on a wide range of tasks. In the sequel, we will unpack some of these arguments to justify regularizing by $R(\theta) \defeq \textup{tr}\left (\nabla^2 \hat{L}(\theta) \right )$.
+
+We first consider the case of one data point, i.e. $\hat{L}(\theta) = \ell(f_\theta(x), y)$. For notational simplicity, let $f \defeq f_{\theta}(x)$ denote the model output, $p$ be the number of parameters, and $\ell(f,y)$ be the loss function. Then,
+\begin{align}
+    \nabla^2\hat{L}(\theta) &= \nabla_\theta \left(\diffp{\ell}{f}  \cdot \diffp{f}{\theta}\right) \\
+    &= \nabla_\theta \left(\diffp{\ell}{f} \cdot \nabla_\theta f_\theta(x) \right) \\
+    &= \diffp[2]{\ell}{f} \cdot \nabla_\theta f_{\theta}(x)\nabla_\theta f_{\theta}(x)^\top + \diffp{\ell}{f}\underbrace{\nabla_\theta^2 f_{\theta}(x)}_{\in \R^{p \times p}}.
+\end{align}
+Suppose the loss function is $\ell(f,y) = \frac{1}{2}(f-y)^2$. Then, observing that $\ell$ is simply a quadratic function of $f$, we have
+\begin{align}\label{lec18:eq:gn-decom}
+    \nabla^2\hat{L}(\theta) = 1 \cdot \nabla_\theta f(x) \nabla_\theta f_\theta(x)^\top + (f-y)\cdot\nabla^2_\theta f_\theta (x),   
+\end{align}
+Note that the first term of \eqref{lec18:eq:gn-decom} is positive semi-definite (PSD), while the second term is not necessarily PSD. In general, \eqref{lec18:eq:gn-decom} is referred to as the Gauss-Newton decomposition. Note also that for convex losses $\ell$, 
+\begin{align}
+    \diffp[2]{\ell}{f} \geq 0,
+\end{align}
+which further implies that
+\begin{align}
+    \diffp[2]{\ell}{f}\nabla f_\theta (x) \nabla f_\theta (x)^\top \succcurlyeq 0.   
+\end{align}
+
+Empirically, we observe that the second term $(f-y)\nabla^2f_{\theta}(x)$ is generally smaller. This is especially evident when $\theta$ is at a global minimum for which $\ell(f_\theta, y) = 0$. In this case, $(f-y)\nabla^2f_{\theta}(x)=0$ because $f_{\theta}(x)=y$. These two observations suggest that we can ignore the second term. In that case,
+\begin{align}
+    \mathrm{tr}\l (\nabla^2\hat{L}(\theta) \r ) &\approx \diffp[2]{\ell}{f} \cdot \mathrm{tr}\l (\nabla f(x)\nabla f(x)^\top\r ) \\
+    &=\diffp[2]{\ell}{f} \cdot \norm{\nabla  f_{\theta}(x)}_2^2
+\end{align}
+Thus, minimizing $\mathrm{tr}\l (\nabla^2\hat{L}(\theta)\r )$ is approximately equivalent to minimizing the Lipschitzness of the model output with respect to $\theta$, which is approximately equivalent to minimizing the Lipschitzness of the model output with respect to hidden variables.
+
+For example, let $\theta = (w_1, \dots, w_r)$, then we have 
+\begin{align}
+    \diffp{f}{{w_i}} = \diffp{f}{{h_{i+1}'}} \cdot h_i^\top,
+\end{align}
+where $h'_{i+1} = w_i h_i$, and $h_i$ denotes the hidden variables of the $i$-th layer and  $h'_{i+1}$ is the pre-activation of the $(i+1)$-th layer. Then,
+\begin{align}
+    \l \|\diffp{f}{{w_i}}\r \|_F = \l \|\diffp{f}{{h_{i+1}}}\r \|_2\cdot \|h_i\|_2.
+\end{align}
+This validates our claim that minimizing the Lipschitzness of the model output with respect to the parameters is (approximately) equivalent to minimizing the Lipschitzness of the model output with respect to the hidden variables. We have previously connected the latter concept to generalization of deep neural networks. See Section~\ref{sec:all_layer_margin} for a discussion of the all-layer margin, a measure of Lipschitzness of the model with respect to hidden layer variables that can be directly used to bound generalization error of a deep net.

@@ -261,7 +261,7 @@ So far in this course, given some complexity measure we denote as $\text{comp}(\
     Most of the results we have obtained so far are of type I, e.g. with $\text{comp}(\cF)/\sqrt{n} = R_n(\cF)$. We obtain results of type II by considering a restricted set of functions $\cF_C = \{f : \text{comp}(f) \leq C\}$. We then apply a type I bound to $\cF_C$ and take a union bound over all $C$. Therefore, these two type of bounds are essentially equivalent (up to a small additive factor difference due to the additional union bound over the choices of $C$.)
 \end{remark}
 
-Note, however, that neither of these approaches produce bounds that depend upon the data. By contrast, in the sequel, we will derive a new \textit{data-dependent} generalization bound. These bounds state that with high probability over the choice of the empirical data and, forall all functions $f\in \cF$,
+Note, however, that neither of these approaches produce bounds that depend upon the data. By contrast, in the sequel, we will derive a new \textit{data-dependent} generalization bound. These bounds state that with high probability over the choice of the empirical data and, for all functions $f\in \cF$,
 \begin{align}
     L(f) \leq \text{comp}\left (f, \{(x\sp{i}, y\sp{i})\}_{i = 1}^n\right)
 \end{align}
@@ -285,7 +285,7 @@ for some function $g$. Then we can consider an \textit{augmented loss}:
 \begin{align}
     \tilde{\ell}(f) = \ell(f) \ind{h(f, x\sp{i} \leq C)} \label{eqn:5}
 \end{align}
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}
         \draw[->] (0, 0) -- (5, 0) node[right] {$\theta$};
@@ -304,7 +304,7 @@ for some function $g$. Then we can consider an \textit{augmented loss}:
 \end{figure}
 Suppose we have a region of low complexity in our existing loss function as depicted in Figure~\ref{lec11:fig:low_vs_high_complexity}. Because this region is random, so we cannot selectively apply uniform convergence. However, we can use our new surrogate loss function $\tilde{\ell}$ in that region. By modifying the loss function in this way, we can still fix the hypothesis class ahead of time, allowing us to apply existing tools to $\tilde{\ell}(f)$. The surrogate loss was used in~\cite{wei2019data} to obtain a data-dependent generalization bound, though there are possibly various other ways to define surrogate losses and apply existing uniform convergence guarantees. In the sequel, we introduce a particular surrogate ``margin'' that allows us to cleanly apply our previous results to a (implicitly) data-dependent hypothesis class \cite{wei2019data}.
 
-\sec{All-layer margin}
+\sec{All-layer margin} \label{sec:all_layer_margin}
 We next introduce a new surrogate loss called the \textit{all-layer margin} that can also be thought of as a surrogate margin. This loss will essentially zero out high-complexity regions so that we may focus on low-complexity regions for which we can expect small generalization gap. Note that the all-layer margin we analyze will not explicitly zero-out high-complexity regions using an indicator function, but instead implicitly takes into account some data-dependent characteristics of the model. Once we adopt this new loss function, we will be able to apply some of our earlier methods.
 
 Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin is defined as $y f(x)$, with $y$ in $\{-1, 1\}$. We will say that $g_f(x, y)$ is a \textit{generalized margin} if it satisfies

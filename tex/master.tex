@@ -34,13 +34,14 @@
 %
 %    Remove any commented or uncommented macros you do not use.
 
-\documentclass[ebook, oneside, openany]{book}
+\documentclass[oneside, openany]{book}
 \usepackage{amsfonts,bm,amsthm,amsmath,bbm,amssymb,mathtools}
 \usepackage{fullpage}
 \usepackage{tikz, pgfplots} % added for Lecture 2	
 \usepackage{caption, subcaption}
 \usepackage{float}  % added for Lecture 8
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}  % added for Lecture 15
+\usepackage{esdiff}
 \usepackage{booktabs}  % added for Lecture 15
 \usepackage{hyperref}
 \hypersetup{linktocpage}
@@ -71,6 +72,7 @@
 \makeindex
 \def\lectureformat{0}
 \input{macros}
+\pgfplotsset{compat=1.17}
 \begin{document}
 	
 	\frontmatter
@@ -166,7 +168,8 @@
 	\input{collection/08-02-algorithmic.tex}
 	\input{collection/08-03-algorithmic-new.tex}
 	
-%	\chapter{Data-dependent generalization bounds}
+	\chapter{Unsupervised Learning}
+	\input{collection/09-01-unsupervised.tex}
 %	\input{collection/09-01-data-dependent.tex}
 	
 	\chapter{Online learning}\label{chap:OL}

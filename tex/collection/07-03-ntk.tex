@@ -62,7 +62,7 @@ The key idea is that the Taylor approximation works for certain cases. We defer 
     \item Optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$ and does not leave $B(\theta^0)$, i.e. everything is confined to this region. Intuitively, this last point to some extent is ``implied" by (1) and (2), but this claim still requires a formal proof. 
 \end{enumerate}
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
     \centering
     \includegraphics[scale=0.5]{figures/ntk_global_min.png}
     \caption{Here, $\hat{L}(g_{\theta})$ and $\hat{L}(f_{\theta})$ are both plotted. At $\hat{\theta}$, we have reached the approximate global minimum where $\hat{L}(g_{\hat{\theta}}) \approx 0$, in turn implying also that $\hat{L}(f_{\hat{\theta}}) \approx 0$.}
@@ -280,7 +280,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
     Recall here that $\sigma_{\min}$ does not depend on $m$. Concretely, this result tells us that our function becomes more smooth (the gradient has a smaller Lipschitz constant) as we add more neurons. 
 \end{enumerate}
 
-\subsec{Optimizing $\hat{L}(g_\theta)$ vs. $\hat{L}(f_\theta)$}
+\subsec{Optimizing \texorpdfstring{$\hat{L}(g_\theta)$}{L(g)} vs. \texorpdfstring{$\hat{L}(f_\theta)$}{L(f)}}
 We now discuss how to establish the last of the three conditions under which we claimed a Taylor approximation is reasonable. We need to show that  optimizing $\hat{L} (f_\theta)$ is similar to optimizing $\hat{L}(g_\theta)$. To do so, we require two steps:
 \begin{enumerate}[label=\alph*]
     \item[(A)] Analyze optimization of $\hat{L}(g_\theta)$.
@@ -424,8 +424,11 @@ Subtracting $\vec{y}$ and re-arranging,
 \end{align}
 Comparing \eqref{lec14:eqn:f_decomposition} with \eqref{lec14:eqn:g_decomp}, we see one difference: in \eqref{lec14:eqn:f_decomposition}, our convergence depends on $\eta \Phi^t\l(\Phi^t\r)^\top$, which is a matrix that changes as we iterate, whereas in \eqref{lec14:eqn:g_decomp}, convergence is controlled by a matrix that is fixed as we iterate. 
 
-To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of \linebreak $I - \eta \Phi^t \l(\Phi^t\r)^\top$. For now, suppose $\norm{\theta^t - \theta^0}_2 \leq \sigma/(4\sqrt{n}\beta)$ at time $t$. This implies that $\norm{\Phi^t - \Phi}_F \leq \frac{\sigma}{4}$ by the Lipschitzness of $\nabla f_\theta(x)$ in $\theta$. Here with slight abuse of notations we 
-Then, we claim that 
+To understand the convergence implications of \eqref{lec14:eqn:f_decomposition}, we examine the eigenvalues of $I - \eta \Phi^t \l(\Phi^t\r)^\top$. For now, suppose 
+\begin{equation}
+    \norm{\theta^t - \theta^0}_2 \leq \sigma/(4\sqrt{n}\beta)
+\end{equation} 
+at time $t$. This implies that $\norm{\Phi^t - \Phi}_F \leq \frac{\sigma}{4}$ by the Lipschitzness of $\nabla f_\theta(x)$ in $\theta$. Then, we claim that 
 \begin{align}
     \sigma_{\text{min}}(\Phi^t) \geq 3\sigma/4. \label{lec14:eqn:phi_t_eigenvalue_bound}
 \end{align}

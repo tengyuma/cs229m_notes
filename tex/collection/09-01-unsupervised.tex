@@ -1,0 +1,120 @@
+\metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
+
+We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, this approach is not suitable for a comprehensive theoretical analysis. Most analysis of EM only applies to special cases and it is not clear whether any of the results can be extended to more realistic, complex setups. Our analysis of classical unsupervised elarning will instead focus on a particular application of the ``moment method.'' While the moment method is not as empirically effective as EM, the analysis is far more straightforward. 
+
+After discussing the basics of classical unsupervised learning, we will move on to modern applications of deep learning such as self-training and contrastive learning. Here we note that so-called ``semi-supervised'' and domain adaptation approaches in deep learning can often be reduced to unsupervised learning problems, so in some sense, our analysis here is related to many fields in deep learning that are not always referred to as unsupervised. 
+
+\sec{Moment method}
+
+We begin by formally describing the unsupervised learning problem. First, assume that we are studying a family of distributions $P_{\theta}$ parameterized by $\theta \in \Theta$, where $P_{\theta}$ can be described by a latent variable model. Then, given data $x^{(i)},...,x^{(n)}$ that is sampled i.i.d. from some distribution in $\{P_\theta\}_{\theta \in \Theta}$, our goal is to recover the true $\theta$. 
+
+Perhaps the most well-studied latent variable model in machine learning is the mixture of Gaussians. We consider the following model for the mixture of $k$ $d$-dimensional Gaussians. Let 
+\begin{align}
+\theta = \l ( (\mu_1, \cdots, \mu_k), (p_1, \cdots, p_k)\r ),
+\end{align}
+where $\mu_i\in \R^d$ is the mean of the $i$-th component and $p$ is a vector of probabilities belonging to the $k$-simplex. Formally, for $\Delta(k) \defeq \{ p: \|p\|_1 = 1, p\geq 0, p\in\R^k\}$, 
+\begin{align}
+    p = (p_1, \cdots, p_k) \in \Delta(k).
+\end{align}
+We then sample $x \sim P_\theta$ in a two-step approach: 
+\begin{align}
+    i &\sim \text{categorical}(p), \notag\\
+    x &\sim \cN(\mu_i, I).
+\end{align}
+Here $i$ is called the latent variable since we only observe $x$. Other approaches to this problem include Hidden Markov Models, Independent Component Analysis, and Expectation-Maximization, but here we focus on the so-called Moment Method.
+
+\subsec{Warm-up: mixture of two Gaussians}
+We first study a simple case: the mixture of two Gaussians.
+In this case, $k=2$, and we assume $p_1=p_2=\frac{1}{2}$. Without loss of generality, we can also assume $\mu_1+\mu_2=0$. To simplify our notation, let $\mu_1=\mu$ and $\mu_2=-\mu$. These assumptions yield the following model for $X$: 
+\begin{equation}
+    X \sim \frac{1}{2}\mathcal{N}(\mu,I) + \frac{1}{2}\mathcal{N}(-\mu,I).
+\end{equation}
+To implement the moment method, we need to complete the following two tasks:
+\begin{enumerate}
+    \item Estimate the moment(s) of $X$ using empirical samples.
+    \item Recover parameters from the moment(s) of $X$.
+\end{enumerate}
+
+The first moment of $X$ is
+\begin{align}
+    M_1 &\defeq \Exp [X] \\
+    &= \frac{1}{2}\Exp [X|i=1]+\frac{1}{2}\Exp[X|i=2] \\
+    &= \frac{1}{2}\mu + \frac{1}{2}(-\mu) \\
+    &= 0.
+\end{align}
+Therefore, the first moment provides no information about $\mu$. We compute the second moment as
+\begin{align}
+    M_2 &\defeq \Exp[XX^\top] \\
+    &= \frac{1}{2}\Exp[XX^\top|i=1]+\frac{1}{2}\Exp[XX^\top|i=2]
+\end{align}
+To compute these expectations, consider an arbitrary $Z \sim \cN(\mu, I)$. Then,
+\begin{align}
+    \Exp [ZZ^\top] &= \Exp[Z] \Exp[Z]^\top + \Cov(Z) \\
+    &= \mu \mu^\top + I
+\end{align}
+Recognizing that this second moment calculation is the same for both Gaussians in our mixture, we obtain:
+\begin{align}
+    M_2 &= \frac{1}{2}(\mu\mu^\top+I)+\frac{1}{2}(\mu\mu^\top+I) \\
+    &=\mu\mu^\top+I
+\end{align}
+Since the second moment provides information about $\mu$, we can complete the two tasks required for the moment method using the second moment.
+
+If we had access to infinite data, then we can compute the exact second moment $M_2=\mu\mu^\top+I$. Then, we can recover $\mu$ by evaluating the top eigenvector and eigenvalue of $M_2$.\footnote{This approach is known as the spectral method.} The top eigenvector and eigenvalue of $M_2$ is $\bar{\mu} \defeq \frac{\mu}{\norm{\mu}_2}$ and $\norm{\mu}_2^2+1$, respectively. 
+
+In practice, however, we do not have infinite data. In that case, we need to estimate the second moment by an empirical average.
+\begin{align}
+    \hat{M}_2=\frac{1}{n}\sum_{i=1}^nx\sp{i} {x\sp{i}}^\top
+\end{align}
+We can then recover $\mu$ by evaluating the top egivenvector and eigenvalue of $\hat{M}_2$. However, we need this algorithm to be robust to errors, i.e., similar estimates, $\hat{M}_2$, of the second moment should yield similar estimates of $\mu$. Fortunately, most algorithms we might use for obtaining the top eigenvector and eigenvalue are robust, so we can limit our attention to the infinite data case. Having outlined the moment method approach to the mixture of two Gaussians problem, we study a generalization of this problem in the sequel.
+
+\subsec{General latent variable models}
+
+The general moment method for solving latent variable models is summarized by the following steps.
+\begin{enumerate}
+    \item Compute $M_1=\Exp[X]$, $M_2=\Exp[XX^\top]$, $M_3=\Exp[X\otimes X\otimes X],$ $M_4 = \cdots$. Note that $X\otimes X\otimes X$ is in $\mathbb{R}^{d\times d\times d}$ and $X\otimes X\otimes X_{ijk}=X_i\cdot X_j\cdot X_k$. For example, $M_{3,ijk}=\Exp[X_iX_jX_k]$.
+    \item Design as algorithm $A(M_1, M_2, M_3,\dots)$ that outputs $\theta$.
+    \item Show that $A$ is robust to errors in our moment estimates, i.e., we apply $A$ to $(\hat{M}_1,\hat{M}_2,\hat{M}_3,...)$ in reality.
+\end{enumerate}
+In the sequel, we instantiate this algorithm for mixtures of $k$ Gaussians ($k\geq 2$). 
+
+We assume $p_1 = \cdots = p_k =\frac{1}{k}$, i.e. $i \stackrel{\text{unif}} \sim[k]$, and $x\sim\mathcal{N}(\mu_i,I)$. Equivalently, 
+\begin{equation}
+    X\sim\frac{1}{k}\sum_{i=1}^k\mathcal{N}(\mu_i,I).
+\end{equation}
+In this example, we only describe steps (1) and (2) in the general algorithm described above. 
+
+We first evaluate the first and second moments. The first moment follows from
+\begin{align}
+    M_1 &=\Exp[X] \\
+    &=\sum_{i=1}^k\frac{1}{k}\Exp[X|i] \\
+    &=\frac{1}{k}\sum_{i=1}^k\mu_i,
+\end{align}
+and the second moment is computed as
+\begin{align}
+    M_2 &= \Exp[XX^\top] \\
+    &=\sum_{i=1}^k\frac{1}{k}\Exp[XX^\top|i] \\
+    &=\sum_{i=1}^k\frac{1}{k}(\mu_i\mu_i^\top+I) \\
+    &=\frac{1}{k}\sum_{i=1}^k\mu_i\mu_i^\top + I.
+\end{align}
+
+Can we recover $\mu=(\mu_1,...,\mu_k)$ from $\frac{1}{k}\sum_{i=1}^k\mu_i$ and $\frac{1}{k}\sum_{i=1}^k\mu_i\mu_i^\top$? Unfortunately, in most of the cases when $k\geq 3$, the first and second moments are not sufficent to recover $\mu$. 
+
+One reason is the so-called ``missing rotation information'' problem. Let 
+\begin{equation}
+    \cU =\begin{pmatrix} \vrule & & \vrule \\ \mu_1 & \cdots & \mu_k \\ \vrule & & \vrule \end{pmatrix} \in\mathbb{R}^{d\times k}
+\end{equation}
+denote the matrix we aim to recover. Then, consider some rotation matrix $R\in\mathbb{R}^{k\times k}$. We consider $\cU$ versus $\cU R$:
+\begin{align}
+    \frac{1}{k}\sum_{i=1}^k\mu_i\mu_i^\top &= \frac{1}{k}\cU \cU^\top \\
+    &=\frac{1}{k}(\cU R)(\cU R)^\top &\text{($RR^\top=I$)}
+\end{align}
+This result proves that the second moment is invariant to rotations. To prove a similar claim for the first moment, we also constrain our choice of $R$ such that
+\begin{align}
+    R\cdot\Vec{1}=\Vec{1}
+\end{align}
+Then,
+\begin{align}
+    \frac{1}{k}\sum_{i=1}^k\mu_i&=\frac{1}{k} \cU \cdot\Vec{1} \\
+    &=\frac{1}{k} \cU R\cdot\Vec{1}
+\end{align}
+Therefore, the first and second moments of $\cU$ and $\cU R$ are indistinguishable, and we must consider the third moment in order to identify $\cU$.
