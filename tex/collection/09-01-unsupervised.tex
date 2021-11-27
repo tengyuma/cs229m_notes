@@ -1,10 +1,12 @@
 \metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
 
-We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, this approach is not suitable for a comprehensive theoretical analysis. Most analysis of EM only applies to special cases and it is not clear whether any of the results can be extended to more realistic, complex setups. Our analysis of classical unsupervised elarning will instead focus on a particular application of the ``moment method.'' While the moment method is not as empirically effective as EM, the analysis is far more straightforward. 
+We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, so far we do not have a comprehensive theoretical analysis for the convergence of EM algorithms because fundamentally analyzing EM algorithms involves understanding non-convex optimization. Most analysis of EM only applies to special cases (e.g.,see ~\citet{xu2016global,daskalakis2016ten}) and it is not clear whether any of the results can be extended to more realistic, complex setups, without a fundamentally new technique for understanding nonconvex optimization. 
+
+Instead, we will analyze a family of algorithms which are broadly referred to as spectral methods or tensor methods, which are a particular application of the method of moments~\citep{pearson1894} with the algorithmic technique of tensor decomposition~\citep{anandkumar2015learning}. While the spectral method appears to be not as empirically sample-efficient as EM, it has provable guarantees and arguably is more reliable than EM given the provable guarantees. 
 
 After discussing the basics of classical unsupervised learning, we will move on to modern applications of deep learning such as self-training and contrastive learning. Here we note that so-called ``semi-supervised'' and domain adaptation approaches in deep learning can often be reduced to unsupervised learning problems, so in some sense, our analysis here is related to many fields in deep learning that are not always referred to as unsupervised. 
 
-\sec{Moment method}
+\sec{Method of Moments}
 
 We begin by formally describing the unsupervised learning problem. First, assume that we are studying a family of distributions $P_{\theta}$ parameterized by $\theta \in \Theta$, where $P_{\theta}$ can be described by a latent variable model. Then, given data $x^{(i)},...,x^{(n)}$ that is sampled i.i.d. from some distribution in $\{P_\theta\}_{\theta \in \Theta}$, our goal is to recover the true $\theta$. 
 
@@ -12,7 +14,7 @@ Perhaps the most well-studied latent variable model in machine learning is the m
 \begin{align}
 \theta = \l ( (\mu_1, \cdots, \mu_k), (p_1, \cdots, p_k)\r ),
 \end{align}
-where $\mu_i\in \R^d$ is the mean of the $i$-th component and $p$ is a vector of probabilities belonging to the $k$-simplex. Formally, for $\Delta(k) \defeq \{ p: \|p\|_1 = 1, p\geq 0, p\in\R^k\}$, 
+where $\mu_i\in \R^d$ is the mean of the $i$-th component and $p$ is a vector of probabilities belonging to the $k$-simplex, which represents the mixture coefficient for clusters. Formally, for $\Delta(k) \defeq \{ p: \|p\|_1 = 1, p\geq 0, p\in\R^k\}$, 
 \begin{align}
     p = (p_1, \cdots, p_k) \in \Delta(k).
 \end{align}
@@ -21,7 +23,9 @@ We then sample $x \sim P_\theta$ in a two-step approach:
     i &\sim \text{categorical}(p), \notag\\
     x &\sim \cN(\mu_i, I).
 \end{align}
-Here $i$ is called the latent variable since we only observe $x$. Other approaches to this problem include Hidden Markov Models, Independent Component Analysis, and Expectation-Maximization, but here we focus on the so-called Moment Method.
+Here $i$ is called the latent variable since we only observe $x$. 
+
+There are many other latent variables that could be defined via a similar generative process, such as Hidden Markov Models, Independent Component Analysis, which we will discuss later. %, and Expectation-Maximization, but here we focus on the so-called Moment Method.
 
 \subsec{Warm-up: mixture of two Gaussians}
 We first study a simple case: the mixture of two Gaussians.
