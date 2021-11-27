@@ -1,8 +1,8 @@
 \metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
 
-We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, so far we do not have a comprehensive theoretical analysis for the convergence of EM algorithms because fundamentally analyzing EM algorithms involves understanding non-convex optimization. Most analysis of EM only applies to special cases (e.g.,see ~\citet{xu2016global,daskalakis2016ten}) and it is not clear whether any of the results can be extended to more realistic, complex setups, without a fundamentally new technique for understanding nonconvex optimization. 
+We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, so far we do not have a comprehensive theoretical analysis for the convergence of EM algorithms because fundamentally analyzing EM algorithms involves understanding non-convex optimization. Most analysis of EM only applies to special cases (e.g., see ~\citet{xu2016global,daskalakis2016ten}) and it is not clear whether any of the results can be extended to more realistic, complex setups, without a fundamentally new technique for understanding nonconvex optimization. 
 
-Instead, we will analyze a family of algorithms which are broadly referred to as spectral methods or tensor methods, which are a particular application of the method of moments~\citep{pearson1894} with the algorithmic technique of tensor decomposition~\citep{anandkumar2015learning}. While the spectral method appears to be not as empirically sample-efficient as EM, it has provable guarantees and arguably is more reliable than EM given the provable guarantees. 
+Instead, we will analyze a family of algorithms which are broadly referred to as spectral methods or tensor methods, which are a particular application of the method of moments~\citep{pearson1894} with the algorithmic technique of tensor decomposition~\citep{anandkumar2015learning}. While the spectral method appears to be not as empirically sample-efficient as EM, it has provable guarantees and arguably is more reliable than EM given the provable guarantees.
 
 After discussing the basics of classical unsupervised learning, we will move on to modern applications of deep learning such as self-training and contrastive learning. Here we note that so-called ``semi-supervised'' and domain adaptation approaches in deep learning can often be reduced to unsupervised learning problems, so in some sense, our analysis here is related to many fields in deep learning that are not always referred to as unsupervised. 
 
@@ -23,13 +23,13 @@ We then sample $x \sim P_\theta$ in a two-step approach:
     i &\sim \text{categorical}(p), \notag\\
     x &\sim \cN(\mu_i, I).
 \end{align}
-Here $i$ is called the latent variable since we only observe $x$. 
+Here $i$ is called the latent variable since we only observe $x$. Here we assume the covariances of the Gaussians to be identity, but they can also be parameters that are to be learned.
 
 There are many other latent variables that could be defined via a similar generative process, such as Hidden Markov Models, Independent Component Analysis, which we will discuss later. %, and Expectation-Maximization, but here we focus on the so-called Moment Method.
 
 \subsec{Warm-up: mixture of two Gaussians}
 We first study a simple case: the mixture of two Gaussians.
-In this case, $k=2$, and we assume $p_1=p_2=\frac{1}{2}$. Without loss of generality, we can also assume $\mu_1+\mu_2=0$. To simplify our notation, let $\mu_1=\mu$ and $\mu_2=-\mu$. These assumptions yield the following model for $X$: 
+In this case, $k=2$, and we assume $p_1=p_2=\frac{1}{2}$. For simplicity, we also assume $\mu_1=-\mu_2$, that is, the means of the two Gaussians are symmetric around the origin. To simplify our notation, let $\mu_1=\mu$ and $\mu_2=-\mu$. These assumptions yield the following model for $X$: \tnote{Please replace all the $X$ in the section below to $x$. There is no way for us to use capital letters only for random variables so it's better to just completely break off from that convention. Also letter $x$ is a more consistent with other parts of the notes} 
 \begin{equation}
     X \sim \frac{1}{2}\mathcal{N}(\mu,I) + \frac{1}{2}\mathcal{N}(-\mu,I).
 \end{equation}
@@ -65,23 +65,23 @@ Since the second moment provides information about $\mu$, we can complete the tw
 
 If we had access to infinite data, then we can compute the exact second moment $M_2=\mu\mu^\top+I$. Then, we can recover $\mu$ by evaluating the top eigenvector and eigenvalue of $M_2$.\footnote{This approach is known as the spectral method.} The top eigenvector and eigenvalue of $M_2$ is $\bar{\mu} \defeq \frac{\mu}{\norm{\mu}_2}$ and $\norm{\mu}_2^2+1$, respectively. 
 
-In practice, however, we do not have infinite data. In that case, we need to estimate the second moment by an empirical average.
+In practice, however, we do not have infinite data. In that case, we need to estimate the second moment by an empirical average. \tnote{let's use $\widehat{M}_2$}
 \begin{align}
     \hat{M}_2=\frac{1}{n}\sum_{i=1}^nx\sp{i} {x\sp{i}}^\top
 \end{align}
 We can then recover $\mu$ by evaluating the top egivenvector and eigenvalue of $\hat{M}_2$. However, we need this algorithm to be robust to errors, i.e., similar estimates, $\hat{M}_2$, of the second moment should yield similar estimates of $\mu$. Fortunately, most algorithms we might use for obtaining the top eigenvector and eigenvalue are robust, so we can limit our attention to the infinite data case. Having outlined the moment method approach to the mixture of two Gaussians problem, we study a generalization of this problem in the sequel.
 
-\subsec{General latent variable models}
+\subsec{Mixture of Gaussians with more components}
 
 The general moment method for solving latent variable models is summarized by the following steps.
 \begin{enumerate}
-    \item Compute $M_1=\Exp[X]$, $M_2=\Exp[XX^\top]$, $M_3=\Exp[X\otimes X\otimes X],$ $M_4 = \cdots$. Note that $X\otimes X\otimes X$ is in $\mathbb{R}^{d\times d\times d}$ and $X\otimes X\otimes X_{ijk}=X_i\cdot X_j\cdot X_k$. For example, $M_{3,ijk}=\Exp[X_iX_jX_k]$.
+    \item Compute $M_1=\Exp[X]$, $M_2=\Exp[XX^\top]$, $M_3=\Exp[X\otimes X\otimes X],$ $M_4 = \cdots$. Note that $X\otimes X\otimes X$ is in $\mathbb{R}^{d\times d\times d}$ and $(X\otimes X\otimes X)_{ijk}=X_i\cdot X_j\cdot X_k$. For example, $M_{3,ijk}=\Exp[X_iX_jX_k]$.
     \item Design as algorithm $A(M_1, M_2, M_3,\dots)$ that outputs $\theta$.
     \item Show that $A$ is robust to errors in our moment estimates, i.e., we apply $A$ to $(\hat{M}_1,\hat{M}_2,\hat{M}_3,...)$ in reality.
 \end{enumerate}
-In the sequel, we instantiate this algorithm for mixtures of $k$ Gaussians ($k\geq 2$). 
+In the sequel, we instantiate this paradigm for mixtures of $k$ Gaussians ($k\geq 3$). 
 
-We assume $p_1 = \cdots = p_k =\frac{1}{k}$, i.e. $i \stackrel{\text{unif}} \sim[k]$, and $x\sim\mathcal{N}(\mu_i,I)$. Equivalently, 
+For the simplicity of demonstrating the idea, we assume $p_1 = \cdots = p_k =\frac{1}{k}$, i.e. $i \stackrel{\text{unif}} \sim[k]$, and $x\sim\mathcal{N}(\mu_i,I)$. Equivalently, 
 \begin{equation}
     X\sim\frac{1}{k}\sum_{i=1}^k\mathcal{N}(\mu_i,I).
 \end{equation}
@@ -105,7 +105,7 @@ Can we recover $\mu=(\mu_1,...,\mu_k)$ from $\frac{1}{k}\sum_{i=1}^k\mu_i$ and $
 
 One reason is the so-called ``missing rotation information'' problem. Let 
 \begin{equation}
-    \cU =\begin{pmatrix} \vrule & & \vrule \\ \mu_1 & \cdots & \mu_k \\ \vrule & & \vrule \end{pmatrix} \in\mathbb{R}^{d\times k}
+    \cU =\begin{bmatrix} \vrule & & \vrule \\ \mu_1 & \cdots & \mu_k \\ \vrule & & \vrule \end{bmatrix} \in\mathbb{R}^{d\times k}
 \end{equation}
 denote the matrix we aim to recover. Then, consider some rotation matrix $R\in\mathbb{R}^{k\times k}$. We consider $\cU$ versus $\cU R$:
 \begin{align}
@@ -113,6 +113,7 @@ denote the matrix we aim to recover. Then, consider some rotation matrix $R\in\m
     &=\frac{1}{k}(\cU R)(\cU R)^\top &\text{($RR^\top=I$)}
 \end{align}
 This result proves that the second moment is invariant to rotations. To prove a similar claim for the first moment, we also constrain our choice of $R$ such that
+\tnote{change $\mathcal{U}$ to $U$. }
 \begin{align}
     R\cdot\Vec{1}=\Vec{1}
 \end{align}
