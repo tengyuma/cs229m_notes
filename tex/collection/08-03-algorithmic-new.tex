@@ -2,7 +2,7 @@
 
 \sec{From small to large initialization: a precise characterization}
 
-We have previously discussed how certain initializations of gradient descent converge to minimum-norm solutions. In the sequel, we characterize the effect of initialization more precisely---we will show that in a variant of the settings in Section~\ref{sec:small_init_nonlinear}, we can precisely compute the corresponding regularizer induced by any initialization. We will see that when the initialization is small, we obtain the bias towards minimum norm solution (in the parameter space used in optimization), whereas when the initialization is large, we are in the NTK regime (Section~\ref{sec:ntk_approach}) where the implicit bias is towards the min norm solution under the NTK kernel. 
+We have previously discussed how certain initializations of gradient descent converge to minimum-norm solutions. In the sequel, we characterize the effect of initialization more precisely---we will show that in a variant of the settings in Section~\ref{sec:small_init_nonlinear}, we can precisely compute the corresponding regularizer induced by any initialization. We will see that when the initialization is small, we obtain the bias towards minimum norm solution (in the parameter space used in optimization), whereas when the initialization is large, we are in the NTK regime (Section~\ref{sec:ntk_approach}) where the implicit bias is towards the min norm solution under the NTK kernel. The materials in this subsection are simplifications of results in the recent paper~\citet{woodworth2020kernel}.
 
 \subsection{Preparation: gradient flow}
 To simplify the analysis, we will consider the concept of gradient flow, i.e. gradient descent with an infinitesimal learning rate.  This allows us omit the second order effect from the learning rate and simplify the analysis. 
@@ -249,7 +249,7 @@ Thus, $\theta_\alpha$ satisfies both KKT conditions. Even further, since our opt
 \end{proof}
 
 \sec{Implicit regularization towards max-margin solutions in classification}
-We now switch our focus to classification problems. We consider linear models (though these results also apply to nonlinear models with a weaker version of the conclusion). We assume that our data is separable and will prove that gradient descent converges to the max-margin solution. This result holds for any initialization and does not require any additional regularization; we only require the use of gradient descent and the standard logistic loss function.
+We now switch our focus to classification problems. We consider linear models (though these results also apply to nonlinear models with a weaker version of the conclusion). We assume that our data is separable and will prove that gradient descent converges to the max-margin solution. This result holds for any initialization and does not require any additional regularization; we only require the use of gradient descent and the standard logistic loss function. The results in this subsection are originally given by~\citet{soudry2018implicit}, and our exposition heavily depends on those in~\cite{ji2018risk,mjt_dlt}. 
 
 Assume we have data $\{(x\sp{i}, y\sp{i}) \}_{i=1}^n $, where $x\sp{i} \in \R^d$ and $y\sp{i} \in \{\pm 1 \}$. We consider the linear model $ h_w(x) = w^\top x$ and the cross entropy loss function $\hatL (w) = \sum_{i=1}^n \ell\left(y\sp{i}, h_w\l (x\sp{i} \r )\right)$, where $ \ell(t) = \log(1 + \exp(-t))$ is the logistic loss.
 
@@ -407,9 +407,10 @@ In the sequel, we will move forward to the implicit regularization effect of SGD
 \begin{enumerate}
 \item On the one dimensional quadratic function, the iterate can be disentangled into a contraction part and a stochastic part, the latter of which is characterized by the Ornstein–Uhlenbeck (OU) process. The noise makes the iterate bounce around the global minimum.
 \item On the multi-dimensional quadratic function, the iterate can be disentangled into multiple separate 1-D OU processes. The noise makes the iterate bounce around the global minimum, while the fluctuation is closely related to the shape of the noise.
-\item On non-quadratic functions, SGD with \textit{label noise} on empirical loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$, which is mainly due to the accumulation of a third order effect.
+\item On non-quadratic functions, SGD with \textit{label noise} on empirical loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2\hat{L}(\theta))$, which is mainly due to the accumulation of a third order effect. 
 \end{enumerate}
  
+Given the score of the lectures,  we will only be able to discuss some of these results informally and heuristically. For example, we refer to the paper~\citet{damian2021label} for the a concrete, formal version result for the third bullet. 
 
 For the remainder of this section, let $g(x)$ denote the general loss function. Then, the formulation of SGD is: for $t$ in $[0,T]$,
 \begin{align}

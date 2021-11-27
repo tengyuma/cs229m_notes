@@ -11,6 +11,7 @@ The focus of this chapter will be to illustrate algorithmic regularization in si
 \sec{Implicit regularization effect of zero initialization in overparametrized linear regression}\label{lec13:sec:olr}
 We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). 
 \tnote{replace all the $y$ in this subsection by $\vec{y}$ (this does not apply to $y\sp{i}$}
+\tnote{could you help replace $y$ by $\vec{y}$}
 Let $X:= \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
 
 %\subsec{Analysis of algorithmic regularization}
@@ -70,9 +71,10 @@ Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ 
 \end{proof}
 
 \sec{Implicit regularization of small initialization in nonlinear models} \label{sec:small_init_nonlinear}
-We give an example of implicit regularization in a non-convex version of the overparametrized linear regression task considered in the previous section.
+We give another example of implicit regularization effect of small initialization in a non-convex version of the overparametrized linear regression task considered in the previous section. The results in this subsection are largely simplifications of the paper~\citet{li2017algorithmic} which studies over-parameterized compressed sensing and two-layer neural nets with quadratic activation. 
 
-Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, our goal is to find a weight vector that minimizes our empirical loss function
+%Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, 
+\tnote{the setup paragraph needs to be re-organized a bit---perhaps stay the data model, and then the loss, etc}Our goal is to find a weight vector that minimizes our empirical loss function
 \begin{equation}
 \hatL(\beta) := \frac{1}{4n}\sum_{i=1}^n \left(y\sp{i} - f_\beta(x\sp{i})\right)^2, \label{lec13:eqn:hadamard_model_1}
 \end{equation}
@@ -185,7 +187,7 @@ The RIP condition also gives us the following lemma which will be needed for the
     \end{align}
 \end{corollary}
 
-\subsec{Warm up: Gradient descent on population loss}
+\subsec{Warm-up for analysis: Gradient descent on population loss}
 
 The main intuition for proving Theorem~\ref{lec13:thm:non-linear-main} is to leverage the uniform convergence when $\beta$ belongs to the set $S_r$ (see Figure~\ref{lec13:fig:uc-sr}). Note that the initialization $\beta^0$ is not exactly $r$-sparse, but taking $\alpha$ to be sufficiently small, $\beta^0$ is approximately $0$-sparse. The proof is decomposed into the following steps:
 
