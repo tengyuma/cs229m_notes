@@ -25,7 +25,7 @@ The big question that we have in mind is the following: many existing optimizers
 \end{figure}
 Before diving into details, we first highlight some observations that will be important to keep in mind when discussing optimization in deep learning. Suppose $g(\theta)$ is the loss function. Recall that the \textit{gradient descent (GD)} algorithm would do the following:
 \begin{enumerate}
-    \item $\theta_0$ := initialization
+    \item $\theta_0 \defeq$ initialization
     \item $\theta_{t + 1} = \theta_t - \eta\nabla g(\theta_t)$, where $\eta$ is the step size.
 \end{enumerate}
 Here are some observations to :

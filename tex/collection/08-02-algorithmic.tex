@@ -54,7 +54,7 @@ To simplify the analysis, we can rearrange some of the terms that are part of th
     &= \underbrace{X \big(r_{t}^{2} - 1\big) \cdot \big(\beta^\star \odot \beta^\star\big)}_{\text{part of } u_t} + \underbrace{X \big(\zeta_{t} \odot \zeta_{t}\big)}_{v_t}.
 \end{align}
 
-Now, define $u_{t} := (r_{t}^{2} - 1) (\beta^\star \odot \beta^\star) - X (r_{t}^{2} - 1) (\beta_{*} \odot \beta_{*})$ and $v_{t} := X \big(\beta_{t} \odot \beta_{t}\big)$. Then we can rewrite the gradient as
+Now, define $u_{t} \defeq (r_{t}^{2} - 1) (\beta^\star \odot \beta^\star) - X (r_{t}^{2} - 1) (\beta_{*} \odot \beta_{*})$ and $v_{t} \defeq X \big(\beta_{t} \odot \beta_{t}\big)$. Then we can rewrite the gradient as
 
 \begin{equation}
     \nabla \empLt = m_{t} \odot \beta^{t} = [(r_{t}^{2} -1) \beta^\star \odot \beta^\star - u_{t} + v_{t}] \odot \beta_{t}. \label{lec14:eqn:emp-gradient}

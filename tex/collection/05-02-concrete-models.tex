@@ -260,7 +260,7 @@ R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 \end{remark}
 
 \begin{proof}[Proof of Theorem~\ref{lec8:thm:thm-improved-nn-rc}]
-Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j := u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
+Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j \defeq u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
 \allowdisplaybreaks
 \al{
 R_S(\cH) &= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
@@ -331,7 +331,7 @@ At first glance, the above seems orthogonal to techniques used in practice. Howe
 \text{minimize} & \qquad C_{\ell_2}(\theta) = \frac{1}{2}\sum_{j=1}^m |w_j|^2 + \frac{1}{2}\sum_{j=1}^m \norm{u_j}_2^2 \nonumber \tag{I*} \label{lec8:eqn:opt1star} \\ 
 \text{subject to} & \qquad \gammamin(\theta)\ge 1. \nonumber
 }
-This is a simple consequence of the positive homogeneity of $\phi$. For any scaling factor $\lambda=(\lambda_1, \dots, \lambda_m)\in \R_+^m$, the rescaled neural network $\theta_\lambda := \{(\lambda_i w_i, u_i/\lambda_i)\}$ has the same functionality as the original neural network $\theta = \{w_i, u_i \}$ (i.e. it achieves the same $\gammamin$). Thus, 
+This is a simple consequence of the positive homogeneity of $\phi$. For any scaling factor $\lambda=(\lambda_1, \dots, \lambda_m)\in \R_+^m$, the rescaled neural network $\theta_\lambda \defeq \{(\lambda_i w_i, u_i/\lambda_i)\}$ has the same functionality as the original neural network $\theta = \{w_i, u_i \}$ (i.e. it achieves the same $\gammamin$). Thus, 
 \al{
 \min_{\theta} C_{\ell_2}(\theta) &= \min_{\theta} \min_{\lambda} \rbr{ \frac{1}{2}\sum_{j=1}^m \lambda_j^2 |w_j|^2 + \frac{1}{2}\sum_{j=1}^m \lambda_j^{-2}\norm{u_j}_2^2 }\\
 &= \min_{\theta}  \sum_{j=1}^m |w_j|\cdot \norm{u_j}_2 \\
@@ -374,7 +374,7 @@ is well-defined. The next interesting fact is that in this $m \to \infty$ limit,
 
 Since a collection of data points with binary class labels may not be a priori separable, a \textit{kernel model} first transforms an input $x$ to $\varphi(x)$ where $\varphi: \mathbb{R}^d \to \mathcal{G}$ is known as the \textit{feature map}. The model then seeks a separating hyperplane in this new (extremely high-dimensional) feature space $\mathcal{G}$, parameterized by a vector $\mu$ pointing from the origin to the hyperplane. The prediction of the model on an input $x$ is then a decision score that quantifies $\varphi(x)$'s displacement with respect to the hyperplane:
 \begin{equation}
-g_{\mu, \varphi}(x) := \l\langle \mu, \varphi(x) \r\rangle.
+g_{\mu, \varphi}(x) \defeq \l\langle \mu, \varphi(x) \r\rangle.
 \end{equation}
 Motivated by margin theory, it is desirable to seek the maximum-margin hyperplane under a constraint on $\mu$ to guarantee the generalizability of the model. In particular, a kernel model with an $\ell_p$-constraint seeks to solve the following program:
 \al{
@@ -387,7 +387,7 @@ The case of $p=1$ is particularly useful in practice as $\ell_1$-regularization 
 
 \begin{theorem}\label{lec8:thm:thm8.5}
 Define the feature map $\phirelu: \mathbb{R}^d \to \mathcal{G}$ such that $x$ is mapped to $\phi(u^\top x)$ for all vectors $u$ on the $d-1$-dimensional sphere $\mathcal{S}^{d-1}$. Informally, 
-$$\phirelu(x) := \begin{bmatrix} \vdots \\ \phi(u^\top x) \\ \vdots \end{bmatrix}_{u\in S^{d-1}}$$
+$$\phirelu(x) \defeq \begin{bmatrix} \vdots \\ \phi(u^\top x) \\ \vdots \end{bmatrix}_{u\in S^{d-1}}$$
 is an ``infinite-dimensional vector'' that contains an entry $\phi(u^\top x)$ for each vector $u \in \mathcal{S}^{d-1}$, and we let $\phirelu(x)[u]$ denote the ``$u$''-th entry of this vector. Noting that $\mathcal{G}$ is the space of functions which can be indexed by $u \in S^{d-1}$, the inner product structure on $\mathcal{G}$ is defined by $\langle f, g \rangle = \int_{S^{d-1}} f[u]g[u] du$.
 
 Under this set-up, we have
@@ -403,7 +403,7 @@ We will only prove the $\gamma_{\infty}^* \leq \gamma_{\ell_1}^*$ direction. (Th
 
 Suppose $\gamma_\infty^*$ is obtained by network weights $(w_1,w_2, \cdots), (u_1, u_2, \cdots)$ where $w_i\in \R, u_i\in \R^d$ (there is a slight subtlety here to be rectified later). Define renormalized versions of $\{w_i\}$ and $\{u_i\}$:
 \begin{equation}
-\widetilde w_i := w_i\cdot \norm{u_i}_2, \qquad \overline u_i := \frac {u_i} {\norm{u_i}_2}.   
+\widetilde w_i \defeq w_i\cdot \norm{u_i}_2, \qquad \overline u_i \defeq \frac {u_i} {\norm{u_i}_2}.   
 \end{equation}
 Note that $\{(\widetilde w_i, \overline u_i)\}$ has the same functionality (and also the same complexity measure $C(\theta)$, margin, etc.) as that of $\{(w_i,u_i)\}$, but now $\overline u_i$ has unit $\ell_2$-norm (i.e. $\bar{u}_i \in \mathcal{S}^{d-1}$). Thus, $\phi(\overline u_i ^\top x)$ can be treated as a feature in $\cG$ and we can construct an equivalent $\ell_1$-SVM (denoted by $\mu$) such that $\widetilde w_i$ is the coefficient of $\mu$ associated with that feature. Since $\widetilde w_i$ must only be ``turned on' at $\overline u_i $, we have 
 \al{

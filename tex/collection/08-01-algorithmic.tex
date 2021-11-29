@@ -10,41 +10,40 @@ The focus of this chapter will be to illustrate algorithmic regularization in si
 
 \sec{Implicit regularization effect of zero initialization in overparametrized linear regression}\label{lec13:sec:olr}
 We prove that gradient descent initialized at the origin converges to the minimum norm interpolating solution (assuming such a solution exists). 
-\tnote{replace all the $y$ in this subsection by $\vec{y}$ (this does not apply to $y\sp{i}$}
-\tnote{could you help replace $y$ by $\vec{y}$}
-Let $X:= \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $y:= \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) := \frac{1}{2}||y - X\beta||_2^2$.
+
+Let $X \defeq \l[x\sp{1},...,x\sp{n} \r]^\top \in \bbR^{n \times d}$ denote our data matrix and $\vec{y} \defeq \l[y\sp{1},...,y\sp{n} \r]^\top \in \bbR^n$ denote our label vector, where $n < d$. Assume $X$ is full rank. Our goal is to find a weight vector $\beta$ that minimizes our empirical loss function $\hatL (\beta) \defeq \frac{1}{2}\|\vec{y} - X\beta\|_2^2$.
 
 %\subsec{Analysis of algorithmic regularization}
 As we are in the overparametrized setting with $n < d$ and $X$ full rank, there exist infinitely many global minimizers that interpolate the data and hence achieve zero loss. In fact, the following lemma shows that the set of global minimizers forms a subspace.
 
 \begin{lemma}\label{lec13:lem:soln-subspace}
-Let $X^+$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^\top$ is invertible and so we have $X^+ = X^\top (X X^\top)^{-1}$. Note that $X X^+ X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^+ y + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
+Let $X^+$ denote the pseudoinverse\footnote{Since $X$ is full rank, $XX^\top$ is invertible and so we have $X^+ = X^\top (X X^\top)^{-1}$. Note that $X X^+ X = X$.} of $X$. Then $\beta$ is a global minimizer if and only if $\beta = X^+ \vec{y} + \zeta$ for some $\zeta$ such that $\zeta \perp x_1,...,x_n$.
 \end{lemma}
 
 \begin{proof}
 For any $\beta \in \R^d$, we can decompose it as $\beta = X^+ + \zeta$ for some $\zeta \in \R^d$. Since
 \begin{equation}
-X\beta = X (X^+ y + \zeta) = y + X\zeta,
+X\beta = X (X^+ \vec{y} + \zeta) = \vec{y} + X\zeta,
 \end{equation}
 
 $\beta$ is a global minimizer if and only if $X\zeta = 0$, which happens if and only if $\zeta \perp x_1,...,x_n$.
 
 \end{proof}
 
-From Lemma~\ref{lec13:lem:soln-subspace}, we can derive an explicit formula for the minimum norm interpolant $\beta^\star := \arg \min_{\beta : \hatL(\beta) = 0} ||\beta||_2$.
+From Lemma~\ref{lec13:lem:soln-subspace}, we can derive an explicit formula for the minimum norm interpolant $\beta^\star \defeq \argmin_{\beta : \hatL(\beta) = 0} \|\beta\|_2$.
 \tnotelong{add some basics about SVD }
 \begin{corollary}
-$\beta^\star = X^+ y$.
+$\beta^\star = X^+ \vec{y}$.
 \end{corollary}
 
 \begin{proof}
-Take any $\beta$ such that $\hatL(\beta) = 0$, and write $\beta = X^+ y + \zeta$. Then from the definition of $X^+$ and the fact that $X \zeta = 0$ (see the proof of Lemma~\ref{lec13:lem:soln-subspace}), we have 
+Take any $\beta$ such that $\hatL(\beta) = 0$, and write $\beta = X^+ \vec{y} + \zeta$. Then from the definition of $X^+$ and the fact that $X \zeta = 0$ (see the proof of Lemma~\ref{lec13:lem:soln-subspace}), we have 
 \begin{align}
-    ||\beta||_2^2 &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle X^+ y, \zeta \rangle \\
-    &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle X^\top(X X^\top)^{-1} y, \zeta \rangle \\
-    &= ||X^+ y||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^\top)^{-1} y, X \zeta \rangle \\
-    &= ||X^+ y||_2^2 + ||\zeta||_2^2 &\text{(because $X\zeta = 0$)} \\
-    &\geq ||X^+ y||_2^2,
+    ||\beta||_2^2 &= ||X^+ \vec{y}||_2^2 + ||\zeta||_2^2 + 2 \langle X^+ \vec{y}, \zeta \rangle \\
+    &= ||X^+ \vec{y}||_2^2 + ||\zeta||_2^2 + 2 \langle X^\top(X X^\top)^{-1} \vec{y}, \zeta \rangle \\
+    &= ||X^+ \vec{y}||_2^2 + ||\zeta||_2^2 + 2 \langle (X X^\top)^{-1} y, X \zeta \rangle \\
+    &= ||X^+ \vec{y}||_2^2 + ||\zeta||_2^2 &\text{(because $X\zeta = 0$)} \\
+    &\geq ||X^+ \vec{y}||_2^2,
 \end{align}
 with equality if and only if $\zeta = 0$.
 
@@ -65,22 +64,22 @@ The main idea of the proof is that the iterates of gradient descent always lie i
 \end{figure}
 
 \begin{proof}
-We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ for all $t$. For the induction base case, note that $\beta^0 = 0 \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Now suppose $\beta^{t-1} \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Recall that $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$. Since left-multiplying any vector by $X^\top$ amounts to taking a linear combination of the rows of $X$, it follows that $\eta \nabla \hatL(\beta^{t-1}) = \eta X^\top(X\beta^{t-1} - y) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$, and so $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. This proves the induction step.
+We first show via induction that $\beta^t \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ for all $t$. For the induction base case, note that $\beta^0 = 0 \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Now suppose $\beta^{t-1} \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. Recall that $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1})$. Since left-multiplying any vector by $X^\top$ amounts to taking a linear combination of the rows of $X$, it follows that $\eta \nabla \hatL(\beta^{t-1}) = \eta X^\top(X\beta^{t-1} - \vec{y}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$, and so $\beta^t = \beta^{t-1} - \eta \nabla \hatL(\beta^{t-1}) \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$. This proves the induction step.
 
-Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - y = X X^\top v - y$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} y = X^+ y = \hat \beta^\star$.
+Next, we show that $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ and $\hatL(\hat \beta) = 0$ implies $\hat \beta = \beta^\star$. By definition, $\hat \beta \in \text{span}\l\{ x\sp{1}, \dots,x\sp{n} \r\}$ implies $\hat \beta = X^\top v$ for some $v \in \bbR^n$. Since $\hatL(\hat \beta) = 0$, we have $0 = X\hat \beta - \vec{y} = X X^\top v - \vec{y}$. This implies $v = (X X^\top)^{-1}y$, and so $\hat \beta = X^\top v = X^\top (X X^\top)^{-1} \vec{y} = X^+ \vec{y} = \hat \beta^\star$.
 \end{proof}
 
 \sec{Implicit regularization of small initialization in nonlinear models} \label{sec:small_init_nonlinear}
 We give another example of implicit regularization effect of small initialization in a non-convex version of the overparametrized linear regression task considered in the previous section. The results in this subsection are largely simplifications of the paper~\citet{li2017algorithmic} which studies over-parameterized compressed sensing and two-layer neural nets with quadratic activation. 
 
-%Take $X$ and $y$ as defined in Section~\ref{lec13:sec:olr}. This time, 
-\tnote{the setup paragraph needs to be re-organized a bit---perhaps stay the data model, and then the loss, etc}Our goal is to find a weight vector that minimizes our empirical loss function
-\begin{equation}
-\hatL(\beta) := \frac{1}{4n}\sum_{i=1}^n \left(y\sp{i} - f_\beta(x\sp{i})\right)^2, \label{lec13:eqn:hadamard_model_1}
-\end{equation}
-where $f_\beta(x):= \langle \beta \odot \beta, x\rangle$. (The operation $\odot$ denotes the Hadamard product: for $u,v \in \bbR^d$, $u \odot v \in \bbR^d$ is defined by $(u \odot v)_i := u_i v_i$ for $i = 1, \dots, d$.)
-
 We assume $x\sp{1},...,x\sp{n} \iid \cN(0,I_{d \times d})$ and $y\sp{i} = f_{\beta^\star}(x\sp{i})$, where the ground truth vector $\beta^\star$ is $r$-sparse (i.e. $\|\beta^\star\|_0 = r$). For simplicity, we assume $\beta_i^\star = \mathbf{1} \{i \in S\}$ for some $S \subset [d]$ such that $|S| = r$. We again analyze the overparametrized setting, where this time $n \ll d$ but also $n \geq \widetilde \Omega(r^2)$.
+
+Our goal is to find a weight vector that minimizes our empirical loss function
+\begin{equation}
+\hatL(\beta) \defeq \frac{1}{4n}\sum_{i=1}^n \left(y\sp{i} - f_\beta(x\sp{i})\right)^2, \label{lec13:eqn:hadamard_model_1}
+\end{equation}
+where $f_\beta(x) \defeq \langle \beta \odot \beta, x\rangle$. The operation $\odot$ denotes the Hadamard product: for $u,v \in \bbR^d$, $u \odot v \in \bbR^d$ is defined by $(u \odot v)_i \defeq u_i v_i$ for $i = 1, \dots, d$.
+
 
 \subsec{Main results of algorithmic regularization}
 Note that while $f_\beta$ is still linear over $x$, our loss is no longer convex over $\beta$. (To see this, suppose $\beta \neq 0$ is a global minimizer. Then we have $\hatL(0) > \hatL(\beta) = \hatL(-\beta)$.) Thus, the effect of algorithmic regularization induced by gradient descent will be much different from the overparametrized linear regression setting. 
