@@ -394,3 +394,101 @@ We then hope that $G - \Exp[G]$ is a small perturbation, so that the top eigenve
 \begin{equation}
     \norm{G - \Exp[G]}_{\text{op}} \ll \l \|\frac{p - q}{2} \cdot uu^\top\r \|_{\text{op}}.
 \end{equation}
+
+\metadata{20}{Miria Feng and Christopher Wolff}{Dec 1st, 2021}
+
+We will start by proving the following Lemma.
+\begin{lemma}
+With high probability,
+\begin{align}
+    \norm{ G - \Exp[G] }_{\mathrm{op}} \leq O (\sqrt{n \log n} ) \;.
+\end{align}
+\end{lemma}
+
+Note that this concentration inequality is different from the ones we have seen in the course so far because both $G$ and $\Exp[G]$ are matrices, not scalars. Our goal will be to turn the quantity on the LHS into something that we are familiar with.
+
+\begin{proof}
+The key idea is that we can use uniform convergence, after noting that
+\begin{align}
+    \norm{ G - \Exp[G] }_{\mathrm{op}} &= \max_{\norm{ v }_2 = 1} \left\vert v^\top (G - \Exp[G]) v \right\vert \\
+    &= \max_{\norm{ v }_2 = 1} \left\vert v^\top G v - v^\top \Exp[G] v \right\vert \\
+    &= \max_{\norm{ v }_2 = 1} \left\vert \sum_{i, j \in [n]} v_i v_j G_{ij} - \Exp \left[ \sum_{i, j \in [n]} v_i v_j G_{ij} \right] \right\vert \;.
+\end{align}
+Now, the quantity inside the $\max$ is the difference between the sum of independent random variables and their expectation, which we are familiar with. We can use brute force discretization to deal with the $\max$. First, note that for a fixed $v$ with $\norm{ v }_2 = 1$, we can use Hoeffding's inequality to find that
+\begin{align}
+    \Pr \left( \left\vert \sum_{i, j \in [n]} v_i v_j G_{ij} - \Exp \left[ \sum_{i, j \in [n]} v_i v_j G_{ij} \right] \right\vert \geq \epsilon \right) \leq \frac{\epsilon^2}{2} \;.
+\end{align}
+Then, we choose $\epsilon = \cO(\sqrt{n \log n})$, take a discretization of the unit ball with granularity $1/n^{\cO(1)}$, and take a union bound over this discretized set to achieve the desired result.
+\end{proof}
+
+\begin{remark}
+Comparing this bound to $\frac{p - q}{2} \cdot n$, we can deduce that if $p - q \gg \frac{1}{\sqrt{n}}$, then we can recover the vector $u$ approximately.
+\end{remark}
+
+\subsec{Clustering the worst-case graph}
+
+Given a graph $G(V, E)$, we define its {\it conductance}
+\begin{align}
+    \phi(S) &\defeq \frac{\vert \operatorname{E}(S, \bar{S}) \vert}{\operatorname{Vol}(S)}
+\end{align}
+where $\operatorname{E}(S, \bar{S})$ is the total number of edges between $S$ and $\bar{S}$, and $\operatorname{Vol}(S)$ is the total number of edges connecting to $S$. To be precise,
+\begin{align}
+    \operatorname{E}(S, \bar{S}) &= \sum_{i \in S, j \in \bar{S}} G_{ij} \\
+    \operatorname{Vol}(S) &= \sum_{i \in S, j \in [n]} G_{ij} \;.
+\end{align}
+Intuitively, conductance captures how separated $S$ and $\bar{S}$ are. Clearly, $\phi(S) \leq 1$. We will insist that we only talk about $S$ such that $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$.
+
+Next, we define $\phi(G)$ to be the {\it sparsest cut} of $G$ if
+\begin{align}
+    \phi(G) &= \min_{S: \operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2} \phi(S) \;.
+\end{align}
+We might wonder why we need to normalize by $\operatorname{Vol}(S)$ in the definition of conductance. The reason for this is that $\operatorname{E}(S, \bar{S})$ is typically minimized when $S$ is small. Thus, the sparsest cut would not be very meaningful.
+
+Our goal is to find an approximate sparsest cut $\hat{S}$ such that $\phi(\hat{S}) \approx \phi(G)$. We will use eigendecomposition to approach this problem. Let $d_i \coloneqq \operatorname{Vol}(\{i\})$ be the degree of node $i$, and let $D$ be the diagonal matrix that contains the degrees $d_i$ as entries. Furthermore, let $\bar{A} \coloneqq D^{-\frac{1}{2}} G D^{\frac{1}{2}}$ be the normalized adjacency matrix. This is equivalent to normalizing each element $G_{ij}$ of the adjacency matrix by $\frac{1}{\sqrt{d_i d_j}}$.
+
+In most cases, it suffices to think of $G$ as a regular graph, i.e. all of its degrees are the same. Assuming $G$ is a $\kappa$-regular graph, for which $d_i = \kappa$, then this normalization simply scales $G$ by $\frac{1}{\kappa}$. Let $L = I - \bar{A}$ be the Laplacian matrix. Note that any eigenvector of $L$ is also an eigenvector of $\bar{A}$. Suppose $L$ has eigenvalues $\lambda_1 \leq \hdots \leq \lambda_n$ with corresponding eigenvectors $u_1 \hdots u_n$, then $\bar{A}$ has eigenvalues $1 - \lambda_1 \geq \hdots \geq 1 - \lambda_n$ with the same eigenvectors.
+
+\begin{theorem}[Cheeger's inequality]
+The second eigenvalue of $L$, namely $\lambda_2$, is connected to the sparsest cut $\phi(G)$ as follows:
+\begin{align}
+    \frac{\lambda_2}{2} \leq \phi(G) \leq \sqrt{2 \lambda_2} \;.
+\end{align}
+Moreover, you can find $\hat{S}$ such that $\phi(\hat{S}) \leq \sqrt{2 \lambda_2} \leq 2 \sqrt{\phi(G)}$ efficiently by rounding the eigenvector. Suppose $u_2 = [\beta_1 \cdots \beta_n]^\top \in \bbR^n$ is the second eigenvector of $L$. Then you can choose a threshold $\tau = \beta_i$ and consider $\hat{S}_i = \{ j \in [n] : \beta_j \leq \tau \}$. One such $\hat{S}_i$ satisfies $\phi(\hat{S}_i) \leq 2 \sqrt{\phi(G)}$.
+\end{theorem}
+
+We might wonder why this algorithm uses the second eigenvector of $\bar{A}$ in particular, and not the first eigenvector. The reason for this is that the first eigenvector is trivial, and generally has the form $u_1 = [\sqrt{d_1} \cdots \sqrt{d_n}]^\top$.
+
+\begin{remark}
+If we look at the quadratic form of the Laplacian, we have
+\begin{align}
+    v^\top L v &= v^\top I v - v^\top \bar{A} v \\
+    &= \sum_{i=1}^n v_i^2 - \sum_{i, j = 1}^n v_i v_j \bar{A}_{ij} \\
+    &= \sum_{i=1}^n v_i^2 - \sum_{i, j = 1}^n v_i v_j \frac{G_{ij}}{\sqrt{d_i d_j}} \\
+    &= \sum_{i=1}^n v_i^2 - 2 \sum_{(i, j) \in E} \frac{v_i}{\sqrt{d_i}} \cdot \frac{v_j}{\sqrt{d_j}} \\
+    &= \sum_{(i, j) \in E} \left( \frac{v_i}{\sqrt{d_i}} - \frac{v_j}{\sqrt{d_j}} \right)^2 \;.
+\end{align}
+If $G$ is $\kappa$-regular, then this becomes $v^\top L v = \frac{1}{\kappa} \sum_{(i, j) \in E} (v_i - v_j)^2$. Furthermore, suppose $v \in \{0, 1\}$ with support $S = \operatorname{supp}(v)$. Then you can convince yourself that
+\begin{align}
+    \frac{1}{\kappa} \sum_{(i, j) \in E} (v_i - v_j)^2 &= \frac{1}{\kappa} E(S, \bar{S}) \\
+    &= \frac{1}{\kappa} E(\operatorname{supp}(v), \overline{\operatorname{supp}}(v)) \;.
+\end{align}
+If the support of $v$ is less than $n/2$, implying $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, then
+\begin{align}
+    \frac{v^\top L v}{\norm{v}^2_2} &= \frac{\frac{1}{\kappa} E(S, \bar{S})}{\frac{1}{\kappa} \operatorname{Vol}(S)} = \phi(S) \;.
+\end{align}
+The term $\frac{v^\top L v}{\norm{v}^2_2}$ is also called the {\it Rayleigh quotient}. This nicely connects the abstract linear algebraic approach to the intuitive sparsest cut approach. Using eigenvectors, we minimize the Rayleigh quotient without any constraints on $v$. Using sparsest cut, we minimize the Rayleigh quotient, constraining $v$ to be binary.
+\end{remark}
+
+\subsec{Relating these results to machine learning}
+
+How do the ideas from the previous sections connect to machine learning? Suppose you have some raw data $x^{(1)} \cdots x^{(n)}$ that you'd like to group into $k$ clusters. \citet{ng2001spectral} propose to define a weighted graph $G$ such that each element $G_{ij} = \exp \left( -\frac{\norm{x^{(i)} - x^{(j)}}^2_2}{2\sigma^2} \right)$ represents a distance between two data points. Then, you compute the first $k$ eigenvectors of the Laplacian $L$ and arrange them into the columns of a matrix: $[u_1 \cdots u_k] \in \bbR^{n \times k}$. For each example, we will use the $i$th row of this matrix as a $k$-dimensional embedding. Note that this is usually a much lower-dimensional representation than the raw data. Finally, we can use k-means to cluster the embeddings.
+
+The issue with this approach is that in high dimensions, the training data points are all far away from each other. The Euclidean distance between points becomes meaningless, and so our definition of $G$ doesn't make any sense. How do we solve this issue? Haochen et al. propose a solution. They consider an infinite weighted graph $G(V, w)$, where $w$ are the edge weights, and $V = \cX \subseteq \bbR^n$ is the set of all possible data points. For simplicity, suppose $| \cX | = N$. We define $w(x, x')$ to be large only if $x$ and $x'$ are very close in $\ell_2$ distance. Now, the graph is more meaningful, because only data points that are small perturbations of each other have high connection weights. However, we don't have explicit access to this graph, and its eigenvectors and infinite-dimensional. To solve this problem, consider some eigenvector $u = (u_x)_{x \in \cX} \in \bbR^N$. The dimension $N$ could be very large. Instead, we will represent $u_x$ by $f_\theta(x)$ where $f_\theta$ is a parameterized model. Now, the challenge is to find $\theta$ such that $[f_\theta(x)]_{x \in \cX}$ is an eigenvector of $L$. We can do this by considering the following optimization problem:
+\begin{align}
+    \min_{F \in \bbR^{N \times k}} \Norm{\bar{A} - F F^\top}^2_F \;.
+\end{align}
+This gives the top $k$ eigenvectors of $\bar{A}$. Intuitively, we are trying to fit a low-rank matrix to $\bar{A}$, and it turns out that the best fit happens to use the top $k$ eigenvectors. Thus, we can rewrite $F$ as $[u_1 \cdots u_k] = [f_\theta(x^{(1)})^\top \cdots f_\theta(x^{(n)})^\top]^\top$. Then, the minimization problem becomes
+\begin{align}
+    \min_\theta \sum_{i, j \in [N]} \left( \bar{A}_{ij} - \langle f_\theta(x^{(i)}), f_\theta(x^{(j)})\rangle \right)^2 \;.
+\end{align}
+To make this tractable, we can replace the sum of $i, j \in [N]$ with empirical samples from the data distribution.
