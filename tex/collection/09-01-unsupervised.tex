@@ -126,12 +126,12 @@ Therefore, the first and second moments of $U$ and $U R$ are indistinguishable, 
 
 \subsubsection{Computing the third moment}
 
-The third moment is $\Exp[x \otimes x \otimes x] \in \mathbb{R}^{d \times d \times d}$. We can average over each of the Gaussians in the mixture to express this quantity in terms of the third moment of each Gaussian. Namely,
+The third moment is the tensor $\Exp[x \otimes x \otimes x] \in \mathbb{R}^{d \times d \times d}$. To express this expectation in terms of tractable quantities, we can condition on the Gaussian observed and average:
 \begin{align}
 	\Exp[x \otimes x \otimes x] = \frac{1}{k} \sum_{i=1}^k \Exp[x \otimes x \otimes x \mid i]
 \end{align}
 
-Then, we apply the subsequent lemma, which states the third moment for a multivariate Gaussian, to determine the third moment of the mixture.
+Each term in the sum now corresponds to the third moment for some multivariate Gaussian. Fortunately, Lemma~\ref{lec19:lma:gaussian_third_moment} suggests a formula for estimating its value.
 \begin{lemma} \label{lec19:lma:gaussian_third_moment}
 Suppose $z \in \cN(v, I)$. Then, 
 \begin{align}
@@ -139,10 +139,10 @@ Suppose $z \in \cN(v, I)$. Then,
 \end{align}
 where $e_1,\dots,e_d$ denote the canonical basis vectors.
 \end{lemma}
-Note that $\Exp[z] = v$, which means that we can compute $v \otimes v \otimes v$ from linear combination of $\Exp[z \otimes z \otimes z]$  and $\Exp[z]$.
+Note that $\Exp[z] = v$, which means that we can compute $v \otimes v \otimes v$ from a linear combination of $\Exp[z \otimes z \otimes z]$  and $\Exp[z]$.
 
 \begin{proof}
-We compute the third moment element-wise. Note that
+We compute the third moment element-wise. That is,
 \begin{align}
 	(\Exp[z \otimes z \otimes z])_{ijk} &= \Exp[z_i  z_j z_k] \\
 	&= \Exp[(v_i + \xi_i)\cdot (v_j + \xi_j) \cdot (v_k + \xi_k)]  &\text{$(z = v + \xi, \xi \sim \cN(0, I))$}\\
@@ -168,7 +168,7 @@ Since $(\sum_{l=1}^d v \otimes e_l \otimes e_l)_{ijk} = \sum_{l=1}^d v_i  e_{lj}
 \end{equation} 
 \end{proof}
 
-We can now apply Lemma~\ref{lec19:lma:gaussian_third_moment} to compute the third moment of the mixture. In particular,
+We can now apply Lemma~\ref{lec19:lma:gaussian_third_moment} to compute the third moment of the mixture of $k$ Gaussians. In particular,
 \begin{align}
 	\Exp[x \otimes x \otimes x] & =  \frac{1}{k} \sum_{i=1}^k \Exp[x \otimes x \otimes x \mid i] \\
 	&=  \frac{1}{k} \sum_{i=1}^k \l (\mu_i \otimes \mu_i \otimes \mu_i +  \sum_{l=1}^d \mu_i \otimes e_l \otimes e_l + \sum_{l=1}^d  e_l \otimes \mu_i \otimes e_l + \sum_{l=1}^d  e_l \otimes e_l \otimes \mu_i \r ) \\
@@ -177,20 +177,21 @@ We can now apply Lemma~\ref{lec19:lma:gaussian_third_moment} to compute the thir
 	& =  \frac{1}{k} \sum_{i=1}^k \mu_i \otimes \mu_i \otimes \mu_i +  \sum_{l=1}^d \Exp[x] \otimes e_l \otimes e_l + \sum_{l=1}^d  e_l \otimes \Exp[x] \otimes e_l + \sum_{l=1}^d  e_l \otimes e_l \otimes \Exp[x]\\
 \end{align} 
 
-The derivations above tell us how we might compute $\frac{1}{k} \sum_{i=1}^k \mu_i \otimes \mu_i \otimes \mu_i$ from $\Exp[x \otimes x \otimes x]$ and $\Exp[x]$. For notational convenience, let
+For notational convenience, let
 \begin{equation}
     a^{\otimes 3} \defeq a \otimes a \otimes a.
-\end{equation}
-In the sequel, we describe how one might compute $\{\mu_i\}_{i = 1}^k$ from $\frac{1}{k} \sum_{i = 1}^k \mu_i^{\otimes 3}$. 
+\end{equation} 
+So far, we have shown how to compute $\frac{1}{k} \sum_{i=1}^k \mu_i^{\otimes 3}$ from $\Exp[x^{\otimes 3}]$ and $\Exp[x]$. In the sequel, we show how to estimate the latent variable by describing several approaches one might take to recover $\{\mu_i\}_{i = 1}^k$ from $\frac{1}{k} \sum_{i = 1}^k \mu_i^{\otimes 3}$. 
 
 \paragraph{Tensor decomposition}
-Recovering the Gaussian means $\{\mu_i\}_{i = 1}^k$ from the third moment of the mixture is a special case of the general tensor decomposition problem. This problem can be set up as follows. Assume that $a_1, \cdots a_k \in \bbR^d$ are unknown. Then, given $\sum_{i=1}^k a_i^{\otimes 3}$, our goal is to reconstruct the $a_i$ vectors. 
+Recovering the Gaussian means, $\{\mu_i\}_{i = 1}^k$,  from the third mixture moment, $\frac{1}{k} \sum_{i = 1}^k \mu_i^{\otimes 3}$, is a special case of the general tensor decomposition problem. That problem is set up as follows: Assume that $a_1, \cdots a_k \in \bbR^d$ are unknown. Then, given $\sum_{i=1}^k a_i^{\otimes 3}$, our goal is to reconstruct the $a_i$ vectors. 
 
 Before we present some standard results on tensor decomposition, we first describe some basic facts about tensors. Much like matrices, tensors have an associated rank. For example, $a \otimes b \otimes c$ is a rank-1 tensor. In general, the rank of a tensor $T$ is the minimum $k$ such that $T$ can be decomposed as 
 \begin{equation}
     T = \sum_{i=1}^k a_i \otimes b_i \otimes c_i.
 \end{equation} 
-A crucial difference between tensors and matrices is that the former do not have the typical rotational invariance. In particular, there is no analogue to the standard matrix result that 
+for some $\{a_i\}_{i =1}^k, \{b_i\}_{i =1}^k, \{c_i\}_{i =1}^k$.
+Another difference between tensors and matrices is that the former objects do not have the typical rotational invariance. In particular, there is no tensor analogue to the standard matrix result that 
 \begin{equation}
     AA^\top = A RR^\top A^\top.
 \end{equation}
@@ -199,34 +200,34 @@ However, tensors do maintain an interesting (and useful) permutation invariance;
 We now summarize some standard results regarding tensor decomposition for $T = \sum_{i = 1}^k a_i^{\times 3}$. We will not prove these results here.
 \begin{enumerate}
 \setcounter{enumi}{-1}
-\item  In the most general case, recovering the $a_i$'s from $T$ is computationally hard. Any procedure will either fail to find a unique $a_i$ or it fails to find them \emph{efficiently}. 
+\item  In the most general case, recovering the $a_i$'s from $T$ is computationally hard. Any procedure will either fail to find a unique $a_i$ or it fails to find $a_i$ \emph{efficiently}. 
 \item In the orthogonal case, i.e. $a_1,\dots,a_k$ are orthogonal vectors, each $a_i$ is a global maximizer of 
 \begin{equation}
     \max_{\|x\|_2 = 1} T(x,x,x) = \sum_{i,j,k} T_{ijk} x_i x_j x_k
 \end{equation}
-We can heuristically think of $a_i$ as eigenvectors of $T$ and we can find $a_i$ in poly-time.
-\item In the independent case, i.e. $a_1,\dots,a_k$ are linearly independent. Jennrich's algorithm can be used to find the $\{a_i\}_{i = 1}^k$.
+We can heuristically think of $a_i$ as eigenvectors of $T$ and there exists an algorithm to compute $a_i$ in poly-time.
+\item In the independent case, i.e. $a_1,\dots,a_k$ are linearly independent. Jennrich's algorithm can be used to efficiently recover $\{a_i\}_{i = 1}^k$.
 \end{enumerate} 
-Results 1 and 2 in the above list both involve the so-called ``under-complete'' case ($k \leq d$), e.g., when the number of Gaussians in the mixture is smaller than the dimension of the data. Next, we describe certain overcomplete cases for which recovery is possible.
+Results 1 and 2 above both involve the so-called ``under-complete'' case ($k \leq d$), e.g., when the number of Gaussians in the mixture is smaller than the dimension of the data. Next, we describe certain overcomplete cases for which efficient tensor decomposition is possible.
 \begin{enumerate}
 \setcounter{enumi}{2}
 \item Suppose $a_1^{\otimes2},\dots,a_k^{\otimes2}$ are independent for $k \leq d^2$. Then, applying Result 2, we can recover $a_i$ from $\sum_{i=1}^k (a_i^{\otimes2})^{\otimes3} = \sum_{i=1}^k (a_i^{\otimes6}) \in \bbR^{d^6}$.
-\item Excluding an algebraic set of measure $0$, we can use the FOOBI algorithm to recover $a_i$ from the fourth-order tensor $\sum_{i = 1}^k a_i^{\otimes 4}$ when $k \leq d^2$. \citet{ma2016poly} introduce a robust version of the FOOBI algorithm.
-\item Assume $a_i$ are \emph{randomly} generated unit vectors. Then, for the 3rd order tensor, $k$ can be large as $d^{1.5}$ \cite{ma2016poly, schrammsteurer17}. 
+\item Excluding an algebraic set of measure $0$, we can use the FOOBI algorithm to recover $a_i$ from the fourth-order tensor $\sum_{i = 1}^k a_i^{\otimes 4}$ when $k \leq d^2$. A robust version of the FOOBI algorithm is described in \citet{ma2016poly}.
+\item Assume $a_i$ are \emph{randomly} generated unit vectors. Then, for the third order tensor, $k$ can be large as $d^{1.5}$ \cite{ma2016poly, schrammsteurer17}. 
 \end{enumerate}
 
-In summary, the moment method is a recipe in which we first compute high order moments (i.e. tensors), assume that these estimates are noiseless, and decompose these tensors to recover the latent variables. Though we do not discuss these results here, there is an extensive literature analyzing the robustness of the moment method to error in the moment estimates. Though we only explicitly analyze the mixture of Gaussians model here, latent variable models amenable to analysis by the moment method include ICA, Hidden Markov Models, topic models, etc.
+In summary, the moment method is a recipe in which we first compute high order moments (i.e. tensors), assume that these estimates are noiseless, and decompose these tensors to recover the latent variables. Though we do not discuss these results here, there is an extensive literature analyzing the robustness of the moment method to error in the moment estimates. Last, we note that even though we only explicitly analyze the mixture of Gaussians model here, latent variable models amenable to analysis by the moment method include ICA, Hidden Markov Models, topic models, etc.
 
 \sec{Spectral Clustering}
-Introduced by \citet{shi2000normalized} and \citet{ng2002spectral}, spectral clustering learns a model for the data points using a \emph{pairwise} notion of similarity. Formally, assume that we are given $n$ data points $x\sp{1}, \dots, x\sp{n}$ as well as a similarity matrix $G \in \bbR^{n\times n}$ where 
+Introduced by \citet{shi2000normalized} and \citet{ng2002spectral}, spectral clustering learns a model for the data points using a \emph{pairwise} notion of similarity. Formally, assume that we are given $n$ data points $x\sp{1}, \dots, x\sp{n}$ as well as a similarity matrix $G \in \bbR^{n\times n}$ such that 
 \begin{equation}
     G_{ij} = \rho (x\sp{i}, x\sp{j})
 \end{equation}
 where $\rho$ is some measure of similarity that assigns larger values to more similar pairs of points. 
 
-For example, $x\sp{i}$ could denote images for which $\rho (x\sp{i}, x\sp{j})$ measures the semantic similarity. Alternatively, $x\sp{i}$ might be users of social network where $\rho (x\sp{i}, x\sp{j}) = 1$ if $x\sp{i}$ and $x\sp{j}$ are friends. 
+For example, $x\sp{i}$ could denote images for which $\rho (x\sp{i}, x\sp{j})$ measures the semantic similarity. Alternatively, $x\sp{i}$ might be users of a social network and $\rho (x\sp{i}, x\sp{j}) = 1$ if $x\sp{i}$ and $x\sp{j}$ are friends. 
 
-Our goal is to cluster the data points by viewing $G$ as a graph. For instance, in the social network example, we can naturally view $G$ as an \emph{unweighted} graph, where $G_{ij} \in \{0, 1\}$ defines the edges. Then, the clustering problem is to partition the graph into components that are separate from each other. As we will see repeatedly in the sequel, the eigendecomposition of $G$ is closely related to this graph paritioning problem.
+Our goal is to cluster the data points by viewing $G$ as a graph. For instance, in the social network example, we can naturally view $G$ as an \emph{unweighted} graph, where $G_{ij} \in \{0, 1\}$ defines the edges. Then, the clustering problem is to partition the graph into distinct neighborhoods. As we will see repeatedly in the sequel, the eigendecomposition of $G$ is closely related to this graph paritioning problem.
 \subsec{Stochastic block model} 
 In the stochastic block model (SBM), $G$ is assumed to be generated randomly from two hidden communities. Formally, 
 \begin{equation}
@@ -249,15 +250,15 @@ for $p < q$.
 
 Our goal is then to recover $S$ and $\bar{S}$ from $G$; the primary tool we use towards this goal is the eigendecomposition of $G$.
 
-In some trivial cases, it is not necessary to eigendecompose $G$ to recover the two hidden communities. Suppose, for instance, that $p = 0.5$ and $q = 0$. Then, the graph should contain two connected components that correspond to $S$ and $\bar{S}$.
+In some trivial cases, it is not necessary to eigendecompose $G$ to recover the two hidden communities. Suppose, for instance, that $p = 0.5$ and $q = 0$. Then, the graph represented by $G$ will contain two connected components that correspond to $S$ and $\bar{S}$.
 
 As a warm-up to motivate our approach, we eigendecompose $\bar{G} = \Exp[G]$. Observe that
 \begin{align}
     \bar{G}_{ij} = \begin{cases}
-        p &\text{if $i,j$ from same community} \\
+        p &\text{if $i,j$ from the same community} \\
         q &\text{o.w.} \end{cases}.
 \end{align}
-It is then easy to verify that $\bar{G}$ is a matrix of rank $2$:
+It is then easy to see that $\bar{G}$ is a matrix of rank $2$:
 \begin{align}
     \bar{G} = \left[
         \begin{array}{c|c}
@@ -290,7 +291,7 @@ We begin by directly proving \eqref{lec19:eqn:top_eig_G}.
          \end{bmatrix} \\
          &= \frac{p+q}{2} \cdot n \cdot \vec{1}.
 \end{align}
-More generally, $\vec{1}$ is the top eigenvector for any matrix with fixed row sum or for any graph with uniform degree. 
+More generally, $\vec{1}$ is the top eigenvector for any matrix with fixed row sum or any graph with uniform degree. 
 
 Next, we prove \eqref{lec19:eqn:second_eig_G}. Let 
 \begin{align}
@@ -306,9 +307,9 @@ Next, we prove \eqref{lec19:eqn:second_eig_G}. Let
         \end{array}
         \right]
 \end{align}
-for $r = p - q$. Note that $G'$ is then block diagonal with two blocks of size $|S|$ and $|\bar{S}|$, respectively. Then, 
+for $r = p - q$. To precisely define $G'$, we note that $G'$ is block diagonal with two blocks of size $|S|$ and $|\bar{S}|$, respectively. Then, 
 \begin{align}	
-	\bar{G} &= \vec{1} \cdot \vec{1}^\top q + G'. \label{lec19:eqn:barG}
+	\bar{G} &= \vec{1} \vec{1}^\top q + G'. \label{lec19:eqn:barG}
 \end{align}
 Thus,
 \begin{align}
@@ -376,9 +377,9 @@ Then, the three eigenvectors of $A$ are
         0 \\ 1 \\ \vdots \\ 1
       \end{bmatrix} \label{lec19:eqn:eigenmatrix}
 \end{align}
-Furthermore, the rows of the matrix formed by the three eigenvectors given by \eqref{lec19:eqn:eigenmatrix} will also provide the cluster IDs of the vertices in $G$. Note also that permutations of $A$ will result in equivalent permutations in the coordinates of each of the three eigenvectors.
+Furthermore, the rows of the matrix formed by the three eigenvectors given by \eqref{lec19:eqn:eigenmatrix} clearly give the cluster IDs of the vertices in $G$. Note also that permutations of $A$ will result in equivalent permutations in the coordinates of each of the three eigenvectors.
 
-While there are no negative values in the eigenvectors given in \eqref{lec19:eqn:eigenmatrix}, note that any linear combination of eigenvectors is also an eigenvector, so recovering eigenvectors that look like \eqref{lec19:eqn:second_eig_G} is straightforward. Taking linear combinations of the eigenvectors defined above shows that there is an alternative eigenbasis that includes the all-ones vector, $\vec{1}$. But for this choice of $A$, the all-ones vector is not the unique top eigenvector. For that condition to hold, we require background noise in $\bar{G}$.
+Next, we relate this observation to the result in Lemma~\ref{lec19:lma:sbm_eigen}. While there are no negative values in the eigenvectors given in \eqref{lec19:eqn:eigenmatrix}, we observe that any linear combination of eigenvectors is also an eigenvector, so recovering a solution that look more like \eqref{lec19:eqn:second_eig_G} is straightforward. Indeed, taking linear combinations of the eigenvectors defined above shows that there is an alternative eigenbasis that includes the all-ones vector, $\vec{1}$. How for this choice of $A$, the all-ones vector is not the unique top eigenvector. For that to be the case, we require background noise in $\bar{G}$.
 
 In reality, we only observe $G$. In the sequel, we will show that in terms of the spectrum, $G \approx \Exp[G]$. Formally, we will leverage earlier concentration results to prove that $\norm{G - \Exp[G]}_{\text{op}}$ is small. Concretely, then,
 \begin{align}
