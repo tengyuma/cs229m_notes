@@ -4,7 +4,7 @@
 %\metadata{lecture ID}{Your names}{date}
 \metadata{2}{Alexander Ke and Trenton Chang}{Jan 13th, 2021}
 
-In this chapter, we use an asymptotic approach (i.e assuming number of training samples $n \to \infty$) to achieve a bound on the ERM. We then instantiate these results to the case where the loss function is the maximum likelihood  and discuss the limitations of asymptotics. (In future chapters we will assume finite $n$ and provide a non-asymptotic analysis.)
+In this chapter, we use an asymptotic approach (i.e. assuming number of training samples $n \to \infty$) to achieve a bound on the ERM. We then instantiate these results to the case where the loss function is the maximum likelihood  and discuss the limitations of asymptotics. (In future chapters we will assume finite $n$ and provide a non-asymptotic analysis.)
 
 \sec{Asymptotics of empirical risk minimization}
 
@@ -13,13 +13,13 @@ For the asymptotic analysis of ERM, we would like to prove that excess risk is b
     L(\hat{\theta}) - \inf_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right). 
     \label{lec1:eqn:erm-bound}
 }
-Here $c$ is a problem dependent constant that does not depend on $n$, and $o(1/n)$ hides all dependencies except $n$. The equation above shows that as we have more training data (i.e as $n$ increases) the excess risk of ERM decrease at the rate of $\frac{1}{n}$.
+Here $c$ is a problem dependent constant that does not depend on $n$, and $o(1/n)$ hides all dependencies except $n$. The equation above shows that as we have more training data (i.e. as $n$ increases) the excess risk of ERM decreases at the rate of $\frac{1}{n}$.
 
 Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and let $\cH = \{ h_\theta: \theta \in \R^p \}$ be the parameterized family of hypothesis functions. Let the ERM minimizer be $\hat{\theta}$ as defined in Equation~\eqref{lec1:eqn:erm}. Let $\theta^{*}$ be the minimizer
 of the population risk $L$, i.e. $\theta^{*} = \argmin_\theta L(\theta)$. The theorem below quantifies the excess risk $L(\hat{\theta}) - L(\theta^{*})$:
 
 \begin{theorem}[Informally stated]
-Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
+Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e. consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution, respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
 Then,
 \begin{enumerate}
     \item $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, i.e. for every $\epsilon > 0$, there is an $M$ such that $\sup_n \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) < \epsilon$. (This means that the sequence $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ is ``bounded in probability".)
@@ -40,7 +40,7 @@ Theorem \ref{lec1:thm:asymp} is a powerful conclusion because once we know that 
 We will prove the theorem above by applying the following main ideas:
 \begin{enumerate}
     \item Obtain an expression for the excess risk by Taylor expansion of the derivative of the empirical risk $\nabla \hatL(\theta)$ around $\theta^{*}$.
-    \item By the law of large numbers, we have that $\hatL(\theta) \overset{p}{\to} L(\theta)$, $\nabla\hatL(\theta) \overset{p}{\to} \nabla L(\theta)$   and  $\nabla^{2}\hat{L}(\theta) \overset{p}{\to} \nabla^{2} L(\theta)$ as $n \to \infty$.
+    \item By the law of large numbers, we have that $\hatL(\theta) \overset{p}{\to} L(\theta)$, $\nabla\hatL(\theta) \overset{p}{\to} \nabla L(\theta)$   and  $\nabla^{2}\hatL(\theta) \overset{p}{\to} \nabla^{2} L(\theta)$ as $n \to \infty$.
     
     \item Central limit theorem (CLT).
 \label{ideas}
@@ -79,7 +79,7 @@ Rearranging, we have
 
 Multiplying by $\sqrt{n}$ on both sides,
  \al{
-\sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(\sqrt{n} ||\hat{\theta}-\theta^{*}||_{2}^{2})) \\
+\sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(\sqrt{n} ||\hat{\theta}-\theta^{*}||_{2}^{2}) \\
 &\approx -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})). \label{lec1:eqn:interm}}
 
  
@@ -88,7 +88,7 @@ Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \na
  
 Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$, so $\sqrt{n} (\nabla \hatL(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\nabla \ell((x, y), \theta^{*})))$. By the law of large numbers, $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. Applying these results to \eqref{lec1:eqn:interm} (together with an application of Slutsky's theorem),
 \al{
-\sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,\Cov(\nabla \ell((x,y),\theta^{*})) \\
+\sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,\Cov(\nabla \ell((x,y),\theta^{*}))) \\
 &\stackrel{d}{=} \mathcal{N} \left( 0,\nabla^{2}L(\theta^{*})^{-1}\Cov(\nabla \ell((x,y), \theta^{*})) \nabla^{2}L(\theta^{*})^{-1} \right),
 }
 
@@ -109,10 +109,10 @@ n (L(\hat \theta) - L(\theta^*)) &= \frac{n}{2} \langle \hat \theta - \theta^*, 
 &= \frac12 \left\|\nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*) \right\|_2^2,
 \end{align}
 
-where the last equality follows by the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^\top Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
+where the last equality follows from the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^\top Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
 \begin{align}
-    S &\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1} \right) \\
-    &\stackrel{d}{=} \cN \left(0, \nabla^2 L(\theta^*)^{-1/2} \Cov(\nabla \ell ((x, y), \theta^*) \nabla^2 L(\theta^*)^{-1/2} \right).
+    S &\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*)) \nabla^2 L(\theta^*)^{-1} \right) \\
+    &\stackrel{d}{=} \cN \left(0, \nabla^2 L(\theta^*)^{-1/2} \Cov(\nabla \ell ((x, y), \theta^*)) \nabla^2 L(\theta^*)^{-1/2} \right).
 \end{align}
 
 This proves Part 4, and Part 3 follows directly from the definition of the $O_P$ notation.
@@ -122,7 +122,7 @@ Finally, for Part 5, using the fact that the trace operator is invariant under c
     \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] &= \frac12 \Exp\left[ \|S\|_2^2 \right] = \frac12 \Exp \left[ \tr(S^\top S) \right] \\
     &= \frac12 \Exp \left[ \tr(S S^\top) \right]  = \frac12 \tr \left(\Exp[S S^\top] \right) \\
     &= \frac12 \tr \left( \Cov(S) \right) \\
-    &= \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right).
+    &= \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*)) \right).
 \end{align}
 
 \subsec{Well-specified case}
@@ -131,7 +131,7 @@ Theorem \ref{lec1:thm:asymp} is powerful because it is general, avoiding any ass
 
 \begin{theorem}
 \label{lec2:thm:applied}
-    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \mid x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \mid x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \mid x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we performing maximum likelihood estimation (MLE), i.e. our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \mid x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical risk and population risk respectively. Then
+    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \mid x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \mid x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \mid x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we performing maximum likelihood estimation (MLE), i.e. our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \mid x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical risk and population risk, respectively. Then
     \al{
     \label{lec2:eqn:applied1}
         \theta^* = \theta_*,
@@ -218,7 +218,7 @@ We have no idea how large $n$ needs to be for asymptotic bounds to be ``reasonab
 \begin{align}
     \frac{p}{2n} + \frac{1}{n^2} \quad \text{vs.} \quad \frac{p}{2n} + \frac{p^{100}}{n^2}.
 \end{align}
-Asymptotic analysis treats both of these bounds as the same, hiding the polynomial dependence on $p$ in the second bound. Clearly, the second bound is significantly more data-intensive than the first: we would need $n > p^{50}$ before $\frac{p^{100}}{n^2}$ is less than one. Since $p$ represents the dimensionality of the data, this may be an unreasonable assumption.
+Asymptotic analysis treats both of these bounds as the same, hiding the polynomial dependence on $p$ in the second bound. Clearly, the second bound is significantly more data-intensive than the first: we would need $n > p^{50}$ for $\frac{p^{100}}{n^2}$ to be less than one. Since $p$ represents the dimensionality of the data, this may be an unreasonable assumption.
 
 This is where non-asymptotic analysis can be helpful. Whereas asymptotic analysis uses large-sample theorems such as the central limit theorem and the law of large numbers to provide convergence guarantees, non-asymptotic analysis relies on concentration inequalities to develop alternative techniques for reasoning about the performance of learning algorithms.
 
