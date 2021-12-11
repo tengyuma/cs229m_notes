@@ -191,15 +191,32 @@ Before we present some standard results on tensor decomposition, we first descri
     T = \sum_{i=1}^k a_i \otimes b_i \otimes c_i.
 \end{equation} 
 for some $\{a_i\}_{i =1}^k, \{b_i\}_{i =1}^k, \{c_i\}_{i =1}^k$.
-Another difference between tensors and matrices is that the former objects do not have the typical rotational invariance. In particular, there is no tensor analogue to the standard matrix result that 
-\begin{equation}
-    AA^\top = A RR^\top A^\top.
+Another difference between tensors and matrices is that the former objects do not have the typical rotational invariance. In particular, consider applying a right rotation $R\in \R^{k\times k}$ to the matrix \begin{equation}
+A =\begin{bmatrix} \vrule & & \vrule \\ a_1 & \cdots & a_k \\ \vrule & & \vrule \end{bmatrix} \in\mathbb{R}^{d\times k}
 \end{equation}
-However, tensors do maintain an interesting (and useful) permutation invariance; that is, $T = \sum_{i = 1}^k a_i^{\otimes 3}$ is invariant to permutations of the indices of $a_i$.
+and get \al{\widetilde{A} = AR = \begin{bmatrix} \vrule & & \vrule \\ \tilde{a}_1 & \cdots & \tilde{a}_k \\ \vrule & & \vrule \end{bmatrix} \in\mathbb{R}^{d\times k}}
 
-We now summarize some standard results regarding tensor decomposition for $T = \sum_{i = 1}^k a_i^{\times 3}$. We will not prove these results here.
+Then, 
+
+\al{\sum_{i=1}^k a_ia_i^\top = AA^\top = (AR)\cdot (AR)^\top = \sum_{i=1}^k \tilde{a}_i\tilde{a}_i^\top}
+%In particular, 
+However, there is no tensor analogue to the rotation invariance result above. 
+%\begin{equation}
+%    AA^\top = A RR^\top A^\top.
+%\end{equation}
+But tensors do maintain an interesting (and useful) permutation invariance; that is, $T = \sum_{i = 1}^k a_i^{\otimes 3}$ is invariant to permutations of the indices of $a_i$. Or in other words, let $P\in \R^{k\times k}$ be a permutation matrix suppose, and let \al{
+	\widetilde{A} = AP = \begin{bmatrix} \vrule & & \vrule \\ \tilde{a}_1 & \cdots & \tilde{a}_k \\ \vrule & & \vrule \end{bmatrix} \in\mathbb{R}^{d\times k}
+}
+Then, 
+\al{
+	\sum_{i=1}^k a_i^{\otimes 3} =  \sum_{i=1}^k \tilde{a}_i^{\otimes 3}
+}
+The lack of rotation invariance in the sense above and the existence of permutation invariance make tensor decomposition computationally challenging as well as powerful. 
+
+We now summarize some standard results regarding tensor decomposition for $T = \sum_{i = 1}^k a_i^{\otimes 3}$. The results for decomposing the asymmetric version  $T = \sum_{i = 1}^k a_i\otimes b_i \otimes$ are largely analogous. We will not prove these results here.
 \begin{enumerate}
 \setcounter{enumi}{-1}
+\tnotelong{Tengyu will add references here}
 \item  In the most general case, recovering the $a_i$'s from $T$ is computationally hard. Any procedure will either fail to find a unique $a_i$ or it fails to find $a_i$ \emph{efficiently}. 
 \item In the orthogonal case, i.e. $a_1,\dots,a_k$ are orthogonal vectors, each $a_i$ is a global maximizer of 
 \begin{equation}
@@ -431,6 +448,7 @@ Given a graph $G(V, E)$ where $V$ denotes the set of vertices and $E$ the set of
 \begin{align}
     \phi(S) &\defeq \frac{\vert \operatorname{E}(S, \bar{S}) \vert}{\operatorname{Vol}(S)}
 \end{align}
+\tnote{could we make $\operatorname{E}$---that's somehow more standard I guess? maybe just because you want it to look less similar to expectation}
 where $\operatorname{E}(S, \bar{S})$ is the total number of edges between $S$ and $\bar{S}$, and $\operatorname{Vol}(S)$ is the total number of edges connecting to $S$. To be precise,
 \begin{align}
     \operatorname{E}(S, \bar{S}) &= \sum_{i \in S, j \in \bar{S}} G_{ij} \\
