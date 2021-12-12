@@ -9,9 +9,9 @@ In this chapter, we will instantiate Rademacher complexity for two important hyp
 \sec{Margin theory for classification problems}
 
 \subsec{Intuition}
-Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and while we compare it to the outcome (0 or 1), how close it is to the true output gives us a measure of how confident we are in the prediction.
+Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and when we compare it to the outcome (0 or 1), its closeness to the true output gives us a measure of how confident we are in the prediction.
 
-Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a "better" decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red line. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on generalization gap is.
+Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a ``better" decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red boundary. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on the generalization gap is.
 
 \begin{figure}[ht!]
     \begin{center}
@@ -31,14 +31,14 @@ Fix the hypothesis $h_\theta$. The \textit{(unnormalized) margin} for example $(
 \begin{definition}[Minimum margin] Given a dataset $\cD = ((x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n}))$, the \textit{minimum margin} over the dataset is defined as $\gamma_{\min} \triangleq \min_{i\in\{1,\dots,|\cD|\}} y^{(i)}h_\theta(x^{(i)})$.
 \end{definition}
 
-Our final bound will have the form (generalization gap)$\leq f(\text{margin},\text{parameter norm})$. This is very generic since there are many different bounds we could derive based on what margin we use. For this current setting we are using $\gamma_{\min}$, which is the minimum margin, but in other settings could use $\gamma_{\text{average}}$, which is the average margin of each point in the dataset.
+Our final bound will have the form (generalization gap) $\leq f(\text{margin},\text{parameter norm})$. This is very generic since there are many different bounds we could derive based on what margin we use. For this current setting we are using $\gamma_{\min}$, which is the minimum margin, but in other settings could use $\gamma_{\text{average}}$, which is the average margin of each point in the dataset.
 
 We will begin by introducing the idea of a \textit{surrogate loss}, a loss function which approximates zero-one loss but takes the scale of the margin into account. The \textit{margin loss} (also known as \textit{ramp loss}) is defined as 
 \begin{equation}
     \ell_\gamma(t) = \begin{cases} 
-      0 & t\geq \gamma \\
-      1 & t\leq 0 \\
-      1-t/\gamma & 0\leq t\leq \gamma
+      0, & t\geq \gamma \\
+      1, & t\leq 0 \\
+      1-t/\gamma, & 0\leq t\leq \gamma
    \end{cases} \label{lec6:eqn:ramp_loss}
 \end{equation}
 
@@ -50,7 +50,7 @@ We will begin by introducing the idea of a \textit{surrogate loss}, a loss funct
   \label{lec6:fig:marginloss}
 \end{figure}
 
-It is plotted in Figure \ref{lec6:fig:marginloss}. For convenience, define $\ell_\gamma((x,y), h) \triangleq \ell_\gamma(yh(x))$. We can view $\ell_\gamma$ as a continuous version of $\err$ while being more sensitive to the scale of the margin on $[0,\gamma]$. Notice that $\err$ is always less than or equal to the $\ell_\gamma$ when $\gamma\geq 0$, i.e.
+It is plotted in Figure \ref{lec6:fig:marginloss}. For convenience, define $\ell_\gamma((x,y), h) \triangleq \ell_\gamma(yh(x))$. We can view $\ell_\gamma$ as a continuous version of $\err$ that is more sensitive to the scale of the margin on $[0,\gamma]$. Notice that $\err$ is always less than or equal to the $\ell_\gamma$ when $\gamma\geq 0$, i.e.
 \begin{equation}
     \err((x,y), h) = \ind{yh(x) < 0}\leq \ell_\gamma(yh(x)) =\ell_\gamma ((x,y), h)
 \end{equation}
@@ -61,12 +61,12 @@ holds for all $(x,y)\sim P$. Taking the expectation over $(x,y)$ on both sides o
 
 Therefore, the population loss is bounded by the expectation of the margin loss, and so it is sufficient to bound the expectation of the margin loss in order to bound the population loss.
 
-Define the population and empirical version of the margin loss:
+Define the population and empirical versions of the margin loss:
 \begin{equation}
 L_\gamma(h) = \Exp_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gamma(h) = \sum_{i=1}^n\l [\ell_\gamma((x^{(i)},y^{(i)}), h)\r].
 \end{equation}
 
-By Corollary \ref{lec6:cor:ggap-rsbound}, we see that with probability at least $1-\delta$ that
+By Corollary \ref{lec6:cor:ggap-rsbound}, we see that with probability at least $1-\delta$,
 \begin{equation}
 L_\gamma(h) - \hat{L}_\gamma(h)\leq 2R_S(\cF) + 3\sqrt{\frac{\log (2/\delta)}{2n}},
 \end{equation}
@@ -103,7 +103,7 @@ In other words, for training data of the form $S = \{(x\sp{i},y\sp{i})\}_{i=1}^n
 where $\gamma_\mathrm{min}$ is the minimum margin achievable on~$S$ over those hypotheses in $\cH$ that separate the data, and $R_S(\cH)$ is the empirical Rademacher complexity of $\cH$. Such bounds state that simpler models will generalize better beyond the training data, particularly for data that is strongly separable.
 
 \begin{remark} \label{lec7:rmk:union_bound_margin}
-Note there is a subtlety here. If we think of the dataset as random, it follows that $\gamma_{\min}$ is a random variable. Consequently, the $\gamma$ we choose to define the hypothesis class is random, which is not a valid choice when thinking about Rademacher complexity! Technically we cannot apply Talagrand's lemma with a random $\kappa$ (which we took to be $1/\gamma$). Also, when we used concentration inequalities, we implicitly assume that the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$ are independent of each other. That is not the case if $\gamma$ is dependent on the data.
+Note there is a subtlety here. If we think of the dataset as random, it follows that $\gamma_{\min}$ is a random variable. Consequently, the $\gamma$ we choose to define the hypothesis class is random, which is not a valid choice when thinking about Rademacher complexity! Technically we cannot apply Talagrand's lemma with a random $\kappa$ (which we took to be $1/\gamma$). Also, when we use concentration inequalities, we implicitly assume that the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$ are independent of each other. That is not the case if $\gamma$ is dependent on the data.
 
 We sketch out how one might address this issue below. The main idea is to do another union bound over $\gamma$. Choose a family $\Gamma = \left\{ 2^k: k \in [-B, B] \right\}$ for some $B$. Then, for every fixed $\gamma \in \Gamma$, with probability greater than $1 - \delta$,
 \begin{align}
