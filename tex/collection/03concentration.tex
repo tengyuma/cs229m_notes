@@ -15,11 +15,11 @@ As it turns out, the material from this chapter constitutes arguably the importa
 
 \sec{The big-O notation}
 
-Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(x)$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cx$ for some absolute/universal constant $C$. In other words, suppose $O(n_1),\dots, O(n_k)$ occur in a statement, it means that \textbf{there exists} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(x)|\le C_ix$ for all $x$, such that after replacing each occurrence $O(n_i)$ by $f_i(n_i)$,  the statement is true.  The difference with traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O". In nearly all cases, big-O notation is used to define an upper bound; then, the bound is identical if we simply substitute $Cx$ in place of $O(x)$. 
+Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(x)$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cx$ for some absolute/universal constant $C$. In other words, when $O(n_1),\dots, O(n_k)$ occur in a statement, it means that \textbf{there exist} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(x)|\le C_ix$ for all $x$, such that after replacing each occurrence $O(n_i)$ by $f_i(n_i)$,  the statement is true.  The difference from traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O". In nearly all cases, big-O notation is used to define an upper bound; then, the bound is identical if we simply substitute $Cx$ in place of $O(x)$. 
 
-Note that the $x$ in our definition of big-O is a surrogate for an arbitrary variable. For instance, later on in this chapter, we will encounter the term $O(\sigma \sqrt{\log n})$. The definition above, applied with $x = \sigma \sqrt{\log n}$, yields the following conclusion. Namely that $O(\sigma \sqrt{\log n}) = f(\sigma \sqrt{\log n})$ for some function $f$ and constant $C$ such that $|f(\sigma \sqrt{\log n})| \leq C \sigma  \sqrt{\log n}$ for all values that $\sigma \sqrt{\log n}$ can take. 
+Note that the $x$ in our definition of big-O is a surrogate for an arbitrary variable. For instance, later on in this chapter, we will encounter the term $O(\sigma \sqrt{\log n})$. The definition above, applied with $x = \sigma \sqrt{\log n}$, yields the following conclusion: $O(\sigma \sqrt{\log n}) = f(\sigma \sqrt{\log n})$ for some function $f$ and constant $C$ such that $|f(\sigma \sqrt{\log n})| \leq C \sigma  \sqrt{\log n}$ for all values that $\sigma \sqrt{\log n}$ can take. 
 
-Last, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some absolute constant $c > 0$ such that $a \leq cb$.
+Lastly, for any $a, b \geq 0$, we will let $a \lesssim b$ mean that there is some absolute constant $c > 0$ such that $a \leq cb$.
 \sec{Chebyshev's inequality} 
 
 We begin by considering an arbitrary random variable $Z$ with finite variance. One of the most famous results characterizing its tail behavior is the following theorem:
@@ -77,14 +77,14 @@ Let $\sigma^2 = \frac{1}{n^2}\sum_{i=1}^n (b_i - a_i)^2$. If we take $\varepsilo
     &= 1 - 2 n^{-2c}
 \end{align}
 
-We can see that as $n$ grows, the right-most term tends to zero such that $\Pr[|\bar{X} - \mu| \leq \varepsilon]$ very quickly approaches 1. Intuitively, this result tells us that, with high probability, the sample mean $\bar{X}$ will not be ``much farther" from the population mean $\mu$ by some sublogarithmic ($\sqrt{c \log n}$) factor of the standard deviation.\footnote{This is with the caveat, of course, that $\sigma$ is not exactly standard deviation but a loose upper bound on standard deviation.} Thus, we can restate the above claim we reached as follows:
+We can see that as $n$ grows, the right-most term tends to zero such that $\Pr[|\bar{X} - \mu| \leq \varepsilon]$ very quickly approaches 1. Intuitively, this result tells us that, with high probability, the sample mean $\bar{X}$ will not be ``much farther" from the population mean $\mu$ by more than some sublogarithmic ($\sqrt{c \log n}$) factor of the standard deviation.\footnote{This is with the caveat, of course, that $\sigma$ is not exactly the standard deviation but a loose upper bound on standard deviation.} Thus, we can restate the above claim we reached as follows:
 
 \begin{remark}
     For sufficiently large $n$, $|\bar{X} - \mu | \leq O(\sigma \sqrt{\log{n}})$ with high probability.
 \end{remark}
 
 \begin{remark}\label{lec2:rem:hoeffding}
-    If, in addition, we have $a_i = -O(1)$ and $b_i = O(1)$, then $\sigma^2 = O \left( \frac{1}{n}\right)$, and $|\bar{X} - \mu | \leq O\left(\sqrt{\frac{\log n}{n}}\right) = \tilO\left(\frac{1}{\sqrt{n}}\right)$.\footnote{$\tilO$ is analogous to Big-$O$ notation, in that $\tilO$ hides logarithmic factors. That is; if $f(n) = O(\log n)$, then $f(n) = \tilO(1)$.}
+    If, in addition, we have $a_i = -O(1)$ and $b_i = O(1)$, then $\sigma^2 = O \left( \frac{1}{n}\right)$, and $|\bar{X} - \mu | \leq O\left(\sqrt{\frac{\log n}{n}}\right) = \tilO\left(\frac{1}{\sqrt{n}}\right)$.\footnote{$\tilO$ is analogous to Big-$O$ notation, but $\tilO$ hides logarithmic factors. That is; if $f(n) = O(\log n)$, then $f(n) = \tilO(1)$.}
 \end{remark}
 
 Remark~\ref{lec2:rem:hoeffding} provides a compact form of the Hoeffding bound that we can use when the $X_i$ are bounded almost surely. 
@@ -93,7 +93,7 @@ So far, we have only shown how to construct exponential tail bounds for bounded 
 
 \sec{Sub-Gaussian random variables}
 
-We begin by defining the class of sub-Gaussian random variables by way of a bound on their moment generating functions. After estabishing this definition, we will see how this bound guarantees the exponential tail decay we desire.
+We begin by defining the class of sub-Gaussian random variables by way of a bound on their moment generating functions. After establishing this definition, we will see how this bound guarantees the exponential tail decay we desire.
 
 \begin{definition}[Sub-Gaussian Random Variables]
     A random variable $X$ with finite mean $\mu$ is \textit{sub-Gaussian} with parameter $\sigma$ if
@@ -150,7 +150,7 @@ We can then obtain \eqref{lec3:eqn:subgausstail} by applying the union bound:
 \end{remark}
 
 \begin{remark}
-    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\Exp[|X-\mu|^k]$) only requires that the second central moment $\Exp[(X-\mu)^2]$ (more generally, the $k$th central moment $\Exp[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\Exp[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently. This ``tensorization'' property is why most researchers use exponential tail bounds in practice.
+    Note that in light of Remark \ref{lec3:rem:mgf_strong}, the tail bound \eqref{lec3:eqn:normaltailbound} requires all central moments of $X$ to exist and not grow too quickly. In contrast, Chebyshev's inequality (and more generally any polynomial variant of Markov's inequality $\Pr[|X-\mu| \geq t] = \Pr[|X-\mu|^k \geq t^k] \leq t^{-k}\Exp[|X-\mu|^k]$) only requires that the second central moment $\Exp[(X-\mu)^2]$ (more generally, the $k$th central moment $\Exp[|X - \mu|^k]$) is finite to yield a tail bound. If infinite moments exist, however, it turns out that $\inf_{k \in \mathbb{N}} t^{-k}\Exp[|X-\mu|^k] \leq \inf_{\lambda > 0} \exp(-\lambda t) \Exp[\exp(\lambda (X-\lambda))]$, i.e. the optimal polynomial tail bound is tighter than the optimal exponential tail bound (see Exercise 2.3 in \cite{wainwright2019high}). As we will see shortly though, using exponential functions of random variables allows us to prove results about sums of random variables more conveniently. This ``tensorization'' property is why most researchers use exponential tail bounds in practice.
 \end{remark}
 
 Having defined and derived exponential tail bounds for sub-Gaussian random variables, we can now accomplish the first of the goals we set out at the beginning of the chapter: show that under certain conditions, namely independence and sub-Gaussianity of $X_1, \dotsc, X_n$, the sum $Z = \sum_{i = 1}^n X_i$ concentrates around $\Exp[Z] = \Exp[\sum_{i = 1}^n X_i]$.
@@ -210,7 +210,7 @@ If $X$ is Gaussian with variance $\sigma^2$, then $X$ satisfies \eqref{lec3:eqn:
 \end{example}
 
 \sec{Concentrations of functions of random variables}
-We now introduce some important inequalities related to the second of our two goals, namely showing that for independent $X_1, \dotsc, X_n$ and certain functions $f$, $f(X_1, \dotsc, X_n)$ concentrates around $\Exp[f(X_1, \dotsc, X_n)]$.
+We now introduce some important inequalities related to the second of our two goals, namely, showing that for independent $X_1, \dotsc, X_n$ and certain functions $f$, $f(X_1, \dotsc, X_n)$ concentrates around $\Exp[f(X_1, \dotsc, X_n)]$.
 
 \begin{theorem}[McDiarmid's inequality]
     Suppose $f : \R^n \to \R$ satisfies the \emph{bounded difference condition}: there exist constants $c_1, \ldots, c_n \in \R$ such that for all real numbers $x_1, \ldots, x_n$ and $x_i'$,
