@@ -38,7 +38,7 @@ Let $\cF = \{x \to Wx : W \in \mathbb{R}^{m \times d}, ||W^\top||_{2, 1} \le B\}
 In this lecture, we discuss a bound on the Rademacher complexity of a dense neural network. We set up notation as follows: $W_i$ denotes the linear weight matrix at the $i$-th layer of the neural network, we have a total of $r$ layers, and $\sigma$ is the activation function which is 1-Lipschitz (for example, ReLU, softmax, or sigmoid). If the input is a vector $x$, the neural network's output can be represented as follows:
 
 \begin{align}
-    f_\theta(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots),
+    f_\theta(x) = W_r\sigma(W_{r-1}\sigma(\cdots \sigma(W_1x)\ldots)),
 \end{align}
 Using this notation, we establish an upper bound on the Rademacher complexity of a dense neural network.
 
@@ -203,7 +203,7 @@ when $\frac{1}{p} + \frac{1}{q} = 1$. Writing out the vectors $a, b$, we get tha
     \sum_{i}a_ib_i \leq \left(\sum a_i^p\right)^{\frac{1}{p}}\left(\sum b_i^q\right)^{\frac{1}{q}}
 \end{align}
 
-Letting $\alpha_i^2 = c_{i-1}^2b_i^2, \beta_i = \prod_{j=i+1}^{r}\kappa_j$. By Holder's inequality, using $p = 3, q = \frac{3}{2}$, we get
+Let $\alpha_i^2 = c_{i-1}^2b_i^2, \beta_i = \prod_{j=i+1}^{r}\kappa_j$. By Holder's inequality, using $p = 3, q = \frac{3}{2}$, we get
 \begin{align}
     \left(\sum_{i=1}^{r}\frac{\alpha_i^2}{\epsilon_i^2}\right)\left(\sum_{i=1}^{r}\beta_i\epsilon_i\right)^2 &\geq \left(\sum_{i=1}^{r}\left(\alpha_i\beta_i\right)^{\frac{2}{3}}\right)^{\frac{3}{2}}
 \end{align}
