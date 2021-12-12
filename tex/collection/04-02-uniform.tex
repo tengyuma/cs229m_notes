@@ -8,7 +8,7 @@
 
 \subsec{Motivation for a new complexity measure}
 
-Recall that our goal is to bound the \textit{excess risk} $L(\hat{h}) - L(h^*)$, where $L$ is the expected loss (or population loss), $\hat{h}$ is our estimated hypothesis and $h^*$ is the hypothesis in the hypothesis class $\cH$ which minimizes the expected loss. We previously showed that to do so it suffices to upper bound $\sup_{h\in \cH} (L (h) - \hatL(h))$. (Note: we often call $L(\hat{h}) - \hatL(\hat{h})$ the \textit{generalization gap} or \textit{generalization error}.)
+Recall that our goal is to bound the \textit{excess risk} $L(\hat{h}) - L(h^*)$, where $L$ is the expected loss (or population loss), $\hat{h}$ is our estimated hypothesis and $h^*$ is the hypothesis in the hypothesis class $\cH$ which minimizes the expected loss. We previously showed that to do so, it suffices to upper bound $\sup_{h\in \cH} (L (h) - \hatL(h))$. (Note: we often call $L(\hat{h}) - \hatL(\hat{h})$ the \textit{generalization gap} or \textit{generalization error}.)
 
 In the previous sections, we derived bounds for the generalization gap in two cases:
 \begin{enumerate}
@@ -42,7 +42,7 @@ In uniform convergence, we sought a high probability bound for $\sup_{h \in H}(L
 \begin{equation}
 \Exp\l[ \sup_{h \in H}(L(h) - \hat L (h)) \r] \leq \text{ upper bound}. \label{lec5:eq:generror}
 \end{equation}
-The expectation is over the randomness in the training data $\{(x^{(i)}, y^{(i)}\}_{i=1}^n$.\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
+The expectation is over the randomness in the training data $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$.\footnote{Though we might like to pull the $\sup$ outside of the $\Exp$ operator, and bound the expectation of the excess risk (a far simpler quantity to deal with!), in general, the $\sup$ and $\Exp$ operators do not commute. In particular, $\Exp\left [\sup_{h \in \cH} (L(h) - \hat{L}(h)) \right ] \geq \sup_{h \in \cH} \Exp \left[ L(h) - \hat{L} (h) \right]$.}
 
 To do so, we first define \textit{Rademacher complexity}.
 
@@ -60,10 +60,10 @@ For applications to empirical risk minimization, we will take $\cZ = \cX \times 
 \end{remark}
 
 \begin{remark}
-Note that $R_n(\cF)$ is also dependent on the measure $P$ of the space, so technically it should be $R_{n,P}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
+Note that $R_n(\cF)$ is also dependent on the measure $\rho$ of the space, so technically it should be $R_{n,\rho}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
 \end{remark}
 
-An interpretation is $R_n(\cF)$ is the maximal possible correlation between outputs of some $f \in \cF$ (on points $f(z_1), \dots, f(z_n)$) and random Rademacher variables $ (\sigma_1, \dots, \sigma_n).$ Essentially, functions with more random sign outputs will better match random patterns of Rademacher variables and have higher complexity (greater ability to mimic or express randomness).
+An interpretation is that $R_n(\cF)$ is the maximal possible correlation between outputs of some $f \in \cF$ (on points $f(z_1), \dots, f(z_n)$) and random Rademacher variables $ (\sigma_1, \dots, \sigma_n).$ Essentially, functions with more random sign outputs will better match random patterns of Rademacher variables and have higher complexity (greater ability to mimic or express randomness).
 
 The following theorem is the main theorem involving Rademacher complexity:
 
@@ -82,7 +82,7 @@ We can think of $\frac{1}{n} \sum^n_{i=1} f(z_i)$ as an empirical average and $\
 \end{equation} 
 This is the family of losses induced by the hypothesis functions in $\cH$. We also define the function class $-\cF$ as $\{-f : f \in \cF\}$. It should be obvious from this definition that $R_n(\cF) = R_n(-\cF)$ since $\sigma_i \stackrel{d}{=} -\sigma_i$ for all $i$. Then, letting $z_i = (x^{(i)}, y^{(i)})$,
 \begin{align}
-    \Exp\l[ \sup_{h \in \cH}\l( L(h) - \hat L (h) \r) \r] &= \Exp_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[L(h) - \frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}, h)) \r] \r] \\
+    \Exp\l[ \sup_{h \in \cH}\l( L(h) - \hat L (h) \r) \r] &= \Exp_{\{(x^{(i)}, y^{(i)})\}} \l[ \sup_{h \in \cH} \l[L(h) - \frac{1}{n} \sum^n_{i=1} \ell((x^{(i)}, y^{(i)}), h) \r] \r] \\
     &= \Exp_{\{z_i\}} \l[\sup_{f \in \cF} \l(\Exp[f(z)] - \frac{1}{n} \sum^n_{i=1} f(z_i) \r)\r] \\
     &= \Exp_{\{z_i\}} \l[\sup_{f \in -\cF} \l(\frac{1}{n} \sum^n_{i=1} f(z_i) - \Exp[f(z)] \r)\r] \\
     &\leq 2 R_n(-\cF) = 2R_n(\cF)
@@ -127,7 +127,7 @@ We use a technique called \textit{symmetrization}, which is a very important tec
 
 The last inequality is because in general,
 \begin{align}
-    \sup_u \l(\Exp_v[g(u,v)]\r) \leq \sup_u \l( \Exp_v\l[\sup_{u'}g(u',v)\r]\r) = \Exp_v \l[\sup_u (g(u,v))\r]
+    \sup_u \l(\Exp_v[g(u,v)]\r) \leq \sup_u \l( \Exp_v\l[\sup_{u'}(g(u',v))\r]\r) = \Exp_v \l[\sup_u (g(u,v))\r]
 \end{align}
 since the $\sup$ over $u$ becomes vacuous after we replace $u$ with $u'$.
 
@@ -144,7 +144,7 @@ where \eqref{lec5:eqn:thm1-pf2} is because $\sigma_i(f(z_i) - f(z_i')) \stackrel
 
 Here is an intuitive understanding of what Theorem \ref{lec5:thm:thm1} achieves. Consider the quantities on the LHS and RHS of \eqref{lec5:eqn:thm1}:
 \begin{align*}
-    \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n f(z_i) - \Exp[f(z)]\r) \qquad \text{v.s.} \qquad \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n \sigma_i f(z_i)\r).
+    \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n f(z_i) - \Exp[f(z)]\r) \qquad \text{vs.} \qquad \sup_{f\in \cF} \l(\frac{1}{n} \sum_{i=1}^n \sigma_i f(z_i)\r).
 \end{align*}
 First, we removed $\Exp[f(z)]$, which is hard to control quantitatively since it is deterministic. Second, we added more randomness in the form of Rademacher variables. This will allow us to shift our focus from the randomness in the $z_i$'s to the randomness in the $\sigma_i$'s. In the future, our bounds on the Rademacher complexity will typically only depend on the randomness from the $\sigma_i$'s.
 
@@ -159,14 +159,14 @@ For intuition on how Rademacher complexity depends on the distribution $P$, cons
     &= \frac{1}{n}\l( \Exp_{\sigma_i} \l[ \sum^n_{i=1} \sigma_i^2 \r] \r)^\frac{1}{2} \\
     &= \frac{1}{n} \cdot \sqrt{n} = \frac{1}{\sqrt{n}}.
 \end{align}
-This bound does not depend on $\cF$ (except that it is bounded). This example illustrates that a bound on the Rademacher complexity can sometimes only depend on the (known) distribution of the Rademacher random variables.
+This bound does not depend on $\cF$ (except on the fact that $\cF$ is bounded). This example illustrates that a bound on the Rademacher complexity can sometimes depend only on the (known) distribution of the Rademacher random variables.
 
 \sec{Empirical Rademacher complexity}
 
 In the previous section, we bounded the expectation of $\sup_{f\in F} \l[ \frac{1}{n} \sum^n_{i=1} f(z_i) -  \Exp_{z\sim P} [f(z)] \r]$. This expectation is taken over the training examples $z_1, \dots, z_n$. In many instances we only have one training set, and do not have access to many training sets. Thus, the bound on the expectation does not give a guarantee for the one training set that we have. In this section, we seek to bound the quantity itself with high probability.
 
 \begin{definition}[Empirical Rademacher complexity]
-Given a dataset $S = \{z_1, \dots, z_n\}$, the \textit{emprical Rademacher complexity} is defined as
+Given a dataset $S = \{z_1, \dots, z_n\}$, the \textit{empirical Rademacher complexity} is defined as
 \begin{equation}
 R_S(\cF) \overset{\Delta}{=} \Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{f\in \cF} \frac{1}{n} \sum^n_{i=1} \sigma_i f(z_i) \r].
 \end{equation}
@@ -192,7 +192,7 @@ For conciseness, define
 
 We prove the theorem in 4 steps.
 
-\textbf{Step 1:} We bound $g$ using McDiarmid's Inequality. To use McDiarmid's inequality, we check that the bounded difference condition holds:
+\textbf{Step 1:} We bound $g$ using McDiarmid's Inequality. To use McDiarmid's Inequality, we check that the bounded difference condition holds:
 \begin{align}
     g(z_1, \dots, z_n) - g(z_1, \dots, z_i', \dots, z_n)
     &\leq \sup_{f\in \cF} \l[ \frac{1}{n} \sum^{n}_{j=1} f(z_j) \r] - \sup_{f\in \cF} \l[ \l(\frac{1}{n} \sum^{n}_{j=1, j \neq i} f(z_j)\r) + \frac{f(z_i')}{n} \r]  \\
@@ -238,7 +238,7 @@ as required.
 
 Setting $\cF$ to be a family of loss functions bounded by $[0,1]$ in Theorem \ref{lec5:thm:thm2} gives the following corollary:
 \begin{corollary}\label{lec6:cor:ggap-rsbound}
-Let $\cF$ to be a family of loss functions $\cF = \l\{ (x,y) \mapsto \ell((x,y),h): h \in \cH \r\}$ with $\ell((x,y), h) \in [0,1]$ for all $\ell$, $(x,y)$ and $h$. Then, with probability $1-\delta,$ the generalization gap is
+Let $\cF$ be a family of loss functions $\cF = \l\{ (x,y) \mapsto \ell((x,y),h): h \in \cH \r\}$ with $\ell((x,y), h) \in [0,1]$ for all $\ell$, $(x,y)$ and $h$. Then, with probability $1-\delta,$ the generalization gap is
     \begin{equation}\label{lec6:eqn:ggap-rsbound}
         \hat{L}(h) - L(h) \leq 2R_S(\cF) + 3\sqrt{\frac{\log(2/\delta)}{2n}} \quad \text{for all } h\in \cH.
     \end{equation}

@@ -17,13 +17,13 @@ A central goal of learning theory is to bound the \emph{excess risk} $L(\hat{\th
 
 Uniform convergence is a property of a parameter set $\Theta$, which gives us bounds of the form
 \al{
-    \Pr \left[|\hat{L}(\theta) - L(\theta)| \geq \varepsilon \right] \leq \delta; \; \forall \theta \in \Theta.\label{lec2:eqn:uc}
+    \Pr \left[|\hat{L}(\theta) - L(\theta)| \geq \varepsilon \right] \leq \delta; , \forall \theta \in \Theta.\label{lec2:eqn:uc}
 }
 In other words, uniform convergence tells us that for any choice of $\theta$, our empirical risk is always close to our population risk with high probability. Let's look at a motivating example for why this type of bound is useful.
 
 \subsec{Motivation: Uniform convergence implies generalization}\label{sec:uc-gen}
 
-Consider the standard supervised learning setup where we have some i.i.d. $(x\sp{i}, y\sp{i})$. Furthermore, assume that we have a bounded loss function; specifically, suppose that $0 \leq \ell((x, y); \theta) \leq 1$, as in the case of the zero-one loss function. We show that uniform convergence implies generalization.
+Consider the standard supervised learning setup where we have some i.i.d. $\{(x\sp{i}, y\sp{i})\}$. Furthermore, assume that we have a bounded loss function; specifically, suppose that $0 \leq \ell((x, y); \theta) \leq 1$, as in the case of the zero-one loss function. We show that uniform convergence implies generalization.
 
 First, via telescoping sums, we can decompose the excess risk into three terms:
 \al{
@@ -37,7 +37,7 @@ L(\hat{\theta}) - L(\theta^*) &\leq |L(\hat{\theta}) - \hat{L}(\hat{\theta})| + 
 \end{align}
 This result tells us that if $\sup_{\theta \in \Theta } |L(\theta) - \hat{L}(\theta)|$ is small (say, less than $\varepsilon/2$), then excess risk $L(\hat{\theta}) - L(\theta^*)$ is less than $\varepsilon$. But this is exactly in the form of the bound in \eqref{lec2:eqn:uc}. Hence, if we can show that a parameter family exhibits uniform convergence, we can get a bound on excess risk as well.
 
-For future references, Equation~\eqref{lec2:eqn:1} can be strengthened straightforwardly into the following with slightly more careful treatment of the signs of each term:
+For future reference, Equation~\eqref{lec2:eqn:1} can be strengthened straightforwardly into the following with slightly more careful treatment of the signs of each term:
 \begin{align}
 L(\hat{\theta}) - L(\theta^*) \le |\hat{L}(\theta^*) - L(\theta^*)|+  L(\hat{\theta}) - \hat{L}(\hat{\theta})  \le |\hat{L}(\theta^*) - L(\theta^*)|+ \sup_{\theta \in \Theta} \left(L(\theta) - \hat{L}(\theta)\right)\label{lec2:eqn:2}
 \end{align}
@@ -61,7 +61,7 @@ We can then use Hoeffding's inequality to deal with the summands as $\theta$ the
 
 \subsec{Intuitive interpretation of uniform convergence}
 
-Since uniform convergence implies generalization, if we know that population risk and empirical risk are always ``close," then excess risk is ``small" as well (Figure \ref{lec2:fig:uc}). In fact, it is possible to show that not only is $L(\theta)$ ``close" to $\hat{L}(\theta)$ for sufficiently large data, but that the ``shape" of $\hat{L}$ is ``close" to the shape of $L$ as well (Figure \ref{lec2:fig:shape}). This holds for the convex case; furthermore, there are conditions under which this holds in the non-convex case, for which a rigorous treatment can be found in~\cite{mei2017landscape}. (\emph{Figure design and some wording in this section was inspired by~\cite{percynotes, thomasliu2018}.})
+Since uniform convergence implies generalization, if we know that population risk and empirical risk are always ``close," then excess risk is ``small" as well (Figure \ref{lec2:fig:uc}). In fact, it is possible to show that not only is $L(\theta)$ ``close" to $\hat{L}(\theta)$ for sufficiently large data, but that the ``shape" of $\hat{L}$ is ``close" to the shape of $L$ as well (Figure \ref{lec2:fig:shape}). This holds for the convex case; furthermore, there are conditions under which this holds in the non-convex case, for which a rigorous treatment can be found in~\cite{mei2017landscape}. (\emph{Figure design and some wording in this section were inspired by~\cite{percynotes, thomasliu2018}.})
 
 \begin{figure}[t]
     \centering
@@ -102,7 +102,7 @@ Since uniform convergence implies generalization, if we know that population ris
 
 \sec{Finite hypothesis class}
 
-In this section, assume that $\cH$ is finite. The following theorem gives a bound for the excess risk $L(\hat{h}) - L(h^{*})$, where $\hat{h}$ and $h^*$ are the minimizers of the empirical loss and population loss respectively.
+In this section, assume that $\cH$ is finite. The following theorem gives a bound for the excess risk $L(\hat{h}) - L(h^{*})$, where $\hat{h}$ and $h^*$ are the minimizers of the empirical loss and population loss, respectively.
 
 \begin{theorem}\label{lec4:thm:finite}
 Suppose that our hypothesis class $\cH$ is finite and that our loss function $\ell$ is bounded in $[0,1]$, i.e. $0 \leq \ell((x, y), h) \leq 1$. Then $\forall \delta \  s.t. \  0 < \delta < \frac{1}{2}$ , with probability at least $1 - \delta$, we have 
@@ -144,7 +144,7 @@ If we take $\delta$ such that $2\vert \cH \vert \exp(-2n\epsilon^2) = \delta$, t
 \epsilon = \sqrt{\frac{\ln{\vert \cH \vert} + \ln{(2 / \delta)}}{2n}},
 \label{lec4:eqn:probabilitytoerror}
 }
-which proves \eqref{lec4:eqn:finiteuniformbound}. \eqref{lec4:eqn:finiteexcessriskbound} follows by the inequality we stated in Section \ref{sec:uc-gen} and taking 
+which proves \eqref{lec4:eqn:finiteuniformbound}. \eqref{lec4:eqn:finiteexcessriskbound} follows by the inequality we stated in Section \ref{sec:uc-gen}, and taking 
 \begin{align}
     \epsilon = \sqrt{\frac{ 2(\ln{\vert \cH \vert} + \ln{(2 / \delta)}) }{n}},
 \end{align}
@@ -192,7 +192,7 @@ For this section, assume that our infinite hypothesis class $\cH$ can be paramet
 \label{lec4:eqn:infiniteclass}
 }
 
-The intuition behind brute-force discretization is as follows: Let $E_\theta = \{ |\hatL(\theta) - L(\theta)| \geq \epsilon \}$ be the ``bad" event. We want the bound the probability of any one of these bad events happening (i.e. $\bigcup_\theta E_\theta$). The union bound does not work as we end up with an infinite sum. However, the union bound is very loose: these events can overlap with each other significantly. Instead, we can try to find ``prototypical" bad events $E_{\theta_1}, \dots, E_{\theta_N}$ that are somewhat disjoint so that $\bigcup_\theta E_\theta \approx \bigcup_{i=1}^N E_{\theta_i}$. We can then use the union bound on $\bigcup_{i=1}^N E_{\theta_i}$ to get a non-vacuous upper bound.
+The intuition behind brute-force discretization is as follows: Let $E_\theta = \{ |\hatL(\theta) - L(\theta)| \geq \epsilon \}$ be the ``bad" events. We want the bound the probability of any one of these bad events happening (i.e. $\bigcup_\theta E_\theta$). The union bound does not work as we end up with an infinite sum. However, the union bound is very loose: these events can overlap with each other significantly. Instead, we can try to find ``prototypical" bad events $E_{\theta_1}, \dots, E_{\theta_N}$ that are somewhat disjoint so that $\bigcup_\theta E_\theta \approx \bigcup_{i=1}^N E_{\theta_i}$. We can then use the union bound on $\bigcup_{i=1}^N E_{\theta_i}$ to get a non-vacuous upper bound.
 
 We make these ideas precise in the following section.
 
@@ -201,14 +201,14 @@ We make these ideas precise in the following section.
 We start by defining the notion of an \emph{$\epsilon$-cover} (also \textit{$\epsilon$-net}):
 
 \begin{definition}[$\epsilon$-cover]
-Let $\epsilon>0$. An \emph{$\epsilon$-cover} of a set $S$ with respect to distance metric $\rho$ is a subset $C \subseteq S$ such that $\forall x \in S$, $\exists x' \in C$ such that $\rho(x,x') \le \epsilon$, or equivalently,
+Let $\epsilon>0$. An \emph{$\epsilon$-cover} of a set $S$ with respect to a distance metric $\rho$ is a subset $C \subseteq S$ such that $\forall x \in S$, $\exists x' \in C$ such that $\rho(x,x') \le \epsilon$, or equivalently,
 \begin{align}
 S &\subseteq \bigcup_{x \in C} \mathrm{Ball}(x, \epsilon, \rho), \quad \text{where} \\
 \mathrm{Ball}(x, \epsilon, \rho) &\triangleq \{ x': \rho(x, x') \leq \epsilon \}.
 \end{align}
 \end{definition}
 
-(We note that in some definitions it is possible for points in $C$ to lie outside of $S$; we do not worry about this technicality the class.) The following lemma tells us that our parameter space $S = \{\theta \in \R^p: \|\theta\|_2 \le B\}$ has an $\epsilon$-cover with not too many elements:
+(We note that in some definitions it is possible for points in $C$ to lie outside of $S$; we do not worry about this technicality in this class.) The following lemma tells us that our parameter space $S = \{\theta \in \R^p: \|\theta\|_2 \le B\}$ has an $\epsilon$-cover with not too many elements:
 
 \begin{lemma}[$\epsilon$-cover of $\ell_2$ ball]\label{lec4:lem:ECSize}
 Let $B,\epsilon>0$, and let $S = \{x \in \R^p: \|x\|_2 \le B\}.$ Then there exists an $\epsilon$-cover of $S$ with respect to the $\ell_2$-norm with at most $\max \left (\left(\frac{3B\sqrt{p}}{\epsilon}\right)^p, 1 \right)$  elements.
@@ -222,7 +222,7 @@ C = \left\{ x \in S: x_i = k_i \frac{\epsilon}{\sqrt{p}}, k_i \in \mathbb{Z}, |k
 i.e. $C$ is the set of grid points in $\R^p$ of width $\tfrac{\epsilon}{\sqrt{p}}$ that are contained in $S$. See Figure \ref{lec5:fig:ecover} for an illustration. 
 \begin{figure}[ht]
 \centerline{\includegraphics[width=3in]{figures/ECover.png}}
-\caption[lec5:fig:ecover]{The $\epsilon$-cover (shown in red) of $S$ we construct in the proof of Lemma~\ref{lec4:lem:ECSize}. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$.}
+\caption[lec5:fig:ecover]{The $\epsilon$-cover (shown in red) of $S$ that we construct in the proof of Lemma~\ref{lec4:lem:ECSize}. For $x \in S$, we choose the grid point $x'$ such that $\norm{x-x'}_2 \le \epsilon$.}
 \label{lec5:fig:ecover}
 \end{figure}
 
@@ -282,7 +282,7 @@ To choose the correct $\delta$, we must reason about the probability of $E$ unde
 }
 (At the same time, we see from \eqref{lec4:eqn:triangle} that this choice of $\delta$ gives $|\hat L(\theta)- L(\theta)| \le 2 \sqrt{\frac{p}{n}}$, which is roughly the bound we want.)
 
-Since we cannot actually drop the log term in the inequality $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$, we need to make $\delta$ a little big bigger. So, if we set $\delta = \sqrt{\frac{c_0 p \max(1, \ln{(\kappa Bn)})}{n}}$ with $c_0 = 36$, then by Remark \ref{lec4:rem:enet},
+Since we cannot actually drop the log term in the inequality $\ln{|C|} \leq p \ln{ (3B / (\delta / 2)) }$, we need to make $\delta$ a little bit bigger. So, if we set $\delta = \sqrt{\frac{c_0 p \max(1, \ln{(\kappa Bn)})}{n}}$ with $c_0 = 36$, then by Remark \ref{lec4:rem:enet},
 \begin{align}
 \ln{\vert C \vert} - 2n\delta^2 &\leq p \ln\left(\frac{6B \kappa}{\delta}\right) - 2n\delta^2 \\
 &\leq p \ln\left(\frac{6B\kappa \sqrt{n}}{ \sqrt{c_0 p \max(1, \ln{(\kappa Bn)})} }\right) - 2n \frac{c_0p}{n} \ln(\kappa Bn) &(\text{dfn of } \delta)  \\
