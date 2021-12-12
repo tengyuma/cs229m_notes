@@ -446,23 +446,22 @@ Comparing this bound to $\frac{p - q}{2} \cdot n$, we can deduce that if $p - q 
 
 Given a graph $G(V, E)$ where $V$ denotes the set of vertices and $E$ the set of edges, we define the {\it conductance} of a component $S$ as
 \begin{align}
-    \phi(S) &\defeq \frac{\vert \operatorname{E}(S, \bar{S}) \vert}{\operatorname{Vol}(S)}
+    \phi(S) &\defeq \frac{\vert E(S, \bar{S}) \vert}{\operatorname{Vol}(S)}
 \end{align}
-\tnote{could we make $\operatorname{E}$---that's somehow more standard I guess? maybe just because you want it to look less similar to expectation}
-where $\operatorname{E}(S, \bar{S})$ is the total number of edges between $S$ and $\bar{S}$, and $\operatorname{Vol}(S)$ is the total number of edges connecting to $S$. To be precise,
+where $E(S, \bar{S})$ is the total number of edges between $S$ and $\bar{S}$, and $\operatorname{Vol}(S)$ is the total number of edges connecting to $S$. To be precise,
 \begin{align}
-    \operatorname{E}(S, \bar{S}) &= \sum_{i \in S, j \in \bar{S}} G_{ij} \\
+    E(S, \bar{S}) &= \sum_{i \in S, j \in \bar{S}} G_{ij} \\
     \operatorname{Vol}(S) &= \sum_{i \in S, j \in [n]} G_{ij} \;.
 \end{align}
 Intuitively, conductance captures how separated $S$ and $\bar{S}$ are. 
 
-Since $\operatorname{Vol}(S) \geq \operatorname{E}(S, \bar{S})$, it follows that $\phi(S) \leq 1$. Next, observe that $\operatorname{Vol}(S) + \operatorname{Vol}(\bar{S}) = \operatorname{Vol}(V)$. Then, if $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, it must be the case that $\operatorname{Vol}(S) \leq \operatorname{Vol}(\bar{S})$ and therefore $\phi(S) \geq \phi(\bar{S})$. In subsequent analysis, we assume without loss of generality that $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, i.e. that $S$ is the smaller community.
+Since $\operatorname{Vol}(S) \geq E(S, \bar{S})$, it follows that $\phi(S) \leq 1$. Next, observe that $\operatorname{Vol}(S) + \operatorname{Vol}(\bar{S}) = \operatorname{Vol}(V)$. Then, if $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, it must be the case that $\operatorname{Vol}(S) \leq \operatorname{Vol}(\bar{S})$ and therefore $\phi(S) \geq \phi(\bar{S})$. In subsequent analysis, we assume without loss of generality that $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, i.e. that $S$ is the smaller community.
 
 Next, we define $\phi(G)$ to be the {\it sparsest cut} of $G$ if
 \begin{align}
     \phi(G) &= \min_{S: \operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2} \phi(S) \;.
 \end{align}
-We might wonder why we need to normalize by $\operatorname{Vol}(S)$ in the definition of conductance. The reason for this is that $\operatorname{E}(S, \bar{S})$ is typically minimized when $S$ is small. Thus, without this normalization, the sparsest cut would not be very meaningful.
+We might wonder why we need to normalize by $\operatorname{Vol}(S)$ in the definition of conductance. The reason for this is that $E(S, \bar{S})$ is typically minimized when $S$ is small. Thus, without this normalization, the sparsest cut would not be very meaningful.
 
 Our goal is to find an approximate sparsest cut $\hat{S}$ such that $\phi(\hat{S}) \approx \phi(G)$.\footnote{Finding the exact sparsest cut is a computationally hard problem.} We will use eigendecomposition to approach this problem. Let $d_i = \operatorname{Vol}(\{i\})$ be the degree of node $i$, and let $D = \text{diag}(\{d_i\})$ be the diagonal matrix that contains the degrees $d_i$ as entries. Furthermore, let 
 \begin{equation}
