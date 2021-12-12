@@ -236,7 +236,7 @@ Results 1 and 2 above both involve the so-called ``under-complete'' case ($k \le
 In summary, the moment method is a recipe in which we first compute high order moments (i.e. tensors), assume that these estimates are noiseless, and decompose these tensors to recover the latent variables. Though we do not discuss these results here, there is an extensive literature analyzing the robustness of the moment method to error in the moment estimates. Last, we note that even though we only explicitly analyze the mixture of Gaussians model here, latent variable models amenable to analysis by the moment method include ICA, Hidden Markov Models, topic models, etc.
 
 \sec{Spectral Clustering}
-Introduced by \citet{shi2000normalized} and \citet{ng2002spectral}, spectral clustering learns a model for the data points using a \emph{pairwise} notion of similarity. Formally, assume that we are given $n$ data points $x\sp{1}, \dots, x\sp{n}$ as well as a similarity matrix $G \in \bbR^{n\times n}$ such that 
+Introduced by \citet{shi2000normalized} and \citet{ng2001spectral}, spectral clustering learns a model for the data points using a \emph{pairwise} notion of similarity. Formally, assume that we are given $n$ data points $x\sp{1}, \dots, x\sp{n}$ as well as a similarity matrix $G \in \bbR^{n\times n}$ such that 
 \begin{equation}
     G_{ij} = \rho (x\sp{i}, x\sp{j})
 \end{equation}

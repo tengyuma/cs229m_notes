@@ -11,7 +11,7 @@ In this chapter, we will instantiate Rademacher complexity for two important hyp
 \subsec{Intuition}
 Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and when we compare it to the outcome (0 or 1), its closeness to the true output gives us a measure of how confident we are in the prediction.
 
-Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a ``better" decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red boundary. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on the generalization gap is.
+Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a ``better'' decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red boundary. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on the generalization gap is.
 
 \begin{figure}[ht!]
     \begin{center}

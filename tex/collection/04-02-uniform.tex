@@ -60,7 +60,7 @@ For applications to empirical risk minimization, we will take $\cZ = \cX \times 
 \end{remark}
 
 \begin{remark}
-Note that $R_n(\cF)$ is also dependent on the measure $\rho$ of the space, so technically it should be $R_{n,\rho}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
+Note that $R_n(\cF)$ is also dependent on the measure $P$ of the space, so technically it should be $R_{n,P}(\cF)$, but for brevity, we refer to it as $R_n(\cF)$.
 \end{remark}
 
 An interpretation is that $R_n(\cF)$ is the maximal possible correlation between outputs of some $f \in \cF$ (on points $f(z_1), \dots, f(z_n)$) and random Rademacher variables $ (\sigma_1, \dots, \sigma_n).$ Essentially, functions with more random sign outputs will better match random patterns of Rademacher variables and have higher complexity (greater ability to mimic or express randomness).
@@ -159,7 +159,7 @@ For intuition on how Rademacher complexity depends on the distribution $P$, cons
     &= \frac{1}{n}\l( \Exp_{\sigma_i} \l[ \sum^n_{i=1} \sigma_i^2 \r] \r)^\frac{1}{2} \\
     &= \frac{1}{n} \cdot \sqrt{n} = \frac{1}{\sqrt{n}}.
 \end{align}
-This bound does not depend on $\cF$ (except on the fact that $\cF$ is bounded). This example illustrates that a bound on the Rademacher complexity can sometimes depend only on the (known) distribution of the Rademacher random variables.
+This bound does not depend on $\cF$ (except on the fact that $f \in \cF$ is bounded). This example illustrates that a bound on the Rademacher complexity can sometimes depend only on the (known) distribution of the Rademacher random variables.
 
 \sec{Empirical Rademacher complexity}
 

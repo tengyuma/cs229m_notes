@@ -6,7 +6,7 @@
 
 \sec{The Neural Tangent Kernel (NTK) Approach} \label{sec:ntk_approach}
 
-In the previous sections, we studied non-convex optimization problems in which all local minima are global. Selecting the parameters of a deep neural network is another commonly encountered non-convex optimization problem, but it is unrealistic to expect that all local minima will also be global minima in this setting. Here we consider a particular objective for which we can identify particular regions of the input space in which all local minima are also global minima. We can show that this objective corresponds to certain types of deep neural networks, but this analysis remains limited. For further reading about this approach to studying neural network optimization, see \cite{liang2018adding} and \cite{du2019gradient}.
+In the previous sections, we studied non-convex optimization problems in which all local minima are global. Selecting the parameters of a deep neural network is another commonly encountered non-convex optimization problem, but it is unrealistic to expect that all local minima will also be global minima in this setting. Here we consider a particular objective for which we can identify particular regions of the input space in which all local minima are also global minima. We can show that this objective corresponds to certain types of deep neural networks, but this analysis remains limited. For further reading about this approach to studying neural network optimization, see \cite{liang2018adding} and \cite{du2019width}.
 
 \tnotelong{Tengyu should  double check this later}
 
@@ -201,7 +201,7 @@ We visualize the these functions in Figure~\ref{fig:ntk-1d}. We observe that $\h
 %    We will plot $D(\alpha)$ as well as $\hat L(\alpha f_\theta(1))$ and $\hat L(\alpha g_\theta(1))$ for $\alpha = 1,2,4$. In the following plots, we use $\beta = 2$. 
 %   
 \end{remark}
-    \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach (e.g., ~\cite{li2018learning,du2019gradient}). Consider a  two-layer network with $m$ neurons. 
+    \item \textbf{Overparametrization (with specific initialization)}. Early papers on the NTK take this approach (e.g., ~\cite{li2018learning,du2019width}). Consider a  two-layer network with $m$ neurons. 
     \begin{align}
         \hat{y} = \frac{1}{\sqrt{m}} \sum_{i=1}^m a_i \sigma(w_i^\top x )
     \end{align} 
