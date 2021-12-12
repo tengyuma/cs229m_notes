@@ -112,8 +112,14 @@ Formally, the following lemma answers the second step in the above outline. Name
     \end{align}
     \label{lec10:lma:additive_cover}
 \end{lemma}
+\begin{figure}[ht!]
+	\begin{center}
+		\includegraphics[width=\textwidth]{figures/multilayer_covering.png}
+	\end{center}
+	\caption{We visualize the covering strategy adopted in the proof of Lemma~\ref{lec10:lma:additive_cover}. The two grey sets depict the output spaces of the first and second layers, namely, $\cQ_1$ and $\cQ_2$, respectively. The blue dots in $\cQ_1$ are the outputs of three functions in the $\epsilon_1$-cover $\cC_1$, while the blue subsets of $\cQ_2$ depict $\cF_2 \circ f_1'$ and $\cF_2 \circ f_1''$. The red circles show how we construct a covering, $\cC_2$, of $\cQ_2$. In particular, the two collections of red circles depict the $\cC_{2, f_1'}$ and $\cC_{2, f_1''}$ covers. Taking the union of such covers over all functions in $\cC_1$ yields $\cC_2$.}
+	\label{lec10:fig:multilayer-covering}
+\end{figure}
 \begin{proof}
-\tnote{the figure is very important for the proof}
 Let $\epsilon_1,\dots,\epsilon_r$ be the radius for each layer. Let $\cC_1$ be an $\epsilon_1$-cover of $\cF_1$. Then, for all $f_1' \in \cC_1$, we define $\cC_{2, f_1'}$ as an $\epsilon_2$-covering of  the set 
 \begin{equation}
     \cF_2 \circ f_1' = \left\{f_2\left(f_1'\left(X\right)\right) : f_2 \in \cF_2 \right\}.
@@ -122,7 +128,7 @@ Taking a union of this covering over all $f_1' \in \cC_1$ clearly yields an $\ep
 \begin{align}
     \cC_2 = \bigcup_{f_1'\in \cC_1}\cC_{2,f_1'},
 \end{align} 
-then $\cC_2$ is an $\epsilon$-cover of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \cdot \kappa_2 + \epsilon_2$. We prove this claim rigorously in the sequel.
+then $\cC_2$ is an $\epsilon$-cover of $\cF_2 \circ \cF_1$ with $\epsilon = \epsilon_1 \cdot \kappa_2 + \epsilon_2$. We depict this covering procedure in Figure~\ref{lec10:fig:multilayer-covering}, and we prove this claim rigorously in the sequel.
 
 Next, we bound the sizes of these covers. Directly applying the assumption given by \eqref{lec10:eqn:single_cover_bound}, we conclude that
 \begin{align}
