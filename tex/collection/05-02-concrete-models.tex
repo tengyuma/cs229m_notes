@@ -48,7 +48,7 @@ where the first inequality is another application of Jensen's inequality, and th
 We observe that both the empirical and average Rademacher complexities scale with the upper $\ell_2$-norm bound $\Norm{w}_2 \le B$ on the parameters~$w$, which motivates regularizing the model. However, smaller weights in the model may reduce the margin $\gamma_\mathrm{min}$, which in turn hurts generalization according to \eqref{lec7:eqn:generalization_loss}.
 
 \begin{remark}
-Note that if we scale the data by some multiplicative factor, the bound on empirical Rademacher complexity $R_S(\cH)$ will scale accordingly. However, at the same time we expect the margin to scale by the same multiplicative factor, so the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} does not change. This lines up with our intuition that the bound should not depend on the scaling of the data.
+Note that if we scale the data by some multiplicative factor, the bound on empirical Rademacher complexity $R_S(\cH)$ will scale accordingly. However, at the same time, we expect the margin to scale by the same multiplicative factor, so the bound on the generalization gap in \eqref{lec7:eqn:generalization_loss} does not change. This lines up with our intuition that the bound should not depend on the scaling of the data.
 \end{remark}
 
 \subsec{Linear models with weights bounded in \texorpdfstring{$\ell_1$}{L1} norm}
@@ -246,7 +246,7 @@ R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 		\sum |w_j|\|u_j\|_2 &\le \left(\sum |w_j|^2\right)^{1/2} \left(\sum\|u_j\|_2^2\right)^{1/2} \tag{by Cauchy-Schwarz inequality} \\
 		& \le \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2
 	\end{align}
-	Therefore, if we consider $\cH^1 = \{f_\theta \mid \sum |w_j|\|u_j\|_2\le B'\}$ and $\cH^2 = \{f_\theta \mid \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2 \le B'\}$, then either Theorem~\ref{lec8:thm:thm-improved-nn-rc} on $\cH^1$ or Theorem~\ref{lec7:thm:thm_3} on $\cH^2$ gives the same generalization bound $O(B'/\sqrt{n})$ but $\cH^1 \supset \cH^2$. 
+	Therefore, if we consider $\cH^1 = \{f_\theta \mid \sum |w_j|\|u_j\|_2\le B'\}$ and $\cH^2 = \{f_\theta \mid \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2 \le B'\}$, then either Theorem~\ref{lec8:thm:thm-improved-nn-rc} on $\cH^1$ or Theorem~\ref{lec7:thm:thm_3} on $\cH^2$ gives the same generalization bound $O(B'/\sqrt{n})$, but $\cH^1 \supset \cH^2$. 
 	
 	Moreover, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is stronger as we have more neurons---this is because the hypothesis class $\cH$ as defined in~\eqref{eqn:H} is bigger as $m$ increases. Because of this, it's possible to obtain a generalization guarantee that decreases as $m$ increases, as shown in Section~\ref{sec:gen-bounds:decreasing-in-m}. 
 	
@@ -279,7 +279,7 @@ where $\cH' = \l\{x \mapsto \phi(\bar{u}^\top x) :  \bar{u} \in \mathbb{R}^d, \n
 
 \end{proof}
 
-We complete the proof by deriving the Lemma \ref{lec8:lemma:absfortwo} used in the second last inequality. Notably, the lemma's assumption holds in the current context, since
+We complete the proof by deriving the Lemma \ref{lec8:lemma:absfortwo} used in the second-to-last inequality. Notably, the lemma's assumption holds in the current context, since
 \al{
 \sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle = \sup_{\bar{u}: \norm{\bar{u}}_2 \leq 1} 
 \sum_{i=1}^n \sigma_i \phi \l(\bar{u}^\top x\sp i \r)  \geq 0.
@@ -358,7 +358,7 @@ Suppose $\theta = \{(w_i, u_i)\}_{1 \leq i \leq m}$ is a two-layer neural networ
 \al{
 (\widetilde w_i, \widetilde u_i) = \begin{cases}
 (w_i, u_i) & i\le m, \\
-(0,0) & \text{otherwise}
+(0,0) & \text{otherwise.}
 \end{cases}
 }
 $\widetilde \theta$ is functionally equivalent to $\theta$ and $C(\widetilde \theta) = C(\theta) \le 1$. This means maximizing $\gammamin$ over $\{C(\widetilde \theta): \widetilde \theta\text{ of width }m+1\}$ should give no lower of a value than the maximum of $\gammamin$ over $\{C(\theta): \theta\text{ of width }m\}$.
@@ -366,7 +366,7 @@ $\widetilde \theta$ is functionally equivalent to $\theta$ and $C(\widetilde \th
 
 \subsec{Equivalence to an \texorpdfstring{$\ell_1$}{L1}-SVM in \texorpdfstring{$m \to \infty$}{m -> inf} limit}
 
-Since $\gamma_m^*$ is non-decreasing in $m$, quantity 
+Since $\gamma_m^*$ is non-decreasing in $m$, the quantity 
 \begin{equation}
 \gamma_\infty ^* = \lim_{m\to \infty } \gamma_m^*
 \end{equation}
@@ -405,7 +405,7 @@ Suppose $\gamma_\infty^*$ is obtained by network weights $(w_1,w_2, \cdots), (u_
 \begin{equation}
 \widetilde w_i \defeq w_i\cdot \norm{u_i}_2, \qquad \overline u_i \defeq \frac {u_i} {\norm{u_i}_2}.   
 \end{equation}
-Note that $\{(\widetilde w_i, \overline u_i)\}$ has the same functionality (and also the same complexity measure $C(\theta)$, margin, etc.) as that of $\{(w_i,u_i)\}$, but now $\overline u_i$ has unit $\ell_2$-norm (i.e. $\bar{u}_i \in \mathcal{S}^{d-1}$). Thus, $\phi(\overline u_i ^\top x)$ can be treated as a feature in $\cG$ and we can construct an equivalent $\ell_1$-SVM (denoted by $\mu$) such that $\widetilde w_i$ is the coefficient of $\mu$ associated with that feature. Since $\widetilde w_i$ must only be ``turned on' at $\overline u_i $, we have 
+Note that $\{(\widetilde w_i, \overline u_i)\}$ has the same functionality (and also the same complexity measure $C(\theta)$, margin, etc.) as that of $\{(w_i,u_i)\}$, but now $\overline u_i$ has unit $\ell_2$-norm (i.e. $\bar{u}_i \in \mathcal{S}^{d-1}$). Thus, $\phi(\overline u_i ^\top x)$ can be treated as a feature in $\cG$ and we can construct an equivalent $\ell_1$-SVM (denoted by $\mu$) such that $\widetilde w_i$ is the coefficient of $\mu$ associated with that feature. Since $\widetilde w_i$ must only be ``turned on" at $\overline u_i $, we have 
 \al{
 \mu[u] = \sum_{i \in \mathcal{S}^{d-1}} \tilde{w}_i \delta(u - \overline u_i),
 }
@@ -424,12 +424,12 @@ where the last equality holds because $\{(\widetilde w_i, \overline u_i)\}$ sati
 \end{proof}
 
 \begin{remark}
-How well does a finite dimensional neural network approximate the infinite-dimensional $\ell_1$ network? Proposition B.11 of \cite{wei2020regularization} shows that you only need $n+1$ neurons. Another way to say this is that $\{\gamma_m\}$ stabilizes once $m=n+1$:
+How well does a finite-dimensional neural network approximate the infinite-dimensional $\ell_1$ network? Proposition B.11 of \cite{wei2020regularization} shows that you only need $n+1$ neurons. Another way to say this is that $\{\gamma_m\}$ stabilizes once $m=n+1$:
 \begin{equation}
 \gamma_1^* \le \gamma_2^* \le \dots \le \gamma_{n+1}^* = \gamma_\infty^*.
 \end{equation}
 The main idea of the proof is that if we have a neural net $\theta$ with $(n+2)$ neurons, then we can always pick a simplification $\theta'$ with $(n+1)$ neurons such that $\theta,\theta'$ agree on all $n$ datapoints.
 
-As an aside, this result also resolves the issue in our partial proof. A priori, $\gamma_{\infty}^*$ may not necessarily be attained by a set of weights $\{(\widetilde w_i, \overline u_i)\}$ but the above shows that it is achievable with just $n+1$ non-zero indices.
+As an aside, this result also resolves the issue in our partial proof. A priori, $\gamma_{\infty}^*$ may not necessarily be attained by a set of weights $\{(\widetilde w_i, \overline u_i)\}$, but the above shows that it is achievable with just $n+1$ non-zero indices.
 
 \end{remark}
