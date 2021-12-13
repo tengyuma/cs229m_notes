@@ -321,7 +321,7 @@ Let $f: \R^d \to \R$ be a classification model. Recall that the standard margin 
 \end{cases}.
 \end{align}
 %That is, the generalized margin ``zeroes out" incorrect classifications.
-To simplify the exposition of the machinery below, we also introduce the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho$ which is the infinity-norm distance on an input domain $\cX$: 
+To simplify the exposition of the machinery below, we also introduce the \textit{$\infty$-covering number} $N_\infty(\epsilon, \cF)$ as the minimum cover size with respect to the metric $\rho$ defined as the infinity-norm distance on an input domain $\cX$: 
 \begin{equation}
 \rho(f, f) \triangleq \sup_{x \in \mathcal{X}} |f(x) - f'(x)| \triangleq \|f - f'\|_\infty.\footnote{If $f$ maps $\cX$ to multi-dimensional outputs, we will define $\rho(f, f) \triangleq \sup_{x \in \mathcal{X}} \|f(x) - f'(x)\| \triangleq \|f - f'\|_\infty$ where the norm in $\|f(x) - f'(x)\|$ is a norm in the output space of $f$ (which will be the Euclidean norm in this rest of this section).}
 \end{equation}
@@ -333,7 +333,7 @@ To simplify the exposition of the machinery below, we also introduce the \textit
 \end{remark}
 
 \begin{lemma}
-Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$.\footnote{Recall that this is the worst dependency on $\epsilon$ that we can tolerate when converting covering number bounds to Rademacher complexity.} Then, with probability greater than or equal to $1 - \delta$ over the randomness in the training data, for every $f$ in $\mathcal{F}$ that correctly predicts all the training examples,
+Suppose $g_f$ is a generalized margin. Let $\cG = \{g_f: f \in \mathcal{F}\}$. Suppose that for some $R$, $\log N_\infty(\epsilon, \cG) \leq \lfloor \frac{R^2}{\epsilon^2} \rfloor$ for all $\epsilon > 0$.\footnote{Recall that this is the worst dependency on $\epsilon$ that we can tolerate when converting covering number bounds to Rademacher complexity.} Then, with high probability over the randomness in the training data, for every $f$ in $\mathcal{F}$ that correctly predicts all the training examples,
 \begin{equation}
 L_{01} \leq \tilO \l (\frac{1}{\sqrt{n}} \cdot \frac{R}{\min_{i \in [n]} g_f(x\sp{i}, y\sp{i})} \r ) + \tilO\l (\frac{1}{\sqrt{n}}\r ).
 \end{equation}
@@ -359,16 +359,16 @@ Take $\gamma = \gamma_{\min} = \min_{i} g_\gamma(x\sp{i}, y\sp{i})$.\footnote{A 
 \end{proof}
 For which $g_f$ can we bound the covering number? If we take $g_f(x, y) = yf(x)$, then the covering number depends on the product $\prod_i \norm{W_i}_{\text{op}}$, but we originally set out to do better than this. If we have a linear model $w^\top x$, the normalized margin, $\frac{y \cdot w^\top x}{\norm{w}}$, governs the generalization performance. But how do we normalize for more general models? 
 
-For a deep neural net, a natural normalizer is the product of the Lipschitz constants of the layers. However, we do not want to normalize by a constant that depends only on the function class, so we take a different approach. We interpret the normalized margin as the solution to the following optimization problem:
+For a deep neural net, a potential normalizer is the product of the Lipschitz constants of the layers. However, we do not want to normalize by a constant that depends only on the function class, so we take a different approach. We interpret the normalized margin as the solution to the following optimization problem:
 \begin{equation}
     \begin{aligned}
         \min_\delta \quad & \norm{\delta}_2 \\
         \textrm{s.t.} \quad & w^\top(x + \delta) y \leq 0
     \end{aligned}
 \end{equation}
-In plain English, how can we find the minimum perturbation that gets our data point across the boundary?
+In plain English, this problem searches for the minimum perturbation that gets our data point across the boundary?
 
-This perturbation view of the standard margin can be extended naturally to multiple layers, but it turns out that mathematically we need to perturb all the layers. We define the \textit{all-layer margin} as below. We will consider perturbed models $\delta = (\delta_1, \dots, \delta_r)$, where each $\delta_i$ is a perturbation \textit{vector} associated with the $i$-th layer (and it has the same dimensionality as the $i$-th layer activation). We incorporate these perturbations into our model in the following particular way (so that we can handle the scaling in a clean way):
+This perturbation view of the standard margin can be extended naturally to multiple layers. For the math to work, it turns out that we need to perturb all the layers. We define the \textit{all-layer margin} as below. We will consider perturbed models $\delta = (\delta_1, \dots, \delta_r)$, where each $\delta_i$ is a perturbation \textit{vector} associated with the $i$-th layer (and it has the same dimensionality as the $i$-th layer activation). We incorporate these perturbations into our model in the following way (so that we can handle the scaling in a clean way):
 \begin{align}
     h_1(x, \delta) &= W_1 x + \delta_1 \cdot \norm{x}_2 \\
     h_2(x, \delta) &= \sigma(W_2 h_1(x, \delta)) + \delta_2 \cdot \norm{h_1(x, \delta)}_2 \\
@@ -379,13 +379,13 @@ We can then ask: what was the smallest perturbation that changed our decision? T
 \begin{align}
     m_f(x, y) \defeq \min_\delta \sqrt{\sum_{i=1}^r ||\delta_i||_2^2} \quad \text{s.t.} \quad f(x, \delta) y \leq 0,
 \end{align}
-i.e. the perturbation yields incorrect predictions.
+i.e. the smallest perturbation that yields incorrect predictions.
 
 Informally, $m_f(x, y)$ is a measure of how hard it is to perturb the model $f$. $f$ can be hard to perturb for two reasons: $f$ is Lipschitz (in its intermediate layers) and/or $yf(x)$ is large. In other words, the all-layer margin is a normalized version of the standard margin, normalized by the Lipschitzness of the model at the particular data point $(x,y)$.  %Even more informally, large margins imply confidence in our predictions, and so it becomes harder to change the model's mind.
 
 We now introduce our main result regarding the all-layer margin.
 \begin{theorem} \label{lec11:thm:poly_gen_bound_deep_nets}
-With high probability,
+With high probability, for all $f$ with training error $0$,
 \begin{equation}
 L_{01}(f) \leq \tilO\l (\frac{1}{\sqrt{n}} \cdot \frac{\sum_{i=1}^r \norm{W_i}_{1, 1}}{\min_{i \in [n]} m_f(x\sp{i}, y\sp{i})}\r ) + \tilO\l (\frac{r}{\sqrt{n}}\r ),
 \end{equation}
@@ -412,13 +412,13 @@ Then, the desired result follows directly from the preceding decomposition lemma
     \log N_\infty(\epsilon, m \circ \cF) \leq \frac{\sum_i c_i^2}{\epsilon^2}.
 \end{equation}
 \end{corollary}
-This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$. For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}. Finally, we are only left with the proof of Lemma~\ref{lec11:lma:decomp}. 
+This result gives the complexity of the composed model in terms of the complexity of the layers, with each $c_i$ given by $\norm{W_i}_{1, 1}$. For linear models, we can show $N_\infty(\epsilon_i, \cF_i) \leq \tilO\l (\frac{\beta_i^2}{\epsilon^2} \r )$ (where $\beta_i$ is a bound on $\norm{W_i}_{1, 1}$), and this implies Theorem~\ref{lec11:thm:poly_gen_bound_deep_nets}\footnote{Technically, we also need to union bound over the choices of $\beta_i$, which can also be achieved following Remark~\ref{lec7:rmk:union_bound_margin}.} Finally, we are only left with the proof of Lemma~\ref{lec11:lma:decomp}. 
 
 \begin{proof}[Proof of Lemma~\ref{lec11:lma:decomp}]
 Now we will prove a limited form of the decomposition lemma for affine models: $\cF_i = \{ z \mapsto \sigma(W_i z): \norm{W_i}_{1, 1} \leq \beta_i \}$. There are two crucial steps to this problem. First, we will prove that $m_f(x, y)$ is 1-Lipschitz in $f$. That is, for all $\cF = \cF_r \circ \cF_{r-1} \circ \cdots \circ \cF_1$ and $\cF' = \cF_r' \circ 
 \cF_{r-1}' \circ \cdots \circ \cF_1'$,
 \begin{align}
-    \abs{m_f(x, y) - m_{f'}(x, y)} \leq \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} \norm{f_i(x) - f_i'(x)}_2}. \label{lec11:eqn:one_lipschitz_claim}
+    \abs{m_f(x, y) - m_{f'}(x, y)} \leq \sqrt{\sum_{i=1}^r \max_{\norm{x}_2 \leq 1} \norm{f_i(x) - f_i'(x)}_2^2}. \label{lec11:eqn:one_lipschitz_claim}
 \end{align}
 Notice that now we are working with a clean sum of differences, with no multipliers! 
 
@@ -430,7 +430,7 @@ Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsi
 
 Having established the validity of our cover, we now return to our claim of 1-Lipschitz-ness stated in \eqref{lec11:eqn:one_lipschitz_claim}. By symmetry, it is sufficient to prove an upper bound for $m_{f'}(x, y) - m_f(x, y)$.
 
-Let $\delta_1^*, \dots, \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into a feasible solution of $m_{f'}(x, y)$, which we denote by $\hat{\delta}_1, \dots, \hat{\delta}_r$. In particular, we have that $m_{f'}(x, y) \leq \sqrt{\sigma \norm{\hat{\delta}_i}_2} \leftrightarrow \sqrt{\sigma||\delta_i||^2}$; the solution must be feasible for this bound on $m_{f'}(x, y)$ to hold.
+Let $\delta_1^*, \dots, \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into a feasible solution of $m_{f'}(x, y)$, which we denote by $\hat{\delta}_1, \dots, \hat{\delta}_r$. If this soution is feasible, we obtain the bound $m_{f'}(x, y) \leq \sqrt{\sum \norm{\hat{\delta}_i}^2_2}$.
 
 Intuitively, we want to define a perturbation for $f'$ that does the same thing as $\delta_1^*,\dots,\delta_r^*$ for $f$. In plain English, $(f', \hat{\delta}_1, \dots, \hat{\delta}_r)$ should do the same thing as $(f_1, \delta_1^*, \dots, \delta_r^*)$. Recall that $f$ has parameters $W_1, \dots, W_r$ and $f'$ has parameters $W_1', \dots, W_r'$. Then, under the optimal perturbation,
 \begin{align}
