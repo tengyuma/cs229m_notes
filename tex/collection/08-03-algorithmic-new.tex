@@ -480,11 +480,11 @@ x_{t+1} &= x_t - \eta(\nabla g(x_t) + \xi_t)\\
 \end{align}
 
 Let $H = \nabla^2_x g(0)$ and $T = \nabla^3_x g(0)$. Since $T$ is a tensor, we first clarify our notation. First, for $T \in \R^{d\times d\times d}$, $x,y \in \R^{d}$, $T[x,y]\in \R^d$, and 
-\begin{align}
+\begin{align}\label{lec17:eqn:tensor}
     T[x,y]_i \defeq \sum_{j,k\in[d]}T_{ijk}x_jy_k.
 \end{align} 
 For $S\in \R^{d\times d}$, $T(S)\in \R^d$, and 
-\begin{align} 
+\begin{align} \label{lec17:eqn:tensor1}
     T(S)_i \defeq \sum_{j,k\in[d]}T_{ijk}S_{jk}
 \end{align} 
 
@@ -514,13 +514,29 @@ In the subspace $K = \text{span}(H)$, the effect of $\eta T [x_t,x_t]$ is again 
 \Pi_{K^\perp}r_{t+1} &= \Pi_{K^\perp}r_t - \eta \Pi_{K^\perp} T[u_t,u_t]\\
 &=\Pi_{K^\perp}r_0 - \eta \sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k].
 \end{align}
-Namely, the effect of $T[u_k,u_k]$ is slowly accumulating in ${K^\perp}$.
+Namely, the effect of $T[u_k,u_k]$ is slowly accumulating in ${K^\perp}$. In Figure~\ref{lec17:fig:noise}, an illustration of this phenomenon is provided.
 
-Note that the OU process is a Markov chain and a Gaussian process. Here we assume that $H$ is constructed such that $u_t$ converges to its stationary distribution. Suppose the Markov chain $u_t$ mixes as $t\rightarrow \infty$. Then, $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx tT(S)$, where $S \defeq \Exp[u_{\infty}u_{\infty}^\top]$ is the covariance of the stationary distribution.
+Note that the OU process is a Markov chain and a Gaussian process. Here we assume that $H$ is constructed such that $u_t$ converges to its stationary distribution. Suppose the Markov chain $u_t$ mixes as $t\rightarrow \infty$. Then, $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx t \Exp [T[u_\infty,u_\infty]]$. By equation~\eqref{lec17:eqn:tensor} and equation~\eqref{lec17:eqn:tensor1},
+
+\begin{align}
+\Exp [T[u,u]]_i &= \Exp [\sum_{j,k}T_{ijk}u_iu_j]\\
+&= \sum_{j,k}T_{ijk}\Exp[uu^\top]_{jk} \\
+&= T(\Exp[uu^\top])_i.
+\end{align}
+
+Therefore $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx tT(S)$ where $S \defeq \Exp[u_{\infty}u_{\infty}^\top]$ is the covariance of the stationary distribution.
+
+\begin{figure}[ht]
+\includegraphics[width=0.50\textwidth]{figures/labelnoise-static.png}
+\centering
+\caption{The effect of SGD noise on non-quadratic functions. $K$ is the span of the noise covariance $\Sigma$. In the quadratic case, the iterates will fluctuate in $K$, but remains unchanged in $K^\perp$. When the function is non-quadratic, the third order effect slowly accumulates in $K^\perp$, resulting in implicit regularization. } 
+\label{lec17:fig:noise}
+\end{figure}
 
 \tnote{need to add figures. I added two figures labelnoise-static.jpg and bias2.png. Also need to refer to this figure in the main texts. I did discuss in length these figures so there should be some paragraphs about these figures. }
 
 \paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2_x g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2_\theta \hat{L}(\theta))$. In the next subsection, we will heuristically explain why this regularization term is useful.
+
 
 \subsec{SGD with label noise}
 We previously claimed that SGD with label noise minimizes the regularized loss 
