@@ -366,7 +366,7 @@ For a deep neural net, a potential normalizer is the product of the Lipschitz co
         \textrm{s.t.} \quad & w^\top(x + \delta) y \leq 0
     \end{aligned}
 \end{equation}
-In plain English, this problem searches for the minimum perturbation that gets our data point across the boundary?
+In plain English, this problem searches for the minimum perturbation that gets our data point across the boundary.
 
 This perturbation view of the standard margin can be extended naturally to multiple layers. For the math to work, it turns out that we need to perturb all the layers. We define the \textit{all-layer margin} as below. We will consider perturbed models $\delta = (\delta_1, \dots, \delta_r)$, where each $\delta_i$ is a perturbation \textit{vector} associated with the $i$-th layer (and it has the same dimensionality as the $i$-th layer activation). We incorporate these perturbations into our model in the following way (so that we can handle the scaling in a clean way):
 \begin{align}
@@ -430,7 +430,7 @@ Second, we construct a cover: Let $U_1, \dots, U_r$ be $\epsilon_1, \dots, \epsi
 
 Having established the validity of our cover, we now return to our claim of 1-Lipschitz-ness stated in \eqref{lec11:eqn:one_lipschitz_claim}. By symmetry, it is sufficient to prove an upper bound for $m_{f'}(x, y) - m_f(x, y)$.
 
-Let $\delta_1^*, \dots, \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into a feasible solution of $m_{f'}(x, y)$, which we denote by $\hat{\delta}_1, \dots, \hat{\delta}_r$. If this soution is feasible, we obtain the bound $m_{f'}(x, y) \leq \sqrt{\sum \norm{\hat{\delta}_i}^2_2}$.
+Let $\delta_1^*, \dots, \delta_r^*$ be the optimal choices of $\delta$ in defining $m_f(x, y)$. Our goal is to turn these into a feasible solution of $m_{f'}(x, y)$, which we denote by $\hat{\delta}_1, \dots, \hat{\delta}_r$. If this solution is feasible, we obtain the bound $m_{f'}(x, y) \leq \sqrt{\sum \norm{\hat{\delta}_i}^2_2}$.
 
 Intuitively, we want to define a perturbation for $f'$ that does the same thing as $\delta_1^*,\dots,\delta_r^*$ for $f$. In plain English, $(f', \hat{\delta}_1, \dots, \hat{\delta}_r)$ should do the same thing as $(f_1, \delta_1^*, \dots, \delta_r^*)$. Recall that $f$ has parameters $W_1, \dots, W_r$ and $f'$ has parameters $W_1', \dots, W_r'$. Then, under the optimal perturbation,
 \begin{align}
