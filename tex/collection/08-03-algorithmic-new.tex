@@ -459,13 +459,6 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 \end{align}
 \paragraph{Interpretation.} Intuitively, $\frac{\sigma_i^2}{d_i}$ here is the iterate fluctuation in the direction of the $i$-th eigenvector. This results tell us that the fluctuation of the iterates depends on the shape of $\Sigma$ and $A$. If $\Sigma$ is not full rank, the fluctuations will be limited to the subspace $K$. Also note that $\Exp[\|x_t\|_2] = \Theta(\sqrt{\eta})$. This reflects the noise accumulation since the scale of noise in each step is $\Theta({\eta})$. However, we still do not have any implicit regularization effect. 
 
-% \begin{figure}[ht]
-% \includegraphics[width=0.90\textwidth]{figures/noise_regularization_sgd.pdf}
-% \centering
-% \caption{Comparison of SGD on quadratic functions (Left) and non-quadratic functions (Right). $K$ is the span of the noise covariance $\Sigma$. In the quadratic case, the iterates will fluctuate in $K$, but remains unchanged in $K^\perp$. When the function is non-quadratic, the third order effect slowly accumulates in $K^\perp$, resulting in implicit regularization. } 
-% \label{lec17:fig:OU}
-% \end{figure}
-
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
 
 \tnote{need to add some figures}
