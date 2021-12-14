@@ -468,8 +468,6 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
 
-\tnote{need to add some figures}
-
 \subsec{SGD on non-quadratic functions}
 In this section, we analyze SGD on non-quadratic functions based on \cite{damian2021label}. Due to the complexity of the analysis, we provide heuristic derivations to convey the main insights. 
 
@@ -532,8 +530,6 @@ Therefore $\sum_{k=0}^{t}\Pi_{K^\perp}T[u_k,u_k] \approx tT(S)$ where $S \defeq 
 \caption{The effect of SGD noise on non-quadratic functions. $K$ is the span of the noise covariance $\Sigma$. In the quadratic case, the iterates will fluctuate in $K$, but remains unchanged in $K^\perp$. When the function is non-quadratic, the third order effect slowly accumulates in $K^\perp$, resulting in implicit regularization. } 
 \label{lec17:fig:noise}
 \end{figure}
-
-\tnote{need to add figures. I added two figures labelnoise-static.jpg and bias2.png. Also need to refer to this figure in the main texts. I did discuss in length these figures so there should be some paragraphs about these figures. }
 
 \paragraph{Interpretation.} Intuitively, the direction of the implicit regularization is $T(S) = \nabla_x \left(\langle\nabla_x^2g(0), S\rangle\right)$. In other words, the implicit bias $-T(S)$ is trying to make $\langle\nabla^2_x g(0), S\rangle$ small. \cite{damian2021label} further prove that SGD with label noise on loss $\hat{L}(\theta)$ converges to a stationary point of the regularized loss $\hat{L}(\theta) + \lambda \textup{tr}(\nabla^2_\theta \hat{L}(\theta))$. In the next subsection, we will heuristically explain why this regularization term is useful.
 
