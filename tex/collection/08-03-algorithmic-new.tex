@@ -457,7 +457,14 @@ Since $A$ and $\Sigma$ are simultaneously diagonizable, we can easily disentangl
 \eta^2\sum_{k=0}^{\infty} (I- \eta A)^{k}\Sigma (I- \eta A)^{k} &= \eta^2 U\text{diag}\left(\sum_{k=0}^{\infty}\sigma_i^2(1-\eta d_i)^{2k}\right)U^\top\\
 &= \eta U\text{diag}\left(\frac{\sigma_i^2}{d_i}\right)U^\top.
 \end{align}
-\paragraph{Interpretation.} Intuitively, $\frac{\sigma_i^2}{d_i}$ here is the iterate fluctuation in the direction of the $i$-th eigenvector. This results tell us that the fluctuation of the iterates depends on the shape of $\Sigma$ and $A$. If $\Sigma$ is not full rank, the fluctuations will be limited to the subspace $K$. Also note that $\Exp[\|x_t\|_2] = \Theta(\sqrt{\eta})$. This reflects the noise accumulation since the scale of noise in each step is $\Theta({\eta})$. However, we still do not have any implicit regularization effect. 
+\paragraph{Interpretation.} Intuitively, $\frac{\sigma_i^2}{d_i}$ here is the iterate fluctuation in the direction of the $i$-th eigenvector. This results tell us that the fluctuation of the iterates depends on the shape of $\Sigma$ and $A$. If $\Sigma$ is not full rank, the fluctuations will be limited to the subspace $K$. Also note that $\Exp[\|x_t\|_2] = \Theta(\sqrt{\eta})$. This reflects the noise accumulation since the scale of noise in each step is $\Theta({\eta})$. However, we still do not have any implicit regularization effect. This is because the Hessian of the quadratic objective is unchanged. When we have the change in Hessian, SGD noise will exert an implicit bias on the iterate. See Figure~\ref{lec17:fig:bias} for an example.
+
+\begin{figure}[ht]
+\includegraphics[width=1.00\textwidth]{figures/bias2.png}
+\centering
+\caption{The effect of SGD noise with the change in Hessian when $x=0$. Consider the objective $F(x) = x^2$ when $x \le 0$ and $F(x) = \frac{1}{10}x^2$ when $x > 0$. Suppose we initialize SGD at $x=0$ and run 1024 steps of SGD with step size $0.01$. We plot the probability density of the iterate after various steps of SGD. Note that the density function and the mean gradually move to the left.} 
+\label{lec17:fig:bias}
+\end{figure}
 
 In the sequel, we separately analyze the second order and third order effects of SGD on a general non-quadratic function. The second order effect exactly corresponds to this section's analysis when $A$ equals the Hessian of the general non-quadratic function.
 
