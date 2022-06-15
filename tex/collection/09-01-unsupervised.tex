@@ -512,6 +512,7 @@ Moreover, we can find $\hat{S}$ such that $\phi(\hat{S}) \leq \sqrt{2 \lambda_2}
 \end{theorem}
 
 \begin{remark}
+	\tnote{maybe abstractify this into a lemma?}
 We might wonder why this algorithm uses the second eigenvector of $\bar{A}$ in particular, and not the first eigenvector. The top eigenvector is generally not that interesting as it only captures the ``background density'' of the graph. For instance, when $G$ is $\kappa$-regular, $\vec{1}$ is the top eigenvector of $G$ and is thus also the top eigenvector of $\bar{A} = \frac{1}{\kappa} \cdot G$. 
 
 For more general $G$, the top eigenvector of $\bar{A}$ (respectively, the smallest eigenvector of $L$) is $u_1 = [\sqrt{d_1} \cdots \sqrt{d_n}]^\top$. This fact is easily verified:
