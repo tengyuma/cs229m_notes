@@ -680,6 +680,7 @@ The following lemma shows that contrastive learning is closely related to the ei
 	&= \text{const} -2 \sum_{x, z\in X} p(x, z) f(x)^\top f(z) + \sum_{x, z\in X}p(x)p(z)\left(f(x)^\top f(z)\right)^2\\
 	&= \text{const} -2\Exp_{(x, x^+) \sim\text{positive}} f(x)^\top f(x^+) + \Exp_{(x, x') \sim\text{random}}  \left(f(x)^\top f(x')\right)^2.
 \end{align}
+\tnote{add a bit texts to explian the notation and steps}
 \end{proof}
 
 Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ to represent the rows of $U$, i.e., 
@@ -699,7 +700,9 @@ So when does spectral clustering produce good features? Recall that we've shown 
 	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=3in]{figures/ssl4.pdf}
-		\caption{A demonstration of the assumptions in Lemma~\ref{lemma:ssl1}.}
+		\caption{A demonstration of the assumptions in Lemma~\ref{lemma:ssl1}. \tnote{a bit more caption?} 
+			\tnote{I think $S_1, S_2$ are mentioned twice with different meanings in the lemma 10.10, so the figure is a bit ambiguous. Maybe replace $S_1, S_2, S_3$ by $T_1,..$ and change the figure.}
+		}
 	\end{figure}
 	
 	Then, let $g=\mathbbm{1}(S_1)\in \bbR^N$ (i.e., $g_i=1$ if $i\in S_1$), and $k\ge 6$, there exists linear classifier $b$ such that 
@@ -717,6 +720,7 @@ Before proving the above lemma, we first introduce the following higher-order Ch
 	\begin{align*}
 		\max\{\phi(S_1), \phi(S_2), \phi(S_3)\lesssim \sqrt{\lambda_{6}}.
 	\end{align*}
+	\tnote{could you state the contrapositive of this? [I suspect that it's easier to understand the contrapositive in this context]}
 \end{lemma}
 
 Now we give a proof of Lemma~\ref{lemma:ssl1}.
