@@ -251,7 +251,7 @@ Our goal is to cluster the data points by viewing $G$ as a graph. For instance, 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=2in]{figures/ssl1.pdf}
-	\caption{A demonstration of graph partitioning.}
+	\caption{A demonstration of graph partitioning. \tnote{slightly more caption}}
 %	\label{lec15:fig:OLgame}
 \end{figure}
 
@@ -680,7 +680,7 @@ The following lemma shows that contrastive learning is closely related to the ei
 	&= \text{const} -2 \sum_{x, z\in X} p(x, z) f(x)^\top f(z) + \sum_{x, z\in X}p(x)p(z)\left(f(x)^\top f(z)\right)^2\\
 	&= \text{const} -2\Exp_{(x, x^+) \sim\text{positive}} f(x)^\top f(x^+) + \Exp_{(x, x') \sim\text{random}}  \left(f(x)^\top f(x')\right)^2.
 \end{align}
-\tnote{add a bit texts to explian the notation and steps}
+\tnote{add a bit texts to explain the notation and steps}
 \end{proof}
 
 Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ to represent the rows of $U$, i.e., 
