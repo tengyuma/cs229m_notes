@@ -251,7 +251,7 @@ Our goal is to cluster the data points by viewing $G$ as a graph. For instance, 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=2in]{figures/ssl1.pdf}
-	\caption{A demonstration of graph partitioning. \tnote{slightly more caption}}
+	\caption{A demonstration of graph partitioning. Sets $S_1$ and $S_2$ form a good partition of the graph since there's only one edge between them.}
 %	\label{lec15:fig:OLgame}
 \end{figure}
 
@@ -675,12 +675,13 @@ The following lemma shows that contrastive learning is closely related to the ei
 	Hence solving $F$ is equivalent to eigendecomposition of $\bar{A}$. 
 \end{lemma}
 \begin{proof}
+Directly expanding the Frobenius norm $\norm{\bar{A}-FF^\top}_F^2$ as a sum over entries, we have
 \begin{align}
 	\norm{\bar{A} - FF^\top}_F^2 &= \sum_{x, z\in X} \left(\frac{p(x, z)}{\sqrt{p(x)}\sqrt{p(z)}} - f(x)^\top f(z) \sqrt{p(x)}\sqrt{p(z)}\right)^2\\
 	&= \text{const} -2 \sum_{x, z\in X} p(x, z) f(x)^\top f(z) + \sum_{x, z\in X}p(x)p(z)\left(f(x)^\top f(z)\right)^2\\
-	&= \text{const} -2\Exp_{(x, x^+) \sim\text{positive}} f(x)^\top f(x^+) + \Exp_{(x, x') \sim\text{random}}  \left(f(x)^\top f(x')\right)^2.
+	&= \text{const} -2\Exp_{(x, x^+) \sim\text{positive}} f(x)^\top f(x^+) + \Exp_{(x, x') \sim\text{random}}  \left(f(x)^\top f(x')\right)^2,
 \end{align}
-\tnote{add a bit texts to explain the notation and steps}
+where the last equation uses the fact that $p(x, z)$ and $p(x)p(z)$ are the probability densities of $(x,z)$ being a positive pair and a random pair, respectively. 
 \end{proof}
 
 Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ to represent the rows of $U$, i.e., 
@@ -696,12 +697,13 @@ One interesting thing is that $\phi(x_i)$ has the same separability as $u_i$. Th
 So when does spectral clustering produce good features? Recall that we've shown spectral clustering is good at graph partitioning in stochastic block model or the worst-case graph. For simplicity, let's consider a regular graph where $w(x) = \sum_{x'\in V} w(x, x') = d$. 
 
 \begin{lemma}\label{lemma:ssl1}
-	Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha dN$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ S_1, S_2, S_3$, we have $\max\{\phi(S_1), \phi(S_2), \phi(S_3)\} \ge \rho$. 
+	Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha dN$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ T_1, T_2, T_3$, we have $\max\{\phi(T_1), \phi(T_2), \phi(T_3)\} \ge \rho$. 
 	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=3in]{figures/ssl4.pdf}
-		\caption{A demonstration of the assumptions in Lemma~\ref{lemma:ssl1}. \tnote{a bit more caption?} 
-			\tnote{I think $S_1, S_2$ are mentioned twice with different meanings in the lemma 10.10, so the figure is a bit ambiguous. Maybe replace $S_1, S_2, S_3$ by $T_1,..$ and change the figure.}
+		\caption{A demonstration of the assumptions in Lemma~\ref{lemma:ssl1}. The left half and right half of the graph can be chosen as $S_1$ and $S_2$, since there's at most $\alpha$ proportion of edges between them. Sets $T_1, T_2, T_3$ form a 3-way partition where $\phi(T_1)\ge \rho$.
+%\tnote{a bit more caption?} 
+%			\tnote{I think $S_1, S_2$ are mentioned twice with different meanings in the lemma 10.10, so the figure is a bit ambiguous. Maybe replace $S_1, S_2, S_3$ by $T_1,..$ and change the figure.}
 		}
 	\end{figure}
 	
@@ -716,11 +718,11 @@ The above lemma essentially says that $\langle u_x, b \rangle\approx g_x$ for al
 
 Before proving the above lemma, we first introduce the following higher-order Cheeger inequality. 
 \begin{lemma}[Proposition 1.2  in \cite{louis2014approximation}]\label{lemma:higher_order_cheeger}
-	Let $G=(V, w)$ be a weight graph with $|V|=N$.  Then, there exists a partition $S_1, S_2, S_{3}$ of $V$ with 
+	Let $G=(V, w)$ be a weight graph.  Suppose the graph cannot be partitioned into $3$ sets $S_1, S_2, S_3$ such that $\max\{\phi(S_1), \phi(S_2), \phi(S_3)\} \le \rho$. Then, we have
 	\begin{align*}
-		\max\{\phi(S_1), \phi(S_2), \phi(S_3)\lesssim \sqrt{\lambda_{6}}.
+		 \lambda_{6} \gtrsim\rho^2.
 	\end{align*}
-	\tnote{could you state the contrapositive of this? [I suspect that it's easier to understand the contrapositive in this context]}
+%	\tnote{could you state the contrapositive of this? [I suspect that it's easier to understand the contrapositive in this context]}
 \end{lemma}
 
 Now we give a proof of Lemma~\ref{lemma:ssl1}.
