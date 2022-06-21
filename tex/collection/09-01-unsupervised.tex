@@ -476,15 +476,14 @@ where $E(S, \bar{S})$ is the total number of edges between $S$ and $\bar{S}$, an
 \end{align}
 Intuitively, conductance captures how separated $S$ and $\bar{S}$ are. 
 
-Since $\operatorname{Vol}(S) \geq E(S, \bar{S})$, it follows that $\phi(S) \leq 1$. Next, observe that $\operatorname{Vol}(S) + \operatorname{Vol}(\bar{S}) = \operatorname{Vol}(V)$. Then, if $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, it must be the case that $\operatorname{Vol}(S) \leq \operatorname{Vol}(\bar{S})$ and therefore $\phi(S) \geq \phi(\bar{S})$. In subsequent analysis, we assume without loss of generality that $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, i.e. that $S$ is the smaller community.
+Since $\operatorname{Vol}(S) \geq E(S, \bar{S})$, it follows that $\phi(S) \leq 1$. Next, observe that $\operatorname{Vol}(S) + \operatorname{Vol}(\bar{S}) = \operatorname{Vol}(V)$. Then, if $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$, it must be the case that $\operatorname{Vol}(S) \leq \operatorname{Vol}(\bar{S})$ and therefore $\phi(S) \geq \phi(\bar{S})$. In some sense, thus suggests that the conductance of a set $\bar{S}$ with volume larger than $\operatorname{Vol}(V)/2$ could be misleading, because the conductance of the other part could be larger. Therefore, typically people only consider the conductance of a smaller part of the partition. 
+%In subsequent analysis, we assume without loss of generality that $\operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2$.
 
-Next, we define $\phi(G)$ to be the {\it sparsest cut} of $G$ if
+Next, we define $\phi(G)$ to be the {\it sparsest cut} of $G$:
 \begin{align}
     \phi(G) &= \min_{S: \operatorname{Vol}(S) \leq \operatorname{Vol}(V)/2} \phi(S) \;.
 \end{align}
-We might wonder why we need to normalize by $\operatorname{Vol}(S)$ in the definition of conductance. The reason for this is that $E(S, \bar{S})$ is typically minimized when $S$ is small. Thus, without this normalization, the sparsest cut would not be very meaningful.
-
-For instance, suppose the graph $G$ contains $n$ nodes and can be divided into two halves each containing $n/2$ nodes, and every node is connected to all the other nodes in the same half, but is connected to only $2$ nodes in the other half (as shown in Figure~\ref{fig:ssl1}). Then, we can consider two subsets $S_1$ and $S_2$, where $S_1$ contains half the nodes, and $S_2$ contains two nodes in the same half. It's easy to see that $E(S_1, \bar{S}_1) = \frac{n}{2}\cdot 2 > E(S_2, \bar{S}_2) = \frac{n}{2}$. However, the conductance of $S_1$ is $\phi(S_1) = \frac{E(S_1, \bar{S}_1)}{\operatorname{Vol}(S_1)} = \frac{\frac{n}{2}\cdot 2}{\frac{n}{2}\cdot(\frac{n}{2}-1)+\frac{n}{2}\cdot 2}\approx\frac{4}{n}$, whereas the conductance of $S_2$ is $\phi(S_2) = \frac{E(S_2, \bar{S}_2)}{\operatorname{Vol}(S_2)}=\frac{\frac{n}{2}}{n+2} \approx\frac{1}{2}$. Thus, when $n$ is large, $S_1$ is a sparser cut than $S_2$ under $\phi(\cdot)$. 
+One may wonder why we need to normalize by $\operatorname{Vol}(S)$ in the definition of conductance. The reason is that $E(S, \bar{S})$ itself is typically minimized when $S$ is small. Thus, without this normalization, the sparsest cut would not be very meaningful. For instance, suppose the graph $G$ contains $N$ nodes and can be divided into two halves each containing $N/2$ nodes, and every node is connected to all the other nodes in the same half, but is connected to only $2$ nodes in the other half (as shown in Figure~\ref{fig:ssl1}). Then, we can consider two subsets $S_1$ and $S_2$, where $S_1$ contains half the nodes, and $S_2$ contains two nodes in the same half. It's easy to see that $E(S_1, \bar{S}_1) = \frac{N}{2}\cdot 2 > E(S_2, \bar{S}_2) = \frac{N}{2}$. However, the conductance of $S_1$ is $\phi(S_1) = \frac{E(S_1, \bar{S}_1)}{\operatorname{Vol}(S_1)} = \frac{\frac{N}{2}\cdot 2}{\frac{N}{2}\cdot(\frac{N}{2}-1)+\frac{N}{2}\cdot 2}\approx\frac{4}{N}$, whereas the conductance of $S_2$ is $\phi(S_2) = \frac{E(S_2, \bar{S}_2)}{\operatorname{Vol}(S_2)}=\frac{\frac{N}{2}}{N+2} \approx\frac{1}{2}$. Thus, when $n$ is large, $S_1$ is a sparser cut than $S_2$ under $\phi(\cdot)$. 
 
 
 \begin{figure}[ht]
@@ -495,23 +494,30 @@ For instance, suppose the graph $G$ contains $n$ nodes and can be divided into t
 \end{figure}
 
 
-Our goal is to find an approximate sparsest cut $\hat{S}$ such that $\phi(\hat{S}) \approx \phi(G)$.\footnote{Finding the exact sparsest cut is a computationally hard problem.} We will use eigendecomposition to approach this problem. Let $d_i = \operatorname{Vol}(\{i\})$ be the degree of node $i$, and let $D = \text{diag}(\{d_i\})$ be the diagonal matrix that contains the degrees $d_i$ as entries. Furthermore, let 
+Our goal is to find an approximate sparsest cut $\hat{S}$ such that $\phi(\hat{S}) \approx \phi(G)$.\footnote{Finding the exact sparsest cut is a NP-hard problem.} Our main technique is eigendecomposition or spectral clustering, though in the literature much more advanced and better algorithms have been proposed, e.g., the famous ARV algorithm~\cite{arora2009expander}. Let $d_i = \operatorname{Vol}(\{i\})$ be the degree of node $i$, and let $D = \text{diag}(\{d_i\})$ be the diagonal matrix that contains the degrees $d_i$ as entries. Furthermore, let 
 \begin{equation}
     \bar{A} = D^{-\frac{1}{2}} A D^{\frac{1}{2}}
 \end{equation}
-be the normalized adjacency matrix. This is equivalent to normalizing each element $G_{ij}$ of the adjacency matrix by $\frac{1}{\sqrt{d_i d_j}}$.
+be the normalized adjacency matrix. This is equivalent to normalizing each element $G_{ij}$ \tnote{typo?}of the adjacency matrix by $\frac{1}{\sqrt{d_i d_j}}$.\tnote{gives an explicit formula for the entry of A bar}
+In most cases, it suffices to starting with considering $G$ as a regular graph (whose degrees are all the same), because the proof for regular graph can oftentimes extend to general graph easily. Assuming $G$ is a $\kappa$-regular graph, i.e. $d_i = \kappa$; then, this normalization simply scales $A$ by $\frac{1}{\kappa}$.
 
-In most cases, it suffices to think of $G$ as a regular graph, i.e. all of its degrees are the same. Assuming $G$ is a $\kappa$-regular graph, i.e. $d_i = \kappa$; then, this normalization simply scales $A$ by $\frac{1}{\kappa}$. Let $L = I - \bar{A}$ be the Laplacian matrix. Note that any eigenvector of $L$ is also an eigenvector of $\bar{A}$. Suppose $L$ has eigenvalues $\lambda_1 \leq \hdots \leq \lambda_n$ with corresponding eigenvectors $u_1 \hdots u_n$, then $\bar{A}$ has eigenvalues $1 - \lambda_1 \geq \hdots \geq 1 - \lambda_n$ with the same eigenvectors.
+ Let $L = I - \bar{A}$ be the Laplacian matrix. Note that any eigenvector of $L$ is also an eigenvector of $\bar{A}$. Suppose $L$ has eigenvalues $\lambda_1 \leq \hdots \leq \lambda_n$ with corresponding eigenvectors $u_1 \hdots u_n$, then $\bar{A}$ has eigenvalues $1 - \lambda_1 \geq \hdots \geq 1 - \lambda_n$ with the same eigenvectors.
+ 
+ The following famous Cheeger's inequality relates the eigendecompositions to the graph partitioning. 
 
 \begin{theorem}[Cheeger's inequality]
-The second eigenvalue of $L$, namely $\lambda_2$, is connected to the sparsest cut $\phi(G)$ as follows:
+The second eigenvalue of $L$, namely $\lambda_2$, is related to the sparsest cut $\phi(G)$ as follows:
 \begin{align}
     \frac{\lambda_2}{2} \leq \phi(G) \leq \sqrt{2 \lambda_2} \;.
 \end{align}
 Moreover, we can find $\hat{S}$ such that $\phi(\hat{S}) \leq \sqrt{2 \lambda_2} \leq 2 \sqrt{\phi(G)}$ efficiently by rounding the second eigenvector. Suppose $u_2 = [\beta_1 \cdots \beta_n]^\top \in \bbR^n$ is the second eigenvector of $L$. Then we can choose a threshold $\tau = \beta_i$ and consider $\hat{S}_i = \{ j \in [n] : \beta_j \leq \tau \}$. At least one such $\hat{S}_i$ satisfies $\phi(\hat{S}_i) \leq 2 \sqrt{\phi(G)}$.
 \end{theorem}
 
-We might wonder why this algorithm uses the second eigenvector of $\bar{A}$ in particular, and not the first eigenvector. The top eigenvector is generally not that interesting as it only captures the ``background density'' of the graph. For instance, when $A$ is $\kappa$-regular, $\vec{1}$ is the top eigenvector of $A$ and is thus also the top eigenvector of $\bar{A} = \frac{1}{\kappa} \cdot A$. More generally, we have the following lemma:
+Note that this can be viewed as a general but weaker version of the theorem that we proved for stochastic block model. There is no randomized assumption; the conclusion is weaker than those for SBM; also the rounding algorithm to recover the cluster is also more complicated---one has to try multiple thresholding instead of using threshold $1/2$. 
+
+We will refer the readers to~\cite{?} for the proof of the theorem. Here below we give a few basic lemmas that help build up intuitions on why eigendecompositions relate to graph decomposition.
+
+First, one might wonder why this algorithm uses the second eigenvector of $\bar{A}$, but not the first eigenvector. As we have seen in the SBM case, the first eigenvector captures the background in some sense. Here for general graph, we see the same phenomenon. The top eigenvector is generally not that interesting as it only captures the ``background density'' of the graph. For instance, when $A$ is $\kappa$-regular, $\vec{1}$ is the top eigenvector of $A$ and is thus also the top eigenvector of $\bar{A} = \frac{1}{\kappa} \cdot A$. More generally, we have the following lemma:
 
 
 \begin{lemma}
@@ -553,7 +559,7 @@ If $|\operatorname{supp}(v)| \leq n/2$, implying $\operatorname{Vol}(S) \leq \op
 \begin{align}
     \frac{v^\top L v}{\norm{v}^2_2} &= \frac{\frac{1}{\kappa} E(S, \bar{S})}{\frac{1}{\kappa} \operatorname{Vol}(S)} = \phi(S) \;.
 \end{align}
-The term $\frac{v^\top L v}{\norm{v}^2_2}$ is also called the {\it Rayleigh quotient}. This result nicely connects the abstract linear algebraic approach to the sparsest cut approach. Note that we only achieve an approximate sparsest cut because when we compute eigenvectors, we minimize the Rayleigh quotient \emph{without any constraints on $v$}. By contrast, the sparsest cut minimizes the Rayleigh quotient subject to the constraint that $v \in \{0,1\}^n$.
+The term $\frac{v^\top L v}{\norm{v}^2_2}$ is also called the {\it Rayleigh quotient}. This result nicely connects the abstract linear algebraic approach to the sparsest cut approach. Note that we only achieve an approximate sparsest cut because when we compute eigenvectors, we minimize the Rayleigh quotient \emph{without any constraints on $v$}. By contrast, the sparsest cut minimizes the Rayleigh quotient subject to the constraint that $v \in \{0,1\}^n$. Proving Cheeger inequality essentially involves controlling the difference caused by real $v$ vs binary $v$. We omit the proof of Cheeger's inequality because it's beyond the scope of this notes. 
 
 \subsec{Applying spectral clustering}
 
@@ -584,7 +590,7 @@ Self-supervised learning is widely used for pretraining modern models. These lar
 
 \paragraph{Adaptation.} During adaptation, we have access to a set of labeled downstream task examples $\{(x^{(1)}_{\text{task}}, y^{(1)}_{\text{task}}), \cdots, (x^{(n_{\text{task}})}_{\text{task}}, y^{(n_{\text{task}})}_{\text{task}})\}$, where usually $n_{\text{task}}\ll n$. One popular adapataion method is \emph{linear probe}, which uses $f_{\hat{\theta}}(x)$ as features / representations / embeddings, and train a linear classifier on downstream tasks. Concretely, the prediction on data $x$ is $w^\top f_{\hat{\theta}}(x)$, where $w$ is the linear head learned from $\min_{w} \hat{L}_{\text{task}}(w) = \frac{1}{n_{\text{task}}} \sum_{i=1}^{n_{\text{task}}} \ell_{\text{task}}(y^{(i)}_{\text{task}}, w^\top f_{\hat{\theta}}(x^{(i)}_{\text{task}}))$. Another popular adaptation method is \emph{finetuning}, which also updates the parameter $\theta$. Concretely, one initializes from $\theta = \hat{\theta}$, and solve $\min_{\theta, w} \hat{L}_{\text{task}}(w, \theta) = \frac{1}{n_{\text{task}}} \sum_{i=1}^{n_{\text{task}}} \ell_{\text{task}}(y^{(i)}_{\text{task}}, w^\top f_{{\theta}}(x^{(i)}_{\text{task}}))$.
 
-Why does pretraining on unlabeled data with an unsupervised (self-supervised) loss help a wide range of downstream prediction tasks? There are many open questions to be answered in this field. For instance, here are three concrete questions: (1) how does pretraining help label efficiency of downstream tasks, (2) why pretraining can give ``universal'' representations, and (3) why does pretraining provide robustness to distribution shift. 
+Why does pretraining on unlabeled data with an unsupervised (self-supervised) loss help a wide range of downstream prediction tasks? There are many open questions to be answered in this field. For instance,  we may ask: (1) how does pretraining help label efficiency of downstream tasks\tnote{the be verb should be after the noun unless this is a standalone question}, (2) why pretraining can give ``universal'' representations, and (3) why does pretraining provide robustness to distribution shift. 
 
 \subsec{Analysis of contrastive learning}\label{section:analysis_contrastive_learning}
 Let $\bar{X}$ be the set of all natural images in the image domain, $\bar{P}_{\bar{X}}$ be the distribution over $\bar{X}$. Contrastive learning learns $f_{\theta}$ such that representations of augmentations of the same image are close, whereas augmentations of random images are far away (as visualized in Figure~\ref{fig:ssl2}). 
@@ -616,11 +622,11 @@ One example of contrastive learning is SimCLR~\citep{chen2020simclr}.  Given $B$
 \end{align}
 Notice that $-\log\frac{A}{A+B}$ is decreasing in $A$ but increasing in $B$, the loss above encourages $f_{{\theta}}(x^{(i)})^\top f_{{\theta}}(x^{(i)+})$ to be large, while $f_{{\theta}}(x^{(i)})^\top f_{{\theta}}(x^{(j)+})$ to be small.
 
-In the rest of this section, we consider a variant of contrastive loss: 
+In the rest of this section, we consider a variant of contrastive loss, proposed in~\cite{haochen2021provable}: 
 \begin{align}
 	L(\theta)  = -2\Exp_{(x, x^+) \sim\text{positive}} f_{{\theta}}(x)^\top f_{{\theta}}(x^+) + \Exp_{(x, x') \sim\text{random}}  \left(f_{{\theta}}(x)^\top f_{{\theta}}(x')\right)^2.
 \end{align}
-This contrastive loss follows the same design principle as other contrastive losses in the literature: suppose all representations have the same norm, then the first term encourages the representations of a positive pair to be closer while  the second term encourages the representations of a random pair to be orthogonal to each other (hence far away). 
+This contrastive loss follows the same design principle as other contrastive losses in the literature: suppose all representations have the same norm, then the first term encourages the representations of a positive pair to be closer while  the second term encourages the representations of a random pair to be orthogonal to each other (hence far away). ~\cite{haochen2021provable} show that the loss function, though inspired by theoretical derivations, still perform competitively, nearly matching the SOTA methods. 
 
 We can also define the empirical loss on a set of tuples $(x^{(i)}, x^{+(i)}, x'^{(i)})$ sampled i.i.d. as follows: $\bar{x}\sim\bar{P}_{\bar{X}}, x^{(i)}\sim\aug{\bar{x}^{(i)}}, x^{+(i)}\sim\aug{\bar{x}^{(i)}}$, $\bar{x}'\sim\bar{P}_{\bar{X}}$, $x'^{(i)}\sim\aug{\bar{x}'^{(i)}}$. The empirical loss is defined as 
 \begin{align}
@@ -638,22 +644,22 @@ We learn the linear head $\hat{w} = \argmin_w \hat{L}_{\text{task}}(w, \hat{\the
 	L_{\text{task}}(\hat{w}, \hat{\theta}) = \Exp\left[\frac{1}{2} \left(y_{\text{task}} - \hat{w}^\top f_{{\theta}}(x_{\text{task}})\right)^2\right].
 \end{align}
 
-We give a summary of our analysis pipeline below. 
+\noindent {\bf Analysis pipeline. } We give a summary of our analysis pipeline below. The key takeaway is that we only have to focus on the population distribution case (step 3). 
 \begin{enumerate}\setcounter{enumi}{-1}
-\item{Assume expressivity, i.e., assuming $\exists \theta^*$ such that $L(\theta^*)=0$.}
+\item{Assume expressivity, i.e., assuming $\exists \theta^*$ such that $L(\theta^*)$ is sufficiently small (the details will be quantified later).}
 \item{For large enough $n$ (e.g., $n>\text{Comp}({\mathcal{F}})/\epsilon^2$ where ${\mathcal{F}}=\{f_\theta\}$ is the function class, $\text{Comp}(\cdot)$ is some measure of complexity, $\epsilon$ is the target error), show that $\hat{L}(\theta) = L(\theta) \pm \epsilon$.}
 \item{Let $\hat{\theta}$ be the parameter learned on empirical data. Since $\hat{L}(\hat{\theta})=\min_{\theta}\hat{L}(\theta) \le \hat{L}(\theta^*) \le L(\theta^*)+\epsilon$, we have
 \begin{align}
 	\hat{L}(\hat{\theta})\le\epsilon \Rightarrow L(\hat{\theta}) \le 2\epsilon
 \end{align}
 }
-\item{\textbf{Key step:} (infinite data case) We prove a theorem that shows if $L(\hat{\theta})\le2\epsilon$, then there exists $w$ such that $L_{\text{task}}(\theta, w)\le \delta$, where $\delta$ is a function of $\epsilon$ and data distribution $\bar{P}$.}
+\item{\textbf{Key step:} (infinite data case) We will prove a theorem (Theorem ?? \tnote{add pointer})that shows if $L(\hat{\theta})\le2\epsilon$, then there exists $w$ such that $L_{\text{task}}(\theta, w)\le \delta$, where $\delta$ is a function of $\epsilon$ and data distribution $\bar{P}$.}
 \item{When we have enough downstream data $n_{\text{task}}\ge\text{poly}(k, \frac{1}{\epsilon'})$, for any $\theta$, with high probability we have (via uniform convergence) that for any $w$, 
 $	\hat{L}_{\text{task}}(w, \theta) \approx L_{\text{task}}(w, \theta)\pm \epsilon'$. }
 \item{Using the results in step 3 and step 4, we have $\hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) = \min_{w} \hat{L}_{\text{task}}(w, \hat{\theta}) \le \min_w L_{\text{task}}(w, \hat{\theta}) + \epsilon' \le \delta + \epsilon'$. Thus, the final evaluation loss on the downstream task is $L_{\text{task}}(\hat{w}, \hat{\theta}) \le \hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) +\epsilon' \le \delta + 2\epsilon'$. }
 \end{enumerate}
 
-We will now dive into the analysis of step 3 (all the other steps are from standard concentration inequalities). Recall that 
+\noindent{\bf Key step: the case with population pretraining and downstream data.} We will now dive into the analysis of step 3 (all the other steps are from standard concentration inequalities). Recall that 
 \begin{align}
 		L(\theta)  = -2\Exp_{(x, x^+) } f_{{\theta}}(x)^\top f_{{\theta}}(x^+) + \Exp_{(x, x') }  \left(f_{{\theta}}(x)^\top f_{{\theta}}(x')\right)^2.
 \end{align}
