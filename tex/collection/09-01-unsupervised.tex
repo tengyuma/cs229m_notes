@@ -659,14 +659,14 @@ $	\hat{L}_{\text{task}}(w, \theta) \approx L_{\text{task}}(w, \theta)\pm \epsilo
 \item{Using the results in step 3 and step 4, we have $\hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) = \min_{w} \hat{L}_{\text{task}}(w, \hat{\theta}) \le \min_w L_{\text{task}}(w, \hat{\theta}) + \epsilon' \le \delta + \epsilon'$. Thus, the final evaluation loss on the downstream task is $L_{\text{task}}(\hat{w}, \hat{\theta}) \le \hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) +\epsilon' \le \delta + 2\epsilon'$. }
 \end{enumerate}
 
-\noindent{\bf Key step: the case with population pretraining and downstream data.} We will now dive into the analysis of step 3 (all the other steps are from standard concentration inequalities). Recall that 
+\noindent{\bf Key step: the case with population pretraining and downstream data.} We will now dive into the analysis of step 3, as all the other steps are from standard concentration inequalities. Recall that 
 \begin{align}
 		L(\theta)  = -2\Exp_{(x, x^+) } f_{{\theta}}(x)^\top f_{{\theta}}(x^+) + \Exp_{(x, x') }  \left(f_{{\theta}}(x)^\top f_{{\theta}}(x')\right)^2.
 \end{align}
 
-Our analysis requires structral assumptions on the data. In particular, we will use the graph theoretic language to describe the assumptions on population data. Let $X$ be the set of all augmented data, $P$ be the distribution of $x\sim\aug{\bar{x}}$ where $\bar{x}\sim\bar{P}_{\bar{X}}$. Let $p(x, x^+)$ be the probability density of positive pair $(x, x^+)$. We define a graph $G(V, w)$ where vertex set $V=X$ and edge weights $w(x, z) = p(x, z)$ for any $(x, z) \in X\times X$. In general, this graph may be infinitely large. To simplify math and avoid integrals, we assume $|X|=N$ where $N$ is the number of all possible augmented images (can be exponential in dimension). 
+As expected, the analysis requires structural assumptions on the data. In particular, we will use the graph-theoretic language to describe the assumptions on population data. Let $X$ be the set of all augmented data, $P$ be the distribution of augmented data $x\sim\aug{\bar{x}}$ where $\bar{x}\sim\bar{P}_{\bar{X}}$. Let $p(x, x^+)$ be the probability density of positive pair $(x, x^+)$. We define a graph $G(V, w)$ where vertex set $V=X$ and edge weights $w(x, z) = p(x, z)$ for any $(x, z) \in X\times X$. In general, this graph may be infinitely large. To simplify math and avoid integrals, we assume $|X|=N$ where $N$ is the number of all possible augmented images (which can be infinite or exponential in dimension). 
 
-The degree of node $x$ is $p(x) = \sum_{z\in X} p(x, z)$.  We say $A\in\bbR^{N\times N}$ is the adjacency matrix of this graph if $A_{x, z} = p(x, z)$, and $\bar{A}$ is the normalized adjacency matrix if $\bar{A}_{x, z} = \frac{p(x, z)}{\sqrt{p(x)p(z)}}$. 
+The degree of node $x$ is $p(x) = \sum_{z\in X} p(x, z)$.  Let $A\in\bbR^{N\times N}$ be the adjacency matrix of this graph defined as $A_{x, z} = p(x, z)$, and let $\bar{A}$ ber the normalized adjacency matrix such that $\bar{A}_{x, z} = \frac{p(x, z)}{\sqrt{p(x)p(z)}}$. 
 
 The following lemma shows that contrastive learning is closely related to the eigendecomposition of $\bar{A}$. 
 \begin{lemma}
@@ -678,7 +678,7 @@ The following lemma shows that contrastive learning is closely related to the ei
 	\begin{align}
 		L(f) = \norm{\bar{A}-FF^\top}_F^2 +\text{const}.
 	\end{align}
-	Hence solving $F$ is equivalent to eigendecomposition of $\bar{A}$. 
+	Hence, minimizing $L(f)$ w.r.t the variable $f$ is equivalent to eigendecomposition of $\bar{A}$. 
 \end{lemma}
 \begin{proof}
 Directly expanding the Frobenius norm $\norm{\bar{A}-FF^\top}_F^2$ as a sum over entries, we have
@@ -690,7 +690,7 @@ Directly expanding the Frobenius norm $\norm{\bar{A}-FF^\top}_F^2$ as a sum over
 where the last equation uses the fact that $p(x, z)$ and $p(x)p(z)$ are the probability densities of $(x,z)$ being a positive pair and a random pair, respectively. 
 \end{proof}
 
-Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ to represent the rows of $U$, i.e., 
+Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ \tnote{I think we need to change the notation here because $v_i$ is used to denote the columns already; use $v_i$?} to represent the rows of $U$, i.e., 
 	\begin{equation}
 	U = \begin{bmatrix}  u_1^\top  \\ \vdots \\  u_N^\top \end{bmatrix}.
 \end{equation}
@@ -698,10 +698,11 @@ Then we know $f(x_i)= p(x_i)^{-\frac{1}{2}} \cdot \text{diag}(\gamma_i^{\frac{1}
 
 \newcommand{\id}[1]{\mathbbm{1}\left[#1\right]}
 
-One interesting thing is that $\phi(x_i)$ has the same separability as $u_i$. This is because for any vector $v\in\bbR^k$, we have $\id{v^\top u_i>0} = \id{v^\top \text{diag}(\gamma_i^{-\frac{1}{2}}) f(x) >0}$, suggesting linear head $\text{diag}(\gamma_i^{-\frac{1}{2}}) v$ applied on feature $f(x_i)$ would achieve the same classification accuracy as $v$ applied on $u_i$. Thus, it suffices to analyze $u_i$'s downstream accuracy under linear head, which is exactly the spectral clustering literature has studied.
+One interesting thing is that $\phi(x_i)$ has the same separability as $u_i$. This is because for any vector $v\in\bbR^k$\tnote{change $u_i$ to $v_i$ and change $v$ to something else e.g., $\theta$}, we have $\id{v^\top u_i>0} = \id{v^\top \text{diag}(\gamma_i^{-\frac{1}{2}}) f(x) >0}$, suggesting linear head $\text{diag}(\gamma_i^{-\frac{1}{2}}) v$ applied on feature $f(x_i)$ would achieve the same classification accuracy as $v$ applied on $u_i$. Thus, it suffices to analyze $u_i$'s downstream accuracy under linear head, which is exactly the spectral clustering literature has studied\tnote{this doesn't sound to be true? the literature didn't study linear probe?}.
 
-So when does spectral clustering produce good features? Recall that we've shown spectral clustering is good at graph partitioning in stochastic block model or the worst-case graph. For simplicity, let's consider a regular graph where $w(x) = \sum_{x'\in V} w(x, x') = d$. 
+When does spectral clustering produce good features? Recall that we've shown spectral clustering is good at graph partitioning in stochastic block model or the worst-case graph\tnote{this sentence seems to come out of nowhere; more transition}. For simplicity, let's consider a regular graph where $w(x) = \sum_{x'\in V} w(x, x') = d$. \tnote{could we change $d$ to $\kappa$--- it coincides the dimension }
 
+\tnote{maybe say what the lemma is about in words before stating the lemma}
 \begin{lemma}\label{lemma:ssl1}
 	Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha dN$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ T_1, T_2, T_3$, we have $\max\{\phi(T_1), \phi(T_2), \phi(T_3)\} \ge \rho$. 
 	\begin{figure}[ht]
@@ -722,18 +723,19 @@ where $U$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns.
 
 The above lemma essentially says that $\langle u_x, b \rangle\approx g_x$ for all data $x\in X$, where $u_x$ is the $x$-th row of $U$. 
 
-Before proving the above lemma, we first introduce the following higher-order Cheeger inequality. 
+Before proving the above lemma, we first introduce the following higher-order Cheeger inequality\tnote{say briefly what its about}. 
 \begin{lemma}[Proposition 1.2  in \cite{louis2014approximation}]\label{lemma:higher_order_cheeger}
 	Let $G=(V, w)$ be a weight graph.  Suppose the graph cannot be partitioned into $3$ sets $S_1, S_2, S_3$ such that $\max\{\phi(S_1), \phi(S_2), \phi(S_3)\} \le \rho$. Then, we have
 	\begin{align*}
 		 \lambda_{6} \gtrsim\rho^2.
 	\end{align*}
+	\tnote{can we have the other side of the inequality stated here as well? }
 %	\tnote{could you state the contrapositive of this? [I suspect that it's easier to understand the contrapositive in this context]}
 \end{lemma}
 
 Now we give a proof of Lemma~\ref{lemma:ssl1}.
 \begin{proof}[Proof of Lemma~\ref{lemma:ssl1}]
-	By results in Section~\ref{subsec:clustering_worst_graph} we know that 
+	By results in Section~\ref{subsec:clustering_worst_graph} \tnote{which equation}we know that 
 \begin{align}
 	\frac{2}{N} g^\top L g &= \frac{1}{Nd} \sum_{x, z} (g_x - g_z)^2 w(x, z)\\
 	&= \frac{1}{Nd} \left(\sum_{x\in S_1, z\in S_2} w(x, z) + \sum_{x\in S_2, z\in S_1} w(x, z)\right)\\
