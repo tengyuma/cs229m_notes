@@ -1,3 +1,5 @@
+\newcommand{\jnote}[1]{{\color{red}\authnoteimp{JH}{#1}}}
+
 \metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
 
 We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, so far we do not have a comprehensive theoretical analysis for the convergence of EM algorithms because fundamentally analyzing EM algorithms involves understanding non-convex optimization. Most analysis of EM only applies to special cases (e.g., see ~\citet{xu2016global,daskalakis2016ten}) and it is not clear whether any of the results can be extended to more realistic, complex setups, without a fundamentally new technique for understanding nonconvex optimization. 
@@ -235,7 +237,7 @@ Results 1 and 2 above both involve the so-called ``under-complete'' case ($k \le
 
 In summary, the moment method is a recipe in which we first compute high order moments (i.e. tensors), assume that these estimates are noiseless, and decompose these tensors to recover the latent variables. Though we do not discuss these results here, there is an extensive literature analyzing the robustness of the moment method to error in the moment estimates. Last, we note that even though we only explicitly analyze the mixture of Gaussians model here, latent variable models amenable to analysis by the moment method include ICA, Hidden Markov Models, topic models, etc.
 
-\sec{Graph Decomposition and Spectral Clustering}
+\sec{Graph Decomposition and Spectral Clustering}\label{section:spectral_clustering}
 Introduced by \citet{shi2000normalized} and \citet{ng2001spectral}, spectral clustering learns a model for the data points using a \emph{pairwise} notion of similarity. Formally, assume that we are given $n$ data points $x\sp{1}, \dots, x\sp{n}$ as well as a similarity matrix $G \in \bbR^{n\times n}$ such that 
 \begin{equation}
     G_{ij} = \rho (x\sp{i}, x\sp{j})
@@ -498,7 +500,7 @@ Our goal is to find an approximate sparsest cut $\hat{S}$ such that $\phi(\hat{S
 \begin{equation}
     \bar{A} = D^{-\frac{1}{2}} A D^{\frac{1}{2}}
 \end{equation}
-be the normalized adjacency matrix. This is equivalent to normalizing each element $G_{ij}$ \tnote{typo?}of the adjacency matrix by $\frac{1}{\sqrt{d_i d_j}}$.\tnote{gives an explicit formula for the entry of A bar}
+be the normalized adjacency matrix. This is equivalent to normalizing each element $A_{ij}$ of the adjacency matrix by $\frac{1}{\sqrt{d_i d_j}}$ (i.e., $\bar{A}_{ij} = \frac{A_{ij}}{\sqrt{d_i d_j}}$).
 In most cases, it suffices to starting with considering $G$ as a regular graph (whose degrees are all the same), because the proof for regular graph can oftentimes extend to general graph easily. Assuming $G$ is a $\kappa$-regular graph, i.e. $d_i = \kappa$; then, this normalization simply scales $A$ by $\frac{1}{\kappa}$.
 
  Let $L = I - \bar{A}$ be the Laplacian matrix. Note that any eigenvector of $L$ is also an eigenvector of $\bar{A}$. Suppose $L$ has eigenvalues $\lambda_1 \leq \hdots \leq \lambda_n$ with corresponding eigenvectors $u_1 \hdots u_n$, then $\bar{A}$ has eigenvalues $1 - \lambda_1 \geq \hdots \geq 1 - \lambda_n$ with the same eigenvectors.
@@ -515,7 +517,7 @@ Moreover, we can find $\hat{S}$ such that $\phi(\hat{S}) \leq \sqrt{2 \lambda_2}
 
 Note that this can be viewed as a general but weaker version of the theorem that we proved for stochastic block model. There is no randomized assumption; the conclusion is weaker than those for SBM; also the rounding algorithm to recover the cluster is also more complicated---one has to try multiple thresholding instead of using threshold $1/2$. 
 
-We will refer the readers to~\cite{?} for the proof of the theorem. Here below we give a few basic lemmas that help build up intuitions on why eigendecompositions relate to graph decomposition.
+We will refer the readers to~\citet{chung2007four} for the proof of the theorem. Here below we give a few basic lemmas that help build up intuitions on why eigendecompositions relate to graph decomposition.
 
 First, one might wonder why this algorithm uses the second eigenvector of $\bar{A}$, but not the first eigenvector. As we have seen in the SBM case, the first eigenvector captures the background in some sense. Here for general graph, we see the same phenomenon. The top eigenvector is generally not that interesting as it only captures the ``background density'' of the graph. For instance, when $A$ is $\kappa$-regular, $\vec{1}$ is the top eigenvector of $A$ and is thus also the top eigenvector of $\bar{A} = \frac{1}{\kappa} \cdot A$. More generally, we have the following lemma:
 
@@ -534,7 +536,7 @@ The top eigenvector of $\bar{A}$ (respectively, the smallest eigenvector of $L$)
 
 
 To understand why the eigenvectors of the Laplacian are related to the sparsest cut, we examine the quadratic form the Laplacian. In particular, we have the following lemma:
-\begin{lemma}
+\begin{lemma}\label{lemma:laplacian_quadratic}
 	Let $v\in\bbR^N$ be a vector, $L$ is the graph Laplacian. Then, 
 	\begin{align}
 		v^\top L v = \frac{1}{2} \sum_{(i, j) \in E} \left( \frac{v_i}{\sqrt{d_i}} - \frac{v_j}{\sqrt{d_j}} \right)^2.
@@ -590,7 +592,7 @@ Self-supervised learning is widely used for pretraining modern models. These lar
 
 \paragraph{Adaptation.} During adaptation, we have access to a set of labeled downstream task examples $\{(x^{(1)}_{\text{task}}, y^{(1)}_{\text{task}}), \cdots, (x^{(n_{\text{task}})}_{\text{task}}, y^{(n_{\text{task}})}_{\text{task}})\}$, where usually $n_{\text{task}}\ll n$. One popular adapataion method is \emph{linear probe}, which uses $f_{\hat{\theta}}(x)$ as features / representations / embeddings, and train a linear classifier on downstream tasks. Concretely, the prediction on data $x$ is $w^\top f_{\hat{\theta}}(x)$, where $w$ is the linear head learned from $\min_{w} \hat{L}_{\text{task}}(w) = \frac{1}{n_{\text{task}}} \sum_{i=1}^{n_{\text{task}}} \ell_{\text{task}}(y^{(i)}_{\text{task}}, w^\top f_{\hat{\theta}}(x^{(i)}_{\text{task}}))$. Another popular adaptation method is \emph{finetuning}, which also updates the parameter $\theta$. Concretely, one initializes from $\theta = \hat{\theta}$, and solve $\min_{\theta, w} \hat{L}_{\text{task}}(w, \theta) = \frac{1}{n_{\text{task}}} \sum_{i=1}^{n_{\text{task}}} \ell_{\text{task}}(y^{(i)}_{\text{task}}, w^\top f_{{\theta}}(x^{(i)}_{\text{task}}))$.
 
-Why does pretraining on unlabeled data with an unsupervised (self-supervised) loss help a wide range of downstream prediction tasks? There are many open questions to be answered in this field. For instance,  we may ask: (1) how does pretraining help label efficiency of downstream tasks\tnote{the be verb should be after the noun unless this is a standalone question}, (2) why pretraining can give ``universal'' representations, and (3) why does pretraining provide robustness to distribution shift. 
+Why does pretraining on unlabeled data with an unsupervised (self-supervised) loss help a wide range of downstream prediction tasks? There are many open questions to be answered in this field. For instance,  we may ask: (1) how pretraining helps label efficiency of downstream tasks, (2) why pretraining can give ``universal'' representations, and (3) why does pretraining provide robustness to distribution shift. 
 
 \subsec{Analysis of contrastive learning}\label{section:analysis_contrastive_learning}
 Let $\bar{X}$ be the set of all natural images in the image domain, $\bar{P}_{\bar{X}}$ be the distribution over $\bar{X}$. Contrastive learning learns $f_{\theta}$ such that representations of augmentations of the same image are close, whereas augmentations of random images are far away (as visualized in Figure~\ref{fig:ssl2}). 
@@ -653,7 +655,7 @@ We learn the linear head $\hat{w} = \argmin_w \hat{L}_{\text{task}}(w, \hat{\the
 	\hat{L}(\hat{\theta})\le\epsilon \Rightarrow L(\hat{\theta}) \le 2\epsilon
 \end{align}
 }
-\item{\textbf{Key step:} (infinite data case) We will prove a theorem (Theorem ?? \tnote{add pointer})that shows if $L(\hat{\theta})\le2\epsilon$, then there exists $w$ such that $L_{\text{task}}(\theta, w)\le \delta$, where $\delta$ is a function of $\epsilon$ and data distribution $\bar{P}$.}
+\item{\textbf{Key step:} (infinite data case) We will prove a theorem (Theorem~\ref{theorem:scl} \tnote{add pointer}\jnote{Technically Theorem~\ref{theorem:scl} is only a simplified version of this key step. Shall we add pointer to the theorem in our paper too?})that shows if $L(\hat{\theta})\le2\epsilon$, then there exists $w$ such that $L_{\text{task}}(\theta, w)\le \delta$, where $\delta$ is a function of $\epsilon$ and data distribution $\bar{P}$.}
 \item{When we have enough downstream data $n_{\text{task}}\ge\text{poly}(k, \frac{1}{\epsilon'})$, for any $\theta$, with high probability we have (via uniform convergence) that for any $w$, 
 $	\hat{L}_{\text{task}}(w, \theta) \approx L_{\text{task}}(w, \theta)\pm \epsilon'$. }
 \item{Using the results in step 3 and step 4, we have $\hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) = \min_{w} \hat{L}_{\text{task}}(w, \hat{\theta}) \le \min_w L_{\text{task}}(w, \hat{\theta}) + \epsilon' \le \delta + \epsilon'$. Thus, the final evaluation loss on the downstream task is $L_{\text{task}}(\hat{w}, \hat{\theta}) \le \hat{L}_{\text{task}}(\hat{w}, \hat{\theta}) +\epsilon' \le \delta + 2\epsilon'$. }
@@ -669,7 +671,7 @@ As expected, the analysis requires structural assumptions on the data. In partic
 The degree of node $x$ is $p(x) = \sum_{z\in X} p(x, z)$.  Let $A\in\bbR^{N\times N}$ be the adjacency matrix of this graph defined as $A_{x, z} = p(x, z)$, and let $\bar{A}$ ber the normalized adjacency matrix such that $\bar{A}_{x, z} = \frac{p(x, z)}{\sqrt{p(x)p(z)}}$. 
 
 The following lemma shows that contrastive learning is closely related to the eigendecomposition of $\bar{A}$. 
-\begin{lemma}
+\begin{lemma}\label{lemma:scl_as_decomposition}
 	Let $L(f) = -2\Exp_{(x, x^+) } f(x)^\top f(x^+) + \Exp_{(x, x') } \left(f(x)^\top f(x')\right)^2$.  Suppose $X=\{x_1, \cdots, x_N\}$, let matrix 
 	\begin{equation}
 	    F = \begin{bmatrix}  p(x_1)^{\frac{1}{2}} f(x_1)^\top  \\ \vdots \\  p(x_N)^{\frac{1}{2}} f(x_N)^\top \end{bmatrix}.
@@ -690,60 +692,73 @@ Directly expanding the Frobenius norm $\norm{\bar{A}-FF^\top}_F^2$ as a sum over
 where the last equation uses the fact that $p(x, z)$ and $p(x)p(z)$ are the probability densities of $(x,z)$ being a positive pair and a random pair, respectively. 
 \end{proof}
 
-Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $u_1, \cdots, u_N$ \tnote{I think we need to change the notation here because $v_i$ is used to denote the columns already; use $v_i$?} to represent the rows of $U$, i.e., 
+Standard matrix decomposition results tell us that the minimizer of $\norm{\bar{A}-FF^\top}_F^2 $ satisfies $F = U \cdot \text{diag}(\gamma_i^{\frac{1}{2}})$, where $\gamma_i$'s are the eigenvalues of $\bar{A}$ and $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. Suppose we use $v_1, \cdots, v_N$ to represent the rows of $U$, i.e., 
 	\begin{equation}
-	U = \begin{bmatrix}  u_1^\top  \\ \vdots \\  u_N^\top \end{bmatrix}.
+	U = \begin{bmatrix}  v_1^\top  \\ \vdots \\  v_N^\top \end{bmatrix}.
 \end{equation}
-Then we know $f(x_i)= p(x_i)^{-\frac{1}{2}} \cdot \text{diag}(\gamma_i^{\frac{1}{2}}) \cdot u_i$ is the minimizer of the contrastive loss. 
+Then we know $f(x_j)= p(x_j)^{-\frac{1}{2}} \cdot \text{diag}(\gamma_i^{\frac{1}{2}}) \cdot v_j$ is the minimizer of the contrastive loss. 
 
 \newcommand{\id}[1]{\mathbbm{1}\left[#1\right]}
 
-One interesting thing is that $\phi(x_i)$ has the same separability as $u_i$. This is because for any vector $v\in\bbR^k$\tnote{change $u_i$ to $v_i$ and change $v$ to something else e.g., $\theta$}, we have $\id{v^\top u_i>0} = \id{v^\top \text{diag}(\gamma_i^{-\frac{1}{2}}) f(x) >0}$, suggesting linear head $\text{diag}(\gamma_i^{-\frac{1}{2}}) v$ applied on feature $f(x_i)$ would achieve the same classification accuracy as $v$ applied on $u_i$. Thus, it suffices to analyze $u_i$'s downstream accuracy under linear head, which is exactly the spectral clustering literature has studied\tnote{this doesn't sound to be true? the literature didn't study linear probe?}.
+One interesting thing is that $f(x_i)$ has the same separability as $v_i$. This is because for any vector $b\in\bbR^k$, we have $\id{b^\top v_i>0} = \id{b^\top \text{diag}(\gamma_i^{-\frac{1}{2}}) f(x) >0}$, suggesting linear head $\text{diag}(\gamma_i^{-\frac{1}{2}}) b$ applied on feature $f(x_i)$ would achieve the same classification accuracy as $v$ applied on $v_i$. Thus, it suffices to analyze $v_i$'s downstream accuracy under linear head.
 
-When does spectral clustering produce good features? Recall that we've shown spectral clustering is good at graph partitioning in stochastic block model or the worst-case graph\tnote{this sentence seems to come out of nowhere; more transition}. For simplicity, let's consider a regular graph where $w(x) = \sum_{x'\in V} w(x, x') = d$. \tnote{could we change $d$ to $\kappa$--- it coincides the dimension }
+Since $v_i$ is exactly the feature used by the classic spectral clustering algorithm, we may ask when spectral clustering produces good features. As discussed in Section~\ref{section:spectral_clustering}, spectral clustering is good at graph partitioning in stochastic block models. In this section, we aim to find more general settings where spectral clustering produces good features. For simplicity, let's consider a regular graph where $w(x) = \sum_{x'\in V} w(x, x') = \kappa$. \jnote{rewrote this para}
 
-\tnote{maybe say what the lemma is about in words before stating the lemma}
+The following lemma shows that suppose the graph roughly contains two clusters, then the spectral clustering features can be used to accurately predict which cluster a node belongs to.
+\tnote{maybe say what the lemma is about in words before stating the lemma}\jnote{added}
 \begin{lemma}\label{lemma:ssl1}
-	Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha dN$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ T_1, T_2, T_3$, we have $\max\{\phi(T_1), \phi(T_2), \phi(T_3)\} \ge \rho$. 
+	Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha \kappa N$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ T_1, T_2, T_3$, we have $\max\{\phi(T_1), \phi(T_2), \phi(T_3)\} \ge \rho$. (Figure~\ref{figure:ssl_thm_assumption} gives a demonstration of these assumptions.)
 	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=3in]{figures/ssl4.pdf}
 		\caption{A demonstration of the assumptions in Lemma~\ref{lemma:ssl1}. The left half and right half of the graph can be chosen as $S_1$ and $S_2$, since there's at most $\alpha$ proportion of edges between them. Sets $T_1, T_2, T_3$ form a 3-way partition where $\phi(T_1)\ge \rho$.
 %\tnote{a bit more caption?} 
 %			\tnote{I think $S_1, S_2$ are mentioned twice with different meanings in the lemma 10.10, so the figure is a bit ambiguous. Maybe replace $S_1, S_2, S_3$ by $T_1,..$ and change the figure.}
-		}
+		}\label{figure:ssl_thm_assumption}
 	\end{figure}
-	
-	Then, let $g=\mathbbm{1}(S_1)\in \bbR^N$ (i.e., $g_i=1$ if $i\in S_1$), and $k\ge 6$, there exists linear classifier $b$ such that 
+	Then, let $g=\mathbbm{1}(S_1)\in \bbR^N$ (i.e., $g_i=1$ if $i\in S_1$), and $k\ge 6$, there exists linear classifier $b$ such that \jnote{I realize that there should be a $N$ here on RHS.}
 	\begin{align}
-		\norm{Ub-g}_2^2 \lesssim \frac{\alpha}{\rho^2},
+		\norm{Ub-g}_2^2 \lesssim \frac{N\alpha}{\rho^2},
 	\end{align}
 where $U$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns.
 \end{lemma}
 
-The above lemma essentially says that $\langle u_x, b \rangle\approx g_x$ for all data $x\in X$, where $u_x$ is the $x$-th row of $U$. 
+The above lemma essentially says that $\langle v_x, b \rangle\approx g_x$ for all data $x\in X$, where $v_x$ is the $x$-th row of $U$. 
 
-Before proving the above lemma, we first introduce the following higher-order Cheeger inequality\tnote{say briefly what its about}. 
+Before proving the above lemma, we first introduce the following higher-order Cheeger inequality, which shows that when the graph cannot be partitioned well into $3$ clusters, the $6$-th smalled eigenvalue of the Laplacian cannot be too small. \tnote{say briefly what its about}\jnote{added}
 \begin{lemma}[Proposition 1.2  in \cite{louis2014approximation}]\label{lemma:higher_order_cheeger}
 	Let $G=(V, w)$ be a weight graph.  Suppose the graph cannot be partitioned into $3$ sets $S_1, S_2, S_3$ such that $\max\{\phi(S_1), \phi(S_2), \phi(S_3)\} \le \rho$. Then, we have
 	\begin{align*}
 		 \lambda_{6} \gtrsim\rho^2.
 	\end{align*}
-	\tnote{can we have the other side of the inequality stated here as well? }
+	\tnote{can we have the other side of the inequality stated here as well? }\jnote{the other side of inequality requires 6-way partition rather than 3-way. Would it be worth of it to introduce that?}
 %	\tnote{could you state the contrapositive of this? [I suspect that it's easier to understand the contrapositive in this context]}
 \end{lemma}
 
 Now we give a proof of Lemma~\ref{lemma:ssl1}.
 \begin{proof}[Proof of Lemma~\ref{lemma:ssl1}]
-	By results in Section~\ref{subsec:clustering_worst_graph} \tnote{which equation}we know that 
+	By Lemma~\ref{lemma:laplacian_quadratic} we know that 
 \begin{align}
-	\frac{2}{N} g^\top L g &= \frac{1}{Nd} \sum_{x, z} (g_x - g_z)^2 w(x, z)\\
-	&= \frac{1}{Nd} \left(\sum_{x\in S_1, z\in S_2} w(x, z) + \sum_{x\in S_2, z\in S_1} w(x, z)\right)\\
-	&= \frac{2}{Nd} E(S_1, S_2) \\
+	\frac{2}{N} g^\top L g &= \frac{1}{N\kappa} \sum_{x, z} (g_x - g_z)^2 w(x, z)\\
+	&= \frac{1}{N\kappa} \left(\sum_{x\in S_1, z\in S_2} w(x, z) + \sum_{x\in S_2, z\in S_1} w(x, z)\right)\\
+	&= \frac{2}{N\kappa} E(S_1, S_2) \\
 	&\le \alpha.
 \end{align}
 Thus, $g$ has to be mostly in the smaller eigenspace of $L$.  Suppose $L$ has eigenvalue $0=\lambda_1\le\lambda_2 \le \cdots \le \lambda_N $, with corresponding eigenvectors $u_1, u_2, \cdots u_N$. Define matrix $U=[u_1, \cdots, u_k] \in \bbR^{N\times k}$. Suppose $\sqrt{\frac{2}{N}}g = \sum_{i=1}^N \beta_i u_i$. Since $\norm{\sqrt{\frac{2}{N}}g}=1$, we know $\sum_{i=1}^N \beta_i^2 = 1$.
 
-Since we know $g^\top L g = \sum_{i=1}^N \beta_i^2 \lambda_i \le \alpha$, we can conclude $\sum_{i>k} \beta_i^2 \lambda_i \le \alpha$, which implies that $\sum_{i>k}\beta_i^2 \lesssim \frac{\alpha}{\lambda_{k+1}} \le \frac{\alpha}{\rho^2}$. Here we used the fact $\lambda_6 \gtrsim \rho^2$ by higher-order Cheeger inequality (Lemma~\ref{lemma:higher_order_cheeger}). Thus, we have $\norm{g-\sum_{i=1}^k \beta_i u_i}_2^2 = \norm{\sum_{i>k} \beta_i u_i}_2^2 \lesssim \frac{\alpha}{\rho^2}$ which finishes the proof. 
+Since we know $g^\top L g = \sum_{i=1}^N \beta_i^2 \lambda_i \le \frac{N\alpha}{2}$, we can conclude $\sum_{i>k} \beta_i^2 \lambda_i \le \frac{N\alpha}{2}$, which implies that $\sum_{i>k}\beta_i^2 \le \frac{N\alpha}{2\lambda_{k+1}} \lesssim \frac{N\alpha}{\rho^2}$. Here we used the fact $\lambda_6 \gtrsim \rho^2$ by higher-order Cheeger inequality (Lemma~\ref{lemma:higher_order_cheeger}). Thus, we have $\norm{g-\sum_{i=1}^k \beta_i u_i}_2^2 = \norm{\sum_{i>k} \beta_i u_i}_2^2 \lesssim \frac{N\alpha}{\rho^2}$ which finishes the proof. 
+\end{proof}
 
+We can combine Lemma~\ref{lemma:scl_as_decomposition} and Lemma~\ref{lemma:ssl1} to prove the following theorem, which shows that when the graph roughly contains $2$ clusters, the feature learned from contrastive learning can be used to predict the cluster membership accurately. \jnote{added the theorem below so that we have something to point to in the "key step" bullet point}
+\begin{theorem}\label{theorem:scl}
+	Let $L(f) = -2\Exp_{(x, x^+) } f(x)^\top f(x^+) + \Exp_{(x, x') } \left(f(x)^\top f(x')\right)^2$, and $f^*: X\rightarrow \bbR^k$ is a minimizer of $L(f)$ for $k\ge 6$. Suppose the graph $G$ can be partitioned into $2$ clusters $S_1$, $S_2$ with size $|S_1| = |S_2| = \frac{N}{2}$, such that $E(S_1, S_2)=\sum_{x\in S_1, z\in S_2} w(x, z) \le \alpha \kappa N$. Furthermore, suppose $G$ cannot be partitioned well into $3$ clusters in the sense that for all partition $ T_1, T_2, T_3$, we have $\max\{\phi(T_1), \phi(T_2), \phi(T_3)\} \ge \rho$. Let $y(x_i) = \mathbbm{1}(x_i\in S_1)$ (i.e., $y(x_i)=1$ if $x_i\in S_1$, otherwise $y(x_i)=0$). Then, there exists linear classifier $b\in\bbR^k$ such that
+	\begin{align}
+		\frac{1}{N}\sum_{i\in [N]} \left(f(x_i)^\top b - y(x_i)\right)^2 \lesssim \frac{\alpha}{\rho^2}.
+	\end{align}
+\end{theorem}
+\begin{proof}
+	Let $U\in\bbR^{N\times k}$ contains the top $k$ eigenvectors of $\bar{A}$ as its columns. By Lemma~\ref{lemma:ssl1}, we know there exists some $\hat{b}\in\bbR^k$ such that $\norm{U\hat{b}-g}_2^2 \lesssim \frac{N\alpha}{\rho^2}$, where $g\in\bbR^N$ such that $g_i = y(x_i)$. Let $v_1, \cdots, v_N$ be the rows of $U$. According to Lemma~\ref{lemma:scl_as_decomposition}, we know that $f(x_i)= p(x_i)^{-\frac{1}{2}} \cdot \text{diag}(\gamma_j^{\frac{1}{2}}) \cdot v_i = \kappa^{-\frac{1}{2}}\cdot \text{diag}(\gamma_j^{\frac{1}{2}}) \cdot v_i$, where $\gamma_j$ is the $j$-th largest eigenvalue of $\bar{A}$, and $\text{diag}(\gamma_j^{\frac{1}{2}})$ is a diagonal matrix containing $\gamma_1^\frac{1}{2}, \gamma_2^{\frac{1}{2}}, \cdots, \gamma_k^{\frac{1}{2}}$ as its entries. Thus, if we let $b=\sqrt{\kappa}\cdot  \text{diag}(\gamma_j^{-\frac{1}{2}}) \cdot \hat{b}$, we would have 
+	\begin{align}
+\sum_{i\in[N]} (f(x_i)^\top b - y(x_i))^2 = \sum_{i\in[N]} (v_i^\top \hat{b} - g_i)^2 = \norm{U\hat{b}-g}_2^2 \lesssim \frac{N\alpha}{\rho^2}.
+	\end{align}
 \end{proof}
