@@ -77,7 +77,7 @@
 	
 	\frontmatter
 	
-	\title{Lecture Notes for Machine Learning Theory (CS229M/STATS214)}
+	\title{Lecture Notes for Machine Learning Theory}
 	
 	%    Remove any unused author tags.
 	
@@ -130,14 +130,15 @@
 	\let\subsec\subsection
 	\let\subsubsec\subsubsection
 	
-	\chapter*{Acknowledgments}
-	\setcounter{page}{5}
-	This monograph is a collection of scribe notes for the course CS229M/STATS214 at Stanford University. The materials in Chapter \ref{chap:supervised}--\ref{chap:gen-bounds} are mostly based on Percy Liang's lecture notes~\cite{percynotes}, and Chapter~\ref{chap:OL} is largely based on Haipeng Luo's lectures~\cite{haipengnotes}. Kenneth Tay contributed significantly to the revision of these notes as a teaching assistant for the course. The original contributor to the scribe notes are Stanford students including but not limited to Anusri Pampari, Gabriel Poesia, Alexander Ke, Trenton Chang, Brad Ross, Robbie Jones, Yizhou Qian, Will Song, Daniel Do, Spencer M. Richards, Thomas Lew, David Lin, Jinhui Wang, Rafael Rafailov, Aidan Perreault, Kevin Han, Han Wu, Andrew Wang, Rohan Taori, Jonathan Lee, Rohith Kuditipudi, Kefan Dong, Roshni Sahoo, Sarah Wu, Tianyu Du, Xin Lu, Soham Sinha, Kevin Guo, Jeff Z. HaoChen, Carrie Wu, Kaidi Cao, and Ruocheng Wang.  The notes will be updated every year with new materials. The reference list is far from complete.
-	
-	\tnotelong{to add names for fall 2021 quarter}
 	
 	
-	\chapter{Supervised Learning Formulations}\label{chap:supervised}
+	
+	\chapter*{Introduction} \label{chap:iintro}
+	\input{collection/00introduction.tex}
+
+	\part{Classical Statistical Learning Theory}\label{part:supervised}
+	
+	\chapter{Basic Formulations}\label{chap:supervised}
 	\input{collection/01supervised.tex}
 	
 	\chapter{Asymptotic Analysis}\label{chap:asymp}
@@ -151,12 +152,18 @@
 	\input{collection/04-02-uniform.tex}
 	\input{collection/04-03-uniform.tex}
 	
-	\chapter{Rademacher Complexity Bounds for Concrete Models and Losses}\label{chap:gen-bounds}
+	\chapter{Rademacher Complexity Bounds for Linear Classifiers}\label{chap:gen-bounds}
 	\input{collection/05-01-concrete-models.tex}
 	\input{collection/05-02-concrete-models}
-	\input{collection/05-03-deep-nets.tex}
+%	\input{collection/05-03-deep-nets.tex}
+
+	\part{Deep Learning Theory}	
 	
-	\chapter{Theoretical Mysteries in Deep Learning}
+	\chapter{Generalization Bounds for Neural Networks} \label{chap:gen-bounds-nns}
+	\input{collection/05-04-generalization-for-neural-nets}
+
+
+	\chapter{Conceptual and Theoretical Mysteries in Deep Learning}
 	\input{collection/06-dltheory}
 	
 	\chapter{Nonconvex Optimization}
@@ -170,10 +177,12 @@
 	\input{collection/08-02-algorithmic.tex}
 	\input{collection/08-03-algorithmic-new.tex}
 	
-	\chapter{Unsupervised Learning and Self-supervised Learning}
+	\part{Unsupervised Learning and Self-supervised Learning}
+	\chapter{Moment Methods and Spectral Clustering}
 	\input{collection/09-01-unsupervised.tex}
 %	\input{collection/09-01-data-dependent.tex}
 	
+	\part{Online Learning}
 	\chapter{Online learning}\label{chap:OL}
 	\input{collection/10-01-online.tex}
 	\input{collection/10-02-online.tex}
@@ -186,7 +195,7 @@
 	\backmatter
 	%    Bibliography styles amsplain or harvard are also acceptable.
 	\bibliographystyle{plainnat}
-	\bibliography{all, bibliography}
+	\bibliography{all,bibliography}
 	%    See note above about multiple indexes.
 	%\printindex
 	

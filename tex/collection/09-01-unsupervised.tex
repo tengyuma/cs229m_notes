@@ -1,6 +1,6 @@
 \newcommand{\jnote}[1]{{\color{red}\authnoteimp{JH}{#1}}}
 
-\metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
+%\metadata{18}{Haoran Xu and Lewis Liu}{Nov 17th, 2021}
 
 We venture into unsupervised learning by first studying classical (and analytically tractable) approaches to unsupervised learning. Classical unsupervised learning usually consists of specifying a latent variable model and fitting using the expectation-maximization (EM) algorithm. However, so far we do not have a comprehensive theoretical analysis for the convergence of EM algorithms because fundamentally analyzing EM algorithms involves understanding non-convex optimization. Most analysis of EM only applies to special cases (e.g., see ~\citet{xu2016global,daskalakis2016ten}) and it is not clear whether any of the results can be extended to more realistic, complex setups, without a fundamentally new technique for understanding nonconvex optimization. 
 Instead, we will analyze a family of algorithms which are broadly referred to as spectral methods or tensor methods, which are a particular application of the method of moments~\citep{pearson1894} with the algorithmic technique of tensor decomposition~\citep{anandkumar2015learning}. While the spectral method appears to be not as empirically sample-efficient as EM, it has provable guarantees and arguably is more reliable than EM given the provable guarantees.
@@ -8,7 +8,7 @@ Instead, we will analyze a family of algorithms which are broadly referred to as
 %\tnote{this paragraph require updating}
 After discussing the basics of classical unsupervised learning, we will move on to modern applications of deep learning. In particular, we'll focus on theoretical interpretations of contrastive learning, which is a class of successful self-supervised learning algorithms in computer vision. 
 
-\sec{Method of Moments for mixture models}
+\sec{Method of Moments for mixture models} \label{sec:method-of-moments}
 
 We begin by formally describing the unsupervised learning problem. First, assume that we are studying a family of distributions $P_{\theta}$ parameterized by $\theta \in \Theta$, where $P_{\theta}$ can be described by a latent variable model. Then, given data $x^{(i)},...,x^{(n)}$ that is sampled i.i.d. from some distribution in $\{P_\theta\}_{\theta \in \Theta}$, our goal is to recover the true $\theta$. 
 
@@ -218,8 +218,7 @@ The lack of rotation invariance in the sense above and the existence of permutat
 We now summarize some standard results regarding tensor decomposition for $T = \sum_{i = 1}^k a_i^{\otimes 3}$. The results for decomposing the asymmetric version  $T = \sum_{i = 1}^k a_i\otimes b_i \otimes$ are largely analogous. We will not prove these results here.
 \begin{enumerate}
 \setcounter{enumi}{-1}
-\tnotelong{Tengyu will add references here}
-\item  In the most general case, recovering the $a_i$'s from $T$ is computationally hard. Any procedure will either fail to find a unique $a_i$ or it fails to find $a_i$ \emph{efficiently}. 
+\item  In the most general case, recovering the $a_i$'s from $T$ is computationally hard. Any procedure will either fail to find a unique $a_i$ or it fails to find $a_i$ \emph{efficiently}. \tnotelong{Tengyu will add references here}
 \item In the orthogonal case, i.e. $a_1,\dots,a_k$ are orthogonal vectors, each $a_i$ is a global maximizer of 
 \begin{equation}
     \max_{\|x\|_2 = 1} T(x,x,x) = \sum_{i,j,k} T_{ijk} x_i x_j x_k
@@ -583,9 +582,9 @@ How do we solve this issue? \citet{haochen2021provable} propose a solution. They
 Now, suppose we have some eigenvector $u = (u_x)_{x \in \cX} $. Rather than explicitly represent $u_x$, we represent $u_x$ by $f_\theta(x)$ where $f_\theta$ is some parameterized model. Now, the challenge is to find $\theta$ such that $[f_\theta(x)]_{x \in \cX}$ is the second smallest eigenvector of Laplacian of $G$. It turns out solving this problem gives a form of contrastive learning, which we will discuss in Section~\ref{section:analysis_contrastive_learning}.
 
 
-\sec{Self-supervised Learning}
+\chapter{Self-supervised Learning}
 
-\subsec{Pretraining / self-supervised learning / foundation model basics}
+\sec{Pretraining / self-supervised learning / foundation model basics}
 Self-supervised learning is widely used for pretraining modern models. These large pretrained models are also called foundation models~\cite{bommasani2021opportunities}. One simplified setup / workflow contains the following two stages:
 
 \paragraph{Pretraining on unlabeled, massive data.} Let $\{x^{(1)}, \cdots, x^{(n)}\}$ be a dataset where $x^{(i)}\in\bbR^d$ is sampled from some pretraining data distribution $x^{(i)}\sim P_{\text{pre}}$. The goal is to learn a pretrained model $f_{\theta}: \bbR^d\rightarrow\bbR^k$, where $k$ is the dimension of features / representations / embeddings, and $\theta$ is the model parameter. This model can be learned by minimizing certain pretrained loss function: $\hat{L}_{\text{pre}}(\theta) = \hat{L}_{\text{pre}}(x^{(1)}, \cdots, x^{(n)}; \theta)$, which sometimes is of the form $\hat{L}_{\text{pre}}(\theta)  = \frac{1}{n}\sum_{i=1}^n \ell_{\text{pre}}(x^{(i)}; \theta)$. We use $\hat{\theta} = \argmin_{\theta}\hat{L}_{\text{pre}}(\theta)$ to denote the parameter learned during pretraining.
@@ -594,7 +593,7 @@ Self-supervised learning is widely used for pretraining modern models. These lar
 
 Why does pretraining on unlabeled data with an unsupervised (self-supervised) loss help a wide range of downstream prediction tasks? There are many open questions to be answered in this field. For instance,  we may ask: (1) how pretraining helps label efficiency of downstream tasks, (2) why pretraining can give ``universal'' representations, and (3) why does pretraining provide robustness to distribution shift. 
 
-\subsec{Analysis of contrastive learning}\label{section:analysis_contrastive_learning}
+\sec{Analysis of contrastive learning}\label{section:analysis_contrastive_learning}
 Let $\bar{X}$ be the set of all natural images in the image domain, $\bar{P}_{\bar{X}}$ be the distribution over $\bar{X}$. Contrastive learning learns $f_{\theta}$ such that representations of augmentations of the same image are close, whereas augmentations of random images are far away (as visualized in Figure~\ref{fig:ssl2}). 
 
 \begin{figure}[ht]

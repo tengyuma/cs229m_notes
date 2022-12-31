@@ -2,68 +2,100 @@
 
 \setcounter{section}{0}
 
-\metadata{1}{Anusri Pampari and Gabriel Poesia}{Jan 11th, 2021}
+%\metadata{1}{Anusri Pampari and Gabriel Poesia}{Jan 11th, 2021}
 
 
-In this chapter, we will set up the standard theoretical formulation of supervised learning and introduce the \textit{empirical risk minimization} (ERM) paradigm. The setup will apply to almost the entire monograph \tnotelong{to be updated}and the ERM paradigm will be the main focus of Chapter~\ref{chap:asymp}, \ref{chap:conc}, and \ref{chap:uc}. 
+In this chapter, we will set up the standard theoretical formulation of supervised learning and introduce the \textit{empirical risk minimization} (ERM) paradigm. 
+We will also establish the basic notations that will be used throughout the monograph.
+The ERM paradigm will be the main focus of Chapter~\ref{chap:asymp}, \ref{chap:uc}, and \ref{chap:gen-bounds}. 
 
 \sec{Supervised learning}\label{lec1:sec:sup-learn}
-In supervised learning, we have a dataset where each data point is associated with a label, and we aim to learn from the data a function that maps data points to their labels. The learned  function can be used to infer the labels of test data points. More formally, suppose the data points, also called inputs,  belong to some input space $\cX$ (e.g. images of birds), and labels belong to the output space $\cY$ (e.g. bird species). Suppose we are interested in a specific joint probability distribution $P$ over $\cX \times \cY$ (e.g. images of birds in North America), from which we draw a \emph{training set}, i.e we draw a a set of $n$ independent and identically distributed (i.i.d.) data points $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$ from $P$. The goal of supervised learning is to learn a mapping (i.e. a function) from $\cX$ to $\cY$ using the training data. Any such function $h : \cX \rightarrow \cY$ is called a \emph{predictor} (also \emph{hypothesis} or \emph{model}).
+In the supervised learning setting, we are given a training dataset consisting of multiple pairs of datapoints and the associated labels, and our goal is to learn a function that maps datapoints to their corresponding labels. The learned function should be able to predict the labels of test data that were not seen in the training dataset.
 
-Given two predictors, how do we decide which is better? For that, we define a \emph{loss function} over the predictions. There are several ways to define loss functions: for now, define a loss function $\ell$ as a function $\ell : \cY \times \cY \rightarrow \R$. Intuitively, the loss function takes two labels, the prediction made by a model $\hat{y}$ and the true label $y$, and gives a number that captures how different the two labels are. We assume $\ell$ is non-negative, i.e $\ell(\hat{y}, y) \geq 0$. Then, the loss of a model $h$ on an example $(x, y)$ is $\ell(h(x), y)$, i.e. the difference (as measured by $\ell$) between the prediction made by $h$ and the true label.
+%The learned  function is supposed to infer the labels of test datapoints unseen in the training dataset. 
+
+More formally, suppose the datapoints, also called inputs,  belong to the \textbf{input space} $\cX$ (e.g. natural images of birds), and labels belong to the \textbf{output space} $\cY$ (e.g. the discrete set of bird species). Suppose we are interested in a specific joint probability distribution $P$ over $\cX \times \cY$ (e.g. images of birds in North America), from which we draw a \textbf{training dataset}, i.e., we draw a a set of $n$ independent and identically distributed (i.i.d.) examples $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$ from $P$. The goal is to learn a mapping (i.e., a function) from $\cX$ to $\cY$ using this training dataset. Any such function $h : \cX \rightarrow \cY$ is called a \textbf{predictor}, also known as a \textbf{hypothesis} or \textbf{model}.
+
+What is the evaluation criterion for which predictors are better? We define a \textbf{loss function} that measures the quality of the predictions made by each predictor. 
+A loss function is a function $\ell : \cY \times \cY \rightarrow \Rnonneg$ that takes as input the prediction made by a model $\hat{y}$ and the true label $y$, and produces a \emph{non-negative} value $\ell(\hat{y}, y)$ that indicates the difference between the two labels. 
+%There are several ways to define loss functions: for now, define a loss function $\ell$ as a function $\ell : \cY \times \cY \rightarrow \R$. 
+%Intuitively, the loss function takes two labels, the prediction made by a model $\hat{y}$ and the true label $y$, and gives a number that captures how different the two labels are. 
+%We assume $\ell$ is non-negative, i.e $\ell(\hat{y}, y) \geq 0$. 
+A small value of $\ell(\hat{y}, y)$ indicates a good prediction, while a large value indicates a poor prediction. 
+The loss of a model $h$ on an example $(x, y)$ is give by $\ell(h(x), y)$, i.e. which is the difference between the prediction made by $h$ and the true label, as measured by the loss $\ell$.
 
 
-With these definitions, we are able to formalize the problem of supervised learning. Precisely, we seek to find a model $h$ that minimizes what we call the expected loss (or population loss or expected risk or population risk):
+With these definitions, we can now formalize the problem of supervised learning as finding a model $h$ that minimizes the \textbf{expected loss}, also known as the \textbf{population loss}, \textbf{expected risk},  or \textbf{population risk}:
 \al{
-    L(h) \defeq{} \Exp_{(x, y)\sim p} [\ell(h(x), y)].
+    L(h) \defeq{} \Exp_{(x, y)\sim P} [\ell(h(x), y)]\,.
 }
 
 
-Note that $L$ is nonnegative because $\ell$ is nonnegative. Typically, the loss function is designed so that the best possible loss is zero when $\hat{y}$ matches $y$ exactly. Therefore, the goal is to find $h$ such that $L(h)$ is as close to zero as possible. % The best possible $h$ would have , we would find an $h$ with expected loss $0$, since that's the best possible we can do.
+Note that the expected loss $L$ is nonnegative because the loss function $\ell$ is nonnegative. 
+Typically, the loss function is designed such that the optimal loss is zero when the prediction $\hat{y}$ exactly matches the true label $y$. 
+Therefore, the goal is to find a model $h$ such that $L(h)$ is as close to zero as possible. 
+This indicates that the model is making accurate predictions on average.
+% The best possible $h$ would have , we would find an $h$ with expected loss $0$, since that's the best possible we can do.
 
-\paragraph{Examples: regression and classification problems.}
+\paragraph{Regression and classification problems.}
 
-Here are two standard types of supervised learning problems based on the properties of the output space:
+Supervised learning problems can be broadly classified into two categories based on the properties of the output space:
 
 \begin{itemize}
-    \item In the problem of \emph{regression}, predictions are real numbers ($\cY = \R$). We would like predictions to be as close as possible to the real labels. A classical loss function that captures this is the squared error, $\ell(\hat{y}, y) = (\hat{y} - y)^2$.
-    \item In the problem of \emph{classification}, predictions are in a discrete set of $k$ unordered classes $\cY = [k] = \{1, \cdots, k \}$. One possible classification loss is the $0-1$ loss: $\ell(\hat{y}, y) = \mathbbm{1}(\hat{y} \neq y)$, i.e. $0$ if the prediction is equal to the true label, and $1$ otherwise.
+    \item In \emph{regression} problems, predictions and true labels are real numbers ($\cY = \R$). A common loss function that captures the difference between predictions and true labels is the squared error, $\ell(\hat{y}, y) = (\hat{y} - y)^2$.
+    \item In \emph{classification} problems, predictions are in a discrete set of $k$ unordered classes $\cY = [k] = \{1, \cdots, k \}$. A common classification loss is the 0/1 loss: $\ell_{0/1}(\hat{y}, y) = \mathbbm{1}(\hat{y} \neq y)$, which is $0$ if the prediction is equal to the true label, and $1$ otherwise. There are other common loss functions for classification problems for the purpose of efficient training and/or theoretical analysis. 
 \end{itemize}
 
 \paragraph{Hypothesis class.}
 
-So far, we said we would like to find \emph{any function} that minimizes population risk. However, in practice, we do not have a way of optimizing over arbitrary functions. Instead, we work within a more constrained set of functions $\cH$, which we call the \emph{hypothesis family} (or \emph{hypothesis class}). Each element of $\cH$ is a function $h : \cX \rightarrow \cY$. Usually, we choose a set $\cH$ that we know how to optimize over (e.g. linear functions, or neural networks).
+Thus far, we have stated that our goal is to find a function that minimizes population loss. However, in practice, we cannot numerically optimize over arbitrary functions. Instead, we restrict ourselves to a set of functions, known as the \textbf{hypothesis class}, \textbf{model class}, or \textbf{model family}, denoted by $\cH$. Each element of $\cH$ is a function $h : \cX \rightarrow \cY$. Usually, we choose a set $\cH$ that we are able to optimize within, such as linear functions or neural networks.
 
-Given one particular function $h \in \cH$, we define the \emph{excess risk} of $h$ with respect to $\cH$ as the difference between the population risk of $h$ and the best possible population risk inside $\cH$:
+For a given predictor/hypothesis/model $h \in \cH$, we define the \textbf{excess risk} of $h$ with respect to $\cH$ as the difference between the population loss of $h$ and the lowest possible population loss within $\cH$:
+\begin{align}
+E(h) \defeq{} L(h) - \inf_{g\in\cH} L(g)\,.\text{\footnotemark}
+\end{align}
+In other words, the population loss $L(h)$is equal to lthe sum of lowest possible loss within $\cH$ and the excess risk.  The former quantity reflects the fundamental expressivity or representational power of the hypothesis class $\cH$, and is independent of the number of training examples. In this monograph, we will generally assume that the hypothesis class is sufficiently expressive so that $\inf_{g\in\cH} L(g)$ is zero or negligible, and we focus on bounding from above the excess risk based on the properties of $\cH, P$ and the number of examples $n$.\footnotetext{The symbol $\inf$ represents the infimum~\citep{enwiki:inf}. For the purposes of this monograph, it can be thought of as equivalent to $\min$, the minimum value. In order to simplify the presentation, we will use these terms interchangeably without strictly adhering to mathematical rigor. }  
+%Generally we need more assumptions about a specific problem and hypothesis class to bound absolute population risk, hence we focus on bounding the excess risk.
 
-$$E(h) \defeq{} L(h) - \inf_{g\in\cH} L(g).$$
+Usually, the hypothesis class is parameterized by a vector $\theta \in \Theta \subset \mathbb{R}^p$. In this case, we can refer to an element of $\cH$ as $h_\theta$, making the dependence on $\theta$ explicit. For example, the hypothesis class of linear models is $\cH = \{ h: h_\theta(x) = \theta^\top x, \theta \in \mathbb{R}^d \}$, where $h_\theta(x)$ is a linear function of $x$ with parameter $\theta$.
 
-Generally we need more assumptions about a specific problem and hypothesis class to bound absolute population risk, hence we focus on bounding the excess risk.
-
-Usually, the family we choose to work with can be parameterized by a vector of parameters $\theta \in \Theta$. In that case, we can refer to an element of $\cH$ by $h_\theta$, making that explicit. An example of such a parametrization of the hypothesis class is $\cH = \{ h: h_\theta(x) = \theta^\top x, \theta \in \mathbb{R}^d \}$.
+%We typically parameterize the hypothesis class by a parameter vector $\theta \in \Theta\subset \R^p$. In that case, we can refer to an element of $\cH$ by $h_\theta$, making that explicit. An example of such a parametrization of the hypothesis class is $\cH = \{ h: h_\theta(x) = \theta^\top x, \theta \in \mathbb{R}^d \}$.
 
 \sec{Empirical risk minimization}
 
-Our ultimate goal is to minimize population risk. However, in practice we do not have access to the entire population: we only have a \emph{training set} of $n$ data points, drawn from the same distribution as the entire population. While we cannot compute population risk, we can compute \emph{empirical risk}, the loss over the training set, and try to minimize that. This is, in short, the paradigm known as \emph{empirical risk minimization} (ERM): we optimize the training set loss, with the hope that this leads us to a model that has low
-population loss. From now on, with some abuse of notation, we often write $\ell(h_\theta(x),y)$ as $\ell((x,y),\theta)$ and use the two notations interchangeably.  Formally, we define the empirical risk of a model $h$ as:
+Though our ultimate goal is to minimize population loss, we can only observe the population distribution $P$ through a \emph{training set} of $n$ datapoints that are sampled from $P$.  While we cannot compute and minimize the population loss, we can approximate the population loss by the so-called \textbf{empirical loss/risk}, which is the loss over the training set, and minimize the empirical loss. This paradigm is known as \textbf{empirical risk minimization} (ERM): we optimize the empirical loss on the training dataset with the hope that it will lead us to a model with low
+population loss. From now on, with some abuse of notation, we often write $\ell(h_\theta(x),y)$ as $\ell((x,y),\theta)$ and use the two notations interchangeably.  Formally, given a training dataset $\{(x^{(i)}, y^{(i)})\}_{i=1}^n$, we define the empirical loss/risk of a model $h$ as:
 \al{
-\hatL(h_\theta) \defeq{} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) = \frac{1}{n} \sum_{i=1}^n \ell((x^{(i)}, y^{(i)}), \theta).
+	\hatL(h) \defeq{} \frac{1}{n} \sum_{i=1}^n \ell(h(x^{(i)}), y^{(i)})\,.%= \frac{1}{n} \sum_{i=1}^n \ell((x^{(i)}, y^{(i)}), \theta).
 }
-\emph{Empirical risk minimization} is the method of finding the minimizer of $\hatL$, which we call $\hat{\theta}$:
+\emph{Empirical risk minimization} is the method of finding the minimizer of $\hatL$ as the learned predictor/model:%, which we call $\hat{\theta}$:
 \al{
-    \label{lec1:eqn:erm}
-    \hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(h_\theta).
+	\label{lec1:eqn:erm}
+	\hat{h} \defeq{} \argmin_{h\in\cH} \hatL(h)\,.
 }
-Since we are assuming that our training examples are drawn from the same distribution as the whole population, we know that empirical risk and population risk are equal
+Therefore, when the hypothesis class is parameterized by $\theta\in \Theta$, ERM refers to finding the minimizer $\hat{\theta}$ of the empirical risk:
+\al{
+	\label{lec1:eqn:erm:theta}
+	\hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(h_\theta).
+}
+
+%\al{
+%\hatL(h_\theta) \defeq{} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) = \frac{1}{n} \sum_{i=1}^n \ell((x^{(i)}, y^{(i)}), \theta).
+%}
+%\emph{Empirical risk minimization} is the method of finding the minimizer of $\hatL$, which we call $\hat{\theta}$:
+%\al{
+%    \label{lec1:eqn:erm}
+%    \hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(h_\theta).
+%}
+Because here we assumed that our training examples are drawn from the population distribution $P$, the empirical risk equals to the population risk 
 \emph{in expectation} (over the randomness of the training dataset):
 \al{
-    \Exp_{(x^{(i)}, y^{(i)}) \iid P}\ \hatL(h_\theta) &= \Exp_{(x^{(i)}, y^{(i)}) \iid P} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) \\
-    &= \frac{1}{n} \sum_{i=1}^n \Exp_{(x^{(i)}, y^{(i)}) \iid P} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
-    &= \frac{1}{n} \cdot{} n \cdot{} \Exp_{(x^{(i)}, y^{(i)}) \iid P} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
-    &= L(h_\theta).
+    \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P}\ \hatL(h_\theta) &= \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) \\
+    &= \frac{1}{n} \sum_{i=1}^n \Exp_{(x^{(i)}, y^{(i)}) \sim P} \ell(h_\theta(x^{(i)}), y^{(i)}) \label{eqn:2}\\
+%    &= \frac{1}{n} \cdot{} n \cdot{} \Exp_{(x^{(i)}, y^{(i)}) \sim P} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
+    &= \frac{1}{n} \sum_{i=1}^n  L(h_\theta) =  L(h_\theta)\,. 
 }
 
 
-This is one reason why it makes sense to use empirical risk: it is an unbiased estimator of the population risk.
-
-The key question that we seek to answer in the first part of this course is: \textbf{what guarantees do we have on the excess risk for the parameters learned by ERM?} The hope with ERM is that minimizing the training error will lead to small testing error. One way to make this rigorous is by showing that the ERM minimizer's excess risk is bounded.
+In other words, the empirical loss is  an unbiased estimator of the population loss, and this is the primary motivation of ERM. However, obviously we need a certain number of examples for the empirical loss to be close enough to the population loss that they have similar minimizers. The central question in statistical learning theory is to provide guarantees or upper bounds on the excess risk for the model learned by ERM, which is the main focus in Part~\ref{part:supervised} of this monograph. 
+%The hope with ERM is that minimizing the training error will lead to small testing error. One way to make this rigorous is by showing that the ERM minimizer's excess risk is bounded.

@@ -3,7 +3,7 @@
 \usepackage{enumitem}
 
 % for potential improvements
-\def\shownotes{0}  %set 1 to show author notes
+\def\shownotes{1}  %set 1 to show author notes
 \ifnum\shownotes=1
 \newcommand{\authnoteimp}[2]{[#1: #2]}
 \else
@@ -15,7 +15,7 @@
 
 
 % for course staff to edit or comment
-\def\shownotes{0}  %set 1 to show author notes
+\def\shownotes{1}  %set 1 to show author notes
 \ifnum\shownotes=1
 \newcommand{\authnote}[2]{[#1: #2]}
 \else
@@ -25,7 +25,7 @@
 
 
 % for long term commnets 
-\def\shownotes{0}  %set 1 to show author notes
+\def\shownotes{1}  %set 1 to show author notes
 \ifnum\shownotes=1
 \newcommand{\authnotelong}[2]{[#1: #2]}
 \else
@@ -163,6 +163,7 @@
 
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\bbR}
+\newcommand{\Rnonneg}{\bbR_{\ge 0}}
 \newcommand{\Z}{\mathbb{Z}}
 
 
