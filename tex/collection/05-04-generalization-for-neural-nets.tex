@@ -56,14 +56,14 @@ Nevertheless, we now prove this bound to build up some techniques, and will disc
  The steps above allow us to remove the presence of variable $w$ inside the supreme. Next, we change the $\ell_2$ norm to $\ell_\infty$ norm so that the matrix variable $U$ can be reduced to a vector variable. 
         \begin{align}
                R_S(\mathcal{H}) &  \leq \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
-            &&\text{bc. ($\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
-        \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
+            &&\text{(bc. $\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
+        \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} }  \label{eqn:14}
         \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
         \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
-            &&\text{(by Lemma \ref{lec8:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
+            &&\text{(by Lemma \ref{lec8:lemma:absfortwo}, stated and proved later)} \label{lec7:eqn:nn-proof1}
         \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
     \end{align}
-    where the last inequality follows by applying the contraction lemma (Talagrand's lemma, Lemma~\ref{lec6:lem:talagrand_lemma}) and observing that the ReLU function is $1$-Lipschitz. Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for the model family $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$, to which we apply the contraction lemma.
+    where the last inequality follows by applying the contraction lemma (Talagrand's lemma, Lemma~\ref{lec6:lem:talagrand_lemma}) and observing that the ReLU function is $1$-Lipschitz. Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for the model family $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$, to which we apply the contraction lemma. Here line~\ref{lec7:eqn:nn-proof1} removes the absolute value inside the supremum at the expense of paying a constant factor of 2. This is a standard tool in the literature of Rademacher complexity and we will defer its formal statement and proof at the end of this section. 
     
     We now observe that the expectation in \Cref{lec7:eqn:nn-proof2} is the Rademacher complexity of the family of linear models $\{x \mapsto \inprod{u,x} \mid \Norm{u}_2\leq B_u\}$. Thus, applying Theorem~\ref{lec7:thm:l1-thm} for linear models yields
     \begin{equation}
@@ -75,7 +75,7 @@ Nevertheless, we now prove this bound to build up some techniques, and will disc
         R_n(\mathcal{H})  &= \Exp\left[ R_S(\mathcal{H})\right] \\
         &\leq \frac{2B_wB_u\sqrt{m}}{n} \Exp\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
         &\leq \frac{2B_wB_u\sqrt{m}}{n} C\sqrt{n} \\
-        &= 2 B_w B_u C\sqrt{\frac{m}{n}},
+        &= 2 B_w B_u C\sqrt{\frac{m}{n}}, \label{eqn:15}
     \end{align}
     which completes the proof.
     
@@ -136,40 +136,46 @@ In contrast with Theorem~\ref{lec7:thm:thm_3}, this bound does not \textit{expli
 %\end{remark}
 
 \begin{proof}[Proof of Theorem~\ref{lec8:thm:thm-improved-nn-rc}]
-Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j \defeq u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
+Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j \defeq u_j / \norm{u_j}_2$ and rewrite $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. Essentially we will merge the $\|u_j\|_2$ component into the second layer weight $w_j$, and treat $\bar{u}_j$ as the first layer weight vector. This allows us to capture the scaling invariance of the neural network in the proof. 
+
+
+Starting form the definition of  empirical Rademacher complexity, we first peel off $w$ and the norm of $u_j$'s from the supremum---we compute the maximizers and remove the presence of these variables in the supremum. 
 \allowdisplaybreaks
 \al{
 R_S(\cH) &= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i f_{\theta}\left(x\sp{i}\right) \right] \\
-&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \phi\left(u_j ^ T x\sp{i}\right) \right] \right] &&\text{(by dfn of $f_\theta$)} \\
-&=  \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \norm{u_j}_2  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right]  
+&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \phi\left(u_j ^\top x\sp{i}\right) \right] \right] &&\text{(by definition of $f_\theta$)} \\
+&=  \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta} \sum_{i=1}^n \sigma_i \left[\sum_{j=1}^m w_j \norm{u_j}_2  \phi\left(\bar{u}_j ^\top x\sp{i}\right) \right] \right]  
     && \text{(by positive homogeneity of $\phi$)}\\
-&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^ T x\sp{i}\right) \right] \right] \\ 
-&\leq \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
-&\leq \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^ T x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq \boundsforcomp$)} \\
-&=  \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) \right| } \\
-&\le \frac{2\boundsforcomp}{n}  \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^ T x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
-&= 2\boundsforcomp R_S(\cH '),
+&= \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m w_j \norm{u_j}_2 \left[ \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_j ^\top x\sp{i}\right) \right] \right] \\ 
+&\leq \frac{1}{n}\Exp_{\sigma}\left[ \sup_{\theta}  \sum_{j=1}^m |w_j| \norm{u_j}_2 \max_{k \in [n]}\left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^\top x\sp{i}\right) \right| \right] && \l(\because \sum_j \alpha_j \beta_j \leq \sum_j |\alpha_j| \max_{k} |\beta_k|\r) \\ 
+&\leq \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\theta = (w, U)} \max_{k \in [n]} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u}_k ^\top x\sp{i}\right) \right| } && \text{($\because C(\theta) \leq \boundsforcomp$)}  \label{eqn:16}
 }
-where $\cH' = \l\{x \mapsto \phi(\bar{u}^\top x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^\top x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. Using $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$ by Theorem \ref{lec7:thm:l2-thm} then concludes the proof.
+The rest of the proof is similar to \Cref{eqn:14} to \Cref{eqn:15} in the proof of \Cref{lec7:thm:thm_3}. The main difference is that work with $\bar{u}_j$'s now instead of $u_j$'s. 
+\begin{align}
+R_S(\cH) &\le  \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 = 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^\top x\sp{i}\right) \right| } && \text{(by \Cref{eqn:16} and change of variables)}\\
+%&\le \frac{\boundsforcomp}{n} \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \left| \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^\top x\sp{i}\right) \right| } \\
+&\le \frac{2\boundsforcomp}{n}  \Exp_{\sigma}\sbr{ \sup_{\bar{u}: \norm{\bar{u}}_2 \le 1} \sum_{i=1}^n \sigma_i  \phi\left(\bar{u} ^\top x\sp{i}\right) } && \text{(see Lemma \ref{lec8:lemma:absfortwo})} \\
+&= 2\boundsforcomp R_S(\cH '),
+\end{align}
+where $\cH' = \l\{x \mapsto \phi(\bar{u}^\top x) :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$. By Talagrand's lemma, since $\phi$ is $1$-Lipschitz, we have $R_S(\cH') \leq R_S(\cH'')$ where  $\cH'' = \l\{x \mapsto \bar{u}^\top x :  \bar{u} \in \mathbb{R}^d, \norm{\bar{u}}_2 \leq 1 \r\}$ is a linear hypothesis space. By \Cref{lec7:thm:l2-thm}, we have $R_S(\cH'') \leq \frac{C}{\sqrt{n}}$. Combining these facts concludes the proof.
 
 \end{proof}
 
-We complete the proof by deriving the Lemma \ref{lec8:lemma:absfortwo} used in the second-to-last inequality. Notably, the lemma's assumption holds in the current context, since
-\al{
-\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle = \sup_{\bar{u}: \norm{\bar{u}}_2 \leq 1} 
-\sum_{i=1}^n \sigma_i \phi \l(\bar{u}^\top x\sp i \r)  \geq 0.
-}
-since one can take $\bar{u} = 0$ for any $\sigma = (\sigma_1, \dots, \sigma_n)$.
-
+Finally, we state formally the Lemma \ref{lec8:lemma:absfortwo} that deal with the absolute value and prove it. 
 \begin{lemma}\label{lec8:lemma:absfortwo}
-Let $\sigma = (\sigma_1, ..., \sigma_n)$ and $f_{\theta}(x) = \l(f_{\theta}\l(x\sp{1}\r), ...,  f_{\theta}\l(x\sp{n} \r)\r)$. Suppose that for any $\sigma \in \{\pm 1\}^n$, $\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle \geq 0$. Then, 
+Let $\sigma = (\sigma_1, ..., \sigma_n)$ and $f_{\theta}(x) = \l(f_{\theta}\l(x\sp{1}\r), ...,  f_{\theta}\l(x\sp{n} \r)\r)\in \R^n$. Suppose that for any $\sigma \in \{\pm 1\}^n$, $\sup_{\theta} \langle \sigma, f_{\theta}(x) \rangle \geq 0$. Then, 
 \begin{equation}
 \mathbb{E}_{\sigma}\l[ \sup_{\theta}  \l | \langle \sigma, f_{\theta}(x) \rangle \r|  \r] \leq 2 \mathbb{E}_{\sigma}\l[ \sup_{\theta}  \langle \sigma, f_{\theta}(x) \rangle   \r].
 \end{equation}
 \end{lemma}
+Notably, the lemma's assumption holds in the context of the proof of \Cref{lec7:thm:thm_3} and \Cref{lec8:thm:thm-improved-nn-rc}. For example, in the context of line~\eqref{lec7:eqn:nn-proof1}, we have 
+\al{\sup_{u: \norm{u}_2 \leq B_u} 
+	\sum_{i=1}^n \sigma_i \phi \l(u^\top x\sp i \r)  \geq   0\perm
+} 
+%This is because  one can take $\bar{u} = 0$ for any $\sigma = (\sigma_1, \dots, \sigma_n)$.
 
-\begin{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lec8:lemma:absfortwo}]
 Letting $\phi$ be the ReLU function, the lemma's assumption implies that $\sup_{\theta} \phi\left(\langle \sigma, f_{\theta}(x) \rangle\right) = \sup_{\theta}\langle \sigma, f_{\theta}(x) \rangle$ for any $\sigma \in \{\pm 1\}^n$. Observing that $|z| = \phi(z) + \phi(-z)$, 
 \begin{align}
 \sup_{\theta} \abs{\inprod{ \sigma, f_{\theta}(x) }}%
