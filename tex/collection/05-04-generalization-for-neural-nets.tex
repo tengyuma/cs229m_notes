@@ -8,14 +8,16 @@ In Chapter~\ref{chap:dl-overview}, we will provide a high-level overview of the 
 
 
 \sec{Two-layer neural networks}
-Using the same language and framework as Chapter~\ref{chap:gen-bounds}, we will compute a bound for the Rademacher complexity of two-layer neural networks.  Throughout this section, we use the following notation:
+
+In this section, we will use the same language and framework as Chapter~\ref{chap:gen-bounds} and compute a bound for the Rademacher complexity of two-layer neural networks. We start by defining formally a two-layer neural network. Recall that the input is in $\R^d$ and the output is a real number, and he training datasets is $\{ (x\sp{i}, y\sp{i}) \}_{i=1}^n$ with $x\sp{i}\in\R^d$ and $y\sp{i}\in\R$.
+%The following notations for neural networks will be used throughout this section
+
 \begin{itemize}
-    \item $\theta = (w, U)$ are the parameters of the model with $w \in \R^m$ and $U \in \R^{m \times d}$, where $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$ (written as a column vector).
-    \item $\phi(z) = \max(z, 0)$ is the ReLU activation function applied element-wise.
-    \item $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)$ is the model.
-    \item $\{ (x\sp{i}, y\sp{i}) \}_{i=1}^n$ is the training set, with $x\sp{i}\in\R^d$ and $y\sp{i}\in\R$.
+    \item Let $\theta = (w, U)$ be the parameters of the two-layer neural net, where $U \in \R^{m \times d}$ is the first layer weights and $w \in \R^m$ is the second layer weights. Here $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$, and it's written as a column vector.
+    \item Let $\phi(z) = \max(z, 0)$ be the ReLU activation function applied element-wise.
+    \item Given input the $x$, the model outputs $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)\in \R$. 
 \end{itemize}
-We start with a somewhat weak bound which introduces the technical tools we need to derive tighter bounds subsequently.
+We start with a  weak bound on the Rademacher complexity which introduces the technical tools that we need to derive tighter bounds subsequently.
 
 \begin{theorem}\label{lec7:thm:thm_3}
     For some constants $B_w > 0$ and $B_u > 0$, let
