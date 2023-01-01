@@ -143,7 +143,7 @@ Finally, we derive \Cref{eqn:4} by using the fact that the trace operator is inv
     &= \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*)) \right).
 \end{align}
 
-\subsec{Well-specified case}
+\subsec{The well-specified case}
 
 Theorem \ref{lec1:thm:asymp} is quite general without any assumptions of a probabilistic model of the data distribution $P$. In many applications, we assume a probabilistic model of our data and use the log-likelihood as the loss function. This is often referred to as the well-specified case in this context, and it allows some simplification of the conclusions of Theorem~\ref{lec1:thm:asymp} with nice interpretations. 
 
@@ -152,94 +152,105 @@ Formally, suppose that we have a family of probability distributions $P_\theta$,
 
 \begin{theorem}
 \label{lec2:thm:applied}
-    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \mid x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \mid x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \mid x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we perform maximum likelihood estimation (MLE), i.e., our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \mid x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical loss and population loss, respectively. Then, we have
-    \al{
-    \label{lec2:eqn:applied1}
-        \theta^* = \theta_*,
-    }
-    \al{
-    \label{lec2:eqn:applied2}
-        \Exp \left[ \nabla \ell ((x, y), \theta^*) \right] = 0,
-    }
-    \al{
-    \label{lec2:eqn:applied3}
-        \Cov \left( \nabla \ell ((x, y), \theta^*) \right) = \nabla^2 L(\theta^*), \text{ and}
-    }
+    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \vert x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \vert x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \vert x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we perform maximum likelihood estimation (MLE), i.e., our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \vert x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical loss and population loss, respectively. Then, we have
+    
+    \begin{enumerate}
+    	\item[1] The minimizer of the population loss $\theta^*$ is indeed the ground-truth parameter $\theta_*$. As a result, $\nabla L(\theta_*) = \nabla L(\theta^*) = \Exp \left[ \nabla \ell ((x, y), \theta^*) \right] = 0$. 
+    	\item[2] (Bartlett's identity) The covariance of the gradient of the loss (which is also known as the ) is equal to the Hessian of the loss at $\theta^*$, and this matrix is also known as the fisher information matrix. 
+    	    \al{
+    		\label{lec2:eqn:applied3}
+    		\Cov \left( \nabla \ell ((x, y), \theta^*) \right) = \nabla^2 L(\theta^*)\perm
+    	}
+    \item[3] The limiting covariance of $\sqrt n (\hat \theta - \theta^*)$ is the inverse Fisher information matrix:
     \al{
     \label{lec2:eqn:applied4}
-        \sqrt n (\hat \theta - \theta^*) \overset d \to \cN (0, \nabla^2 L(\theta^*)^{-1}).
-    }
+    \sqrt n (\hat \theta - \theta^*) \overset d \to \cN (0, \nabla^2 L(\theta^*)^{-1}).
+}
+     \end{enumerate}
+%    \al{
+%    \label{lec2:eqn:applied1}
+%        \theta^* = \theta_*,
+%    }
+%    \al{
+%    \label{lec2:eqn:applied2}
+%        \Exp \left[ \nabla \ell ((x, y), \theta^*) \right] = 0,
+%    }
+
 \end{theorem}
+The first and second bullets of the Theorem above are of their own interest and have other applications. For example, bullet 1 is also the main reason why one can introduce a baseline to reduce the gradient estimate in policy gradient method for reinforcement learning. We also note that bullet 1\&2 are also true in an unsupervised setting or when have a generative learning algorithm that maximizes the joint log-likelihood (see, e.g., \citep[Section 4]{cs229notes}). 
 
-\textbf{Remark 1:} You may also have seen \eqref{lec2:eqn:applied4} in the following form: under the maximum likelihood estimation (MLE) paradigm, the MLE is asymptotically efficient as it achieves the Cramer-Rao lower bound. That is, the parameter error of the MLE estimate converges in distribution to $\mathcal{N}(0, \mathcal{I}(\theta)^{-1})$, where $\mathcal{I}(\theta)$ is the Fisher information matrix (in this case, equivalent to the risk Hessian $\nabla^2 L(\theta^*)$)~\cite{rice2006mathematical}.
+%\textbf{Remark 1:} You may also have seen \eqref{lec2:eqn:applied4} in the following form: under the maximum likelihood estimation (MLE) paradigm, the MLE is asymptotically efficient as it achieves the Cramer-Rao lower bound. That is, the parameter error of the MLE estimate converges in distribution to $\mathcal{N}(0, \mathcal{I}(\theta)^{-1})$, where $\mathcal{I}(\theta)$ is the Fisher information matrix (in this case, equivalent to the risk Hessian $\nabla^2 L(\theta^*)$)~\cite{rice2006mathematical}.
 
-\textbf{Remark 2:} \eqref{lec2:eqn:applied3} is also known as Bartlett's identity~\cite{percynotes}.
+%\textbf{Remark 2:} 
 
-Although the proofs were not presented in live lecture, we include them here.
+%Although the proofs were not presented in live lecture, we include them here.
 
 \begin{proof}
-From the definition of the population loss,
+Because the population loss is the negative maximum likelihood, we have
 \begin{align}
-    L(\theta) &= \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta) \right]\\
-    &= \Exp \left[ - \log P(y \mid x; \theta) \right] \\
-    &= \Exp \left[ - \log P(y \mid x; \theta) + \log P(y \mid x; \theta_*) \right] + \Exp \left[ - \log P(y \mid x; \theta_*) \right] \\
-    &= \Exp \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \right] + \Exp \left[ - \log P(y \mid x; \theta_*) \right].
+    L(\theta) &= \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta) \right] = \Exp \left[ - \log P(y \vert x; \theta) \right] \\
+    &= \Exp \left[ - \log P(y \vert x; \theta) + \log P(y \vert x; \theta_*) \right] + \Exp \left[ - \log P(y \vert x; \theta_*) \right] \\
+    &= \Exp \left[ \log \frac{P(y \vert x; \theta_*)}{P(y \vert x; \theta)} \right] + \Exp \left[ - \log P(y \vert x; \theta_*) \right]\perm
 \end{align}
-Notice that the second term is a constant which we will express as $\cH(y \mid x; \theta_*)$. We expand the first term using the tower rule (or law of total expectation):
+Notice that the second term is a constant, which is also the conditional entropy $H(y \vert x; \theta_*)$. We expand the first term using the law of total expectation and rewrite it as a KL-divergence
 \begin{align}
-    L(\theta) &= \Exp \left[ \Exp \left[ \log \frac{P(y \mid x; \theta_*)}{P(y \mid x; \theta)} \biggr\vert x \right] \right] + \cH(y \mid x; \theta_*).
+ \Exp \left[ \log \frac{P(y \vert x; \theta_*)}{P(y \vert x; \theta)} \right] &= \Exp \left[ \Exp \left[ \log \frac{P(y \vert x; \theta_*)}{P(y \vert x; \theta)} \biggr\vert x \right] \right] = \Exp \left[ \KL \left( y \vert x; \theta_* \| y \vert x; \theta \right) \right] \ge 0 \perm%+ \cH(y \vert x; \theta_*)\perm
 \end{align}
-The term in the expectation is just the KL divergence between the two probabilities, so 
+Combing the two equations above, we have
+%The term in the expectation is just the KL divergence between the two probabilities, so 
 \begin{align}
-    L(\theta) &= \Exp \left[ \KL \left( y \mid x; \theta_* \| y \mid x; \theta \right) \right] + \cH(y \mid x; \theta_*) \\
-    &\geq \cH(y \mid x; \theta_*),
+    L(\theta) &= \Exp \left[ \KL \left( y \vert x; \theta_* \| y \vert x; \theta \right) \right] + H(y \vert x; \theta_*) \geq \cH(y \vert x; \theta_*)\perm\label{eqn:5}
 \end{align}
-since KL divergence is always non-negative. Since $\theta_*$ makes the KL divergence term 0, it minimizes $L(\theta)$ and so $\theta_* \in \argmin_\theta L(\theta)$. However, the minimizer of $L(\theta)$ is unique because of consistency, so  we must have $\argmin_\theta L(\theta) = \theta^*$ which proves (\ref{lec2:eqn:applied1}).
+%since KL divergence is always non-negative. 
+Since setting $\theta = \theta_*$ makes the KL divergence term 0 and achieves the equality in \Cref{eqn:5}, we have $\theta_* \in \argmin_\theta L(\theta)$. Because the minimizer of $L(\theta)$ is unique due to the consistency assumption in Theorem~\ref{lec1:thm:asymp}, we have $\theta_* = \theta^*$ which proves part 1 of Theorem~\ref{lec2:thm:applied}.
 
-For \eqref{lec2:eqn:applied2}, recall $\nabla L(\theta^*) = 0$, so we have
-\begin{equation}
-0 = \nabla L(\theta^*) = \nabla \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta^*) \right] = \Exp \left[ \nabla \ell((x\sp{i}, y\sp{i}), \theta^*) \right],
-\end{equation}
-where we can switch the gradient and expectation under some regularity conditions.
+%Recall that $\nabla L(\theta^*) = 0$, so we have
+%\begin{equation}
+%0 = \nabla L(\theta^*) = \nabla \Exp \left[ \ell((x\sp{i}, y\sp{i}), \theta^*) \right] = \Exp \left[ \nabla \ell((x\sp{i}, y\sp{i}), \theta^*) \right],
+%\end{equation}
+%where we can switch the gradient and expectation under some regularity conditions.
 
-To prove \eqref{lec2:eqn:applied3}, we first expand the RHS using the definition of covariance and express the marginal distributions as integrals:
+To prove \Cref{lec2:eqn:applied3}, we first expand the RHS using the definition of covariance and express the marginal distributions as integrals:
 \begin{align}
-    \Cov \left( \nabla \ell ((x, y), \theta^*) \right) &= \Exp \left[ \nabla \ell ((x, y), \theta^*) \nabla \ell ((x, y), \theta^*)^\top \right] \\
-    &= \int P(x) \left( \int P(y \mid x; \theta^*) \nabla \log P( y\sp{i} \mid x\sp{i} ; \theta^*) \nabla \log P( y\sp{i} \mid x\sp{i} ; \theta^*)^\top dy \right) dx \\
-    &= \int P(x) \left( \int \frac{\nabla P(y \mid x; \theta^*) \nabla P(y \mid x; \theta^*)^\top}{P(y \mid x; \theta^*)}dy \right) dx.
+    \Cov \left( \nabla \ell ((x, y), \theta^*) \right) &= \Exp \left[ \nabla \ell ((x, y), \theta^*) \nabla \ell ((x, y), \theta^*)^\top \right] \tag{because  $\Exp \left[ \nabla \ell ((x, y), \theta^*) \right] = 0$}\\
+    &= \int P(x) \left( \int P(y \vert x; \theta^*) \nabla \log P( y\sp{i} \vert x\sp{i} ; \theta^*) \nabla \log P( y\sp{i} \vert x\sp{i} ; \theta^*)^\top dy \right) dx \\
+    &= \int P(x) \left( \int \frac{\nabla P(y \vert x; \theta^*) \nabla P(y \vert x; \theta^*)^\top}{P(y \vert x; \theta^*)}dy \right) dx.
 \end{align}
 Now we expand the LHS using the definition of the population loss and differentiate repeatedly:
 \begin{align}
-    \nabla^2 L(\theta^*) &= \Exp \left[- \nabla^2 \log P(y \mid x; \theta^*) \right] \\
-    &= \int P(x) \left( \int - \nabla^2 P(y \mid x; \theta^*) + \frac{\nabla P(y \mid x; \theta^*) \nabla P(y \mid x; \theta^*)^\top}{P(y \mid x; \theta^*)}dy  \right) dx.
+    \nabla^2 L(\theta^*) &= \Exp \left[- \nabla^2 \log P(y \vert x; \theta^*) \right] \\
+    &= \int P(x) \left( \int - \nabla^2 P(y \vert x; \theta^*) + \frac{\nabla P(y \vert x; \theta^*) \nabla P(y \vert x; \theta^*)^\top}{P(y \vert x; \theta^*)}dy  \right) dx.
 \end{align}
 Note that we can express 
-\begin{equation} \int \nabla^2 P(y \mid x; \theta^*) dy = \nabla^2 \int P(y \mid x; \theta^*) dy = \nabla 1  = 0 \end{equation}
+\begin{equation} \int \nabla^2 P(y \vert x; \theta^*) dy = \nabla^2 \int P(y \vert x; \theta^*) dy = \nabla 1  = 0 \end{equation}
 so we find
-\begin{equation} \nabla^2 L(\theta^*) = \int P(x) \left( \int \frac{\nabla P(y \mid x; \theta^*) \nabla P(y \mid x; \theta^*)^\top}{P(y \mid x; \theta^*)}dy \right) dx = \Cov \left( \nabla \ell ((x, y), \theta^*) \right). \end{equation}
+\begin{equation} \nabla^2 L(\theta^*) = \int P(x) \left( \int \frac{\nabla P(y \vert x; \theta^*) \nabla P(y \vert x; \theta^*)^\top}{P(y \vert x; \theta^*)}dy \right) dx = \Cov \left( \nabla \ell ((x, y), \theta^*) \right). \end{equation}
 
-Finally, \eqref{lec2:eqn:applied4} follows directly from Part 2 of Theorem~\ref{lec1:thm:asymp} and \eqref{lec2:eqn:applied3}.
+Finally, \Cref{lec2:eqn:applied4} follows directly from Part 2 of Theorem~\ref{lec1:thm:asymp} and \eqref{lec2:eqn:applied3}.
 \end{proof}
 
-Using similar logic to our proof of Part 4 and 5 of Theorem~\ref{lec1:thm:asymp}, we can see that $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where $S \sim N(0, I)$. Since a chi-squared distribution with $p$ degrees of freedom is defined as a sum of the squares of $p$ independent standard normals, it quickly follows that $2n (L(\hat \theta) - L(\theta^*)) \sim  \chi^2(p)$, where $\theta \in \R^p$ and $n \to \infty$. We can thus characterize the excess risk in this case using the propertes of a chi-squared distribution:
+%thus characterize the excess risk in this case using the properties of a chi-squared distribution:
 
+Using the fact $\Cov \left( \nabla \ell ((x, y), \theta^*) \right) = \nabla^2 L(\theta^*)$ in arts 4 of Theorem~\ref{lec1:thm:asymp}, we find that $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where $S \sim \cN(0, I_{p\times p})$, where $p$ is number of parameters.  Because $\|S\|_2^2$ is simply a sum of the squares of $p$ independent standard normal random variables that has a $\chi^2$ distribution with $p$ degree of freedom, we have $2n (L(\hat \theta) - L(\theta^*)) \sim  \chi^2(p)$ as $n \to \infty$. Using part 3 of Theorem~\ref{lec1:thm:asymp}, we can have that in the well-specified case,
 \al{
-    \lim_{n \to \infty} \Exp \left[ L(\hat \theta) - L(\theta^*) \right] = \frac{p}{2n}.
+    \lim_{n \to \infty} \Exp \left[ n(L(\hat \theta) - L(\theta^*)) \right] = \frac{p}{2}\perm
 }
+This suggests that when $\Theta = \R^p$ (that is assumed in the beginning of this subsection), the coefficient in front of the $1/n$ rate depends linearly in the number of parameters. In other words, it requires more samples to achieve a small excess risk for higher dimensional models. 
 
 \sec{Limitations of asymptotic analysis}\label{sec:limit-asymp}
 
-One limitation of asymptotic analysis is that our bounds often obscure dependencies on higher order terms. As an example, suppose we have a bound of the form
+The key limitation of asymptotic analysis is that it often obscures dependencies on other problem hyperparameters such as the number of parameters . For example, suppose we arrived at a bound for the excess risk
 	\al{
-		\frac{p}{2n} + o\left(\frac{1}{n}\right).
+		    L(\hat{\theta}) - \inf_{\theta \in \Theta} L(\theta)  \le \frac{p}{2n} + o\left(\frac{1}{n}\right)\,,
 		\label{lec2:eqn:spicy_bound}
 	}
-(Here $o(\cdot)$ treats the parameter $p$ as a constant as $n$ goes to infinity.) 
-We have no idea how large $n$ needs to be for asymptotic bounds to be ``reasonable." Compare two possible versions of \eqref{lec2:eqn:spicy_bound}: 
+where $o(\cdot)$ treats the hyperparameter $p$ as a constant as $n$ goes to infinity in the asymptotic sense.  
+%We have no idea how large $n$ needs to be for asymptotic bounds to be ``reasonable." 
+How the second order term $o(1/n)$ depend on the model dimension $p$ is unclear from the bound. For example, \Cref{lec2:eqn:spicy_bound} in the asymptotic sense can either mean  
 \begin{align}
-    \frac{p}{2n} + \frac{1}{n^2} \quad \text{vs.} \quad \frac{p}{2n} + \frac{p^{100}}{n^2}.
+    \frac{p}{2n} + \frac{1}{n^2} \quad \text{or} \quad \frac{p}{2n} + \frac{p^{100}}{n^2}\perm
 \end{align}
 Asymptotic analysis treats both of these bounds as the same, hiding the polynomial dependence on $p$ in the second bound. Clearly, the second bound is significantly more data-intensive than the first: we would need $n > p^{50}$ for $\frac{p^{100}}{n^2}$ to be less than one. Since $p$ represents the dimensionality of the data, this may be an unreasonable assumption.
 
-This is where non-asymptotic analysis can be helpful. Whereas asymptotic analysis uses large-sample theorems such as the central limit theorem and the law of large numbers to provide convergence guarantees, non-asymptotic analysis relies on concentration inequalities to develop alternative techniques for reasoning about the performance of learning algorithms.
+For this reason, a non-asymptotic analysis that does not hide any dependencies can be helpful. The rest of the monograph will discuss non-asymptotic bounds. %Whereas asymptotic analysis uses large-sample theorems such as the central limit theorem and the law of large numbers to provide convergence guarantees, non-asymptotic analysis relies on concentration inequalities to develop alternative techniques for reasoning about the performance of learning algorithms.
 
