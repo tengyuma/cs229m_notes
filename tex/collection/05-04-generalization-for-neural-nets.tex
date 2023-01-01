@@ -1,6 +1,14 @@
-\tnote{todo: intro for chapter}
+This chapter provides various generalization bounds for neural network models, and can be viewed as an extension of Chapter~\ref{chap:gen-bounds} with more involved techniques and stronger conclusions. 
+These bounds are still practically relevant and meaningful for modern deep learning, as they serve as building blocks in most current end-to-end theoretical analyses of deep learning algorithms and have led to practical regularization techniques. However, researchers have found that these bounds alone cannot fully explain the success of deep learning.
+
+
+In Chapter~\ref{chap:dl-overview}, we will provide a high-level overview of the current state of deep learning theory, with a particular focus on the differences between theories for deep learning and classical machine learning. We have placed this chapter first in this part due to its technical proximity to the previous chapter. Readers can skip this chapter and move directly to Chapter~\ref{chap:dl-overview} for a broader overview of deep learning theory. 
+
+%In Chapter~\ref{chap:dl-overview}, we will give a high-level overview of current landscape of deep learning theory, especially focusing on the difference between the theories for deep learning and classical machine learning. We put this chapter as the first chapter in this part due to its technical proximity to the previous chapter. Readers should feel free to skip this chapter and jump to Chapter~\ref{chap:dl-overview} for an overarching overview.   
+
+
 \sec{Two-layer neural networks}
-We now compute a bound for the Rademacher complexity of two-layer neural networks.  Throughout this section, we use the following notation:
+Using the same language and framework as Chapter~\ref{chap:gen-bounds}, we will compute a bound for the Rademacher complexity of two-layer neural networks.  Throughout this section, we use the following notation:
 \begin{itemize}
     \item $\theta = (w, U)$ are the parameters of the model with $w \in \R^m$ and $U \in \R^{m \times d}$, where $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$ (written as a column vector).
     \item $\phi(z) = \max(z, 0)$ is the ReLU activation function applied element-wise.

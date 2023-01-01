@@ -15,6 +15,8 @@ As it turns out, the material from this chapter constitutes arguably the importa
 
 \sec{The big-O notation}
 
+\tnote{add something about what is non-asymptotic analysis }
+
 Throughout the rest of this course, we will use ``big-O" notation in the following sense: every occurrence of $O(x)$ is a placeholder for some function $f(x)$ such that for every $x$, $|f(x)| \leq Cx$ for some absolute/universal constant $C$. In other words, when $O(n_1),\dots, O(n_k)$ occur in a statement, it means that \textbf{there exist} absolute constants $C_1,\dots, C_k > 0$ and functions $f_1,\dots, f_k$ satisfying $|f_i(x)|\le C_ix$ for all $x$, such that after replacing each occurrence $O(n_i)$ by $f_i(n_i)$,  the statement is true.  The difference from traditional ``big-O" notation is that we do not need to send $n \to \infty$ in order to define ``big-O". In nearly all cases, big-O notation is used to define an upper bound; then, the bound is identical if we simply substitute $Cx$ in place of $O(x)$. 
 
 Note that the $x$ in our definition of big-O is a surrogate for an arbitrary variable. For instance, later on in this chapter, we will encounter the term $O(\sigma \sqrt{\log n})$. The definition above, applied with $x = \sigma \sqrt{\log n}$, yields the following conclusion: $O(\sigma \sqrt{\log n}) = f(\sigma \sqrt{\log n})$ for some function $f$ and constant $C$ such that $|f(\sigma \sqrt{\log n})| \leq C \sigma  \sqrt{\log n}$ for all values that $\sigma \sqrt{\log n}$ can take. 
