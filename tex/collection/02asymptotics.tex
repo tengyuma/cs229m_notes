@@ -4,55 +4,75 @@
 %\metadata{lecture ID}{Your names}{date}
 \metadata{2}{Alexander Ke and Trenton Chang}{Jan 13th, 2021}
 
-In this chapter, we use an asymptotic approach (i.e. assuming number of training samples $n \to \infty$) to achieve a bound on the ERM. We then instantiate these results to the case where the loss function is the maximum likelihood  and discuss the limitations of asymptotics. (In future chapters we will assume finite $n$ and provide a non-asymptotic analysis.)
+This chapter briefly reviews the classical asymptotic results and techniques, which assume the number of training examples $n$ goes to infinity while all other (hyper-)parameters are treated as constants. It is not clear whether these results and techniques are still applicable to modern machine learning, where the number of parameters can often be larger than the number of examples. None of the later chapters depend on this chapter, so readers who are only interested in deep learning can feel free to skip it.  
+
+Nevertheless, I still include these results in this text because the key ideas of using Taylor expansion and law of large numbers are so elegant and foundational that most machine learning theorists should probably be aware of them. 
+The rest of the monograph will work in the non-asymptotic setting and one of the key technical difference will be that Taylor expansion cannot be applied and that the concentration inequalities need to be strengthened. 
+Due to limited space, we will focus on the core ideas at the expense of some mathematical rigor. The conceptual ideas and techniques of this chapter is self-contained, whereas a fully rigorous treatment of these concepts require additional mathematical language that is beyond the scope of this monograph. We refer the readers to~\citep{vaart_1998} for more in-depth presentation of this line of work. 
+
+
+
+
+%In this chapter, we use an asymptotic approach (i.e. assuming number of training samples $n \to \infty$) to achieve a bound on the ERM. 
+%We then instantiate these results to the case where the loss function is the maximum likelihood  and discuss the limitations of asymptotics. 
+%(In future chapters we will assume finite $n$ and provide a non-asymptotic analysis.)
 
 \sec{Asymptotics of empirical risk minimization}
 
-For the asymptotic analysis of ERM, we would like to prove that excess risk is bounded as shown below:
+The goal of the asymptotic analysis of ERM is to bound from above the excess risk in the following form:
 \al{
-    L(\hat{\theta}) - \inf_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right). 
+    L(\hat{\theta}) - \inf_{\theta \in \Theta} L(\theta) \leq \frac{c}{n} + o\left(\frac{1}{n}\right)\,. 
     \label{lec1:eqn:erm-bound}
 }
-Here $c$ is a problem dependent constant that does not depend on $n$, and $o(1/n)$ hides all dependencies except $n$. The equation above shows that as we have more training data (i.e. as $n$ increases) the excess risk of ERM decreases at the rate of $\frac{1}{n}$.
+Here $c$ is a problem-dependent constant that is independent of $n$, and the $o(\cdot)$ notation hides all dependencies except for $n$. The equation above shows that as the number of training examples $n$ increases, the excess risk of ERM decreases at the rate of $\frac{1}{n}$.
 
-Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and let $\cH = \{ h_\theta: \theta \in \R^p \}$ be the parameterized family of hypothesis functions. Let the ERM minimizer be $\hat{\theta}$ as defined in Equation~\eqref{lec1:eqn:erm}. Let $\theta^{*}$ be the minimizer
-of the population risk $L$, i.e. $\theta^{*} = \argmin_\theta L(\theta)$. The theorem below quantifies the excess risk $L(\hat{\theta}) - L(\theta^{*})$:
+Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and let $\cH = \{ h_\theta: \theta \in \R^p \}$ be the parameterized family of hypothesis functions. Let $\hat{\theta}$ be the empirical risk minimizer as defined in~\Cref{lec1:eqn:erm:theta}. Let $\theta^{*}$ be the minimizer of the population risk $L$ (i.e., $\theta^{*} = \argmin_\theta L(\theta)$, )which is assumed to be unique. The theorem below characterize the excess risk $L(\hat{\theta}) - L(\theta^{*})$, which is a random variable (where the randomness comes from the training dataset). 
 
 \begin{theorem}[Informally stated]
-Suppose that (a) $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$ (i.e. consistency of $\hat{\theta}$), (b) $\nabla^{2}L(\theta^{*})$ is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution, respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
+Assume that (a) the consistency of the ERM estimator $\hat{\theta}$ in the sense that $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$, (b) the Hessian of the population loss at $\theta^*$, $\nabla^{2}L(\theta^{*})$, is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution, respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
 Then,
 \begin{enumerate}
-    \item $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, i.e. for every $\epsilon > 0$, there is an $M$ such that $\sup_n \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) < \epsilon$. (This means that the sequence $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ is ``bounded in probability".)
-    
-    \item  $\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right)$.
-     \item $n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)$.
-    \item $n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2}$ where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2} \right)$.
-    \item $\lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)$.
+    \item The estimated model $\hat{\theta}$ converges to the $\theta^*$ with a $1/\sqrt{n}$ rate in the sense that $\sqrt{n} (\hat{\theta} - \theta^{*}) = O_P(1)$, that is, for every $\epsilon > 0$, there is an $M$ such that $\forall n, \bbP (\| \sqrt{n} (\hat{\theta} - \theta^{*}) \|_2 > M) \le \epsilon$.\footnote{In other words, the sequence of random variables $\{ \sqrt{n} (\hat{\theta} - \theta^{*}) \}$ indexed by $n$ is ``bounded in probability" . } 
+    \item  The scaled parameter error $\sqrt{n}(\hat{\theta}-\theta^{*})$ has asymptotic normality distribution in the sense that as $n\rightarrow \infty$, 
+    \al{\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right) \,.}
+     \item The excess loss decays with an $1/n$ rate
+    \al{n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)\,.}
+     Moreover, 
+     \begin{align}
+     \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)\,.
+     \end{align}
+    \item The scaled excess loss has a $\chi^2$ distribution: 
+    \begin{align}
+    n (L(\hat{\theta}) - L(\theta^{*})) \overset{d}{\to} \frac{1}{2} ||S||_{2}^{2} \,.
+    \end{align}
+    where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2}\right)$.
 \end{enumerate}
 \label{lec1:thm:asymp}
 \end{theorem}
-\textbf{Remark:} In the theorem above, Parts 1 and 3 only show the rate or order of convergence, while Parts 2 and 4 define the limiting distribution for the random variables.
+%\textbf{Remark:} In the theorem above, Parts 1 and 3 only show the rate or order of convergence, while Parts 2 and 4 define the limiting distribution for the random variables.
+%is a powerful conclusion because once we know that $\sqrt{n}(\hat \theta  - \theta^*)$ is (asymptotically) Gaussian, we can easily work out the distribution of the excess risk. 
+%If we believe in our assumptions and $n$ is large enough such that we can assume $n \to \infty$, this allows us to analytically determine quantities of interest in almost any scenario (for example, if our test distribution changes). 
 
-Theorem \ref{lec1:thm:asymp} is a powerful conclusion because once we know that $\sqrt{n}(\hat \theta  - \theta^*)$ is (asymptotically) Gaussian, we can easily work out the distribution of the excess risk. If we believe in our assumptions and $n$ is large enough such that we can assume $n \to \infty$, this allows us to analytically determine quantities of interest in almost any scenario (for example, if our test distribution changes). The key takeaway is that our parameter error $\hat{\theta} - \theta^*$ decreases in order $1/\sqrt{n}$ and the excess risk decreases in order $1/n$. While we will not discuss the regularity assumptions in Theorem~\ref{lec1:thm:asymp} in great detail, we note that the assumption that $L$ is twice differentiable is crucial. 
+The key takeaway is that our parameter error $\hat{\theta} - \theta^*$ decreases on the order of $1/\sqrt{n}$ and the excess risk decreases on the order of $1/n$. We note that the twice-differentiable loss function $L$ plays a crucial role in the rate here---e.g., if the loss for a regression problem is $|\hat{y}-y|$ instead of the squared loss, the excess rate will not have a $1/n$ rate. 
 
-\subsec{Key ideas of proofs} 
+Theorem \ref{lec1:thm:asymp} is powerful because the characterization of the distribution of  $\sqrt{n}(\hat \theta  - \theta^*)$ can lead us to almost any property of $\hat{\theta}$ of interest. For example, in principle, one can characterize the expected loss of the estimator $\hat{\theta}$ on a test distribution different from the distribution $P$. On the other hand, the theorem requires taking the limit as $n$ goes to infinity while ignoring the dependencies on other problem parameters (such as dimension). This significantly limits the applicability of the theorem in modern machine learning settings (see Section~\ref{sec:limit-asymp} for more discussion). 
+%While we will not discuss the regularity assumptions in Theorem~\ref{lec1:thm:asymp} in great detail, we note that the assumption that $L$ is twice differentiable is crucial. 
 
-We will prove the theorem above by applying the following main ideas:
+\subsec{Key proof ideas} 
+
+We will sketch a proof Theorem \ref{lec1:thm:asymp} by applying the following two key ideas. 
 \begin{enumerate}
-    \item Obtain an expression for the excess risk by Taylor expansion of the derivative of the empirical risk $\nabla \hatL(\theta)$ around $\theta^{*}$.
-    \item By the law of large numbers, we have that $\hatL(\theta) \overset{p}{\to} L(\theta)$, $\nabla\hatL(\theta) \overset{p}{\to} \nabla L(\theta)$   and  $\nabla^{2}\hatL(\theta) \overset{p}{\to} \nabla^{2} L(\theta)$ as $n \to \infty$.
-    
-    \item Central limit theorem (CLT).
-\label{ideas}
+    \item[1] \textbf{Taylor expansion.} We will derive a formula for $\hat{\theta}$ and the excess risk by Taylor-expanding the empirical loss $\nabla \hatL(\theta)$ (and its gradient )around the reference point $\theta^{*}$.
+    \item[2] \textbf{Law of large number and central limit theorem.} We will simplify and characterize various empirical quantities, e.g.,  $\hatL(\theta)$ and $\hatL^2(\theta)$ by the law of large numbers and central limit theorems. For exmaple, we will use the facts that $\hatL(\theta) \overset{p}{\to} L(\theta)$, $\nabla\hatL(\theta) \overset{p}{\to} \nabla L(\theta)$   and  $\nabla^{2}\hatL(\theta) \overset{p}{\to} \nabla^{2} L(\theta)$ as $n \to \infty$, and that $\nabla \hatL(\theta)-\nabla L(\theta)$ is asymptotically normal. 
 \end{enumerate}
  
-First, we state the CLT for i.i.d. means and a lemma that we will use in the proof.
+To prepare us with more detail, we first state the the central limit theorem for a sum of i.i.d. random variables.
 
 \begin{theorem}[Central Limit Theorem] \label{lec1:thm:CLT}
-Let $X_1, \cdots, X_n$, be i.i.d. random variables, where $\widehat{X}=\frac{1}{n} \sum_{i=1}^{n} X_i$ and the covariance matrix $\Sigma$ is finite. Then, as $n \to \infty$ we have
+Let $X_1, \cdots, X_n$ be i.i.d. $d$-dimensional random variables and $\widehat{X}=\frac{1}{n} \sum_{i=1}^{n} X_i$ and the covariance matrix $\Sigma = \Exp[X_iX_i^\top]\in \R^{d\times d}$ is finite. Then, as $n \to \infty$, we have
 \begin{enumerate}
     \item $\widehat{X} \overset{p}{\to} \Exp[X]$, and
-    \item $\sqrt{n} (\widehat{X}-\Exp[X]) \overset{d}{\to} \mathcal{N}(0,\Sigma)$. In particular, $\sqrt{n} (\widehat{X}-\Exp[X]) = O_P(1)$.
+    \item $\sqrt{n} (\widehat{X}-\Exp[X]) \overset{d}{\to} \mathcal{N}(0,\Sigma)$. %In particular, $\sqrt{n} (\widehat{X}-\Exp[X]) = O_P(1)$.
 \end{enumerate}
 \end{theorem}
 
@@ -200,13 +220,13 @@ so we find
 Finally, \eqref{lec2:eqn:applied4} follows directly from Part 2 of Theorem~\ref{lec1:thm:asymp} and \eqref{lec2:eqn:applied3}.
 \end{proof}
 
-Using similar logic to our proof of Part 4 and 5 of Theorem~\ref{lec1:thm:asymp}, we can see that $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where $S \sim N(0, I)$. Since a chi-squared distribution with $p$ degrees of freedom is defined as a sum of the squares of $p$ independent standard normals, it quickly follows that $2n (L(\hat \theta) - L(\theta^*)) \sim  \chi^2(p)$, where $\theta \in \R^p$ and $n \to \infty$. We can thus characterize the excess risk in this case using the properties of a chi-squared distribution:
+Using similar logic to our proof of Part 4 and 5 of Theorem~\ref{lec1:thm:asymp}, we can see that $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where $S \sim N(0, I)$. Since a chi-squared distribution with $p$ degrees of freedom is defined as a sum of the squares of $p$ independent standard normals, it quickly follows that $2n (L(\hat \theta) - L(\theta^*)) \sim  \chi^2(p)$, where $\theta \in \R^p$ and $n \to \infty$. We can thus characterize the excess risk in this case using the propertes of a chi-squared distribution:
 
 \al{
     \lim_{n \to \infty} \Exp \left[ L(\hat \theta) - L(\theta^*) \right] = \frac{p}{2n}.
 }
 
-\sec{Limitations of asymptotic analysis}
+\sec{Limitations of asymptotic analysis}\label{sec:limit-asymp}
 
 One limitation of asymptotic analysis is that our bounds often obscure dependencies on higher order terms. As an example, suppose we have a bound of the form
 	\al{
