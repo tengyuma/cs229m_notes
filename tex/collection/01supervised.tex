@@ -59,6 +59,8 @@ In other words, the population loss $L(h)$is equal to lthe sum of lowest possibl
 
 Usually, the hypothesis class is parameterized by a vector $\theta \in \Theta \subset \mathbb{R}^p$. In this case, we can refer to an element of $\cH$ as $h_\theta$, making the dependence on $\theta$ explicit. For example, the hypothesis class of linear models is $\cH = \{ h: h_\theta(x) = \theta^\top x, \theta \in \mathbb{R}^d \}$, where $h_\theta(x)$ is a linear function of $x$ with parameter $\theta$.
 
+For notational simplicity, for parameterized hypothesis class, we often rewrite $\ell(h_\theta(x), y)$, the loss of model $h$ on an example $(x,y)$, as $\ell((x,y), \theta)$. Here $\ell$ is interpreted as a loss function that maps $\cX\times \cY \times \Theta$ to nonnegative real numbers. Also we view $L(\cdot)$ as a function of $\theta$ and use $L(\theta)$ to denoted the population loss (instead of $L(h_\theta)$). The same applies $\hatL$. 
+
 %We typically parameterize the hypothesis class by a parameter vector $\theta \in \Theta\subset \R^p$. In that case, we can refer to an element of $\cH$ by $h_\theta$, making that explicit. An example of such a parametrization of the hypothesis class is $\cH = \{ h: h_\theta(x) = \theta^\top x, \theta \in \mathbb{R}^d \}$.
 
 \sec{Empirical risk minimization}
@@ -76,7 +78,7 @@ population loss. From now on, with some abuse of notation, we often write $\ell(
 Therefore, when the hypothesis class is parameterized by $\theta\in \Theta$, ERM refers to finding the minimizer $\hat{\theta}$ of the empirical risk:
 \al{
 	\label{lec1:eqn:erm:theta}
-	\hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(h_\theta).
+	\hat{\theta} \defeq{} \argmin_{\theta\in\Theta} \hatL(\theta).
 }
 
 %\al{
@@ -90,10 +92,10 @@ Therefore, when the hypothesis class is parameterized by $\theta\in \Theta$, ERM
 Because here we assumed that our training examples are drawn from the population distribution $P$, the empirical risk equals to the population risk 
 \emph{in expectation} (over the randomness of the training dataset):
 \al{
-    \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P}\ \hatL(h_\theta) &= \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P} \frac{1}{n} \sum_{i=1}^n \ell(h_\theta(x^{(i)}), y^{(i)}) \\
-    &= \frac{1}{n} \sum_{i=1}^n \Exp_{(x^{(i)}, y^{(i)}) \sim P} \ell(h_\theta(x^{(i)}), y^{(i)}) \label{eqn:2}\\
+    \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P}\ \hatL(\theta) &= \Exp_{\{(x^{(i)}, y^{(i)})\}_{i=1}^n \iid P} \frac{1}{n} \sum_{i=1}^n \ell((x^{(i)}, y^{(i)}), \theta) \\
+    &= \frac{1}{n} \sum_{i=1}^n \Exp_{(x^{(i)}, y^{(i)}) \sim P} \ell((x^{(i)}, y^{(i)}), \theta) \label{eqn:2}\\
 %    &= \frac{1}{n} \cdot{} n \cdot{} \Exp_{(x^{(i)}, y^{(i)}) \sim P} \ell(h_\theta(x^{(i)}), y^{(i)}) \\
-    &= \frac{1}{n} \sum_{i=1}^n  L(h_\theta) =  L(h_\theta)\,. 
+    &= \frac{1}{n} \sum_{i=1}^n  L(\theta) =  L(\theta)\,. 
 }
 
 

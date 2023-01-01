@@ -28,7 +28,7 @@ Here $c$ is a problem-dependent constant that is independent of $n$, and the $o(
 
 Let $\{(x^{(1)},y^{(1)}), \cdots, (x^{(n)},y^{(n)})\}$ be the training data and let $\cH = \{ h_\theta: \theta \in \R^p \}$ be the parameterized family of hypothesis functions. Let $\hat{\theta}$ be the empirical risk minimizer as defined in~\Cref{lec1:eqn:erm:theta}. Let $\theta^{*}$ be the minimizer of the population risk $L$ (i.e., $\theta^{*} = \argmin_\theta L(\theta)$, )which is assumed to be unique. The theorem below characterize the excess risk $L(\hat{\theta}) - L(\theta^{*})$, which is a random variable (where the randomness comes from the training dataset). 
 
-\begin{theorem}[Informally stated]
+\begin{theorem}[Informally stated] \label{lec1:thm:asymp}
 Assume that (a) the consistency of the ERM estimator $\hat{\theta}$ in the sense that $\hat{\theta}  \overset{p}{\to} \theta^{*}$ as $n \to \infty$, (b) the Hessian of the population loss at $\theta^*$, $\nabla^{2}L(\theta^{*})$, is full rank, and  (c) other appropriate regularity conditions hold.\footnote{$X_n \overset{p}{\to} X$ implies that for all $\epsilon > 0$, $\bbP \left (\norm{X_n - X} > \epsilon \right ) \to 0$, while $X_n \overset{d}{\to} X$ implies that $\bbP(X_n \leq t) \to \bbP(X \leq t)$ at all points $t$ for which $\bbP(X \leq t)$ is continuous. These two notions of convergence are known as convergence in probability and convergence in distribution, respectively. These concepts are not essential to this course, but additional information can be found by reading the Wikipedia \href{https://en.wikipedia.org/wiki/Convergence_of_random_variables}{article} on convergence of random variables.} 
 Then,
 \begin{enumerate}
@@ -47,7 +47,6 @@ Then,
     \end{align}
     where $S \sim \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1/2}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1/2}\right)$.
 \end{enumerate}
-\label{lec1:thm:asymp}
 \end{theorem}
 %\textbf{Remark:} In the theorem above, Parts 1 and 3 only show the rate or order of convergence, while Parts 2 and 4 define the limiting distribution for the random variables.
 %is a powerful conclusion because once we know that $\sqrt{n}(\hat \theta  - \theta^*)$ is (asymptotically) Gaussian, we can easily work out the distribution of the excess risk. 
@@ -76,28 +75,27 @@ Let $X_1, \cdots, X_n$ be i.i.d. $d$-dimensional random variables and $\widehat{
 \end{enumerate}
 \end{theorem}
 
+We also state a lemma that asserts the linear transformation of a Gaussian random variable is still Gaussian and computes its covariance. %The second part claims that quadratic form of Gaussian random variable has a $\chi^2$ distribution.  
 \begin{lemma}\label{lec1:lem:dist}
-\quad\quad
-    \begin{enumerate}
-        \item If $Z \sim N(0, \Sigma)$ and $A$ is a deterministic matrix, then $AZ \sim N(0, A \Sigma A^\top)$.
-        
-        \item If $Z \sim N(0, \Sigma^{-1})$ and $Z \in \bbR^p$, then $Z^\top \Sigma Z \sim \chi^2(p)$, where $\sim \chi^2(p)$ is the chi-squared distribution with $p$ degrees of freedom.
-    \end{enumerate}
+%\quad\quad
+%    \begin{enumerate}
+If $Z \sim N(0, \Sigma)$ and $A$ is a deterministic matrix, then $AZ \sim N(0, A \Sigma A^\top)$. \tnote{todo second part of the old lemma}
+%\subsec{Main proof}        
+%        \item If $Z \sim N(0, \Sigma^{-1})$ and $Z \in \bbR^p$, then $Z^\top \Sigma Z \sim \chi^2(p)$, where $\sim \chi^2(p)$ is the chi-squared distribution with $p$ degrees of freedom.
+%    \end{enumerate}
 \end{lemma}
+With these preparations, we will sketch a proof for parts 1 and 2 of Theorem~\ref{lec1:thm:asymp}. 
 
-\subsec{Main proof}
-
-Let us start with heuristic arguments for Parts 1 and 2. First, note that by definition, the gradient of the empirical risk at the empirical risk minimizer, $\nabla \hatL(\hat{\theta})$, is equal to $0$. From the Taylor expansion of $\nabla \hatL$ around $\theta^*$, we have that 
+By definition, the gradient of the empirical risk evaluated at the empirical risk minimizer, that is, $\nabla \hatL(\hat{\theta})$, is equal to $0$. From the Taylor expansion of $\nabla \hatL$ around $\theta^*$, we have that 
 \begin{align}
-    0 = \nabla \hatL(\hat{\theta}) = \nabla \hatL(\theta^*) + \nabla^2 \hatL(\theta^*)(\hat{\theta} - \theta^*) + O(\|\hat{\theta} - \theta^*\|^2_2).
+    0 = \nabla \hatL(\hat{\theta}) = \nabla \hatL(\theta^*) + \nabla^2 \hatL(\theta^*)(\hat{\theta} - \theta^*) + O(\|\hat{\theta} - \theta^*\|^2_2)\perm\text{\footnotemark}
 \end{align}
 
-Rearranging, we have
-
+Rearranging the equation above,\footnotetext{Technically, the big-O notation here and in the sequel should be $O_P(\cdot)$ because $\hat{\theta}$ is a random variable. However, we omit this distinction in this proof sketch.} gives a solution for $\hat{\theta}-\theta^*$, 
 \al{
  \hat{\theta}-\theta^{*} = -(\nabla^{2}\hatL(\theta^{*}))^{-1} \nabla \hatL(\theta^{*}) + O(||\hat{\theta}-\theta^{*}||_{2}^{2}). \label{lec1:eqn:branch}} 
 
-Multiplying by $\sqrt{n}$ on both sides,
+Multiplying by $\sqrt{n}$ on both sides (so that we deal with quantities on the constant order), we have
  \al{
 \sqrt{n} (\hat{\theta}-\theta^{*}) &= -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})) + O(\sqrt{n} ||\hat{\theta}-\theta^{*}||_{2}^{2}) \\
 &\approx -(\nabla^{2}\hatL(\theta^{*}))^{-1} \sqrt{n} (\nabla \hatL(\theta^{*})). \label{lec1:eqn:interm}}
