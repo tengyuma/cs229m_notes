@@ -36,10 +36,12 @@ Then,
     \item  The scaled parameter error $\sqrt{n}(\hat{\theta}-\theta^{*})$ has asymptotic normality distribution in the sense that as $n\rightarrow \infty$, 
     \al{\sqrt{n}(\hat{\theta}-\theta^{*}) \overset{d}{\to} \mathcal{N} \left(0, (\nabla^{2}L(\theta^{*}))^{-1}\Cov(\nabla \ell((x,y), \theta^*)) (\nabla^{2}L(\theta^{*}))^{-1} \right) \,.}
      \item The excess loss decays with an $1/n$ rate
-    \al{n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)\,.}
+    \al{n (L(\hat{\theta}) - L(\theta^{*})) = O_P(1)\,.
+    	\label{eqn:3}
+    }
      Moreover, 
      \begin{align}
-     \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)\,.
+     \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] = \frac12 \tr\left( \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*) \right)\,.\label{eqn:4}
      \end{align}
     \item The scaled excess loss has a $\chi^2$ distribution: 
     \begin{align}
@@ -102,40 +104,38 @@ Multiplying by $\sqrt{n}$ on both sides (so that we deal with quantities on the 
 
  
 Applying the Central Limit Theorem (Theorem~\ref{lec1:thm:CLT}) using $X_i = \nabla \ell ((x^{(i)}, y^{(i)}), \theta^*)$ and $\widehat{X} = \nabla \hatL(\theta^*)$, and noticing that $\Exp[\nabla \hatL(\theta^{*})] = \nabla L(\theta^{*})$, we have
- \al{ \sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\nabla \ell((x, y), \theta^{*}))).} 
+$\sqrt{n} (\nabla \hatL(\theta^{*}) - \nabla L(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\nabla \ell((x, y), \theta^{*}))).$ 
  
-Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$, so $\sqrt{n} (\nabla \hatL(\theta^{*})) \overset{d}{\to} \mathcal{N}(0,\Cov(\nabla \ell((x, y), \theta^{*})))$. By the law of large numbers, $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. Applying these results to \eqref{lec1:eqn:interm} (together with an application of Slutsky's theorem),
+Note that $\nabla L(\theta^{*}) = 0$ because $\theta^{*}$ is the minimizer of  $L$. Thus, we have \al{\sqrt{n} \cdot\nabla \hatL(\theta^{*}) \overset{d}{\to} \mathcal{N}(0,\Cov(\nabla \ell((x, y), \theta^{*})))\perm}
+By the law of large numbers, we have $\nabla^2 \hatL(\theta^*) \stackrel{p}{\rightarrow} \nabla^2 L(\theta^*)$. We use these results to replace the empirical quantity in \Cref{lec1:eqn:interm} by the population quantity (technically this is an application of Slutsky's theorem), we have
 \al{
 \sqrt{n} (\hat{\theta}-\theta^{*}) &\overset{d}{\to} \nabla^{2}L(\theta^{*})^{-1} \mathcal{N}(0,\Cov(\nabla \ell((x,y),\theta^{*}))) \\
 &\stackrel{d}{=} \mathcal{N} \left( 0,\nabla^{2}L(\theta^{*})^{-1}\Cov(\nabla \ell((x,y), \theta^{*})) \nabla^{2}L(\theta^{*})^{-1} \right),
 }
-
 where the second step is due to Lemma~\ref{lec1:lem:dist}. This proves Part 2 of Theorem~\ref{lec1:thm:asymp}.
 
-Part 1 follows directly from Part 2 by the following fact: If $X_n \stackrel{d}{\rightarrow} P$ for some probability distribution $P$, then $X_n = O_P(1)$.
+Part 1 follows directly from Part 2 by the fact a sequence of random variables that converges to a fixed Gaussian distribution is also bounded in probability.
 
-We now turn to proving Parts 3 and 4. Using a Taylor expansion of $L$ with respect to $\theta$ at $\theta^*$, we find
+We now turn to proving Parts 3 and 4 of Theorem~\ref{lec1:thm:asymp} which uses Part 2. A Taylor expansion of $L$ at the reference point $\theta^*$ gives
 \begin{equation}
 L(\hat \theta) = L(\theta^*) 
 + \langle \nabla L(\theta^*), \hat \theta - \theta^* \rangle 
 + \frac12 \langle \hat \theta - \theta^*, \nabla^2 L(\theta^*) (\hat \theta - \theta^*) \rangle + o(\|\hat \theta - \theta^*\|_2^2).
 \end{equation}
-Since $\theta^*$ is the minimizer of the population risk $L$, we know that $\nabla L(\theta^*) = 0$ and the linear term is equal to 0. Rearranging and multiplying by $n$, we can write
+Since $\theta^*$ is the minimizer of the population loss $L$, we have $\nabla L(\theta^*) = 0$ and the linear term $\langle \nabla L(\theta^*), \hat \theta - \theta^* \rangle$ is equal to 0. Rearranging and multiplying by $n$, we can write
 \begin{align}
 n (L(\hat \theta) - L(\theta^*)) &= \frac{n}{2} \langle \hat \theta - \theta^*, \nabla^2 L(\theta^*) (\hat \theta - \theta^*) \rangle + o(\|\hat \theta - \theta^*\|_2^2) \\
 &\approx \frac12 \langle \sqrt n(\hat \theta - \theta^*), \nabla^2 L(\theta^*) \sqrt n (\hat \theta - \theta^*) \rangle \\
 &= \frac12 \left\|\nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*) \right\|_2^2,
 \end{align}
-
-where the last equality follows from the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^\top Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e. the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian. Thus as $n \to \infty$, $n (L(\hat \theta) - L(\theta^*)) \overset d \to \frac12 \|S\|_2^2$ where
+where the last equality follows from the fact that for any vector $v$ and positive semi-definite matrix $A$ of appropriate dimensions, the inner product $\langle v, Av\rangle = v^\top Av = \lVert A^{1/2}v \rVert_2^2$. Let $S = \nabla^2 L(\theta^*)^{1/2} \sqrt n(\hat \theta - \theta^*)$, i.e., the random vector inside the norm. By Part 2, we know the asymptotic distribution of $\sqrt n(\hat \theta - \theta^*)$ is Gaussian, and by Lemma~\ref{lec1:lem:dist} we know $S$ also has a Gaussian distribution: 
 \begin{align}
-    S &\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*)) \nabla^2 L(\theta^*)^{-1} \right) \\
+    S %&\sim \nabla^2 L(\theta^*)^{1/2} \cdot \cN \left(0, \nabla^2 L(\theta^*)^{-1} \Cov(\nabla \ell ((x, y), \theta^*)) \nabla^2 L(\theta^*)^{-1} \right) \\
     &\stackrel{d}{=} \cN \left(0, \nabla^2 L(\theta^*)^{-1/2} \Cov(\nabla \ell ((x, y), \theta^*)) \nabla^2 L(\theta^*)^{-1/2} \right).
 \end{align}
+This proves Part 4, and Part 3, \Cref{eqn:3} follows directly from the definition of the $O_P$ notation. 
 
-This proves Part 4, and Part 3 follows directly from the definition of the $O_P$ notation.
-
-Finally, for Part 5, using the fact that the trace operator is invariant under cyclic permutations, the fact that $\Exp [S] = 0$, and some regularity conditions,
+Finally, we derive \Cref{eqn:4} by using the fact that the trace operator is invariant under cyclic permutations,  that $\Exp [S] = 0$, and some regularity conditions,
 \begin{align}
     \lim_{n \to \infty} \Exp \left[ n (L(\hat \theta) - L(\theta^*)) \right] &= \frac12 \Exp\left[ \|S\|_2^2 \right] = \frac12 \Exp \left[ \tr(S^\top S) \right] \\
     &= \frac12 \Exp \left[ \tr(S S^\top) \right]  = \frac12 \tr \left(\Exp[S S^\top] \right) \\
@@ -145,11 +145,14 @@ Finally, for Part 5, using the fact that the trace operator is invariant under c
 
 \subsec{Well-specified case}
 
-Theorem \ref{lec1:thm:asymp} is powerful because it is general, avoiding any assumptions of a probabilistic model of our data. However in many applications, we assume a model of our data and we define the log-likelihood with respect to this model. Formally, suppose that we have a family of probability distributions $P_\theta$, parameterized by $\theta \in \Theta$, such that $P_{\theta_*}$ is the true data-generating distribution. This is known as the well-specified case. To make the results of Theorem \ref{lec1:thm:asymp} more applicable, we derive analogous results for this well-specified case in Theorem \ref{lec2:thm:applied}.
+Theorem \ref{lec1:thm:asymp} is quite general without any assumptions of a probabilistic model of the data distribution $P$. In many applications, we assume a probabilistic model of our data and use the log-likelihood as the loss function. This is often referred to as the well-specified case in this context, and it allows some simplification of the conclusions of Theorem~\ref{lec1:thm:asymp} with nice interpretations. 
+
+
+Formally, suppose that we have a family of probability distributions $P_\theta$, parameterized by $\theta \in \Theta$. We assume the data distribution $P$ belongs to this family, that is, there exists $\theta_*$ such that $P = P_{\theta_*}$. This is known as the well-specified case. Theorem \ref{lec1:thm:asymp} implies the following Theorem \ref{lec2:thm:applied} as a direct corollary.
 
 \begin{theorem}
 \label{lec2:thm:applied}
-    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \mid x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \mid x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \mid x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we performing maximum likelihood estimation (MLE), i.e. our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \mid x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical risk and population risk, respectively. Then
+    In addition to the assumptions of Theorem~\ref{lec1:thm:asymp}, suppose there exists a parametric model $P(y \mid x; \theta)$, $\theta \in \Theta$, such that $\{ y\sp{i} \mid x\sp{i} \}_{i=1}^n \sim P( y\sp{i} \mid x\sp{i} ; \theta_*)$ for some $\theta_* \in \Theta$. Assume that we perform maximum likelihood estimation (MLE), i.e., our loss function is the negative log-likelihood $\ell((x\sp{i}, y\sp{i}), \theta) = - \log P( y\sp{i} \mid x\sp{i} ; \theta)$. As before, let $\hat\theta$ and $\theta^*$ denote the minimizers of empirical loss and population loss, respectively. Then, we have
     \al{
     \label{lec2:eqn:applied1}
         \theta^* = \theta_*,
