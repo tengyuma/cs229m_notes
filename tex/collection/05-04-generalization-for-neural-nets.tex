@@ -15,48 +15,62 @@ In this section, we will use the same language and framework as Chapter~\ref{cha
 \begin{itemize}
     \item Let $\theta = (w, U)$ be the parameters of the two-layer neural net, where $U \in \R^{m \times d}$ is the first layer weights and $w \in \R^m$ is the second layer weights. Here $m$ denotes the number of hidden units. We use $u_i\in\R^d$ to denote the $i$-th row of $U$, and it's written as a column vector.
     \item Let $\phi(z) = \max(z, 0)$ be the ReLU activation function applied element-wise.
-    \item Given input the $x$, the model outputs $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)\in \R$. 
+    \item Given input the $x$, the model with parameter $\theta$ outputs $f_\theta(x) = \inprod{w,\phi(Ux)} = w^\top \phi(Ux)\in \R$. 
 \end{itemize}
 We start with a  weak bound on the Rademacher complexity which introduces the technical tools that we need to derive tighter bounds subsequently.
 
 \begin{theorem}\label{lec7:thm:thm_3}
-    For some constants $B_w > 0$ and $B_u > 0$, let
+    For some constants $B_w > 0$ and $B_u > 0$, let the hypothesis class $\cH$ be neural networks with bounded $\ell_2$ norms in the following sense
     \begin{equation}
-        \mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2 \leq B_w,\ \Norm{u_i}_2 \leq B_u,\ \forall i \in \{1,2,\dots,m\} }, \label{lec7:eqn:thm_3}
+        \mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2 \leq B_w,\ \Norm{u_i}_2 \leq B_u,\ \forall i \in \{1,2,\dots,m\} }\perm\label{lec7:eqn:thm_3}
     \end{equation}
-    and suppose $\Exp\sbr{\Norm{x}_2^2} \leq C^2$. Then
+     We also assume that the norm of the data are bounded in the sense of $\Exp[\Norm{x}_2^2]\leq C^2$. Then, 
     \begin{align}
         R_n(\mathcal{H}) \le 2 B_w B_u C\sqrt{\frac{m}{n}}.
     \end{align}
 \end{theorem}
+This Theorem indicates that $B_wB_uC\sqrt{m}$ is a complexity measure of the neural net that can control the generalization error. As discussed in Section~\ref{chap:generalization:sec:margin}, this Rademacher complexity bound implies a generalization bound of the form $O\left(B_wB_uC\sqrt{\frac{m}{\gamma^2 n}}\right)$ where $\gamma$ is the margin for the classification problem. 
 
-This bound is not ideal as it depends on the number of neurons~$m$. Empirically, it has been found that the generalization error does \emph{not} increase monotonically with~$m$. As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. This contradicts the bound above, which states that more neurons leads to worse generalization. We also note that the theorem can be generalized straightforwardly to the setting where the $w$ and $U$ are jointly constrained in the sense that we set $\mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2\cdot \left(\max_i\Norm{u_i}_2\right) \leq B}$ and obtain the generalization bound $        R_n(\mathcal{H}) \le 2 B C\sqrt{\frac{m}{n}}.$ However, the $\sqrt{m}$ dependency still exists under this formulation of $\cH$. 
-Nevertheless, we now derive this bound.
+However, this bound is far from ideal as it increase as the number of neurons~$m$ increases. 
+Empirical results suggest  that the generalization error at least does \emph{not} increase monotonically with $m$ \citep{belkin2019,neyshabur2017exploring}. 
+This means that the bound becomes loose for very large $m$, and it measures the complexity of the neural network in a suboptimal way. 
+%As more neurons are added to the model, thereby giving it more expressive power, studies have shown that generalization is improved \cite{belkin2019}. 
+%This contradicts the bound above, which states that more neurons leads to worse generalization. 
 
-\begin{proof}
-    By definition,
+We also note that the theorem can be generalized straightforwardly to the setting where the $w$ and $U$ are jointly constrained in the sense that we set 
+\begin{align}
+\mathcal{H} = \cbr{ f_\theta \mid \Norm{w}_2\cdot \left(\max_i\Norm{u_i}_2\right) \leq B}\,,\label{eqn:13}
+\end{align}
+ and obtain the generalization bound $        R_n(\mathcal{H}) \le 2 B C\sqrt{\frac{m}{n}}.$ However, the $\sqrt{m}$ dependency still exists under this formulation of $\cH$. 
+
+Nevertheless, we now prove this bound to build up some techniques, and will discuss its refinement in Section~\ref{sec:refined-bounds} and the broader picture in Chapter~\ref{chap:dl-overview}. 
+
+\begin{proof}[Proof of Theorem~\ref{lec7:thm:thm_3}] We have a few simplifications starting from the definition of Rademacher complexity:
     \begin{align}
         R_S(\mathcal{H}) 
         &= \Exp_\sigma\sbr{ \sup_\theta \frac{1}{n} \sum_{i=1}^n \sigma_i \inprod{w,\phi(Ux\sp{i})} }
         \\&= \frac{1}{n} \Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \sup_{\Norm{w}_2 \leq B_w} \inprod{w,\sum_{i=1}^n \sigma_i \phi(Ux\sp{i})} }
         \\&= \frac{B_w}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_2 }
-            &&\text{($\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
-        \\&\leq \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
-            &&\text{($\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
+            &&\text{(bc. $\textstyle\sup_{\Norm{w}_2\leq B}\inprod{w,v} = B\Norm{v}_2$)}
+	\end{align}
+ The steps above allow us to remove the presence of variable $w$ inside the supreme. Next, we change the $\ell_2$ norm to $\ell_\infty$ norm so that the matrix variable $U$ can be reduced to a vector variable. 
+        \begin{align}
+               R_S(\mathcal{H}) &  \leq \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \Norm{ \sum_{i=1}^n \sigma_i \phi(Ux\sp{i})}_\infty }
+            &&\text{bc. ($\Norm{v}_2 \leq \sqrt{m}\Norm{v}_\infty$)}
         \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{U : \Norm{u_j}_2 \leq B_u} \max_{1\leq j\leq m} \abs{ \sum_{i=1}^n \sigma_i \phi(u_j^\top x\sp{i})} } 
         \\&= \frac{B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \abs{ \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i})} }
         \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i \phi(u^\top x\sp{i}) }
             &&\text{(by Lemma \ref{lec8:lemma:absfortwo})} \label{lec7:eqn:nn-proof1}
         \\&\leq \frac{2B_w\sqrt{m}}{n}\Exp_\sigma\sbr{ \sup_{\Norm{u}_2 \leq B_u} \sum_{i=1}^n \sigma_i u^\top x\sp{i} }, \label{lec7:eqn:nn-proof2}
     \end{align}
-    where the last inequality follows by applying the contraction lemma (Talagrand's lemma) and observing that the ReLU function is $1$-Lipschitz. (Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$: this is the family that we are applying the contraction lemma to.)
+    where the last inequality follows by applying the contraction lemma (Talagrand's lemma, Lemma~\ref{lec6:lem:talagrand_lemma}) and observing that the ReLU function is $1$-Lipschitz. Observe that the expectation in \eqref{lec7:eqn:nn-proof1} is the Rademacher complexity for the model family $\{ x \mapsto \phi(u^\top x) \mid \Norm{u}_2 \leq B_u \}$, to which we apply the contraction lemma.
     
-    We now observe that the expectation in \eqref{lec7:eqn:nn-proof2} is the Rademacher complexity of the family of linear models $\{x \mapsto \inprod{u,x} \mid \Norm{u}_2\leq B_u\}$. Thus, applying Theorem~\ref{lec7:thm:l1-thm} yields
+    We now observe that the expectation in \Cref{lec7:eqn:nn-proof2} is the Rademacher complexity of the family of linear models $\{x \mapsto \inprod{u,x} \mid \Norm{u}_2\leq B_u\}$. Thus, applying Theorem~\ref{lec7:thm:l1-thm} for linear models yields
     \begin{equation}
-        R_S(\mathcal{H}) \leq \frac{2B_w\sqrt{m}}{n}B_u\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}.
+        R_S(\mathcal{H}) \leq \frac{2B_w\sqrt{m}}{n}B_u\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}\perm\label{eqn:12}
     \end{equation}
     
-    Taking the expectation of both sides and using similar steps to those in the proof of Theorem~\ref{lec7:thm:l1-thm} gives us
+    Taking the expectation of both sides of \Cref{eqn:12}  and using similar steps to those in the proof of Theorem~\ref{lec7:thm:l1-thm} yields
     \begin{align}
         R_n(\mathcal{H})  &= \Exp\left[ R_S(\mathcal{H})\right] \\
         &\leq \frac{2B_wB_u\sqrt{m}}{n} \Exp\sbr{\sqrt{\sum_{i=1}^n \Norm{x\sp{i}}_2^2}} \\
@@ -67,13 +81,20 @@ Nevertheless, we now derive this bound.
     
 \end{proof}
 
-This upper bound is undesirable since it grows with the number of neurons $m$, contradicting empirical observations of the generalization error decreasing with $m$.
+%This upper bound is undesirable since it grows with the number of neurons $m$, contradicting empirical observations of the generalization error decreasing with $m$.
 
 %*****************************************************************************
 
-\subsec{Refined bounds}
+\subsec{Refined path-norm bounds}\label{sec:refined-bounds}
 \newcommand{\boundsforcomp}{B}
-Next, we look at a finer bound that results from defining a new complexity measure. A recurring theme in subsequent proofs will be the functional invariance of two-layer neural networks under a class of rescaling transformations. The key ingredient will be the \textit{positive homogeneity} of the ReLU function, i.e.
+Next, we look at a finer bound that results from defining a new complexity measure. 
+A recurring theme in subsequent proofs will be looking for complexity measures that are more invariant to transformations of neural network parameters that preserve the functionality of the neural network. 
+
+A technical  example is the following: given a neural net $\theta = (w, U)$, let $u_j$ be the row of $U$ with the smallest $\ell_2$ norm. Suppose we split the neuron $j$ into two neurons by replacing $w_j, u_j$ with $w_j'=w_j/\sqrt{2}$ and $w_j'' = w_j/\sqrt{2}$ and replacing $u_j$ with  $u_j'=u_j/\sqrt{2}$ and $u_j'' = u_j/\sqrt{2}$. We obtain a neural network  with exactly the same functionality. The $\ell_2$ norm of $w$  and the maximum row norm of $U$ remains the same, and thus the quantity $\Norm{w}_2\cdot \left(\max_i\Norm{u_i}_2\right)$ (in \Cref{eqn:13}) remains the same, but the number of neuron increase by 1, which means the generalization bound increases. Such a discrepancy may not be a disaster---we should not always expect generalization bounds to be tight---, but it is certainly desirable to fix it. 
+
+
+ %will be the functional invariance of two-layer neural networks under a class of rescaling transformations. 
+The key ingredient of these transformation of neural network parameters that preserve its functionality is  the \textit{positive homogeneity} of the ReLU function, i.e., 
 \begin{equation}
 \alpha \phi(x) = \phi(\alpha x) \qquad \forall \alpha > 0.
 \end{equation}
@@ -81,28 +102,29 @@ This implies that for any $\lambda_i > 0$ ($i = 1, \dots, m$), the transformatio
 \begin{equation}
 w_i\cdot \phi \left(u_i^\top x\sp i \right) = (\lambda_i w_i) \cdot \phi\l(\l( \frac{u_i}{\lambda_i}\r)^\top x\sp i\r).   
 \end{equation}
-In light of this, we devise a new complexity measure $C(\theta)$ that is also invariant under such transformations and use it to prove a better bound for the Rademacher complexity. This positive homogeneity property is absent in the complexity measure used in the hypothesis class \eqref{lec7:eqn:thm_3} of Theorem \ref{lec7:thm:thm_3}.
+In light of this, we devise a new complexity measure $C(\theta)$ that is also invariant under such transformations and use it to prove a better bound for the Rademacher complexity. This invariance is absent in the complexity measure used in the hypothesis class \eqref{lec7:eqn:thm_3} of Theorem \ref{lec7:thm:thm_3} or the hypothesis class \eqref{eqn:13} .
 
 \begin{theorem}\label{lec8:thm:thm-improved-nn-rc}
-$\operatorname{Let} C(\theta)=\sum_{j=1}^{m}\left|w_{j}\right|\left\|u_{j}\right\|_{2},$ and for some constant $\boundsforcomp>0$ consider the hypothesis class
+$\operatorname{Let} C(\theta)=\sum_{j=1}^{m}\left|w_{j}\right|\left\|u_{j}\right\|_{2}$. For some constant $\boundsforcomp>0$, consider the hypothesis class
 \begin{equation}
-\mathcal{H}=\left\{f_{\theta} \mid C(\theta) \leq \boundsforcomp\right\}. \label{eqn:H}
+\mathcal{H}=\left\{f_{\theta} \mid C(\theta) \leq \boundsforcomp\right\}\perm \label{eqn:H}
 \end{equation}
-If $\left\|x\sp{i}\right\|_{2} \leq C$ for all $i \in\{1, \ldots, n\},$ then
+Assume that $\left\|x\sp{i}\right\|_{2} \leq C$ for all $i \in\{1, \ldots, n\}.$ Then, we have
 \begin{equation}
-R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
+R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}\perm
 \end{equation}
 \end{theorem}
-
-\begin{remark}
-	Compared to Theorem~\ref{lec7:thm:thm_3}, this bound does not explicitly depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound if the value of the new complexity measure $C(\theta)$ is reasonable. In contrast, the bound of Theorem \ref{lec7:thm:thm_3} explicitly grows with the total number of neurons. In fact, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is strictly stronger than Theorem~\ref{lec7:thm:thm_3} as elaborated below. Note that 
+In contrast with Theorem~\ref{lec7:thm:thm_3}, this bound does not \textit{explicitly} depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound as long as the value of the new complexity measure $C(\theta)$ does not increase as we increase the number of neurons. The bound of Theorem \ref{lec7:thm:thm_3}, on the other hand, explicitly grows with the total number of neurons, and thus a good generalization bound with a larger number of neurons is impossible by using Theorem~\ref{lec7:thm:thm_3}. In fact, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is strictly stronger than Theorem~\ref{lec7:thm:thm_3} as elaborated below. Note that 
 	\begin{align}
 		\sum |w_j|\|u_j\|_2 &\le \left(\sum |w_j|^2\right)^{1/2} \left(\sum\|u_j\|_2^2\right)^{1/2} \tag{by Cauchy-Schwarz inequality} \\
 		& \le \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2
 	\end{align}
-	Therefore, if we consider $\cH^1 = \{f_\theta \mid \sum |w_j|\|u_j\|_2\le B'\}$ and $\cH^2 = \{f_\theta \mid \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2 \le B'\}$, then either Theorem~\ref{lec8:thm:thm-improved-nn-rc} on $\cH^1$ or Theorem~\ref{lec7:thm:thm_3} on $\cH^2$ gives the same generalization bound $O(B'/\sqrt{n})$, but $\cH^1 \supset \cH^2$. 
+	Therefore, if we consider $\cH^1 = \{f_\theta \mid \sum |w_j|\|u_j\|_2\le B'\}$ and $\cH^2 = \{f_\theta \mid \|w\|_2 \cdot \sqrt{m} \cdot \max_{j}\|u_j\|_2 \le B'\}$, then either Theorem~\ref{lec8:thm:thm-improved-nn-rc} on $\cH^1$ or Theorem~\ref{lec7:thm:thm_3} on $\cH^2$ gives the same Rademacher complexity bound $O(B'/\sqrt{n})$, but $\cH^1 \supset \cH^2$. 
 	
-	Moreover, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is stronger as we have more neurons---this is because the hypothesis class $\cH$ as defined in~\eqref{eqn:H} is bigger as $m$ increases. Because of this, it's possible to obtain a generalization guarantee that decreases as $m$ increases, as shown in Section~\ref{sec:gen-bounds:decreasing-in-m}. 
+	Moreover, interestingly, Theorem~\ref{lec8:thm:thm-improved-nn-rc} give a \textit{stronger} conclusion as we have more neurons. Let $\cH_m$ be the hypothesis class $\left\{f_{\theta} \mid C(\theta) \leq \boundsforcomp\right\}$ where $\theta$ uses $m$ neurons (the dependency on $m$ was omitted in the context of Theorem~\ref{lec8:thm:thm-improved-nn-rc} because $m$ was considered as fixed there). We have 
+	$\cH_m \subset \cH_{m+1}$ whereas the Rademacher complexity bound for $\cH_{m+1}$ is the \textit{same} as $\cH_m$. This means that the bound for $\cH_{m+1}$ implies the bound for $\cH_m$. 	
+	%this is because the hypothesis class $\cH$ as defined in~\eqref{eqn:H} is bigger as $m$ increases. 
+	Because of this property, Theorem~\ref{lec8:thm:thm-improved-nn-rc} can be  possibly used to obtain a generalization guarantees that decrease as $m$ increases, as discussed in Section~\ref{sec:gen-bounds:decreasing-in-m}. 
 	
 %	For example, consider solving the constrained problem
 %	\begin{equation}
@@ -111,7 +133,7 @@ R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}.
 %	\text{$f_\theta$ fits the data  $\{(x\sp{i}, y\sp{i})\}_{i=1}^n$.}
 %	\end{equation}
 %	In this case, $\rho_m$ monotonically decreases as the number of neurons $m$ increases. Indeed, models with more parameters necessarily include models with a lower number of parameters and thus those of lower complexity.  As a result, it is possible to obtain lower complexity models by increasing the number of parameters $m$.
-\end{remark}
+%\end{remark}
 
 \begin{proof}[Proof of Theorem~\ref{lec8:thm:thm-improved-nn-rc}]
 Due to the positive homogeneity of the ReLU function $\phi$, it will be useful to define the $\ell_2$-normalized weight vector $\bar{u}_j \defeq u_j / \norm{u_j}_2$ so that $\phi\left(u_j^\top x\right) = \norm{u_j}_2 \cdot \phi(\bar{u}_j^\top x)$. The empirical Rademacher complexity satisfies
