@@ -13,15 +13,22 @@ In this chapter, we will instantiate the Rademacher complexity theory developed 
 
 %In order to motivate the definition of margin and its use in analyzing classification problems, we will first clarify some high-level formulation choice for classification problem on what are the hypothesis class and loss functions. 
 To motivate the concept of margin and its role in analyzing classification problems, we will first clarify the choice of some key elements in the formulation of classification problems: the hypothesis class and the loss function. 
-	As an example, consider linear classification, where the model outputs $\ind{w^\top x \ge 0}$ as the prediction. The most direct approach is to define the family of hypothesis $\cH = \{x\mapsto \ind{w^\top x \ge 0}: w\in \R^d\}$, and the loss function $\ell: \{0, 1\}\times \{0, 1\}\rightarrow \R$ is defined to be $\ell(\hat{y}, y) =\ind{\hat{y} \neq y}$. This formulation is essentially the same as in Example~\ref{example:binary-classficiation-rc} except that the label set in that example is  $\{\pm 1\}$ for convenience. One drawback of this formulation is that  the loss function and the model are both discontinuous, which makes them difficult to analyze. More importantly, the hypothesis class is scale-invariant---for any $\alpha> 0$, we have $\ind{w^\top x \ge 0} = \ind{\alpha w^\top x \ge 0}$. This means that the formulation does not allow us to consider finer details about the classifier, e.g., the norm of $w$ and the ``confidence'' of the prediction. It's worth noting that $w^\top x$ is the logit in logistic regression, where the model outputs a probability distribution for the two classes. The confidence of the classifier on training examples apriori should somewhat affect the generalization of the classifier, but this formulation does not take it into account.
+For example, in~\Cref{example:binary-classficiation-rc}, we considered linear classification, where the model outputs $\sgn(w^\top x \ge 0)$ as the prediction. The most direct approach is to define the family of hypothesis $\cH = \{x\mapsto \sgn(w^\top x \ge 0): w\in \R^d\}$, and the loss function $\ell: \{\pm1\}\times \{\pm 1\}\rightarrow \R$ is defined to be $\ell(\hat{y}, y) =\ind{\hat{y} \neq y}$. One drawback of this formulation is that  the loss function and the model are both discontinuous, which makes them difficult to analyze. More importantly, the hypothesis class is scale-invariant---for any $\alpha> 0$, we have $\sgn(w^\top x \ge 0) = \sgn(\alpha w^\top x \ge 0)$. This means that the formulation does not allow us to consider finer details about the classifier, e.g., the norm of $w$ and the ``confidence'' of the prediction. It's worth noting that $w^\top x$ is the logit in logistic regression, where the model outputs a probability distribution for the two classes. The confidence of the classifier on training examples apriori should somewhat affect the generalization of the classifier, but this formulation does not take it into account.
 
-It turns out that an alternative formulation allows us to consider the norm and ``confidence'' of the classifier
+It turns out that an alternative formulation allows us to take the norm and ``confidence'' of the classifier into account.  We let the hypothesis class be the family of functions that outputs the \textit{real-valued} logits \textit{without the threshold}. For example, for linear classification, we let $\cH = \{x\mapsto w^\top x: w\in \R^d \}$ (or its subsets by restricting the norm of $w$.) We fold the threshold function in the definition of the loss, that is, given a model $h: \cX \rightarrow \R$, let the 0-1 loss for example $(x,y)$ be
+\begin{align}
+\ellbinary((x,y), h) = \ind{yh(x) \le 0 } \perm \label{eqn:17}
+\end{align}
+This way, norm constrain on $w$ will be able to affect the complexity of the hypothesis class. However, the loss function is still discontinuous. We will design a surrogate continuous loss function below for analysis.  
 
-Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and when we compare it to the outcome (0 or 1), its closeness to the true output gives us a measure of how confident we are in the prediction.
+%Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and when we compare it to the outcome (0 or 1), its closeness to the true output gives us a measure of how confident we are in the prediction.
 
-Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a ``better'' decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red boundary. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on the generalization gap is.
+Now we formalize the notion of margin, which plays an important role in the analysis. 
+As shown in Figure \ref{lec6:fig:margin}, intuitively, the black line is a ``better'' or more confident decision boundary than the red line because datapoints are further away from the black boundary than the read boundary.  
+We will define the margin of a classifier to be the minimum distance from any point to the decision boundary, and thus the black line has bigger margin than the red line. 
+In this section, we will prove that the larger margin and smaller norm will lead to better generalization error. 
 
-\begin{figure}[ht!]
+\begin{figure}[t]
     \begin{center}
   \includegraphics[width=0.5\textwidth]{figures/margin.png}
   \end{center}
@@ -29,19 +36,22 @@ Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Int
   \label{lec6:fig:margin}
 \end{figure}
 
-\subsec{Formalizing margin theory} \label{sec:formal_margin}
-First, assume that the dataset $\cD = ((x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n}))$ is \textit{completely separable}. In other words, there exists some $h_\theta\in\cH$ such that $y^{(i)} = \sgn(h_\theta(x^{(i)}))$ holds for all $( x^{(i)},y^{(i)})\in \cD$. This is not a necessary condition for our final bound but will make the derivation cleaner.
+%\subsec{Formalizing margin theory} \label{sec:formal_margin}
+We start with a formal mathematical definition of the margin. We will assume throughout this section that the dataset $\cD = ((x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n}))$ is \textit{separable} by the hypothesis class, that is,  exists some $h_\theta\in\cH$ that fits the data with zero error: $\forall i, y^{(i)} = \sgn(h_\theta(x^{(i)}))$. This assumption can be relaxed or weakened, but we assume it to  make the derivation cleaner. The separability assumption is empirically often true because the model family is very expressive and the training error can be close to zero. 
 
-\begin{definition}[(Unnormalized) Margin]
-Fix the hypothesis $h_\theta$. The \textit{(unnormalized) margin} for example $(x, y)$ is defined as $\margin(x) = yh_\theta(x)$. Margin is only defined on examples where $\sgn(h_\theta(x)) = y$. (Note that $\margin(x)\geq 0$ because of our assumption of complete separability.)
+The first definition is the margin of a single example. 
+\begin{definition}[(Unnormalized) margin]
+The \textit{(unnormalized) margin} of a model $h_\theta$ for example $(x, y)$ is defined as $\margin(x) = yh_\theta(x)$. Typically, margin is only defined on correctedly labeled examples with $\sgn(h_\theta(x)) = y$. Under separability condition, all the datapoints have well-defined margin $\margin(x)\geq 0$. 
 \end{definition}
 
-\begin{definition}[Minimum margin] Given a dataset $\cD = ((x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n}))$, the \textit{minimum margin} over the dataset is defined as $\gamma_{\min} \triangleq \min_{i\in\{1,\dots,|\cD|\}} y^{(i)}h_\theta(x^{(i)})$.
+Then, we can define the margin for a training dataset. 
+\begin{definition}[Minimum margin] Given a dataset $S = \{(x\sp{1}, y\sp{1}), \dots, (x\sp{n}, y\sp{n})\}$, the \textit{minimum margin} of model $h_\theta$ over the dataset is defined as $\gamma_{\min} \triangleq \min_{i\in [n]} y^{(i)}h_\theta(x^{(i)})$.
 \end{definition}
 
-Our final bound will have the form (generalization gap) $\leq f(\text{margin},\text{parameter norm})$. This is very generic since there are many different bounds we could derive based on what margin we use. For this current setting we are using $\gamma_{\min}$, which is the minimum margin, but in other settings could use $\gamma_{\text{average}}$, which is the average margin of each point in the dataset.
+Our final result bound from above the generalization gap by a function of the margin and the parameter norm. In the literature, there are various bounds that involve variants of the definition of the margin. %we could derive based on what margin we use. For this current setting we are using $\gamma_{\min}$, which is the minimum margin, 
+For example, some more refined generalization bounds can depend on the margin averaged over the datasets~\citep{srebro2010optimistic,wei2020improved}.
 
-We will begin by introducing the idea of a \textit{surrogate loss}, a loss function which approximates zero-one loss but takes the scale of the margin into account. The \textit{margin loss} (also known as \textit{ramp loss}) is defined as 
+The 0-1 loss in \Cref{eqn:17}  is a discontinuous function of the $\margin(x)$. We introduce a \textit{surrogate loss}, a loss function which approximates zero-one loss but takes the scale of the margin into account. The \textbf{margin loss}, also known as \textbf{ramp loss}, is defined as 
 \begin{equation}
     \ell_\gamma(t) = \begin{cases} 
       0, & t\geq \gamma \\
@@ -54,11 +64,10 @@ We will begin by introducing the idea of a \textit{surrogate loss}, a loss funct
     \begin{center}
   \includegraphics[width=0.5\textwidth]{figures/margin_loss.png}
   \end{center}
-  \caption{Plotted margin loss.}
+  \caption{Plotted margin loss.\tnotelong{also draw the binary loss; have some label for $x$ axis and $y$ axis}}
   \label{lec6:fig:marginloss}
 \end{figure}
-
-It is plotted in Figure \ref{lec6:fig:marginloss}. For convenience, define $\ell_\gamma((x,y), h) \triangleq \ell_\gamma(yh(x))$. We can view $\ell_\gamma$ as a continuous version of $\err$ that is more sensitive to the scale of the margin on $[0,\gamma]$. Notice that $\err$ is always less than or equal to the $\ell_\gamma$ when $\gamma\geq 0$, i.e.
+Here $\gamma$ is a tunable parameter that will be chosen in the analysis. Figure \ref{lec6:fig:marginloss} plots the ramp loss. For convenience, define $\ell_\gamma((x,y), h) \triangleq \ell_\gamma(yh(x))$. We can view $\ell_\gamma$ as a continuous version of $\err$ that is more sensitive to the scale of the margin on $[0,\gamma]$. Notice that $\err$ is always less than or equal to the $\ell_\gamma$ when $\gamma\geq 0$, i.e.
 \begin{equation}
     \err((x,y), h) = \ind{yh(x) < 0}\leq \ell_\gamma(yh(x)) =\ell_\gamma ((x,y), h)
 \end{equation}
