@@ -76,18 +76,16 @@ holds for all $(x,y)\sim P$. Taking the expectation over $(x,y)$ on both sides o
     L(h) = \Exp_{(x,y)\sim P} \left[ \err((x,y), h) \right] \leq \Exp_{(x,y)\sim P} \left[ \ell_\gamma ((x,y), h) \right].
 \end{equation}
 
-Therefore, the population loss is bounded by the expectation of the margin loss, and so it is sufficient to bound the expectation of the margin loss in order to bound the population loss.
-
-Define the population and empirical versions of the margin loss:
+Therefore, the population 0-1 loss is bounded by the population margin loss, and so it is sufficient to upperbound the latter, which we will do below. 
+Formally, define the population and empirical versions margin losses as:
 \begin{equation}
-L_\gamma(h) = \Exp_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gamma(h) = \sum_{i=1}^n\l [\ell_\gamma((x^{(i)},y^{(i)}), h)\r].
+L_\gamma(h) = \Exp_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gamma(h) = \sum_{i=1}^n\l [\ell_\gamma((x^{(i)},y^{(i)}), h)\r]\perm
 \end{equation}
-
-By Corollary \ref{lec6:cor:ggap-rsbound}, we see that with probability at least $1-\delta$,
+By the machinery of Rademacher complexity (e.g., Corollary \ref{lec6:cor:ggap-rsbound}) we can bound the generalization of the margin loss by the Rademacher complexity of the margin loss: with probability at least $1-\delta$, 
 \begin{equation}
 L_\gamma(h) - \hat{L}_\gamma(h)\leq 2R_S(\cF) + 3\sqrt{\frac{\log (2/\delta)}{2n}},
 \end{equation}
-where $\cF = \{(x,y)\mapsto \ell_\gamma((x,y), h)\mid h\in\cH\}$. Note that if we set $\gamma\leq \gamma_{\min}$, then $\hat{L}_{\gamma}(h) = 0$. This follows because by definition of $\gamma_{\min}$, $y^{(i)}h(x^{(i)})\geq \gamma_{\min}$ for any $(x^{(i)}, y^{(i)})\in \cD$. As a result, $\ell_\gamma((x^{(i)}, y^{(i)}), h) = \ell_\gamma(y^{(i)}h(x^{(i)})) = 0$ holds. Therefore, it suffices to bound $R_S(\cF)$.
+where $\cF = \{(x,y)\mapsto \ell_\gamma((x,y), h)\mid h\in\cH\}$ in the family of margin losses. Note that if we set $\gamma\leq \gamma_{\min}$, then $\hat{L}_{\gamma}(h) = 0$. This follows because by definition of $\gamma_{\min}$, $y^{(i)}h(x^{(i)})\geq \gamma_{\min}$ for any $(x^{(i)}, y^{(i)})\in \cD$. As a result, $\ell_\gamma((x^{(i)}, y^{(i)}), h) = \ell_\gamma(y^{(i)}h(x^{(i)})) = 0$ holds. Therefore, it suffices to bound $R_S(\cF)$.
 
 We will now use \textit{Talagrand's lemma} to bound $R_S(\cF)$ in terms of $R_S(\cH)$ to remove any dependence on the loss function from the upper bound. 
  
