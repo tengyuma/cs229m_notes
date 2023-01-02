@@ -2,13 +2,16 @@
 %\setcounter{section}{0}
 
 %\metadata{lecture ID}{Your names}{date}
-\metadata{6}{Daniel Do}{February 1st, 2021}
+%\metadata{6}{Daniel Do}{February 1st, 2021}
+%In this chapter, we will instantiate Rademacher complexity for two important hypothesis classes: linear models and two-layer neural networks. In the process, we will develop margin theory and use it to bound the generalization gap for binary classifiers.
+%\tnote{todo}
 
-In this chapter, we will instantiate Rademacher complexity for two important hypothesis classes: linear models and two-layer neural networks. In the process, we will develop margin theory and use it to bound the generalization gap for binary classifiers.
 
-\sec{Margin theory for classification problems} \label{chap:generalization:sec:margin}
+In this chapter, we will instantiate the Rademacher complexity theory developed in Chapter~\ref{chap:conc} to linear classifiers, and obtain generalization bounds that depend on the margin and norm of the classifier.  In section~\ref{chap:generalization:sec:margin}, we will first present the margin approach for classification problems that are in principle applicable to general hypothesis class. In Section~\ref{lec7:sec:lin_models}, we will bound the Rademacher complexity of linear models and combine it with the margin approach to obtain generalization bounds for linear classifiers.
 
-\subsec{Intuition}
+\sec{Margin-based approach  for classification problems} \label{chap:generalization:sec:margin}
+
+%\subsec{Intuition}
 Assume that we are in the same setting as in the previous section. A fundamental problem we face in this setting is that we do not have a continuous loss: everything is discrete in the output space. We need to find a way to reason about the scale of the output. An example of this is logistic regression: the logistic regression model outputs a probability, and when we compare it to the outcome (0 or 1), its closeness to the true output gives us a measure of how confident we are in the prediction.
 
 Figure \ref{lec6:fig:margin} gives similar intuition for linear classifiers. Intuitively, the black line is a ``better'' decision boundary than the red line because the minimum distance from any point to the black boundary is greater than the minimum distance from any point to the red boundary. In the next section, we will formalize this intuition by proving that the larger this margin is, the smaller the bound on the generalization gap is.

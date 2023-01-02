@@ -114,6 +114,8 @@ Assume that $\left\|x\sp{i}\right\|_{2} \leq C$ for all $i \in\{1, \ldots, n\}.$
 R_{S}(\mathcal{H}) \leq \frac{2 \boundsforcomp C}{\sqrt{n}}\perm
 \end{equation}
 \end{theorem}
+The complexity measure $C(\theta)$ is closely related to the path norm defined in~\citet{neyshabur2015path}. In this monograph, we refer to it as a form of path norm. 
+
 In contrast with Theorem~\ref{lec7:thm:thm_3}, this bound does not \textit{explicitly} depend on the number of neurons $m$. Thus, it is possible to use more neurons and still maintain a tight bound as long as the value of the new complexity measure $C(\theta)$ does not increase as we increase the number of neurons. The bound of Theorem \ref{lec7:thm:thm_3}, on the other hand, explicitly grows with the total number of neurons, and thus a good generalization bound with a larger number of neurons is impossible by using Theorem~\ref{lec7:thm:thm_3}. In fact, Theorem~\ref{lec8:thm:thm-improved-nn-rc} is strictly stronger than Theorem~\ref{lec7:thm:thm_3} as elaborated below. Note that 
 	\begin{align}
 		\sum |w_j|\|u_j\|_2 &\le \left(\sum |w_j|^2\right)^{1/2} \left(\sum\|u_j\|_2^2\right)^{1/2} \tag{by Cauchy-Schwarz inequality} \\
@@ -188,7 +190,7 @@ Taking the expectation over $\sigma$ (and noting that $\sigma \overset d = -\sig
 
 
 
-\sec{More implications and discussions on two-layer neural nets}
+\sec{Implications of the generalization bounds and discussions}
 In this section, we discuss practical implications of the refined neural network bound. 
 
 \subsec{Connection to \texorpdfstring{$\ell_2$}{L2} regularization}\label{sec:gen-bounds:impliciation}
