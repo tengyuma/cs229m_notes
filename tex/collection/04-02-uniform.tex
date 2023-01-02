@@ -90,7 +90,7 @@ This is the family of losses induced by the hypothesis functions in $\cH$. We al
 where the last step follows by Theorem \ref{lec5:thm:thm1}. 
 
 Thus, $2R_n(\cF)$ is an upper bound for the generalization error. In this context, $R_n(\cF)$ can be interpreted as how well the loss sequence $\ell((x^{(1)}, y^{(1)}), h), \dots \ell((x^{(n)}, y^{(n)}), h)$ correlates with $\sigma_1, \dots, \sigma_n$.
-\begin{example}[Binary classification]
+\begin{example}[Binary classification]\label{example:binary-classficiation-rc}
 Consider the binary classification setting where $y \in \{\pm 1\}$ and the model family $\cH$ consists of functions that maps $\cX$ to $\{\pm 1\}$.\footnote{We note that this is not necessarily the best abstraction of the classification problems. See Section~\ref{chap:generalization:sec:margin} for a more margin-based approach that is more practically relevant.} 
 Let $\ell_{0-1}$ denote the zero-one loss function. Note that
 \begin{equation}\label{lec5:eqn:01}
