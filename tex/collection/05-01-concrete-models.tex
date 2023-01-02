@@ -83,51 +83,65 @@ L_\gamma(h) = \Exp_{(x,y)\sim P}\l[ \ell_\gamma((x,y), h)\r], \quad \hat{L}_\gam
 \end{equation}
 By the machinery of Rademacher complexity (e.g., Corollary \ref{lec6:cor:ggap-rsbound}) we can bound the generalization of the margin loss by the Rademacher complexity of the margin loss: with probability at least $1-\delta$, 
 \begin{equation}
-L_\gamma(h) - \hat{L}_\gamma(h)\leq 2R_S(\cF) + 3\sqrt{\frac{\log (2/\delta)}{2n}},
+L_\gamma(h) - \hat{L}_\gamma(h)\leq 2R_S(\cF) + 3\sqrt{\frac{\log (2/\delta)}{2n}}\,,
 \end{equation}
-where $\cF = \{(x,y)\mapsto \ell_\gamma((x,y), h)\mid h\in\cH\}$ in the family of margin losses. Note that if we set $\gamma\leq \gamma_{\min}$, then $\hat{L}_{\gamma}(h) = 0$. This follows because by definition of $\gamma_{\min}$, $y^{(i)}h(x^{(i)})\geq \gamma_{\min}$ for any $(x^{(i)}, y^{(i)})\in \cD$. As a result, $\ell_\gamma((x^{(i)}, y^{(i)}), h) = \ell_\gamma(y^{(i)}h(x^{(i)})) = 0$ holds. Therefore, it suffices to bound $R_S(\cF)$.
+where $\cF = \{(x,y)\mapsto \ell_\gamma((x,y), h)\mid h\in\cH\}$ in the family of margin losses. Note that if we set $\gamma\leq \gamma_{\min}$, then $\forall i, y^{(i)}h(x^{(i)})\geq \gamma_{\min}\ge \gamma$ which implies that $\ell_\gamma((x^{(i)}, y^{(i)}), h)=0$. That is, the training margin loss $\hat{L}_{\gamma}(h) = 0$. 
+Therefore, in order to bound $L_\gamma(h)$, it suffices to bound $R_S(\cF)$.
+%This follows because by definition of $\gamma_{\min}$, $y^{(i)}h(x^{(i)})\geq \gamma_{\min}$ for any $(x^{(i)}, y^{(i)})\in \cD$. As a result, $\ell_\gamma((x^{(i)}, y^{(i)}), h) = \ell_\gamma(y^{(i)}h(x^{(i)})) = 0$ holds. 
 
-We will now use \textit{Talagrand's lemma} to bound $R_S(\cF)$ in terms of $R_S(\cH)$ to remove any dependence on the loss function from the upper bound. 
+It's only worthwhile going these steps via the margin loss if the Rademacher complexity of the margin loss family $\cF$ can be more amenable to theoretical analysis, which we wil perform next.  We first introduce a tool, called \textit{Talagrand's lemma} or \textit{Lipschitz contraction lemma} that can be used to deal with any Lipschitz loss function or generally Lipschitz composition. We will use to bound $R_S(\cF)$ in terms of $R_S(\cH)$ to remove any dependence on the loss function. 
  
-\begin{lemma}[Talagrand's lemma] \label{lec6:lem:talagrand_lemma}
+\begin{lemma}[Talagrand's contraction lemma] \label{lec6:lem:talagrand_lemma}
 Let $\phi:\R\to\R$ be a $\kappa$-Lipschitz function. Then \begin{equation}
     R_S(\phi\circ \cH)\leq \kappa R_S(\cH),
 \end{equation} 
 where $\phi\circ\cH = \{z\mapsto \phi(h(z))\mid h\in\cH\}$.
 \end{lemma}
 
-We can use Talagrand's lemma directly with $\phi(t) = \ell_\gamma(t)$, which is $\frac{1}{\gamma}$-Lipschitz. We can express $\cF$ as $\cF=\ell_\gamma\circ\cH'$ where $\cH' = \{(x,y)\to yh(x)\mid h\in\cH\}$. Applying Talagrand's lemma, we see that
-
+We apply the Talagrand's lemma with $\phi(t) = \ell_\gamma(t)$, which is $\frac{1}{\gamma}$-Lipschitz. We can express $\cF$ as $\cF=\ell_\gamma\circ\cH'$ where $\cH' = \{(x,y)\to yh(x)\mid h\in\cH\}$ is the family of the margin (which is a slightly variant of the model family due to the multiplication with the $y$). 
 \begin{align}
 R_S(\cF) &\leq \frac{1}{\gamma}R_S(\cH') \\
 &= \frac{1}{\gamma}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i y^{(i)}h(x^{(i)}) \r] \\
-&= \frac{1}{\gamma}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i h(x^{(i)})  \r] \\
+&= \frac{1}{\gamma}\Exp_{\sigma_1,\dots, \sigma_n} \l[ \sup_{h\in \cH} \frac{1}{n} \sum^n_{i=1} \sigma_i h(x^{(i)})  \r] && \text{bc. $y^{(i)}\sigma_i$ has the same distribution as $\sigma_i$ }\\
 &= \frac{1}{\gamma}R_S(\cH).
 \end{align}
 
 Putting this all together, we have shown that for $\gamma = \gamma_{\min}$,
 \begin{align}
-\Err(h) \leq L_\gamma(h) &\leq 0 + O \left( \frac{R_S(\cH)}{\gamma} \right) + \tilO \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right) \\
-&= O \left( \frac{R_S(\cH)}{\min_i y\sp{i} h(x\sp{i}) } \right) + \tilO \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right).
+\Err(h) \leq L_\gamma(h) &\leq 0 + O \left( \frac{R_S(\cH)}{\gamma} \right) + O \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right) \\
+&= O \left( \frac{R_S(\cH)}{\min_i y\sp{i} h(x\sp{i}) } \right) + \underbrace{O \left( \sqrt{\frac{\log (2 / \delta)}{2n}} \right)}_{\textup{low order term}}.
 \end{align}
 
-In other words, for training data of the form $S = \{(x\sp{i},y\sp{i})\}_{i=1}^n \subset \mathbb{R}^d \times \{-1,1\}$, a hypothesis class~$\mathcal{H}$ and 0-1 loss, we can derive a bound of the form
-\begin{equation}\label{lec7:eqn:generalization_loss}
-    \text{generalization loss} \leq \frac{2R_S(\mathcal{H})}{\gamma_{\mathrm{min}}} + \text{low-order term},
-\end{equation}
-where $\gamma_\mathrm{min}$ is the minimum margin achievable on~$S$ over those hypotheses in $\cH$ that separate the data, and $R_S(\cH)$ is the empirical Rademacher complexity of $\cH$. Such bounds state that simpler models will generalize better beyond the training data, particularly for data that is strongly separable.
+%In other words, for training data of the form $S = \{(x\sp{i},y\sp{i})\}_{i=1}^n \subset \mathbb{R}^d \times \{-1,1\}$, a hypothesis class~$\mathcal{H}$ and 0-1 loss, we can derive a bound of the form
+%\begin{equation}\label{lec7:eqn:generalization_loss}
+%    \text{g} \leq O\left(\frac{R_S(\mathcal{H})}{\gamma_{\mathrm{min}}}\right) + \text{low-order term},
+%\end{equation}
+%where $\gamma_\mathrm{min}$ is the minimum margin achievable on~$S$ over those hypotheses in $\cH$ that separate the data, and $R_S(\cH)$ is the empirical Rademacher complexity of $\cH$. 
+%Such bounds state that simpler models will generalize better beyond the training data, particularly for data that is strongly separable.
 
-\begin{remark} \label{lec7:rmk:union_bound_margin}
-Note there is a subtlety here. If we think of the dataset as random, it follows that $\gamma_{\min}$ is a random variable. Consequently, the $\gamma$ we choose to define the hypothesis class is random, which is not a valid choice when thinking about Rademacher complexity! Technically we cannot apply Talagrand's lemma with a random $\kappa$ (which we took to be $1/\gamma$). Also, when we use concentration inequalities, we implicitly assume that the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$ are independent of each other. That is not the case if $\gamma$ is dependent on the data.
+%\begin{remark} \label{lec7:rmk:union_bound_margin}
+%Consequently, the $\gamma$ we choose to define the hypothesis class is random, which is not a valid choice when thinking about Rademacher complexity! 
+	
+\noindent{\bf Caveat and Fixes.}
+We note that the argument above has a caveat and is not entirely correct. 
+In the context of standard Rademacher complexity machinery (e.g., Corollary \ref{lec6:cor:ggap-rsbound}), the dataset $S$ is a  random variable, whereas the loss function $\ell$ and hypothesis class $\cH$ (and the class of losses $\cF$) are  fixed object that cannot depend on the dataset $S$. The technical reason for this requirement is that we need the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$'s to be independent with each other to apply concentration inequalities. This is not true when $\gamma$ depends on the dataset $S$. Therefore, choosing the margin loss $\ell_\gamma$ with $\gamma$ depending on the dataset is not allowed when we invoke Corollary~\ref{lec6:cor:ggap-rsbound}. 
 
-We sketch out how one might address this issue below. The main idea is to do another union bound over $\gamma$. Choose a family $\Gamma = \left\{ 2^k: k \in [-B, B] \right\}$ for some $B$. Then, for every fixed $\gamma \in \Gamma$, with probability greater than $1 - \delta$,
+%Technically we cannot apply Talagrand's lemma with a random $\kappa$ (which we took to be $1/\gamma$). 
+%Also, when we use concentration inequalities, we implicitly assume that the $\ell_\gamma((x\sp{i}, y\sp{i}), h)$ are independent of each other. That is not the case if $\gamma$ is dependent on the data.
+
+Fortunately, there is a simple fix for this caveat, and in general any similar issues involving a single variable or a constant number of variables could be addressed by an additional layer of union bound as sketched below. 
+%We sketch out how one might address this issue below. 
+The main idea is to do another union bound over the choice of $\gamma$ so that we have uniform convergence of the set of $\gamma$.  
+We choose a grid of $\gamma$ in the log space, that is, define  $\Gamma = \left\{ 2^k: k \in [-B, B] \right\}$ for some sufficiently large $B$ that contains $2B+1$ choices of $\gamma$'s. 
+For every fixed $\gamma \in \Gamma$, with probability greater than $1 - \delta/(2B+1)$, we have
 \begin{align}
-\Err(h) \leq \hatL_\gamma (h) + O \left( \frac{R_S(\cH)}{\gamma} \right) + \tilO \left( \sqrt{\frac{\log \frac{1}{\delta}}{n}} \right).
+\Err(h) \leq \hatL_\gamma (h) + O \left( \frac{R_S(\cH)}{\gamma} \right) + O \left( \sqrt{\frac{\log \frac{2B+1}{\delta}}{n}} \right).
 \end{align}
-Taking a union bound over all $\gamma \in \Gamma$, it further holds that for all $\gamma \in (0, B)$, 
+The, we taking a union bound over all $\gamma \in \Gamma$. Then, with probability greater than $1 - \delta$, for all $\gamma \in \Gamma$, 
 \begin{align}
-    \Err(h) \leq \hatL_\gamma (h) + O \left( \frac{R_S(\cH)}{\gamma} \right) + \tilO \left( \sqrt{\frac{\log \frac{1}{\delta}}{n}}\right) + \tilO \left ( \sqrt{\frac{\log B}{n}} \right ). \label{lec7:eqn:unionboundmargin}
+    \Err(h) \leq \hatL_\gamma (h) + O \left( \frac{R_S(\cH)}{\gamma} \right) + O \left( \sqrt{\frac{\log \frac{2B+1}{\delta}}{n}}\right). \label{lec7:eqn:unionboundmargin}
 \end{align}
+\tnote{sopped editing here}
 Last, choose the largest $\gamma \in \Gamma$ such that $\gamma \leq \gamma_{\min}$. Then, for this value of $\gamma$, our desired bound directly follows from the bound in \eqref{lec7:eqn:unionboundmargin}. Namely, we have that $\hatL_{\gamma} (h) = 0$ and $O \left( \frac{R_S(\cH)}{\gamma} \right) = O \left( \frac{R_S(\cH)}{\gamma_{\min}} \right)$. The additional term, $\tilO\left ( \sqrt{\frac{\log B}{n} }\right )$, is the price exacted by the uniform convergence argument required to correct the heuristic bound given in \eqref{lec7:eqn:generalization_loss}.
 
-\end{remark}
+%\end{remark}
